@@ -1,0 +1,71 @@
+\chapter*{Formelverzeichnis}
+\addcontentsline{toc}{chapter}{Formelverzeichnis} % Hinzufügen zum Inhaltsverzeichnis
+
+\DeclareSIUnit\px{px}
+
+% Definition des neuen Befehls für das Einfügen der Abkürzung der Einheit
+\newcommand{\acrounit}[1]{
+    % original 18mm
+    \acroextra{\makebox[13mm][l]{\si[per-mode=fraction,fraction-function=\sfrac]{#1}}}
+}
+\def\acrospace{\acroextra{\makebox[14.375mm][l]{}}}
+
+% \begin{acronym}[dmin] % längstes Kürzel wird verw. für den Abstand zw. Kürzel u. Text
+\begin{acronym}[WYSISWG] % längstes Kürzel wird verw. für den Abstand zw. Kürzel u. Text
+
+    % Alphabetisch selbst sortieren - nicht verwendete Formeln rausnehmen!
+    % Allgemein: \acro{KÜRZEL}[ABKÜRZUNG]{\acrounit{SI-EINHEIT}BESCHREIBUNG}
+    \acro{KiB}[\phantom{KiB}]{\acrounit{KiB}Kibibyte ($2^{10}$ Byte)}
+    % \acro{MiB}[\phantom{MiB}]{\acrounit{MiB}Mebibyte ($2^{20}$ Byte)}
+
+    % \vspace{1.2cm}
+
+    % \acro{n}[\ensuremath{n}]{\acrospace{}Anzahl der Iterationen}
+    % \acro{tStart}[\ensuremath{t_{Start}}]{\acrounit{ms}Startzeit}
+    % \acro{tEnde}[\ensuremath{t_{Ende}}]{\acrounit{ms}Endzeit}
+    % \acro{tLaufzeit}[\ensuremath{t_{Laufzeit}}]{\acrounit{ms}Laufzeit eines Zeitstempels}
+
+    % \vspace{1.2cm}
+
+    % \acro{tLaufzeitAvg}[\ensuremath{\overline{t}_{Laufzeit}}]{\acrounit{ms}Durchschnittliche Laufzeit {\small\color{gray}(Arithmetisches Mittel)}}
+    % \acro{tAsyncifyAvg}[\ensuremath{\overline{t}_{Asyncify}}]{\acrounit{ms}Durchschnittliche Laufzeit von Asyncify {\small\color{gray}(Arithmetisches Mittel)}}
+    % \acro{tJSPIAvg}[\ensuremath{\overline{t}_{JSPI}}]{\acrounit{ms}Durchschnittliche Laufzeit von einfachem JSPI {\small\color{gray}(Arithmetisches Mittel)}}
+    % \acro{tOptimiertesJSPIAvg}[\ensuremath{\overline{t}_{Opt.\ JSPI}}]{\acrounit{ms}Durchschnittliche Laufzeit von optimiertem JSPI {\small\color{gray}(Arithmetisches Mittel)}}
+
+    % \vspace{1.2cm}
+
+    % \acro{tLaufzeitMedian}[\ensuremath{\tilde{t}_{Laufzeit}}]{\acrounit{ms}Durchschnittliche Laufzeit {\small\color{gray}(Median)}}
+    % \acro{tAsyncifyMedian}[\ensuremath{\tilde{t}_{Asyncify}}]{\acrounit{ms}Durchschnittliche Laufzeit von Asyncify {\small\color{gray}(Median)}}
+    % \acro{tJSPIMedian}[\ensuremath{\tilde{t}_{JSPI}}]{\acrounit{ms}Durchschnittliche Laufzeit von einfachem JSPI {\small\color{gray}(Median)}}
+    % \acro{tOptimiertesJSPIMedian}[\ensuremath{\tilde{t}_{Opt.\ JSPI}}]{\acrounit{ms}Durchschnittliche Laufzeit von optimiertem JSPI {\small\color{gray}(Median)}}
+
+    % \vspace{1.2cm}
+
+    % \acro{mAsyncifyAvg}[\ensuremath{\overline{m}_{Asyncify}}]{\acrounit{B}Durchschnittlicher Speicherverbrauch von Asyncify}
+    % \acro{mOptimiertesJSPIAvg}[\ensuremath{\overline{m}_{Opt.\ JSPI}}]{\acrounit{B}Durchschnittlicher Speicherverbrauch von optimiertem JSPI}
+
+    % % alternative Darstellungen für den Text
+    % \acroplural{KiB}[KiB]{KiB im Text}
+    % \acroplural{MiB}[MiB]{MiB im Text}
+    % \acroplural{n}[\ensuremath{\scriptstyle{}n}]{n als Zählerindex}
+    % \acroplural{tStart}[\ensuremath{t_{Start}^{(i)}}]{Startzeit in Iteration i}
+    % \acroplural{tEnde}[\ensuremath{t_{Ende}^{(i)}}]{Endzeit in Iteration i}
+    % \acroplural{tLaufzeit}[\ensuremath{t_{Laufzeit}^{(i)}}]{Laufzeit in Iteration i}
+    % \acroplural{tLaufzeitAvg}[\ensuremath{\overline{t}}]{\acrounit{ms}Durchschnittliche Laufzeit (Arithmetisches Mittel)}
+    % \acroplural{tLaufzeitMedian}[\ensuremath{\tilde{t}}]{\acrounit{ms}Durchschnittliche Laufzeit (Median)}
+\end{acronym}
+
+% allow usage with \ac instead of always using \acs
+% \acused{KiB}
+% \acused{n}
+% \acused{tStart}
+% \acused{tEnde}
+% \acused{tLaufzeit}
+% \acused{tLaufzeitAvg}
+% \acused{tAsyncifyAvg}
+% \acused{tJSPIAvg}
+% \acused{tOptimiertesJSPIAvg}
+% \acused{tLaufzeitMedian}
+% \acused{tAsyncifyMedian}
+% \acused{tJSPIMedian}
+% \acused{tOptimiertesJSPIMedian}

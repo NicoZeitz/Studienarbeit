@@ -1,0 +1,132 @@
+% !TEX root = ./Praxisbericht.tex
+% https://github.com/James-Yu/LaTeX-Workshop/wiki/Compile
+% ------------------------------------------------------------
+% LaTeX Template für die DHBW zum Schnellstart!
+% Original: https://github.wdf.sap.corp/vtgermany/LaTeX-Template-DHBW
+% ------------------------------------------------------------
+% ---- Präambel mit Angaben zum Dokument
+\input{Inhalt/00_Latex/praeambel}
+
+% ---- Elektronische Version oder Gedruckte Version?
+% ---- Unterschied: Die elektronische Version enthält keinen Platzhalter für die Unterschrift
+\usepackage{ifthen}
+\newboolean{e-Abgabe}
+\setboolean{e-Abgabe}{true}    % false=gedruckte Fassung
+
+% ---- Persönlichen Daten:
+\newcommand{\titel}{Mathematische Analyse und prototypische Implementierung einer geeigneten Computerspielengine mithilfe maschinellen Lernens für das Brettspiel Patchwork}
+\newcommand{\titelheader}{TODO: Patchwork Computerengine}
+\newcommand{\arbeit}{Studienarbeit (T3\_3101)}
+\newcommand{\studiengang}{Informatik}
+\newcommand{\studienjahr}{2024}
+\newcommand{\autor}{Fabian Wolf und Nico Zeitz}
+\newcommand{\autorReverse}{Wolf, Fabian und Zeitz, Nico}
+\newcommand{\verfassungsort}{Karlsruhe}
+\newcommand{\matrikelnr}{??? und 4075910}
+\newcommand{\kurs}{TINF21B1}
+\newcommand{\bearbeitungsmonat}{??? 2024}
+\newcommand{\abgabe}{??. Monat 2024}
+\newcommand{\bearbeitungszeitraum}{03.10.2023 - ??.??.2024}
+% \newcommand{\firmaName}{SAP SE}
+% \newcommand{\firmaStrasse}{Dietmar-Hopp-Allee 16}
+% \newcommand{\firmaPlz}{69190 Walldorf, Deutschland}
+% \newcommand{\betreuerFirma}{Stephan Lange}
+\newcommand{\betreuerDhbw}{Markus Senger}
+
+\input{Inhalt/00_Latex/kopfundFusszeile}
+
+% ---- Hilfreiches
+\newcommand{\zB}{z.\,B. }   % "z.B." mit kleinem Leeraum dazwischen (ohne wäre nicht korrekt)
+\newcommand{\dash}{d.\,h. }
+
+\newcommand{\code}[1]{\texttt{#1}} % Ist einfacher zu schreiben als ständig \texttt und erlaubt
+% Änderungen im Nachhinein, wenn man z.B. Inline-Code anders stylen möchte.
+\makeatletter
+\newcommand{\labeltext}[3][]{%
+\@bsphack%
+\csname phantomsection\endcsname% in case hyperref is used
+\def\tst{#1}%
+\def\labelmarkup{\emph}% How to markup the label itself
+%\def\refmarkup{\labelmarkup}% How to markup the reference
+\def\refmarkup{}%
+\ifx\tst\empty\def\@currentlabel{\refmarkup{#2}}{\label{#3}}%
+\else\def\@currentlabel{\refmarkup{#1}}{\label{#3}}\fi%
+\@esphack%
+\labelmarkup{\normalfont #2}% visible printed text.
+}
+\makeatother
+
+% ---- Silbentrennung (falls LaTeX defaults falsch / nicht gewünscht sind)
+\hyphenation{HANA}         % anstatt HA-NA
+\hyphenation{Graph-Script} % anstatt GraphS-cript
+
+% ---- Beginn des Dokuments
+\begin{document}
+\setlength{\parindent}{0pt}              % Keine Paragraphen Einrückung.
+% Dafür haben wir den Abstand zwischen den Paragraphen.
+\setcounter{secnumdepth}{2}              % Nummerierungstiefe fürs Inhaltsverzeichnis
+\setcounter{tocdepth}{1}                 % Tiefe des Inhaltsverzeichnisses. Ggf. so anpassen,
+% dass das Verzeichnis auf eine Seite passt.
+\sffamily                                % Serifenlose Schrift verwenden.
+
+% ---- Vorspann
+% ------ Titelseite
+\singlespacing
+\include{Inhalt/01_Standard/titelseite}  % Titelseite
+\newcounter{savepage}
+\pagenumbering{Roman}                    % Römische Seitenzahlen
+\onehalfspacing
+
+% ------ Erklärung, Sperrvermerk, Abstact
+\include{Inhalt/01_Standard/erklaerung}
+% \include{Inhalt/01_Standard/sperrvermerk}
+\include{Inhalt/02_Abstract/abstract-en}
+\include{Inhalt/02_Abstract/abstract-de}
+
+% ------ Inhaltsverzeichnis
+\singlespacing
+\tableofcontents
+
+% ------ Verzeichnisse
+\renewcommand*{\chapterpagestyle}{plain}
+\pagestyle{plain}
+\include{Inhalt/03_Verzeichnisse/formelgroessen}
+\include{Inhalt/03_Verzeichnisse/abkuerzungen}
+\listoffigures                          % Erzeugen des Abbildungsverzeichnisses
+\listoftables                           % Erzeugen des Tabellenverzeichnisses
+\renewcommand{\lstlistlistingname}{Quellcodeverzeichnis}
+\lstlistoflistings                      % Erzeugen des Listenverzeichnisses
+\setcounter{savepage}{\value{page}}
+
+
+% ---- Inhalt der Arbeit
+\cleardoublepage
+\pagenumbering{arabic}                  % Arabische Seitenzahlen für den Hauptteil
+\setlength{\parskip}{0.5\baselineskip}  % Abstand zwischen Absätzen
+\rmfamily
+\renewcommand*{\chapterpagestyle}{scrheadings}
+\pagestyle{scrheadings}
+\onehalfspacing
+\include{chapters/01_einleitung}
+\include{chapters/02_grundlagen}
+\include{chapters/03_anforderungsanalyse}
+\include{chapters/04_umsetzung}
+\include{chapters/05_evaluation}
+\include{chapters/06_fazit}
+
+% ---- Literaturverzeichnis
+\cleardoublepage
+\renewcommand*{\chapterpagestyle}{plain}
+\pagestyle{plain}
+\pagenumbering{Roman}                   % Römische Seitenzahlen
+\setcounter{page}{\numexpr\value{savepage}+1}
+\printbibliography[title=Literaturverzeichnis]
+
+% ---- Anhang
+\appendix
+\clearpage
+\pagenumbering{Roman}  % römische Seitenzahlen für Anhang
+\include{chapters/A_anhang.tex}
+
+\newpage
+\end{document}

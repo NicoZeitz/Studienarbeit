@@ -1,0 +1,265 @@
+% !TEX root = ../../Praxisbericht.tex
+\documentclass[
+    fontsize=12pt,           % Leitlinien sprechen von Schriftgröße 12.
+    paper=A4,
+    twoside=false,
+    listof=totoc,            % Tabellen- und Abbildungsverzeichnis ins Inhaltsverzeichnis
+    bibliography=totoc,      % Literaturverzeichnis ins Inhaltsverzeichnis aufnehmen
+    titlepage,               % Titlepage-Umgebung anstatt \maketitle
+    headsepline,             % horizontale Linie unter Kolumnentitel
+    abstract,                % Überschrift einschalten, Abstract muss in {abstract}-Umgebung stehen
+]{scrreprt}                  % Verwendung von KOMA-Report
+\usepackage[utf8]{inputenc}  % UTF8 Encoding einschalten
+\usepackage[ngerman]{babel}  % Neue deutsche Rechtschreibung
+\usepackage[T1]{fontenc}     % Ausgabe von westeuropäischen Zeichen (auch Umlaute)
+\usepackage{microtype}       % Trennung von Wörtern wird besser umgesetzt
+\usepackage{lmodern}         % Nicht-gerasterte Schriftarten (bei MikTeX erforderlich)
+\usepackage{graphicx}        % Einbinden von Grafiken erlauben
+\usepackage{wrapfig}         % Grafiken fließend im Text
+\usepackage{setspace}        % Zeilenabstand \singlespacing, \onehalfspaceing, \doublespacing
+\usepackage[
+    %showframe,                % Ränder anzeigen lassen
+    left=2.7cm, right=2.5cm,
+    top=2.5cm,  bottom=2.5cm,
+    includeheadfoot
+]{geometry}                      % Seitenlayout einstellen
+\usepackage{scrlayer-scrpage}    % Gestaltung von Fuß- und Kopfzeilen
+\usepackage{acronym}             % Abkürzungen, Abkürzungsverzeichnis
+\usepackage{titletoc}            % Anpassungen am Inhaltsverzeichnis
+\contentsmargin{0.75cm}          % Abstand im Inhaltsverzeichnis zw. Punkt und Seitenzahl
+\usepackage[                     % Klickbare Links (enth. auch "nameref", "url" Package)
+    hidelinks,                     % Blende die "URL Boxen" aus.
+    breaklinks=true                % Breche zu lange URLs am Zeilenende um
+]{hyperref}
+\usepackage[hypcap=true, justification=centering]{caption}% Anker Anpassung für Referenzen
+\urlstyle{same}                  % Aktuelle Schrift auch für URLs
+% Anpassung von autoref für Gleichungen (ergänzt runde Klammern) und Algorithm.
+% Anstatt "Listing" kann auch z.B. "Code-Ausschnitt" verwendet werden. Dies sollte
+% jedoch synchron gehalten werden mit \lstlistingname (siehe weiter unten).
+\addto\extrasngerman{%
+    \def\equationautorefname~#1\null{Gleichung~(#1)\null}
+    \def\lstnumberautorefname{Zeile}
+    \def\lstlistingautorefname{Listing}
+    \def\algorithmautorefname{Algorithmus}
+    % Damit einheitlich "Abschnitt 1.2[.3]" verwendet wird und nicht "Unterabschnitt 1.2.3"
+    % \def\subsectionautorefname{Abschnitt}
+}
+
+% ---- Abstand verkleinern von der Überschrift
+\renewcommand*{\chapterheadstartvskip}{\vspace*{.5\baselineskip}}
+
+% Hierdurch werden Schusterjungen und Hurenkinder vermieden, d.h. einzelne Wörter
+% auf der nächsten Seite oder in einer einzigen Zeile.
+% LaTeX kann diese dennoch erzeugen, falls das Layout ansonsten nicht umsetzbar ist.
+% Diese Werte sind aber gute Startwerte.
+\widowpenalty10000
+\clubpenalty10000
+
+% ---- Für das Quellenverzeichnis
+\usepackage[
+    backend = biber,                % Verweis auf biber
+    language = auto,
+    style = numeric,                % Nummerierung der Quellen mit Zahlen
+    sorting = none,                 % none = Sortierung nach der Erscheinung im Dokument
+    sortcites = true,               % Sortiert die Quellen innerhalb eines cite-Befehls
+    block = space,                  % Extra Leerzeichen zwischen Blocks
+    hyperref = true,                % Links sind klickbar auch in der Quelle
+    %backref = true,                % Referenz, auf den Text an die zitierte Stelle
+    bibencoding = auto,
+    giveninits = true,              % Vornamen werden abgekürzt
+    doi=false,                      % DOI nicht anzeigen
+    isbn=false,                     % ISBN nicht anzeigen
+    alldates=short                  % Datum immer als DD.MM.YYYY anzeigen
+]{biblatex}
+\addbibresource{Inhalt/literatur.bib}
+\setcounter{biburlnumpenalty}{3000}     % Umbruchgrenze für Zahlen
+\setcounter{biburlucpenalty}{6000}      % Umbruchgrenze für Großbuchstaben
+\setcounter{biburllcpenalty}{9000}      % Umbruchgrenze für Kleinbuchstaben
+\DeclareNameAlias{default}{family-given}  % Nachname vor dem Vornamen
+\AtBeginBibliography{\renewcommand{\multinamedelim}{\addslash\space
+    }\renewcommand{\finalnamedelim}{\multinamedelim}}  % Schrägstrich zwischen den Autorennamen
+\DefineBibliographyStrings{german}{
+    urlseen = {Einsichtnahme:},                      % Ändern des Titels von "besucht am"
+}
+\usepackage[babel,german=quotes]{csquotes}         % Deutsche Anführungszeichen + Zitate
+
+
+% ---- Für Mathevorlage
+\usepackage{amsmath}    % Erweiterung vom Mathe-Satz
+\usepackage{amssymb}    % Lädt amsfonts und weitere Symbole
+\usepackage{MnSymbol}   % Für Symbole, die in amssymb nicht enthalten sind.
+\usepackage{mathtools}
+
+
+% ---- Für Quellcodevorlage
+\usepackage{scrhack}                    % Hack zur Verw. von listings in KOMA-Script
+\usepackage{listings}                   % Darstellung von Quellcode
+\usepackage[table,xcdraw]{xcolor}       % Einfache Verwendung von Farben
+\input{Inhalt/00_Latex/quellcodeStyle}  % Weitere Details sind ausgelagert
+
+\usepackage{algorithm}                  % Für Algorithmen-Umgebung (ähnlich wie lstlistings Umgebung)
+\usepackage{algpseudocode}              % Für Pseudocode. Füge "[noend]" hinzu, wenn du kein "endif",
+% etc. haben willst.
+
+\makeatletter                           % Sorgt dafür, dass man @ in Namen verwenden kann.
+% Ansonsten gibt es in der nächsten Zeile einen Compilefehler.
+\renewcommand{\ALG@name}{Algorithmus}   % Umbenennen von "Algorithm" im Header der Listings.
+\makeatother                            % Zeichen wieder zurücksetzen
+\renewcommand{\lstlistingname}{Codeausschnitt} % Erlaubt das Umbenennen von "Listing" in anderen Titel.
+
+% ---- Tabellen
+\usepackage{booktabs}  % Für schönere Tabellen. Enthält neue Befehle wie \midrule
+\usepackage{multirow}  % Mehrzeilige Tabellen
+\usepackage{siunitx}   % Für SI Einheiten und das Ausrichten Nachkommastellen
+\sisetup{locale=DE, range-phrase={~bis~}, output-decimal-marker={,}} % Damit ein Komma und kein Punkt verwendet wird.
+\usepackage{xfrac} % Für siunitx Option "fraction-function=\sfrac"
+
+% ---- Für Definitionsboxen in der Einleitung
+\usepackage{amsthm}                     % Liefert die Grundlagen für Theoreme
+\usepackage[framemethod=tikz]{mdframed} % Boxen für die Umrandung
+\input{Inhalt/00_Latex/highlightBoxen}  % Weitere Details sind ausgelagert
+
+% ---- Für Todo Notes
+\usepackage{todonotes}
+\setlength {\marginparwidth }{2cm}      % Abstand für Todo Notizen
+
+% ====================================================== OWN ====================================================== %
+% =========================== LIBRARIES =========================== %
+\usepackage{tikz}
+\usetikzlibrary{shadows,calc}
+\usetikzlibrary{shapes.misc, positioning}
+\usepackage[T1]{fontenc}% http://ctan.org/pkg/fontenc
+\usepackage[export]{adjustbox}
+\usepackage{makecell}
+\usepackage{comment}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{xpatch}
+
+% =========================== GENERAL COMMANDS =========================== %
+\newcommand{\tikzcircle}[1][red,fill=red]{\tikz[baseline=-0.5ex]\draw[#1,radius=4.5pt] (0,0) circle ;}%
+
+% =========================== RIGHT CAPTION FORMAT =========================== %
+% right format for captions. Number with dot (1.) inside table of contents, no dot (1) inside text
+
+% for figures/images (adapted from https://tex.stackexchange.com/questions/27250/remove-dot-after-number-in-figure-captions-while-keeping-the-dot-in-chapter-sect)
+\renewcommand*{\figureformat}{%
+    \figurename~\thefigure%
+    %  \autodot% DELETED
+}
+
+% for tables
+\renewcommand*{\tableformat}{%
+    \tablename~\thetable%
+    %  \autodot% DELETED
+}
+
+% \renewcommand*{\lstlistingformat}{%
+%     \lstlistingname~\thelstlisting
+% }
+% for code (adapted from https://tex.stackexchange.com/questions/597350/add-dot-after-number-of-listing-in-list-of-listings)
+% BUG: does not work
+\makeatletter
+\xpatchcmd\lst@MakeCaption{\protect\numberline{\thelstlisting}\lst@@caption}{\protect\numberline{\thelstlisting.}\lst@@caption}{}{}
+\makeatother
+
+% =========================== FIGURES/IMAGES =========================== %
+%  How to add a shadow under a picture: https://latex.org/forum/viewtopic.php?t=18644
+% code adapted from https://tex.stackexchange.com/a/11483/3954
+
+% some parameters for customization
+\def\shadowshift{1pt,-1pt}
+\def\shadowradius{8pt}
+
+\colorlet{innercolor}{black!15}
+\colorlet{outercolor}{gray!00}
+
+% this draws a shadow under a rectangle node
+\newcommand\drawshadow[1]{
+    \begin{pgfonlayer}{shadow}
+        \shade[outercolor,inner color=innercolor,outer color=outercolor] ($(#1.south west)+(\shadowshift)+(\shadowradius/2,\shadowradius/2)$) circle (\shadowradius);
+        \shade[outercolor,inner color=innercolor,outer color=outercolor] ($(#1.north west)+(\shadowshift)+(\shadowradius/2,-\shadowradius/2)$) circle (\shadowradius);
+        \shade[outercolor,inner color=innercolor,outer color=outercolor] ($(#1.south east)+(\shadowshift)+(-\shadowradius/2,\shadowradius/2)$) circle (\shadowradius);
+        \shade[outercolor,inner color=innercolor,outer color=outercolor] ($(#1.north east)+(\shadowshift)+(-\shadowradius/2,-\shadowradius/2)$) circle (\shadowradius);
+        \shade[top color=innercolor,bottom color=outercolor] ($(#1.south west)+(\shadowshift)+(\shadowradius/2,-\shadowradius/2)$) rectangle ($(#1.south east)+(\shadowshift)+(-\shadowradius/2,\shadowradius/2)$);
+        \shade[left color=innercolor,right color=outercolor] ($(#1.south east)+(\shadowshift)+(-\shadowradius/2,\shadowradius/2)$) rectangle ($(#1.north east)+(\shadowshift)+(\shadowradius/2,-\shadowradius/2)$);
+        \shade[bottom color=innercolor,top color=outercolor] ($(#1.north west)+(\shadowshift)+(\shadowradius/2,-\shadowradius/2)$) rectangle ($(#1.north east)+(\shadowshift)+(-\shadowradius/2,\shadowradius/2)$);
+        \shade[outercolor,right color=innercolor,left color=outercolor] ($(#1.south west)+(\shadowshift)+(-\shadowradius/2,\shadowradius/2)$) rectangle ($(#1.north west)+(\shadowshift)+(\shadowradius/2,-\shadowradius/2)$);
+        \filldraw ($(#1.south west)+(\shadowshift)+(\shadowradius/2,\shadowradius/2)$) rectangle ($(#1.north east)+(\shadowshift)-(\shadowradius/2,\shadowradius/2)$);
+    \end{pgfonlayer}
+}
+
+% create a shadow layer, so that we don't need to worry about overdrawing other things
+\pgfdeclarelayer{shadow}
+\pgfsetlayers{shadow,main}
+
+\newcommand\shadowimage[2][]{%
+    \begin{figure}[!h]
+        \centering
+        \begin{tikzpicture}
+            \centering
+            \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[#1]{#2}};
+            \drawshadow{image}
+        \end{tikzpicture}
+    \end{figure}}
+
+% =========================== TABLES =========================== %
+% new column types for multiline + text justify + fixed width
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% =========================== ITEMIZE/ENUMERATION =========================== %
+% item range e.g. 1.-5.
+\def\itemrange#1{%
+    \addtocounter{enumi}{1}%
+    \edef\labelenumi{\theenumi.--\noexpand\theenumi.}%
+    \addtocounter{enumi}{-1}%
+    \addtocounter{enumi}{#1}%
+    \item
+    \def\labelenumi{\theenumi.}}
+
+% =========================== ALGORITHM =========================== %
+% full line comment
+\algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
+
+% =========================== TIKZ IMAGES/ICONS =========================== %
+\definecolor{colorPositive}{HTML}{30914c}
+\definecolor{colorNeutral}{HTML}{e76500}
+\definecolor{colorNegative}{HTML}{f53232}
+
+\newcommand\positiveEvaluation{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+        \coordinate  (a) at (-0.09,-0.02) {};
+        \coordinate  (b) at (-0.04,-0.07) {};
+        \coordinate  (c) at (0.08,0.04) {};
+        \draw[colorPositive,fill=colorPositive,radius=4.5pt] (0,0) circle ;
+        \draw[white, line width=0.35mm, line cap=round] (a.center) -- (b.center);
+        \draw[white, line width=0.35mm, line cap=round] (b.center) -- (c.center);
+    \end{tikzpicture}\hspace{0.25cm}}
+
+\newcommand\neutralEvaluation{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+        \draw[colorNeutral,fill=colorNeutral,radius=4.5pt] (0,0) circle ;
+        % \draw[white,fill=white,radius=0.2mm] (0.075,0.05) circle ;
+        % \draw[white,fill=white,radius=0.2mm] (-0.075,0.05) circle ;
+        % \draw[rounded corners, white, line width=0.4mm] (-0.15,-0.05) -- (0.15,-0.05) -- cycle;
+    \end{tikzpicture}\hspace{0.25cm}}
+
+\newcommand\negativeEvaluation{%
+    \begin{tikzpicture}[baseline=-0.5ex]
+        \draw[colorNegative,fill=colorNegative,radius=4.5pt] (0,0) circle ;
+        \draw[rounded corners, white, line width=0.4mm] (-0.115,0.115) -- (0.115,-0.115) -- cycle;
+        \draw[rounded corners, white, line width=0.4mm] (-0.115,-0.115) -- (0.115,0.115) -- cycle;
+    \end{tikzpicture}\hspace{0.25cm}}
+
+% =========================== OWN COLORS =========================== %
+
+\definecolor{colorAsyncify}{HTML}{81B2D5}
+\definecolor{colorJSPI}{HTML}{FFB777}
+\definecolor{colorOptimiertesJSPI}{HTML}{88C988}
+
+\definecolor{colorAsyncifyBG}{HTML}{A6C2D6}
+\definecolor{colorJSPIBG}{HTML}{FFCFA6}
+\definecolor{colorOptimiertesJSPIBG}{HTML}{A6C9A6}
+\definecolor{colorSelected}{HTML}{A6C9A6}
