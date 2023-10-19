@@ -1,0 +1,53 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Server",
+            "detail": "Start the server",
+            "icon": {
+                "color": "terminal.ansiBlue",
+                "id": "server"
+            },
+            "command": "${config:python.pythonPath}",
+            "args": ["server.py"],
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/code/server"
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Webapp (Development)",
+            "detail": "Start the development server",
+            "icon": {
+                "color": "terminal.ansiGreen",
+                "id": "browser"
+            },
+            "path": "code/ui",
+            "type": "npm",
+            "script": "dev",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/code/ui"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
