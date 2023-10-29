@@ -1,80 +1,137 @@
 from dataclasses import dataclass
-from typing import List, Literal, Self
+from enum import Enum
+from typing import List, Self, Optional
+import itertools
 
-from .entities_enum import EntitiesEnum
-from .quilt_board import QuiltBoard
 from .patch import Patch
-from .time_board import TimeBoard
+from .player import Player
+from .time_board import TimeBoard, EntitiesEnum
+
+class CurrentPlayer(Enum):
+    PLAYER_1 = EntitiesEnum.PLAYER_1
+    PLAYER_2 = EntitiesEnum.PLAYER_2
 
 @dataclass
 class State:
-    pieces: List[Patch]
+    """
+    Represents the full state of the patchwork board game.
+    """
+
+    # ================================ instance variables ================================
+
+    patches: List[Patch]
+    """The patches that are still available to be bought."""
+
     time_board: TimeBoard
-    player_1_quilt_board: QuiltBoard
-    player_2_quilt_board: QuiltBoard
-    current_player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2]
-    player_1_button_balance: int
-    player_2_button_balance: int
+    """The time board of the game."""
 
-    # getters regarding all players
+    player_1: Player
+    """The first player of the game."""
+
+    player_2: Player
+    """The second player of the game."""
+
+    current_active_player: CurrentPlayer = CurrentPlayer.PLAYER_1
+    """The current player of the game."""
+
+    special_patch_placement_move: Optional[int] = None
+    """Whether the current player has to place a special patch as the next move and if so which special patch it is."""
+
+    # ================================ instance properties ================================
 
     @property
-    def player_positions(self):
-        return self.time_board.get_player_positions(self.current_player)
-
-    # getters for the current player
-
-    @property
-    def current_player_quilt_board(self) -> QuiltBoard:
-        return self.player_1_quilt_board if self.current_player == EntitiesEnum.PLAYER_1 else self.player_2_quilt_board
-
-    @current_player_quilt_board.setter
-    def current_player_quilt_board(self, value: QuiltBoard) -> None:
-        if self.current_player == EntitiesEnum.PLAYER_1:
-            self.player_1_quilt_board = value
+    def current_player(self) -> Player:
+        """Returns the current player."""
+        if self.current_active_player == CurrentPlayer.PLAYER_1:
+            return self.player_1
         else:
-            self.player_2_quilt_board = value
+            return self.player_2
 
     @property
-    def current_player_button_balance(self) -> int:
-        return self.player_1_button_balance if self.current_player == EntitiesEnum.PLAYER_1 else self.player_2_button_balance
-
-    @property
-    def current_player_button_income(self) -> int:
-        return self.current_player_quilt_board.button_income
-
-    # setters for the current player
-
-    def set_current_player_position(self, position: int) -> None:
-        self.time_board.set_player_position(self.current_player, position)
-
-    def set_current_player_button_balance(self, new_button_balance: int) -> None:
-        if self.current_player == EntitiesEnum.PLAYER_1:
-            self.player_1_button_balance = new_button_balance
+    def other_player(self) -> Player:
+        """Returns the other player."""
+        if self.current_active_player == CurrentPlayer.PLAYER_1:
+            return self.player_2
         else:
-            self.player_2_button_balance = new_button_balance
+            return self.player_1
 
-    def add_current_player_button_balance(self, amount: int) -> None:
-        self.set_current_player_button_balance(self.current_player_button_balance + amount)
-
-    def subtract_current_player_button_balance(self, amount: int) -> None:
-        self.set_current_player_button_balance(self.current_player_button_balance - amount)
-
-    # setters regarding all players
+    # ================================ instance methods ================================
 
     def switch_current_player(self) -> None:
-        self.current_player = EntitiesEnum.PLAYER_1 if self.current_player == EntitiesEnum.PLAYER_2 else EntitiesEnum.PLAYER_2
+        """Switches the current player."""
+        if self.current_active_player == CurrentPlayer.PLAYER_1:
+            self.current_active_player = CurrentPlayer.PLAYER_2
+        else:
+            self.current_active_player = CurrentPlayer.PLAYER_1
 
-    # utility methods
+
+    def __eq__(self, other: Self) -> bool:
+        return self.patches == other.patches and \
+            self.time_board == other.time_board and \
+            self.player_1 == other.player_1 and \
+            self.player_2 == other.player_2 and \
+            self.current_active_player == other.current_active_player and \
+            self.special_patch_placement_move == other.special_patch_placement_move
+
+    def __hash__(self) -> int:
+        return hash((
+            self.patches,
+            self.time_board,
+            self.player_1,
+            self.player_2,
+            self.current_active_player,
+            self.special_patch_placement_move
+        ))
+
+    def __repr__(self) -> str:
+        return f'State(patches={self.patches}, time_board={self.time_board}, player_1={self.player_1}, player_2={self.player_2}, current_player={self.current_active_player}, special_patch_placement_move={self.special_patch_placement_move})'
+
+    def __str__(self) -> str:
+        state_str = f'Current player is {self.current_player.name}'
+        if self.special_patch_placement_move is not None:
+            state_str += f' (special patch placement move {self.special_patch_placement_move + 1})'
+        state_str += '\n\n'
+
+        player_1_str = str(self.player_1).split('\n')
+        player_2_str = str(self.player_2).split('\n')
+
+        # pad each line in player 1 to the same length
+        max_length = max(len(line) for line in player_1_str)
+        for index, line in enumerate(player_1_str):
+            player_1_str[index] += ' ' * (max_length - len(line))
+
+        divider = (' │ \n' * len(player_1_str)) .split('\n')
+
+        state_str += '\n'.join(' '.join(line) for line in zip(player_1_str, divider, player_2_str))
+
+        state_str += f'\n\nTime board:\n{self.time_board}\n'
+        state_str += f'Next 3 patches:\n'
+
+        # only take first 3 patches
+        patch_strings = [str(patch).split('\n') for patch in itertools.islice(self.patches, 3)]
+        # make each list the same length
+        max_length = max(len(patch_string) for patch_string in patch_strings)
+        for patch_string in patch_strings:
+            patch_string[:0] = ([' '] * (max_length - len(patch_string)))
+
+        # pad each string right to 15 characters
+        for patch_string in patch_strings:
+            patch_string[:] = [patch_string + ' ' * (15 - len(patch_string)) for patch_string in patch_string]
+
+        # join the strings
+        state_str += '\n'.join('   '.join(line) for line in zip(*patch_strings))
+
+        return state_str
+
+    def __copy__(self) -> Self:
+        return State(
+            patches=self.patches.copy(),
+            time_board=self.time_board.copy(),
+            player_1=self.player_1.copy(),
+            player_2=self.player_2.copy(),
+            current_active_player=self.current_active_player,
+            special_patch_placement_move=self.special_patch_placement_move
+        )
 
     def copy(self) -> Self:
-        new_state = State(
-            pieces=self.pieces.copy(),
-            time_board=self.time_board.copy(),
-            player_1_quilt_board=self.player_1_quilt_board.copy(),
-            player_2_quilt_board=self.player_2_quilt_board.copy(),
-            current_player=self.current_player,
-            player_1_button_balance=self.player_1_button_balance,
-            player_2_button_balance=self.player_2_button_balance
-        )
-        return new_state
+        return self.__copy__()

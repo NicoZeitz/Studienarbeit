@@ -1,67 +1,135 @@
-import numpy as np
-
 from collections import namedtuple
-from typing import Literal, Self
+from enum import IntFlag
+from typing import Literal, Self, List
 
-
-from .entities_enum import EntitiesEnum
+import numpy as np
+import numpy.typing as npt
 
 PlayerPosition = namedtuple('PlayerPosition', 'current_player other_player')
 
+class EntitiesEnum(IntFlag):
+    PLAYER_1              = 0b0001
+    PLAYER_2              = 0b0010
+    BUTTON_INCOME_TRIGGER = 0b0100
+    SPECIAL_PATCH         = 0b1000
+
 class TimeBoard:
+    """The time board of the game."""
+
+    # ================================ instance variables ================================
+
+    tiles: np.ndarray((54,), np.uint8)
+    """The tiles of the time board."""
+
+    # ================================ static variables ================================
+
+    MAX_POSITION = 53
+    """The maximum position on the time board."""
+
+    # ================================ instance methods ================================
+
     def __init__(self):
-        self.board = np.zeros(54, dtype=np.uint8)
+        self.tiles = np.zeros(54, dtype=np.uint8)
+        self.tiles[0] = EntitiesEnum.PLAYER_1 | EntitiesEnum.PLAYER_2
 
-        self.board[0] = EntitiesEnum.PLAYER_1 | EntitiesEnum.PLAYER_2
+        self.tiles[5] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[11] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[17] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[23] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[29] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[35] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[41] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[47] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[53] = EntitiesEnum.BUTTON_INCOME_TRIGGER
 
-        self.board[5] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[11] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[17] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[23] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[29] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[35] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[41] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[47] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.board[53] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        self.tiles[26] = EntitiesEnum.SPECIAL_PATCH
+        self.tiles[32] = EntitiesEnum.SPECIAL_PATCH
+        self.tiles[38] = EntitiesEnum.SPECIAL_PATCH
+        self.tiles[44] = EntitiesEnum.SPECIAL_PATCH
+        self.tiles[50] = EntitiesEnum.SPECIAL_PATCH
 
-        self.board[26] = EntitiesEnum.SPECIAL_PATCH
-        self.board[32] = EntitiesEnum.SPECIAL_PATCH
-        self.board[38] = EntitiesEnum.SPECIAL_PATCH
-        self.board[44] = EntitiesEnum.SPECIAL_PATCH
-        self.board[50] = EntitiesEnum.SPECIAL_PATCH
+    # special patches
 
-    def get_player_positions(self, current_player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2] = EntitiesEnum.PLAYER_1) -> PlayerPosition:
+    def get_special_patches_in_range(self, range: range) -> npt.NDArray[np.intp]:
+        return np.argwhere((self.tiles[self.clamp_range(range)] & EntitiesEnum.SPECIAL_PATCH) > 0) + range.start
 
-        other_player = EntitiesEnum.PLAYER_2 if current_player == EntitiesEnum.PLAYER_1 else EntitiesEnum.PLAYER_1
+    def clear_special_patch(self, index: int):
+        clamped_index = self.clamp_index(index)
+        self.tiles[clamped_index] = self.tiles[clamped_index] ^ EntitiesEnum.SPECIAL_PATCH
 
-        current_player_position = np.where((self.board & current_player) > 0)[0][0]
-        other_player_position = np.where((self.board & other_player) > 0)[0][0]
+    # button income triggers
 
-        # FIXME: remove in build
-        assert current_player_position <= other_player_position, f"Current player (pos: {current_player_position}) has to be before or on the same position as the other player (pos: {other_player_position})"
+    def get_amount_button_income_triggers_in_range(self, range: range) -> int:
+        return np.count_nonzero((self.tiles[self.clamp_range(range)] & EntitiesEnum.BUTTON_INCOME_TRIGGER) > 0)
 
-        return PlayerPosition(current_player_position, other_player_position)
+    # player positions
 
-    def set_player_position(self, current_player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2], position: int):
-        self.board = np.where((self.board & current_player) > 0, 0, self.board)
-        self.board[position] = self.board[position] | current_player
+    def set_player_position(self, player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2], old_position: int, new_position: int) -> None:
+        # reset old position
+        self.tiles[old_position] = self.tiles[old_position] ^ player
+
+        # set new position
+        clamped_position = self.clamp_index(new_position)
+        self.tiles[clamped_position] = self.tiles[clamped_position] | player
+
+    # other function
+
+    def clamp_range(self, input_range: range) -> range:
+        return range(
+            max(input_range.start, 0),
+            min(input_range.stop, TimeBoard.MAX_POSITION + 1)
+        )
+
+    def clamp_index(self, index: int) -> int:
+        return min(max(index, 0), TimeBoard.MAX_POSITION)
+
+    def __eq__(self, o: object) -> bool:
+        return self.tiles == o.tiles
+
+    def __hash__(self) -> int:
+        return hash(self.tiles)
+
+    def __repr__(self) -> str:
+        return f'TimeBoard(tiles={self.tiles})'
+
+    def __str__(self) -> str:
+        def get_str_for_tile(tile: int) -> str:
+            result_str = ''
+
+            if tile & EntitiesEnum.PLAYER_1 > 0:
+                result_str += '1'
+            if tile & EntitiesEnum.PLAYER_2 > 0:
+                result_str += '2'
+            if tile & EntitiesEnum.BUTTON_INCOME_TRIGGER > 0:
+                result_str += 'B'
+            elif tile & EntitiesEnum.SPECIAL_PATCH > 0:
+                result_str += 'P'
+
+            if len(result_str) == 0:
+                result_str = ' '
+
+            return result_str
+
+        first_line =  []
+        second_line = []
+        third_line =  []
+
+        for field in self.tiles:
+            tile_str = get_str_for_tile(field)
+
+            first_line.append('─' * len(tile_str))
+            second_line.append(tile_str)
+            third_line.append('─' * len(tile_str))
+
+        result_str =  '┌' + '┬'.join(first_line)  + '┐\n'
+        result_str += '│' + '│'.join(second_line) + '│\n'
+        result_str += '└' + '┴'.join(third_line)  + '┘'
+        return result_str
+
+    def __copy__(self) -> Self:
+        copy = TimeBoard()
+        copy.tiles = self.tiles.copy()
+        return copy
 
     def copy(self) -> Self:
-        new_patchwork_game_board = TimeBoard()
-        new_patchwork_game_board.board = self.board.copy()
-        return new_patchwork_game_board
-
-    def __repr__(self):
-        board = self.board.tolist()
-        for index, field in enumerate(board):
-            display_str = []
-            if field & EntitiesEnum.PLAYER_1 > 0:
-                display_str.append("Player 1")
-            if field & EntitiesEnum.PLAYER_2 > 0:
-                display_str.append("Player 2")
-            if field & EntitiesEnum.BUTTON_INCOME_TRIGGER > 0:
-                display_str.append("Button")
-            if field & EntitiesEnum.SPECIAL_PATCH > 0:
-                display_str.append("Special Patch")
-            board[index] = ', '.join(display_str)
-        return str(board)
+        return self.__copy__()

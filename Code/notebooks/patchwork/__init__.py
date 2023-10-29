@@ -1,15 +1,17 @@
 __all__ = [
-    'entities_enum',
-    'game'
+    'action',
+    'game',
+    'game_loop'
     'patch',
     'quilt_board',
     'state',
     'time_board'
 ]
 
-from .entities_enum import EntitiesEnum
+from .action import Action
 from .game import Game
-from .patch import Patch
+from .game_loop import GameLoop
+from .patch import Patch, PatchTransformation, PatchImage, Rotation, Orientation
 from .quilt_board import QuiltBoard
-from .state import State
-from .time_board import TimeBoard
+from .state import State, CurrentPlayer
+from .time_board import TimeBoard, EntitiesEnum

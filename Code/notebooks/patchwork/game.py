@@ -1,202 +1,254 @@
-import numpy as np
-
-from typing import Union, List
+from enum import Enum
+from typing import Union, List, Optional, Self
 import itertools
 
-from .entities_enum import EntitiesEnum
+import numpy as np
+
 from .patch import Patch
+from .player import Player
 from .quilt_board import QuiltBoard
-from .state import State
+from .state import State, CurrentPlayer
 from .time_board import TimeBoard
+from .action import Action
+
+class ValueAndTerminated(Enum):
+    PLAYER_1_WON = 1
+    PLAYER_2_WON = -1
+    DRAW = 0
+    NOT_TERMINATED = 2
+
+    @property
+    def is_terminated(self: Self) -> bool:
+        return self != ValueAndTerminated.NOT_TERMINATED
 
 class Game:
-    def __init__(self):
-        pass
+    """
+    The game of Patchwork.
+    """
 
-    def get_initial_state(self, seed: Union[int, None] = None):
-        """
-        1. Each player takes a quilt board, a time token and
-           5 buttons (as currency). Keep the remaining butt ons
-           on the table close at hand.
-        """
-        player_1_quilt_board = QuiltBoard()
-        player_2_quilt_board = QuiltBoard()
-        player_1_button_balance = 5
-        player_2_button_balance = 5
+    # ================================ instance methods ================================
 
+    def get_initial_state(
+            self,
+            /,
+            seed: Optional[int] = None,
+            player_1_name: Optional[str] = None,
+            player_2_name: Optional[str] = None
+    ) -> State:
         """
-        2. Place the central
-           time board in the
-           middle of the table.
-        """
+        Gets the initial state of the game.
 
-        """
-        3. Place your time tokens on
-           the starting space of the
-           time board.
-           The player who last used a
-           needle begins
-        """
-        game_board = TimeBoard()
-        current_player = EntitiesEnum.PLAYER_1
-
-        """
-        4. Place the (regular)
-           patches in a circle or
-           oval around the time
-           board.
+        :param seed: The seed to use for the random number generator.
+        :param player_1_name: The name of the first player.
+        :param player_2_name: The name of the second player.
+        :return: The initial state of the game.
         """
 
-        """
-        5. Locate the smallest patch, i.e. the
-           patch of size 1x2, and place the
-           neutral token between this patch
-           and the next patch in clockwise
-           order.
-        """
-        pieces = Patch.generate_pieces(seed=seed)
-
-        """
-        6. Lay out the
-           special tile
-        """
-
-        """
-        7. Place the special
-           patches on the
-           marked spaces of
-           the time board
-        """
-
-
-        """
-        8. Now you are
-           ready to go!
-        """
-        return State(
-            pieces=pieces,
-            time_board=game_board,
-            player_1_quilt_board=player_1_quilt_board,
-            player_2_quilt_board=player_2_quilt_board,
-            current_player=current_player,
-            player_1_button_balance=player_1_button_balance,
-            player_2_button_balance=player_2_button_balance
+        # 1. Each player takes a quilt board, a time token and 5 buttons
+        #    (as currency). Keep the remaining buttons on the table close at
+        #    hand.
+        player_1 = Player(
+            name='Player 1' if player_1_name is None else player_1_name,
+            position=0,
+            button_balance=5,
+            quilt_board=QuiltBoard()
+        )
+        player_2 = Player(
+            name='Player 2' if player_2_name is None else player_2_name,
+            position=0,
+            button_balance=5,
+            quilt_board=QuiltBoard()
         )
 
-    def get_next_state(self, state, action, player):
-        pass
+        # 2. Place the central time board in the middle of the table.
 
-    def get_valid_moves(self, state: State) -> List[State]:
+        # 3. Place your time tokens on the starting space of the
+        #    time board. The player who last used a needle begins
+        game_board = TimeBoard()
+        current_active_player = CurrentPlayer.PLAYER_1
+
+        # 4. Place the (regular) patches in a circle or oval around the time
+        #    board.
+
+        # 5. Locate the smallest patch, i.e. the patch of size 1x2, and place
+        #    the neutral token between this patch and the next patch in
+        #    clockwise order.
+        patches = Patch.generate_patches(seed=seed)
+
+        # 6. Lay out the special tile
+
+        # 7. Place the special patches on the marked spaces of the time board
+
+        # 8. Now you are ready to go!
+        return State(
+            patches=patches,
+            time_board=game_board,
+            player_1=player_1,
+            player_2=player_2,
+            current_active_player=current_active_player,
+        )
+
+    def get_valid_actions(self, state: State) -> List[Action]:
+        """
+        Gets the valid actions for the current player in the given state.
+
+        :param state: The state of the game.
+        :return: The valid actions for the current player in the given state.
+        """
+
         # Course of Play
         #
-        # In this game, you do not necessarily alternate between turns. The player whose time token is the furthest
-        # behind on the time board takes his turn. This may result in a player taking multiple turns in a row before
-        # his opponent can take one.
-        # If both time tokens are on the same space, the player whose token is on top goes first.
-        #
+        # In this game, you do not necessarily alternate between turns. The
+        # player whose time token is the furthest behind on the time board takes
+        # his turn. This may result in a player taking multiple turns in a row
+        # before his opponent can take one.
+        # If both time tokens are on the same space, the player whose token is
+        # on top goes first.
+
+        # Placing a Special Patch is a special action
+        if state.special_patch_placement_move is not None:
+            special_patch = Patch.get_special_patch(state.special_patch_placement_move)
+            return state.current_player.quilt_board.get_valid_actions_for_patch(special_patch)
+
         # On your turn, you carry out one of the following actions:
-        valid_moves = []
+        valid_actions: List[Action] = []
 
         # A: Advance and Receive Buttons
-        valid_moves.extend(self.get_advance_and_receive_buttons_moves(state))
+        valid_actions.extend(self._get_advance_and_receive_buttons_actions(state))
 
         # B: Take and Place a Patch
-        valid_moves.extend(self.get_take_and_place_a_patch_moves(state))
+        valid_actions.extend(self._get_take_and_place_a_patch_actions(state))
 
-        return valid_moves
+        return valid_actions
 
-    def get_advance_and_receive_buttons_moves(self, state: State) -> List[State]:
+    def get_next_state(self, state: State, action: Action) -> State:
         """
-        get the valid moves for the action "Advance and Receive Buttons"
+        Gets the next state of the game after the given action has been taken.
 
-        most of the time this method will return exactly 1 valid move, but if the player walks over a special patch
-        there will be multiple valid moves
+        :param state: The state of the game.
+        :param action: The action to take.
+        :return: The next state of the game.
+        """
+
+        new_state = state.copy()
+
+        # IF special patch
+        #   1. place patch
+        #   2. switch player
+        #   3. reset special patch state
+        if new_state.special_patch_placement_move:
+            new_state.current_player.quilt_board.add_patch(action.patch, action.patch_position)
+            new_state.switch_current_player()
+            new_state.special_patch_placement_move = None
+            return new_state
+
+        old_current_player_position = new_state.current_player.position
+        other_player_position = new_state.other_player.position
+        time_cost: int = 0
+
+        # IF walking
+        #   1. add +1 to current player button balance for every tile walked over
+        if action.is_walking:
+            time_cost = other_player_position - old_current_player_position + 1
+            new_state.current_player.button_balance += time_cost
+
+        # IF patch placement
+        #  1. place patch
+        #  2. remove patch from available patches
+        #  3. subtract button cost from current player button balance
+        #      a) if the board is full the current player get +7 points
+        elif action.is_patch_placement:
+            new_state.current_player.quilt_board.add_patch(action.patch, action.patch_position)
+            new_state.patches = np.roll(new_state.patches, -action.patch_index-1)
+            new_state.current_player.button_balance -= action.patch.button_cost
+            time_cost = action.patch.time_cost
+
+            if new_state.current_player.quilt_board.is_full:
+                new_state.current_player.button_balance += 7
+
+        # 4. move player by time_cost
+        new_state.current_player.position += time_cost
+        new_current_player_position = new_state.current_player.position
+        new_state.time_board.set_player_position(new_state.current_active_player.value, old_current_player_position, new_current_player_position)
+
+        walking_range = range(old_current_player_position + 1, new_current_player_position + 1)
+
+        # 5. test if player moved over button income trigger (multiple possible) and add button income
+        button_income_triggers = new_state.time_board.get_amount_button_income_triggers_in_range(walking_range)
+        button_income = new_state.current_player.quilt_board.button_income
+        new_state.current_player.button_balance += button_income_triggers * button_income
+
+        # 6. test if player moved over special patch (only a single one possible) and conditionally change the state
+        special_patches = new_state.time_board.get_special_patches_in_range(walking_range)
+        if special_patches.size != 0:
+            special_patch_index = special_patches[0]
+            new_state.time_board.clear_special_patch(special_patch_index)
+
+            # Test if special patch can even be placed
+            if new_state.current_player.quilt_board.is_full:
+                # If not throw the special patch away and switch player
+                new_state.switch_current_player()
+                return new_state
+
+            new_state.special_patch_placement_move = special_patch_index
+            return new_state
+
+        # test player position and optionally switch (always true if action.is_walking)
+        if new_current_player_position > other_player_position:
+            new_state.switch_current_player()
+
+        return new_state
+
+    def get_value_and_terminated(self, state: State) -> ValueAndTerminated:
+        """
+        Returns if the game is terminated and if so who won.
+
+        :param state: The state of the game.
+        :return: The value of the game and whether the game is terminated.
+        """
+
+        player_1_position = state.player_1.position
+        player_2_position = state.player_2.position
+
+        if player_1_position < TimeBoard.MAX_POSITION or player_2_position < TimeBoard.MAX_POSITION:
+            return ValueAndTerminated.NOT_TERMINATED
+
+        player_1_score = state.player_1.quilt_board.score + state.player_1.button_balance
+        player_2_score = state.player_2.quilt_board.score + state.player_2.button_balance
+
+        if player_1_score > player_2_score:
+            return ValueAndTerminated.PLAYER_1_WON
+        elif player_1_score < player_2_score:
+            return ValueAndTerminated.PLAYER_2_WON
+        else:
+            return ValueAndTerminated.DRAW
+
+    # ================================ private methods ================================
+
+    def _get_advance_and_receive_buttons_actions(self, state: State) -> List[Action]:
+        """
+        Get the valid moves for the action "Advance and Receive Buttons"
+
+        :param state: the current state (will not be modified)
+        :return: a list with one entry containing the walking action
+        """
+        return [Action.walking()]
+
+    def _get_take_and_place_a_patch_actions(self, state: State) -> List[Action]:
+        """
+        Get the valid moves for the action "Take and Place a Patch"
 
         :param state: the current state (will not be modified)
         :return: a list of all valid next states
         """
 
-        # Move your time token on the time board so that it occupies the space directly in front of your opponent’s  time token.
-        # You receive 1 button (i.e. a butt on tile of value 1) per space you moved your time token
+        valid_actions: List[Action] = []
 
-        walking_state = state.copy()
-        positions = state.player_positions
-
-        # get a view of the board between the two players (the tiles that the current player will walk over)
-        # starting from `current_player_position + 1` because we don't want to include the current player's position
-        # ending at `other_player_position + 2` because +1 to include the other players position and another +1 to include the field after the other players position
-        walking_view = walking_state.time_board.board[positions.current_player + 1:positions.other_player + 2]
-
-        # 1. add +1 button income for each field the player walks over
-        walking_state.add_current_player_button_balance(positions.other_player - positions.current_player + 1)
-
-        # 2. add all button incomes that happens because the player walks over a button income trigger
-        button_income_trigger_passed = np.count_nonzero(np.where(walking_view & EntitiesEnum.BUTTON_INCOME_TRIGGER > 0))
-        current_player_button_income = walking_state.current_player_button_income
-        walking_state.add_current_player_button_balance(button_income_trigger_passed * current_player_button_income)
-
-        # 3. update current player position
-        walking_state.set_current_player_position(positions.other_player + 1)
-
-        # 4. switch to the next player for all moves
-        walking_state.switch_current_player()
-
-        # 5. add all the possible special patches that the player walks over
-        special_patches_indices = np.where(walking_view & EntitiesEnum.SPECIAL_PATCH > 0)
-        special_patches_passed = np.count_nonzero(special_patches_indices)
-        if(special_patches_passed == 0):
-            return [walking_state]
-
-        # FIXME:PERF: Remove for more performance
-        assert special_patches_passed <= 1, "Player can only walk over at most one special patch"
-
-        valid_moves = []
-        special_piece = Patch.get_special_piece()
-        for special_piece_placement in walking_state.current_player_quilt_board.get_valid_patch_placements(special_piece):
-            new_state = walking_state.copy()
-            new_state.current_player_quilt_board = special_piece_placement
-            valid_moves.append(new_state)
-
-        # TODO: Remove
-        print(special_patches_indices)
-
-        # 6. Remove the special piece from the pieces
-        index = positions.current_player + 1 + np.argmax(special_patches_indices)
-        walking_state.time_board.board[index] = walking_state.time_board.board[index] ^ EntitiesEnum.SPECIAL_PATCH
-
-        return valid_moves
-
-    def get_take_and_place_a_patch_moves(self, state: State) -> List[State]:
-
-        for piece in itertools.islice(state.pieces, 3):
+        for index, patch in enumerate(itertools.islice(state.patches, 3)):
             # player can only place pieces that they can afford
-            if piece.button_cost > state.current_player_button_balance:
+            if patch.button_cost > state.current_player.button_balance:
                 continue
 
-            new_player_quilt_boards = state.current_player_quilt_board.get_valid_patch_placements(piece)
+            valid_actions.extend(state.current_player.quilt_board.get_valid_actions_for_patch(patch, index))
 
-            # player can only place pieces that fit on their board
-            if len(new_player_quilt_boards) == 0:
-                continue
-
-            for new_player_quilt_board in new_player_quilt_boards:
-                self.get_take_and_place_a_patch_move()
-                print('hihih')
-                # TODO:
-                # new_state = state.copy()
-                # new_state.pieces.remove(piece)
-                # new_state.switch_current_player()
-                # valid_moves.append(new_state)
-
-
-        return []
-
-
-    def get_take_and_place_a_patch_move(self, state: State, piece: Patch, new_player_quilt_board: QuiltBoard) -> State:
-        pass
-
-    def check_win(self, state, action):
-        pass
-
-    def get_value_and_terminated(self, state, action):
-        pass
+        return valid_actions
