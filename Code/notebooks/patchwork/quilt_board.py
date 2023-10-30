@@ -8,7 +8,7 @@ from .action import Action, Position as PatchPosition
 class QuiltBoard:
     """The quilt board of the player."""
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
 
     tiles: np.ndarray[(9,9), np.bool_]
     """The tiles of the board."""

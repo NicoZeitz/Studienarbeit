@@ -2,10 +2,10 @@ from typing import Self, Optional
 
 from .quilt_board import QuiltBoard
 
-class Player:
+class PlayerState:
     """A player in the game of Patchwork."""
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
     name: Optional[str]
     """The name of the player."""
 
@@ -49,7 +49,7 @@ class Player:
         return player_str
 
     def __copy__(self) -> Self:
-        return Player(
+        return PlayerState(
             name=self.name,
             position=self.position,
             button_balance=self.button_balance,

@@ -56,7 +56,7 @@ class Patch:
     Represents a patch in the game Patchwork.
     """
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
     id: int
     """The unique id of the patch"""
 
@@ -138,11 +138,11 @@ class Patch:
         # TODO: return the back image with correct rotation and orientation information
         pass
 
-    # ================================ private instance variables ================================
+    # ================================ private instance attributes ================================
 
     _unique_transformations: Optional[List[Self]] = None
 
-    # ================================ private static variables ================================
+    # ================================ private static attributes ================================
 
     _len_patches: Optional[int] = None
 

@@ -5,7 +5,7 @@ import itertools
 import numpy as np
 
 from .patch import Patch
-from .player import Player
+from .player_state import PlayerState
 from .quilt_board import QuiltBoard
 from .state import State, CurrentPlayer
 from .time_board import TimeBoard
@@ -47,13 +47,13 @@ class Game:
         # 1. Each player takes a quilt board, a time token and 5 buttons
         #    (as currency). Keep the remaining buttons on the table close at
         #    hand.
-        player_1 = Player(
+        player_1 = PlayerState(
             name='Player 1' if player_1_name is None else player_1_name,
             position=0,
             button_balance=5,
             quilt_board=QuiltBoard()
         )
-        player_2 = Player(
+        player_2 = PlayerState(
             name='Player 2' if player_2_name is None else player_2_name,
             position=0,
             button_balance=5,
@@ -199,6 +199,12 @@ class Game:
 
         return new_state
 
+    def get_score(self, state: State, player: CurrentPlayer) -> int:
+        if player == CurrentPlayer.PLAYER_1:
+            return state.player_1.quilt_board.score + state.player_1.button_balance
+        else:
+            return state.player_2.quilt_board.score + state.player_2.button_balance
+
     def get_value_and_terminated(self, state: State) -> ValueAndTerminated:
         """
         Returns if the game is terminated and if so who won.
@@ -213,8 +219,8 @@ class Game:
         if player_1_position < TimeBoard.MAX_POSITION or player_2_position < TimeBoard.MAX_POSITION:
             return ValueAndTerminated.NOT_TERMINATED
 
-        player_1_score = state.player_1.quilt_board.score + state.player_1.button_balance
-        player_2_score = state.player_2.quilt_board.score + state.player_2.button_balance
+        player_1_score = self.get_score(state, CurrentPlayer.PLAYER_1)
+        player_2_score = self.get_score(state, CurrentPlayer.PLAYER_2)
 
         if player_1_score > player_2_score:
             return ValueAndTerminated.PLAYER_1_WON

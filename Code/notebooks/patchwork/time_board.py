@@ -16,12 +16,12 @@ class EntitiesEnum(IntFlag):
 class TimeBoard:
     """The time board of the game."""
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
 
     tiles: np.ndarray((54,), np.uint8)
     """The tiles of the time board."""
 
-    # ================================ static variables ================================
+    # ================================ static attributes ================================
 
     MAX_POSITION = 53
     """The maximum position on the time board."""

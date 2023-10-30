@@ -4,7 +4,7 @@ from typing import List, Self, Optional
 import itertools
 
 from .patch import Patch
-from .player import Player
+from .player_state import PlayerState
 from .time_board import TimeBoard, EntitiesEnum
 
 class CurrentPlayer(Enum):
@@ -17,7 +17,7 @@ class State:
     Represents the full state of the patchwork board game.
     """
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
 
     patches: List[Patch]
     """The patches that are still available to be bought."""
@@ -25,10 +25,10 @@ class State:
     time_board: TimeBoard
     """The time board of the game."""
 
-    player_1: Player
+    player_1: PlayerState
     """The first player of the game."""
 
-    player_2: Player
+    player_2: PlayerState
     """The second player of the game."""
 
     current_active_player: CurrentPlayer = CurrentPlayer.PLAYER_1
@@ -40,7 +40,7 @@ class State:
     # ================================ instance properties ================================
 
     @property
-    def current_player(self) -> Player:
+    def current_player(self) -> PlayerState:
         """Returns the current player."""
         if self.current_active_player == CurrentPlayer.PLAYER_1:
             return self.player_1
@@ -48,7 +48,7 @@ class State:
             return self.player_2
 
     @property
-    def other_player(self) -> Player:
+    def other_player(self) -> PlayerState:
         """Returns the other player."""
         if self.current_active_player == CurrentPlayer.PLAYER_1:
             return self.player_2

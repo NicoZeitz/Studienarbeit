@@ -12,7 +12,7 @@ class Action:
     Represents an action that can be taken in the patchwork board game.
     """
 
-    # ================================ static variables ================================
+    # ================================ static attributes ================================
 
     AMOUNT_OF_ACTIONS = 2026
     """
@@ -21,7 +21,7 @@ class Action:
     (MAX_PATCH_INDEX(2) * ROWS(9) + MAX_ROW(8)) * COLUMNS(9) + MAX_COLUMN(8)) * ROTATIONS(4) + MAX_ROTATION(3)) * ORIENTATIONS(2) + MAX_ORIENTATION(1) + ACTIONS_OTHER_THAN_NORMAL_PATCH_PLACEMENT_ACTION(83)
     """
 
-    # ================================ instance variables ================================
+    # ================================ instance attributes ================================
 
     id: int
     """The id of the action. This is a number between 0 and 2025 (both inclusive)."""
