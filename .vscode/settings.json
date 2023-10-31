@@ -68,8 +68,13 @@
     "cSpell.words": [
         "argmax",
         "argwhere",
+        "backpropagate",
+        "backpropagated",
+        "Backpropagates",
+        "Backpropagation",
         "dtype",
         "intp",
+        "MCTS",
         "ndarray",
         "ndindex",
         "newaxis",

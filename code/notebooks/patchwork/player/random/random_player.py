@@ -8,7 +8,7 @@ from ...state import State
 
 class RandomPlayer(Player):
     """
-    a player that chooses a random action
+    A player that chooses a random action.
     """
 
     seed: Optional[int]

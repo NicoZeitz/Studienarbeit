@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Self, Optional
@@ -125,13 +126,30 @@ class State:
 
     def __copy__(self) -> Self:
         return State(
-            patches=self.patches.copy(),
+            patches=self.patches,
+            time_board=self.time_board,
+            player_1=self.player_1,
+            player_2=self.player_2,
+            current_active_player=self.current_active_player,
+            special_patch_placement_move=self.special_patch_placement_move
+        )
+
+    def __deepcopy__(self, memo: dict) -> Self:
+        return State(
+            patches=deepcopy(self.patches, memo),
+            time_board=deepcopy(self.time_board, memo),
+            player_1=deepcopy(self.player_1, memo),
+            player_2=deepcopy(self.player_2, memo),
+            current_active_player=self.current_active_player,
+            special_patch_placement_move=self.special_patch_placement_move
+        )
+
+    def copy(self) -> Self:
+        return State(
+            patches=list(self.patches),
             time_board=self.time_board.copy(),
             player_1=self.player_1.copy(),
             player_2=self.player_2.copy(),
             current_active_player=self.current_active_player,
             special_patch_placement_move=self.special_patch_placement_move
         )
-
-    def copy(self) -> Self:
-        return self.__copy__()

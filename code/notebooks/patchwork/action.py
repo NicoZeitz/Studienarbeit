@@ -1,6 +1,7 @@
+from collections import namedtuple
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Literal, Optional, Self
-from collections import namedtuple
 
 from .patch import Patch
 
@@ -131,5 +132,14 @@ class Action:
 
     def __hash__(self) -> int:
         return hash(self.id)
+
+    def __copy__(self) -> Self:
+        return Action(self.patch, self.patch_position, self.patch_index)
+
+    def __deepcopy__(self, memo: dict) -> Self:
+        return Action(deepcopy(self.patch, memo), deepcopy(self.patch_position, memo), self.patch_index)
+
+    def copy(self) -> Self:
+        return deepcopy(self)
 
 

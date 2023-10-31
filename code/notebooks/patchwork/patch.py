@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Self, Optional, Union
@@ -45,8 +46,11 @@ class PatchTransformation:
     def __copy__(self) -> Self:
         return PatchTransformation(self.rotation, self.orientation)
 
+    def __deepcopy__(self, memo: dict) -> Self:
+        return PatchTransformation(self.rotation, self.orientation)
+
     def copy(self) -> Self:
-        return self.__copy__()
+        return deepcopy(self)
 
 class PatchImage:
     pass
@@ -196,7 +200,9 @@ class Patch:
             button_cost: int,
             time_cost: int,
             button_income: int,
-            transformation: PatchTransformation = PatchTransformation(Rotation.ZERO, Orientation.NORMAL)
+            transformation: PatchTransformation = PatchTransformation(Rotation.ZERO, Orientation.NORMAL),
+            *,
+            compute_unique_transformations: bool = True
         ):
         self.id = id
         self.tiles = tiles
@@ -204,7 +210,7 @@ class Patch:
         self.time_cost = time_cost
         self.button_income = button_income
         self.transformation = transformation
-        if transformation.rotation == Rotation.ZERO and transformation.orientation == Orientation.NORMAL:
+        if compute_unique_transformations:
             self.get_unique_transformations()
 
     def get_unique_transformations(self) -> List[Self]:
@@ -241,7 +247,8 @@ class Patch:
                         self.button_cost,
                         self.time_cost,
                         self.button_income,
-                        PatchTransformation(rotation, orientation)
+                        PatchTransformation(rotation, orientation),
+                        compute_unique_transformations=False
                     ))
 
         for p in unique_transformations:
@@ -273,27 +280,33 @@ class Patch:
         return patch_str
 
     def __copy__(self) -> Self:
-        return Patch(
+        patch = Patch(
             self.id,
             self.tiles,
             self.button_cost,
             self.time_cost,
             self.button_income,
-            self.transformation
+            self.transformation,
+            compute_unique_transformations=False
         )
+        patch._unique_transformations = self._unique_transformations
+        return patch
 
-    def __deepcopy__(self, memo) -> Self:
-        return Patch(
+    def __deepcopy__(self, memo: dict) -> Self:
+        patch = Patch(
             self.id,
             np.copy(self.tiles),
             self.button_cost,
             self.time_cost,
             self.button_income,
-            self.transformation
+            deepcopy(self.transformation, memo),
+            compute_unique_transformations=False
         )
+        patch._unique_transformations = self._unique_transformations
+        return patch
 
     def copy(self) -> Self:
-        return self.__copy__()
+        return deepcopy(self)
 
     # ================================ private static methods ================================
 
@@ -320,7 +333,7 @@ class Patch:
                 button_cost=10,
                 time_cost=4,
                 button_income=3
-                ),
+            ),
             Patch(
                 2,
                 np.array([

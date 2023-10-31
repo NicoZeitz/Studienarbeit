@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Self, Optional
 
 from .quilt_board import QuiltBoard
@@ -53,8 +54,21 @@ class PlayerState:
             name=self.name,
             position=self.position,
             button_balance=self.button_balance,
-            quilt_board=self.quilt_board.copy()
+            quilt_board=self.quilt_board
+        )
+
+    def __deepcopy__(self, memo: dict) -> Self:
+        return PlayerState(
+            name=self.name,
+            position=self.position,
+            button_balance=self.button_balance,
+            quilt_board=deepcopy(self.quilt_board, memo)
         )
 
     def copy(self) -> Self:
-        return self.__copy__()
+         return PlayerState(
+            name=self.name,
+            position=self.position,
+            button_balance=self.button_balance,
+            quilt_board=self.quilt_board.copy()
+        )

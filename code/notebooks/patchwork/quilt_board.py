@@ -1,10 +1,11 @@
+from copy import deepcopy
 from typing import List, Literal, Self, Optional
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 
-from .patch import Patch
 from .action import Action, Position as PatchPosition
+from .patch import Patch
 
 class QuiltBoard:
     """The quilt board of the player."""
@@ -20,6 +21,9 @@ class QuiltBoard:
     is_full: bool = False
     """Whether the board is full."""
 
+    tiles_filled: int = 0
+    """The amount of tiles that are filled."""
+
     # ================================ instance properties ================================
 
     @property
@@ -27,22 +31,57 @@ class QuiltBoard:
         """The score the player has with this quilt board."""
         return -2 * np.count_nonzero(self.tiles == 0)
 
-    # ================================ instance methods ================================
+    @property
+    def percentage_filled(self) -> float:
+        """The percentage of tiles that are filled."""
+        return self.tiles_filled / QuiltBoard.TILES
+
+    # ================================ static attributes ================================
+
+    ROWS = 9
+    """The amount of rows on the quilt board."""
+
+    COLUMNS = 9
+    """The amount of columns on the quilt board."""
+
+    TILES = ROWS * COLUMNS
+    """The amount of tiles on the quilt board."""
+
+    # ================================ static methods ================================
+
+    @staticmethod
+    def empty_board() -> Self:
+        """Returns an empty quilt board."""
+        return QuiltBoard(0, np.zeros((QuiltBoard.ROWS, QuiltBoard.COLUMNS), dtype=bool))
+
 
     # ================================ instance methods ================================
 
-    def __init__(self):
-        self.tiles = np.zeros((9,9), dtype=bool)
+    def __init__(self, button_income: int, tiles: np.ndarray[(9,9), np.bool_]):
+        self.button_income = button_income
+        self.tiles = tiles
 
     def add_patch(self, patch: Patch, position: PatchPosition) -> None:
         """Adds a patch to the quilt board at the given position."""
         self.button_income += patch.button_income
+
+        # TODO:PERF: defensive copy as the copy() method uses a view of the array for performance
+        self.tiles = self.tiles.copy()
         self.tiles[
             position[0] : position[0] + patch.tiles.shape[0],
             position[1] : position[1] + patch.tiles.shape[1]
         ] |= patch.tiles
+        self.tiles_filled += np.count_nonzero(patch.tiles)
+        self.is_full = self.tiles_filled == QuiltBoard.TILES
 
-        self.is_full = np.all(self.tiles)
+    def is_valid_patch_placement(self, patch: Patch, position: PatchPosition) -> bool:
+        """
+        Tests whether the given patch can be placed at the given position on the quilt board.
+        """
+        return np.any(self.tiles[
+            position[0] : position[0] + patch.tiles.shape[0],
+            position[1] : position[1] + patch.tiles.shape[1]
+        ] & patch.tiles)
 
     def get_valid_actions_for_patch(
             self,
@@ -130,18 +169,18 @@ class QuiltBoard:
 
     def __str__(self) -> str:
         quilt_board_str = ''
-        for row in range(0, np.size(self.tiles, 0)):
-            for column in range(0, np.size(self.tiles, 1)):
+        for row in range(0, QuiltBoard.ROWS):
+            for column in range(0, QuiltBoard.COLUMNS):
                 quilt_board_str += '█' if self.tiles[row, column] else '░'
             quilt_board_str += '\n'
         quilt_board_str += f'Button income: {self.button_income}'
         return quilt_board_str
 
     def __copy__(self) -> Self:
-        copy = QuiltBoard()
-        copy.tiles = self.tiles.copy()
-        copy.button_income = self.button_income
-        return copy
+        return QuiltBoard(self.button_income, self.tiles)
+
+    def __deepcopy__(self, memo: dict) -> Self:
+        return QuiltBoard(self.button_income, deepcopy(self.tiles, memo))
 
     def copy(self) -> Self:
-        return self.__copy__()
+        return QuiltBoard(self.button_income, self.tiles)

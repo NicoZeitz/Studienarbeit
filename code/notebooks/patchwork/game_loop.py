@@ -4,16 +4,18 @@ from timeit import default_timer as timer
 
 from IPython.display import clear_output
 
-from .game import Game, ValueAndTerminated
+from .game import Game
+from .player import Player
+from .termination import Termination
 from .state import CurrentPlayer
-from .player import RandomPlayer
+from .player import RandomPlayer, MCTSPlayer
 
 class GameLoop:
     game: int = 0
 
-    def test(self, /, amount: int = 10, sleep: float = 0.5):
+    def test(self, /, amount: int = 10, sleep: float = 0.5, player_1: Optional[Player] = None, player_2: Optional[Player] = None):
         for i in range(0, amount):
-            self.run(seed=i, sleep=sleep)
+            self.run(seed=i, sleep=sleep, player_1=player_1, player_2=player_2)
             self.game += 1
             time.sleep(sleep)
 
@@ -21,10 +23,16 @@ class GameLoop:
         self,
         /,
         seed: Optional[int] = None,
-        sleep: float = 0
+        sleep: float = 0,
+        player_1: Optional[Player] = None,
+        player_2: Optional[Player] = None
     ):
-        player_1 = RandomPlayer(name='Player 1 (Random)')
-        player_2 = RandomPlayer(name='Player 2 (Random)')
+        # mcts_player_1 = MCTSPlayer(name='Player 1 (MCTS)')
+        if player_1 is None:
+            player_1 = RandomPlayer(name='Player 1 (Random)')
+
+        if player_2 is None:
+            player_2 = RandomPlayer(name='Player 2 (Random)')
 
         game = Game()
         state = game.get_initial_state(seed, player_1_name=player_1.name, player_2_name=player_2.name)
@@ -63,24 +71,24 @@ class GameLoop:
                 avg_get_next_state.append(timer() - start_time)
 
                 start_time = timer()
-                value_and_terminated = game.get_value_and_terminated(state)
+                termination = game.get_termination(state)
                 avg_get_value_and_terminated.append(timer() - start_time)
 
-                if value_and_terminated.is_terminated:
+                if termination.is_terminated:
                     clear_output(wait=True)
                     print(f"======================= GAME {self.game} ENDED AFTER {i} TURNS =======================")
                     print(state)
                     print('\n\n')
-                    if value_and_terminated == ValueAndTerminated.PLAYER_1_WON:
+                    if termination == Termination.PLAYER_1_WON:
                         print(f"Player {state.player_1.name} won")
-                    elif value_and_terminated == ValueAndTerminated.PLAYER_2_WON:
+                    elif termination == Termination.PLAYER_2_WON:
                         print(f"Player {state.player_2.name} won")
                     else:
                         print("Draw")
 
                     print(f"Game took {i} turns")
-                    print(f"Player '{state.player_1.name}' score: {game.get_score(state, CurrentPlayer.PLAYER_1)}")
-                    print(f"Player '{state.player_2.name}' score: {game.get_score(state, CurrentPlayer.PLAYER_2)}")
+                    print(f"Player '{state.player_1.name}' score: {termination.player_1_score}")
+                    print(f"Player '{state.player_2.name}' score: {termination.player_2_score}")
                     print(f"Average get_valid_actions time: {sum(avg_get_valid_actions) / len(avg_get_valid_actions) * 1000}ms")
                     print(f"Average get_next_state time: {sum(avg_get_next_state) / len(avg_get_next_state) * 1000}ms")
                     print(f"Average get_value_and_terminated time: {sum(avg_get_value_and_terminated) / len(avg_get_value_and_terminated) * 1000}ms")

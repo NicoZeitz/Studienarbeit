@@ -1,25 +1,17 @@
-from enum import Enum
-from typing import List, Optional, Self
+from typing import List, Optional
 import itertools
+import math
+import random
 
 import numpy as np
 
-from .patch import Patch
+from .patch import Patch, Orientation, Rotation
 from .player_state import PlayerState
 from .quilt_board import QuiltBoard
 from .state import State, CurrentPlayer
+from .termination import Termination
 from .time_board import TimeBoard
-from .action import Action
-
-class ValueAndTerminated(Enum):
-    PLAYER_1_WON = 1
-    PLAYER_2_WON = -1
-    DRAW = 0
-    NOT_TERMINATED = 2
-
-    @property
-    def is_terminated(self: Self) -> bool:
-        return self != ValueAndTerminated.NOT_TERMINATED
+from .action import Action, Position as PatchPosition
 
 class Game:
     """
@@ -51,20 +43,20 @@ class Game:
             name='Player 1' if player_1_name is None else player_1_name,
             position=0,
             button_balance=5,
-            quilt_board=QuiltBoard()
+            quilt_board=QuiltBoard.empty_board()
         )
         player_2 = PlayerState(
             name='Player 2' if player_2_name is None else player_2_name,
             position=0,
             button_balance=5,
-            quilt_board=QuiltBoard()
+            quilt_board=QuiltBoard.empty_board()
         )
 
         # 2. Place the central time board in the middle of the table.
 
         # 3. Place your time tokens on the starting space of the
         #    time board. The player who last used a needle begins
-        game_board = TimeBoard()
+        game_board = TimeBoard.initial_board()
         current_active_player = CurrentPlayer.PLAYER_1
 
         # 4. Place the (regular) patches in a circle or oval around the time
@@ -117,9 +109,60 @@ class Game:
         valid_actions.append(Action.walking())
 
         # B: Take and Place a Patch
-        valid_actions.extend(self._get_take_and_place_a_patch_actions(state))
+        valid_actions.extend(self.get_take_and_place_a_patch_actions(state))
 
         return valid_actions
+
+
+    def sample_random_action(self, state: State) -> Action:
+        """
+        Samples a random action from the valid actions for the current player in the given state.
+
+        :param state: The state of the game.
+        :return: A random action from the valid actions for the current player in the given state.
+        """
+        quilt_board = state.current_player.quilt_board
+
+        if state.special_patch_placement_move is not None:
+            position = list(range(0, QuiltBoard.TILES))
+            random.shuffle(position)
+            for i in position:
+                row, column = divmod(i, QuiltBoard.COLUMNS)
+                if not quilt_board.tiles[row, column]:
+                    return Action(
+                        patch=Patch.get_special_patch(state.special_patch_placement_move),
+                        patch_position=PatchPosition(row, column),
+                        patch_index=None
+                    )
+
+        first_patches = list(filter(
+            lambda patch: self.can_player_take_patch(state, patch),
+            itertools.islice(state.patches, 3))
+        )
+
+        if len(first_patches) == 0:
+            return Action.walking()
+
+        random.shuffle(first_patches)
+
+        percentage = quilt_board.percentage_filled
+
+        for i in range(math.floor(448 * (1 - percentage))):
+            patches = first_patches[i % len(first_patches)].get_unique_transformations()
+
+            patch = random.choice(patches)
+
+            row =  random.randint(0, QuiltBoard.ROWS - patch.shape[0])
+            column = random.randint(0, QuiltBoard.COLUMNS - patch.shape[1])
+
+            if quilt_board.is_valid_patch_placement(patch, (row, column)):
+                return Action(
+                    patch=patch,
+                    patch_position=PatchPosition(row, column),
+                    patch_index=i % 3
+                )
+
+        return Action.walking()
 
     def get_next_state(self, state: State, action: Action) -> State:
         """
@@ -206,12 +249,20 @@ class Game:
         return new_state
 
     def get_score(self, state: State, player: CurrentPlayer) -> int:
+        """
+        Gets the score of the given player.
+
+        :param state: The state of the game.
+        :param player: The player to get the score for.
+        :return: The score of the given player.
+        """
+
         if player == CurrentPlayer.PLAYER_1:
             return state.player_1.quilt_board.score + state.player_1.button_balance
         else:
             return state.player_2.quilt_board.score + state.player_2.button_balance
 
-    def get_value_and_terminated(self, state: State) -> ValueAndTerminated:
+    def get_termination(self, state: State) -> Termination:
         """
         Returns if the game is terminated and if so who won.
 
@@ -223,21 +274,21 @@ class Game:
         player_2_position = state.player_2.position
 
         if player_1_position < TimeBoard.MAX_POSITION or player_2_position < TimeBoard.MAX_POSITION:
-            return ValueAndTerminated.NOT_TERMINATED
+            return Termination(Termination.NOT_TERMINATED)
 
         player_1_score = self.get_score(state, CurrentPlayer.PLAYER_1)
         player_2_score = self.get_score(state, CurrentPlayer.PLAYER_2)
 
         if player_1_score > player_2_score:
-            return ValueAndTerminated.PLAYER_1_WON
+            return Termination(Termination.PLAYER_1_WON, player_1_score, player_2_score)
         elif player_1_score < player_2_score:
-            return ValueAndTerminated.PLAYER_2_WON
+            return Termination(Termination.PLAYER_2_WON, player_1_score, player_2_score)
         else:
-            return ValueAndTerminated.DRAW
+            return Termination(Termination.DRAW, player_1_score, player_2_score)
 
     # ================================ private methods ================================
 
-    def _get_take_and_place_a_patch_actions(self, state: State) -> List[Action]:
+    def get_take_and_place_a_patch_actions(self, state: State) -> List[Action]:
         """
         Get the valid moves for the action "Take and Place a Patch"
 
@@ -248,10 +299,28 @@ class Game:
         valid_actions: List[Action] = []
 
         for index, patch in enumerate(itertools.islice(state.patches, 3)):
-            # player can only place pieces that they can afford
-            if patch.button_cost > state.current_player.button_balance:
+            if not self.can_player_take_patch(state, patch):
                 continue
 
             valid_actions.extend(state.current_player.quilt_board.get_valid_actions_for_patch(patch, index))
 
         return valid_actions
+
+    def can_player_take_patch(self, state: State, patch: Patch) -> bool:
+        """
+        Fastpath for checking if a player can take a patch and avoiding costly calculations.
+
+        :param state: The state of the game.
+        :param patch: The patch to take.
+        :return: Whether the player can take the patch.
+        """
+
+        # player can only place pieces that they can afford
+        if patch.button_cost > state.current_player.button_balance:
+            return False
+
+        # player can only place pieces that fit on their board (fastpath)
+        if QuiltBoard.TILES - state.current_player.quilt_board.tiles_filled < np.count_nonzero(patch.tiles):
+            return False
+
+        return True

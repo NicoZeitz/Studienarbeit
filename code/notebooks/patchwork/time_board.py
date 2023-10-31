@@ -1,6 +1,7 @@
 from collections import namedtuple
+from copy import deepcopy
 from enum import IntFlag
-from typing import Literal, Self, List
+from typing import Literal, Self
 
 import numpy as np
 import numpy.typing as npt
@@ -13,6 +14,7 @@ class EntitiesEnum(IntFlag):
     BUTTON_INCOME_TRIGGER = 0b0100
     SPECIAL_PATCH         = 0b1000
 
+# TODO: BUG: Player Positions at start are not correct/ wrongly displayed
 class TimeBoard:
     """The time board of the game."""
 
@@ -26,27 +28,35 @@ class TimeBoard:
     MAX_POSITION = 53
     """The maximum position on the time board."""
 
+    # ================================ static methods ================================
+
+    @staticmethod
+    def initial_board() -> Self:
+        """Returns the initial time board."""
+        tiles = np.zeros(54, dtype=np.uint8)
+        tiles[0] = EntitiesEnum.PLAYER_1 | EntitiesEnum.PLAYER_2
+
+        tiles[5] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[11] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[17] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[23] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[29] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[35] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[41] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[47] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+        tiles[53] = EntitiesEnum.BUTTON_INCOME_TRIGGER
+
+        tiles[26] = EntitiesEnum.SPECIAL_PATCH
+        tiles[32] = EntitiesEnum.SPECIAL_PATCH
+        tiles[38] = EntitiesEnum.SPECIAL_PATCH
+        tiles[44] = EntitiesEnum.SPECIAL_PATCH
+        tiles[50] = EntitiesEnum.SPECIAL_PATCH
+        return TimeBoard(tiles)
+
     # ================================ instance methods ================================
 
-    def __init__(self):
-        self.tiles = np.zeros(54, dtype=np.uint8)
-        self.tiles[0] = EntitiesEnum.PLAYER_1 | EntitiesEnum.PLAYER_2
-
-        self.tiles[5] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[11] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[17] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[23] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[29] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[35] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[41] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[47] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-        self.tiles[53] = EntitiesEnum.BUTTON_INCOME_TRIGGER
-
-        self.tiles[26] = EntitiesEnum.SPECIAL_PATCH
-        self.tiles[32] = EntitiesEnum.SPECIAL_PATCH
-        self.tiles[38] = EntitiesEnum.SPECIAL_PATCH
-        self.tiles[44] = EntitiesEnum.SPECIAL_PATCH
-        self.tiles[50] = EntitiesEnum.SPECIAL_PATCH
+    def __init__(self, tiles: np.ndarray((54,), np.uint8)):
+        self.tiles = tiles
 
     # special patches
 
@@ -65,12 +75,15 @@ class TimeBoard:
     # player positions
 
     def set_player_position(self, player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2], old_position: int, new_position: int) -> None:
+        # TODO:PERF: defensive copy as the copy() method uses a view of the array for performance
+        self.tiles = self.tiles.copy()
+
         # reset old position
-        self.tiles[old_position] = self.tiles[old_position] ^ player
+        self.tiles[old_position] ^= player
 
         # set new position
         clamped_position = self.clamp_index(new_position)
-        self.tiles[clamped_position] = self.tiles[clamped_position] | player
+        self.tiles[clamped_position] |= player
 
     # other function
 
@@ -127,9 +140,10 @@ class TimeBoard:
         return result_str
 
     def __copy__(self) -> Self:
-        copy = TimeBoard()
-        copy.tiles = self.tiles.copy()
-        return copy
+        return TimeBoard(self.tiles)
+
+    def __deepcopy__(self, memo: dict) -> Self:
+        return TimeBoard(deepcopy(self.tiles, memo))
 
     def copy(self) -> Self:
-        return self.__copy__()
+        return TimeBoard(self.tiles)
