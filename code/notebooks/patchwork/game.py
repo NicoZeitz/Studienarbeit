@@ -134,10 +134,15 @@ class Game:
 
         # IF special patch
         #   1. place patch
+        #      a) if the board is full the current player get +7 points
         #   2. switch player
         #   3. reset special patch state
         if new_state.special_patch_placement_move:
             new_state.current_player.quilt_board.add_patch(action.patch, action.patch_position)
+
+            if new_state.current_player.quilt_board.is_full:
+                new_state.current_player.button_balance += 7
+
             new_state.switch_current_player()
             new_state.special_patch_placement_move = None
             return new_state
@@ -154,12 +159,13 @@ class Game:
 
         # IF patch placement
         #  1. place patch
-        #  2. remove patch from available patches
+        #  2. rollover first patches and remove patch from available patches
         #  3. subtract button cost from current player button balance
         #      a) if the board is full the current player get +7 points
         elif action.is_patch_placement:
             new_state.current_player.quilt_board.add_patch(action.patch, action.patch_position)
             new_state.patches = np.roll(new_state.patches, -action.patch_index-1)
+            new_state.patches = new_state.patches[:-1]
             new_state.current_player.button_balance -= action.patch.button_cost
             time_cost = action.patch.time_cost
 

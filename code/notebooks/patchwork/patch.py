@@ -4,6 +4,7 @@ from typing import List, Self, Optional, Union
 import random
 
 import numpy as np
+import numpy.typing as npt
 
 class Rotation(Enum):
     ZERO = 0
@@ -62,30 +63,30 @@ class Patch:
 
     tiles: Union[
         # 5xn
-        np.ndarray[(5,3), np.bool_],
-        np.ndarray[(5,1), np.bool_],
+        np.ndarray[(5,3), bool],
+        np.ndarray[(5,1), bool],
         # 4xn
-        np.ndarray[(4,4), np.bool_],
-        np.ndarray[(4,3), np.bool_],
-        np.ndarray[(4,2), np.bool_],
-        np.ndarray[(4,1), np.bool_],
+        np.ndarray[(4,4), bool],
+        np.ndarray[(4,3), bool],
+        np.ndarray[(4,2), bool],
+        np.ndarray[(4,1), bool],
         # 3xn
-        np.ndarray[(3,5), np.bool_],
-        np.ndarray[(3,4), np.bool_],
-        np.ndarray[(3,3), np.bool_],
-        np.ndarray[(3,2), np.bool_],
-        np.ndarray[(3,1), np.bool_],
+        np.ndarray[(3,5), bool],
+        np.ndarray[(3,4), bool],
+        np.ndarray[(3,3), bool],
+        np.ndarray[(3,2), bool],
+        np.ndarray[(3,1), bool],
         # 2xn
-        np.ndarray[(2,4), np.bool_],
-        np.ndarray[(2,3), np.bool_],
-        np.ndarray[(2,2), np.bool_],
-        np.ndarray[(2,1), np.bool_],
+        np.ndarray[(2,4), bool],
+        np.ndarray[(2,3), bool],
+        np.ndarray[(2,2), bool],
+        np.ndarray[(2,1), bool],
         # 1xn
-        np.ndarray[(1,5), np.bool_],
-        np.ndarray[(1,4), np.bool_],
-        np.ndarray[(1,3), np.bool_],
-        np.ndarray[(1,2), np.bool_],
-        np.ndarray[(1,1), np.bool_],
+        np.ndarray[(1,5), bool],
+        np.ndarray[(1,4), bool],
+        np.ndarray[(1,3), bool],
+        np.ndarray[(1,2), bool],
+        np.ndarray[(1,1), bool],
     ]
     """The tiles of the patch"""
 
@@ -188,6 +189,24 @@ class Patch:
 
     # ================================ instance methods ================================
 
+    def __init__(
+            self,
+            id: int,
+            tiles: npt.NDArray[np.bool_],
+            button_cost: int,
+            time_cost: int,
+            button_income: int,
+            transformation: PatchTransformation = PatchTransformation(Rotation.ZERO, Orientation.NORMAL)
+        ):
+        self.id = id
+        self.tiles = tiles
+        self.button_cost = button_cost
+        self.time_cost = time_cost
+        self.button_income = button_income
+        self.transformation = transformation
+        if transformation.rotation == Rotation.ZERO and transformation.orientation == Orientation.NORMAL:
+            self.get_unique_transformations()
+
     def get_unique_transformations(self) -> List[Self]:
         """
         Returns all unique transformations (rotations and reflections) of this patch.
@@ -195,7 +214,7 @@ class Patch:
         if self._unique_transformations is not None:
             return self._unique_transformations
 
-        self._unique_transformations = [
+        unique_transformations = [
             self
         ]
 
@@ -211,12 +230,12 @@ class Patch:
                 transformed_tiles = np.rot90(transformed_tiles, k=rotation.value)
 
                 duplicate_transformation = False
-                for transformation in self._unique_transformations:
+                for transformation in unique_transformations:
                     if np.array_equal(transformation.tiles, transformed_tiles):
                         duplicate_transformation = True
 
                 if not duplicate_transformation:
-                    self._unique_transformations.append(Patch(
+                    unique_transformations.append(Patch(
                         self.id,
                         transformed_tiles,
                         self.button_cost,
@@ -224,6 +243,9 @@ class Patch:
                         self.button_income,
                         PatchTransformation(rotation, orientation)
                     ))
+
+        for p in unique_transformations:
+            p._unique_transformations = unique_transformations
 
         return self._unique_transformations
 
