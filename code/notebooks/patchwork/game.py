@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union, List, Optional, Self
+from typing import List, Optional, Self
 import itertools
 
 import numpy as np
@@ -114,7 +114,7 @@ class Game:
         valid_actions: List[Action] = []
 
         # A: Advance and Receive Buttons
-        valid_actions.extend(self._get_advance_and_receive_buttons_actions(state))
+        valid_actions.append(Action.walking())
 
         # B: Take and Place a Patch
         valid_actions.extend(self._get_take_and_place_a_patch_actions(state))
@@ -236,15 +236,6 @@ class Game:
             return ValueAndTerminated.DRAW
 
     # ================================ private methods ================================
-
-    def _get_advance_and_receive_buttons_actions(self, state: State) -> List[Action]:
-        """
-        Get the valid moves for the action "Advance and Receive Buttons"
-
-        :param state: the current state (will not be modified)
-        :return: a list with one entry containing the walking action
-        """
-        return [Action.walking()]
 
     def _get_take_and_place_a_patch_actions(self, state: State) -> List[Action]:
         """

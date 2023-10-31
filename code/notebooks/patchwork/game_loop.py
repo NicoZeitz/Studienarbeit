@@ -13,7 +13,7 @@ class GameLoop:
 
     def test(self, /, amount: int = 10, sleep: float = 0.5):
         for i in range(0, amount):
-            self.run(seed=i, automatic=True, sleep=sleep)
+            self.run(seed=i, sleep=sleep)
             self.game += 1
             time.sleep(sleep)
 
@@ -21,7 +21,6 @@ class GameLoop:
         self,
         /,
         seed: Optional[int] = None,
-        automatic: bool = False,
         sleep: float = 0
     ):
         player_1 = RandomPlayer(name='Player 1 (Random)')

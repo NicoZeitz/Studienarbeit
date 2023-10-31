@@ -65,5 +65,16 @@
         "**/**.bcf": true,
         "**/**.run.xml": true
     },
-    "cSpell.words": ["argmax", "argwhere", "dtype", "intp", "ndarray", "ndindex", "typeshed", "werkzeug"]
+    "cSpell.words": [
+        "argmax",
+        "argwhere",
+        "dtype",
+        "intp",
+        "ndarray",
+        "ndindex",
+        "newaxis",
+        "typeshed",
+        "vectorize",
+        "werkzeug"
+    ]
 }

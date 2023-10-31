@@ -1,39 +1,10 @@
 from typing import List, Literal, Self, Optional
-import multiprocessing
 
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 
 from .patch import Patch
 from .action import Action, Position as PatchPosition
-
-def get_valid_actions_for_transformed_patch(patch: Patch, patch_index: int, tiles: np.ndarray[(9,9), np.bool_]) -> List[Action]:
-    valid_actions_for_patch = []
-    (transformed_row, transformed_column) = patch.shape
-
-    rows = np.size(tiles, 0) - transformed_row + 1
-    columns = np.size(tiles, 1) - transformed_column + 1
-
-    for (row, column) in np.ndindex(rows, columns):
-        board_tiles_view = tiles[
-            row    : row    + transformed_row,
-            column : column + transformed_column
-        ]
-        combination = (patch.tiles | board_tiles_view)
-
-        ones_in_patch = np.count_nonzero(patch.tiles == 1)
-        ones_in_board_tiles_view = np.count_nonzero(board_tiles_view == 1)
-        ones_in_combination = np.count_nonzero(combination == 1)
-
-        if ones_in_combination != ones_in_board_tiles_view + ones_in_patch:
-            continue
-
-        valid_actions_for_patch.append(Action(
-            patch,
-            PatchPosition(row, column),
-            patch_index
-        ))
-
-    return valid_actions_for_patch
 
 class QuiltBoard:
     """The quilt board of the player."""
@@ -90,38 +61,23 @@ class QuiltBoard:
             return []
 
         valid_actions_for_patch = []
-        # FIXME:PERF: HOT PATH Optimize
 
-        # multiprocessing
-        # transformed_patches = patch.get_unique_transformations()
-        # pool = multiprocessing.Pool(len(transformed_patches))
-        # args = [(p, patch_index, self.tiles.copy()) for p in transformed_patches]
-        # for valid_actions_result in pool.starmap(get_valid_actions_for_transformed_patch, args):
-        #     valid_actions_for_patch.extend(valid_actions_result)
+        sliding_board_window = sliding_window_view(self.tiles, patch.shape)
+        sliding_board_window_rotated_patch = None
+        if patch.shape[0] != patch.shape[1]:
+            sliding_board_window_rotated_patch = sliding_window_view(self.tiles, (patch.shape[1], patch.shape[0]))
 
-        # return valid_actions_for_patch
-
-        # old single process implementation
         for transformed_patch in patch.get_unique_transformations():
-            (transformed_row, transformed_column) = transformed_patch.shape
+            board_window = sliding_board_window if patch.shape[0] == transformed_patch.shape[0] else sliding_board_window_rotated_patch
 
-            rows = np.size(self.tiles, 0) - transformed_row + 1
-            columns = np.size(self.tiles, 1) - transformed_column + 1
+            patch_window = np.repeat(
+                np.repeat(transformed_patch.tiles[np.newaxis, :, :], board_window.shape[1], axis=0)[np.newaxis, :, :],
+                board_window.shape[0], axis=0
+            )
 
-            for (row, column) in np.ndindex(rows, columns):
-                board_tiles_view = self.tiles[
-                    row    : row    + transformed_row,
-                    column : column + transformed_column
-                ]
-                combination = (transformed_patch.tiles | board_tiles_view)
+            combined_windows = np.bitwise_and.reduce(np.bitwise_not(np.bitwise_and(board_window, patch_window)), axis=(2,3))
 
-                ones_in_patch = np.count_nonzero(transformed_patch.tiles)
-                ones_in_board_tiles_view = np.count_nonzero(board_tiles_view)
-                ones_in_combination = np.count_nonzero(combination)
-
-                if ones_in_combination != ones_in_board_tiles_view + ones_in_patch:
-                    continue
-
+            for (row, column) in np.argwhere(combined_windows):
                 valid_actions_for_patch.append(Action(
                     transformed_patch,
                     PatchPosition(row, column),
@@ -129,6 +85,35 @@ class QuiltBoard:
                 ))
 
         return valid_actions_for_patch
+
+        # old implementation
+        # for transformed_patch in patch.get_unique_transformations():
+        #     (transformed_row, transformed_column) = transformed_patch.shape
+
+        #     rows = np.size(self.tiles, 0) - transformed_row + 1
+        #     columns = np.size(self.tiles, 1) - transformed_column + 1
+
+        #     for (row, column) in np.ndindex(rows, columns):
+        #         board_tiles_view = self.tiles[
+        #             row    : row    + transformed_row,
+        #             column : column + transformed_column
+        #         ]
+        #         combination = (transformed_patch.tiles | board_tiles_view)
+
+        #         ones_in_patch = np.count_nonzero(transformed_patch.tiles)
+        #         ones_in_board_tiles_view = np.count_nonzero(board_tiles_view)
+        #         ones_in_combination = np.count_nonzero(combination)
+
+        #         if ones_in_combination != ones_in_board_tiles_view + ones_in_patch:
+        #             continue
+
+        #         valid_actions_for_patch.append(Action(
+        #             transformed_patch,
+        #             PatchPosition(row, column),
+        #             patch_index
+        #         ))
+
+        # return valid_actions_for_patch
 
     def __eq__(self, other: Self) -> bool:
         return self.tiles == other.tiles and \
