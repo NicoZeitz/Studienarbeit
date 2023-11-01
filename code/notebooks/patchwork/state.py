@@ -1,24 +1,24 @@
 from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Self, Optional
+from typing import Any, List, Mapping, Optional, Self, Union
 import itertools
 
 from .patch import Patch
 from .player_state import PlayerState
-from .time_board import TimeBoard, EntitiesEnum
+from .time_board import EntitiesEnum, TimeBoard
 
 class CurrentPlayer(Enum):
     PLAYER_1 = EntitiesEnum.PLAYER_1
     PLAYER_2 = EntitiesEnum.PLAYER_2
 
-@dataclass
+@dataclass(slots=True)
 class State:
     """
     Represents the full state of the patchwork board game.
     """
 
-    # ================================ instance attributes ================================
+    # ================================ attributes ================================
 
     patches: List[Patch]
     """The patches that are still available to be bought."""
@@ -38,7 +38,7 @@ class State:
     special_patch_placement_move: Optional[int] = None
     """Whether the current player has to place a special patch as the next move and if so which special patch it is."""
 
-    # ================================ instance properties ================================
+    # ================================ properties ================================
 
     @property
     def current_player(self) -> PlayerState:
@@ -56,7 +56,7 @@ class State:
         else:
             return self.player_1
 
-    # ================================ instance methods ================================
+    # ================================ methods ================================
 
     def switch_current_player(self) -> None:
         """Switches the current player."""
@@ -66,7 +66,10 @@ class State:
             self.current_active_player = CurrentPlayer.PLAYER_1
 
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, State):
+            return NotImplemented
+
         return self.patches == other.patches and \
             self.time_board == other.time_board and \
             self.player_1 == other.player_1 and \
@@ -85,7 +88,7 @@ class State:
         ))
 
     def __repr__(self) -> str:
-        return f'State(patches={self.patches}, time_board={self.time_board}, player_1={self.player_1}, player_2={self.player_2}, current_player={self.current_active_player}, special_patch_placement_move={self.special_patch_placement_move})'
+        return f'{type(self)}(patches={self.patches}, time_board={self.time_board}, player_1={self.player_1}, player_2={self.player_2}, current_player={self.current_active_player}, special_patch_placement_move={self.special_patch_placement_move})'
 
     def __str__(self) -> str:
         state_str = f'Current player is {self.current_player.name}'
@@ -134,7 +137,7 @@ class State:
             special_patch_placement_move=self.special_patch_placement_move
         )
 
-    def __deepcopy__(self, memo: dict) -> Self:
+    def __deepcopy__(self, memo: Mapping) -> Self:
         return State(
             patches=deepcopy(self.patches, memo),
             time_board=deepcopy(self.time_board, memo),

@@ -1,13 +1,14 @@
-from collections import namedtuple
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Literal, Optional, Self
+from typing import Any, ClassVar, Literal, Mapping, NamedTuple, Optional, Union, Self
 
 from .patch import Patch
 
-Position = namedtuple('Position', 'row column')
+class Position(NamedTuple):
+    row: int
+    column: int
 
-@dataclass
+@dataclass(slots=True)
 class Action:
     """
     Represents an action that can be taken in the patchwork board game.
@@ -15,14 +16,14 @@ class Action:
 
     # ================================ static attributes ================================
 
-    AMOUNT_OF_ACTIONS = 2026
+    AMOUNT_OF_ACTIONS: ClassVar[Literal[2026]] = 2026
     """
     The amount of available actions for the game of patchwork. The actually allowed actions are way lower than this number, but we need to be able to represent all the possible actions in a single number. This is the maximum amount of actions that can be taken in a single turn.
 
     (MAX_PATCH_INDEX(2) * ROWS(9) + MAX_ROW(8)) * COLUMNS(9) + MAX_COLUMN(8)) * ROTATIONS(4) + MAX_ROTATION(3)) * ORIENTATIONS(2) + MAX_ORIENTATION(1) + ACTIONS_OTHER_THAN_NORMAL_PATCH_PLACEMENT_ACTION(83)
     """
 
-    # ================================ instance attributes ================================
+    # ================================ attributes ================================
 
     id: int
     """The id of the action. This is a number between 0 and 2025 (both inclusive)."""
@@ -36,7 +37,7 @@ class Action:
     patch_index: Optional[Literal[0, 1, 2]]
     """The index of the patch from the list of all available patches."""
 
-    # ================================ instance properties ================================
+    # ================================ properties ================================
 
     @property
     def is_walking(self) -> bool:
@@ -75,9 +76,14 @@ class Action:
         """Returns a walking action."""
         return Action(None, None, None)
 
-    # ================================ instance methods ================================
+    # ================================ methods ================================
 
-    def __init__(self, patch: Optional[Patch], patch_position: Optional[Position], patch_index: Optional[Literal[0, 1, 2]]):
+    def __init__(
+            self,
+            patch: Optional[Patch],
+            patch_position: Optional[Position],
+            patch_index: Optional[Literal[0, 1, 2]]
+    ):
         self.patch = patch
         self.patch_position = patch_position
         self.patch_index = patch_index
@@ -110,7 +116,7 @@ class Action:
             )
 
     def __repr__(self) -> str:
-        return f'Action(id={self.id}, patch={self.patch}, patch_position={self.patch_position}, patch_index={self.patch_index})'
+        return f'{type(self)}(id={self.id}, patch={self.patch}, patch_position={self.patch_position}, patch_index={self.patch_index})'
 
     def __str__(self) -> str:
         action_str = f'Action {self.id}'
@@ -127,8 +133,11 @@ class Action:
 
         return action_str
 
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Action) and self.id == other.id
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, Action):
+            return NotImplemented
+
+        return self.id == other.id
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -136,7 +145,7 @@ class Action:
     def __copy__(self) -> Self:
         return Action(self.patch, self.patch_position, self.patch_index)
 
-    def __deepcopy__(self, memo: dict) -> Self:
+    def __deepcopy__(self, memo: Mapping) -> Self:
         return Action(deepcopy(self.patch, memo), deepcopy(self.patch_position, memo), self.patch_index)
 
     def copy(self) -> Self:

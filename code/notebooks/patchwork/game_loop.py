@@ -8,12 +8,12 @@ from .game import Game
 from .player import Player
 from .termination import Termination
 from .state import CurrentPlayer
-from .player import RandomPlayer, MCTSPlayer
+from .player import RandomPlayer
 
 class GameLoop:
     game: int = 0
 
-    def test(self, /, amount: int = 10, sleep: float = 0.5, player_1: Optional[Player] = None, player_2: Optional[Player] = None):
+    def test(self, *, amount: int = 10, sleep: float = 0.5, player_1: Optional[Player] = None, player_2: Optional[Player] = None):
         for i in range(0, amount):
             self.run(seed=i, sleep=sleep, player_1=player_1, player_2=player_2)
             self.game += 1
@@ -21,13 +21,12 @@ class GameLoop:
 
     def run(
         self,
-        /,
+        *,
         seed: Optional[int] = None,
         sleep: float = 0,
         player_1: Optional[Player] = None,
         player_2: Optional[Player] = None
     ):
-        # mcts_player_1 = MCTSPlayer(name='Player 1 (MCTS)')
         if player_1 is None:
             player_1 = RandomPlayer(name='Player 1 (Random)')
 
@@ -35,7 +34,7 @@ class GameLoop:
             player_2 = RandomPlayer(name='Player 2 (Random)')
 
         game = Game()
-        state = game.get_initial_state(seed, player_1_name=player_1.name, player_2_name=player_2.name)
+        state = game.get_initial_state(seed=seed, player_1_name=player_1.name, player_2_name=player_2.name)
 
         i = 1
         action = None

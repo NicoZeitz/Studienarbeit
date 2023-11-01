@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 import random
 
 from ...action import Action
@@ -8,11 +8,8 @@ from ...state import State
 
 class HumanPlayer(Player):
     """
-    a player that is a human
+    A player that is a human.
     """
-
-    def __init__(self, name: Optional[str]):
-        super().__init__(name=name)
 
     def get_action(
             self,
@@ -21,12 +18,20 @@ class HumanPlayer(Player):
             valid_actions: List[Action]
     ) -> Action:
         # TODO: better interactivity
-        # Action -> special patch
-        # Action: Walk, Take first, Take second, Take third
-        # Row
-        # Column
-        # Rotation
-        # Flip
+        # REPEAT UNTIL VALID Action
+        #    IF Action == special patch:
+        #       1. Ask for row
+        #       2. Ask for column
+        #    ELSE
+        #       1. Ask for Walk, Take first, Take second, Take third (only show possible pieces)
+        #       IF Walk:
+        #          Return Action
+        #       ELSE:
+        #          1. Ask for row
+        #          2. Ask for column
+        #          3. Ask for rotation
+        #          4. Ask for flip
+
         prompt = f"Player '{state.current_player.name}' has {len(valid_actions)} options:"
 
         while True:
@@ -44,5 +49,6 @@ class HumanPlayer(Player):
 
                 if valid_actions[index] != None:
                     return valid_actions[index]
+
             except (ValueError, IndexError):
                 print("Please enter a number valid number in the range.")

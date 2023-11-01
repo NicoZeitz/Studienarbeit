@@ -1,12 +1,14 @@
 from copy import deepcopy
-from typing import Self, Optional
+from typing import Any, Mapping, Optional, Self, Union
 
 from .quilt_board import QuiltBoard
 
 class PlayerState:
     """A player in the game of Patchwork."""
 
-    # ================================ instance attributes ================================
+    __slots__ = ('name', 'position', 'button_balance', 'quilt_board')
+
+    # ================================ attributes ================================
     name: Optional[str]
     """The name of the player."""
 
@@ -19,7 +21,7 @@ class PlayerState:
     quilt_board: QuiltBoard
     """The quilt board of the player."""
 
-    # ================================ instance methods ================================
+    # ================================ methods ================================
 
     def __init__(self, name: Optional[str], position: int, button_balance: int, quilt_board: QuiltBoard) -> Self:
         self.name = name
@@ -27,7 +29,10 @@ class PlayerState:
         self.button_balance = button_balance
         self.quilt_board = quilt_board
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, PlayerState):
+            return NotImplemented
+
         return self.name == other.name and \
             self.position == other.position and \
             self.button_balance == other.button_balance and \
@@ -42,7 +47,7 @@ class PlayerState:
         ))
 
     def __repr__(self) -> str:
-        return f'Player(name={self.name}, position={self.position}, button_balance={self.button_balance}, quilt_board={self.quilt_board})'
+        return f'{type(self)}(name={self.name}, position={self.position}, button_balance={self.button_balance}, quilt_board={self.quilt_board})'
 
     def __str__(self) -> str:
         player_str = f'Player \'{self.name if self.name is not None else "Unknown"}\' (button balance: {self.button_balance}):\n'
@@ -57,7 +62,7 @@ class PlayerState:
             quilt_board=self.quilt_board
         )
 
-    def __deepcopy__(self, memo: dict) -> Self:
+    def __deepcopy__(self, memo: Mapping) -> Self:
         return PlayerState(
             name=self.name,
             position=self.position,

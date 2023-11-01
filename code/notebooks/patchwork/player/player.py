@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Any, List, Optional, Unpack
 
 from ..action import Action
 from ..game import Game
@@ -10,11 +10,17 @@ class Player(ABC):
     A base class for any kind of player.
     """
 
+    # ================================ attributes ================================
+
     name: str
     """The name of the player."""
 
-    def __init__(self, name: Optional[str], **kwargs: dict):
+    # ================================ constructor ================================
+
+    def __init__(self, name: Optional[str], **kwargs: Unpack[Any]):
         self.name = name if name is not None else self.__class__.__name__
+
+    # ================================ abstract methods ================================
 
     @abstractmethod
     def get_action(

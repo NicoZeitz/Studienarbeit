@@ -16,15 +16,23 @@ class MCTSPlayer(Player):
     A player that uses Monte Carlo Tree Search to choose an action.
     """
 
+    __slots__ = ('options',)
+
+    # ================================ attributes ================================
+
     options: MCTSOptions
     """The options for the MCTS algorithm."""
+
+    # ================================ constructor ================================
 
     def __init__(self, name: Optional[str], options: Optional[MCTSOptions] = None):
         super().__init__(name=name)
         self.options = options if options is not None else {
             'C': math.sqrt(2),
-            'number_of_simulations': 1000 # TODO: use 1000
+            'number_of_simulations': 10 # TODO: use higher number (> 1000)
         }
+
+    # ================================ methods ================================
 
     def get_action(
             self,

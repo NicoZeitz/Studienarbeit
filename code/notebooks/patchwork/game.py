@@ -5,7 +5,7 @@ import random
 
 import numpy as np
 
-from .patch import Patch, Orientation, Rotation
+from .patch import Patch
 from .player_state import PlayerState
 from .quilt_board import QuiltBoard
 from .state import State, CurrentPlayer
@@ -18,11 +18,11 @@ class Game:
     The game of Patchwork.
     """
 
-    # ================================ instance methods ================================
+    # ================================ methods ================================
 
     def get_initial_state(
             self,
-            /,
+            *,
             seed: Optional[int] = None,
             player_1_name: Optional[str] = None,
             player_2_name: Optional[str] = None
@@ -112,7 +112,6 @@ class Game:
         valid_actions.extend(self.get_take_and_place_a_patch_actions(state))
 
         return valid_actions
-
 
     def sample_random_action(self, state: State) -> Action:
         """
@@ -280,11 +279,11 @@ class Game:
         player_2_score = self.get_score(state, CurrentPlayer.PLAYER_2)
 
         if player_1_score > player_2_score:
-            return Termination(Termination.PLAYER_1_WON, player_1_score, player_2_score)
+            return Termination(Termination.PLAYER_1_WON, player_1_score=player_1_score, player_2_score=player_2_score)
         elif player_1_score < player_2_score:
-            return Termination(Termination.PLAYER_2_WON, player_1_score, player_2_score)
+            return Termination(Termination.PLAYER_2_WON, player_1_score=player_1_score, player_2_score=player_2_score)
         else:
-            return Termination(Termination.DRAW, player_1_score, player_2_score)
+            return Termination(Termination.DRAW, player_1_score=player_1_score, player_2_score=player_2_score)
 
     # ================================ private methods ================================
 

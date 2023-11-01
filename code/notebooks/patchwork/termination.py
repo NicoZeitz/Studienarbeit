@@ -1,26 +1,36 @@
 
-from typing import Optional, Self, Union
+from typing import Any, ClassVar, Literal, Optional, Self, Union
 
-TERMINATION_NOT_TERMINATED = 'not_terminated'
-TERMINATION_PLAYER_1_WON = 'player_1_won'
-TERMINATION_PLAYER_2_WON = 'player_2_won'
-TERMINATION_DRAW = 'draw'
+TERMINATION_NOT_TERMINATED = Literal['NOT TERMINATED']
+TERMINATION_PLAYER_1_WON = Literal['PLAYER 1 WON']
+TERMINATION_PLAYER_2_WON = Literal['PLAYER 2 WON']
+TERMINATION_DRAW = Literal['DRAW']
 
 class Termination:
     """
+    A class representing if the game is terminated and if so who won and with what score.
     """
 
-    NOT_TERMINATED = TERMINATION_NOT_TERMINATED
+    __slots__ = ('state', 'player_1_score', 'player_2_score')
+
+    # ================================ static attributes ================================
+
+    NOT_TERMINATED: ClassVar[TERMINATION_NOT_TERMINATED] = TERMINATION_NOT_TERMINATED
     """The game is not terminated."""
 
-    PLAYER_1_WON = TERMINATION_PLAYER_1_WON
+    PLAYER_1_WON: ClassVar[TERMINATION_PLAYER_1_WON] = TERMINATION_PLAYER_1_WON
     """Player 1 won."""
 
-    PLAYER_2_WON = TERMINATION_PLAYER_2_WON
+    PLAYER_2_WON: ClassVar[TERMINATION_PLAYER_2_WON] = TERMINATION_PLAYER_2_WON
     """Player 2 won."""
 
-    DRAW = TERMINATION_DRAW
+    DRAW: ClassVar[TERMINATION_DRAW] = TERMINATION_DRAW
     """The game ended in a draw."""
+
+    # ================================ attributes ================================
+
+    state: Union[TERMINATION_NOT_TERMINATED, TERMINATION_PLAYER_1_WON, TERMINATION_PLAYER_2_WON, TERMINATION_DRAW]
+    """The state of the game."""
 
     player_1_score: Optional[int]
     """The score of player 1."""
@@ -28,19 +38,20 @@ class Termination:
     player_2_score: Optional[int]
     """The score of player 2."""
 
-    state: Union[TERMINATION_NOT_TERMINATED, TERMINATION_PLAYER_1_WON, TERMINATION_PLAYER_2_WON, TERMINATION_DRAW]
-    """The state of the game."""
+    # ================================ constructor ================================
 
     def __init__(
             self,
             state: Union[TERMINATION_NOT_TERMINATED, TERMINATION_PLAYER_1_WON, TERMINATION_PLAYER_2_WON, TERMINATION_DRAW],
-            /,
+            *,
             player_1_score: Optional[int] = None,
             player_2_score: Optional[int] = None
     ):
         self.state = state
         self.player_1_score = player_1_score
         self.player_2_score = player_2_score
+
+    # ================================ properties ================================
 
     @property
     def is_terminated(self) -> bool:
@@ -72,20 +83,35 @@ class Termination:
 
         return self.player_1_score - self.player_2_score
 
-    def __eq__(self, other: object) -> bool:
+    # ================================ methods ================================
+
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
         if isinstance(other, str):
             return self.state == other
 
         if not isinstance(other, Termination):
-            return False
+            return NotImplemented
 
         return self.state == other.state
+
+    def __hash__(self) -> int:
+        return hash(self.state)
+
+    def __repr__(self) -> str:
+        return f'{type(self)}(state={self.state}, player_1_score={self.player_1_score}, player_2_score={self.player_2_score})'
 
     def __str__(self) -> str:
         return self.state
 
-    def __repr__(self) -> str:
-        return self.state
+    def __copy__(self) -> Self:
+        return Termination(
+            state=self.state,
+            player_1_score=self.player_1_score,
+            player_2_score=self.player_2_score
+        )
 
-    def __hash__(self) -> int:
-        return hash(self.state)
+    def __deepcopy__(self, memo) -> Self:
+        return self.__copy__()
+
+    def copy(self) -> Self:
+        return self.__copy__()

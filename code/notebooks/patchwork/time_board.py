@@ -1,32 +1,58 @@
-from collections import namedtuple
 from copy import deepcopy
 from enum import IntFlag
-from typing import Literal, Self
+from typing import Any, ClassVar, Literal, Mapping, NamedTuple, Self, Union
 
 import numpy as np
 import numpy.typing as npt
 
-PlayerPosition = namedtuple('PlayerPosition', 'current_player other_player')
+class PlayerPosition(NamedTuple):
+    """
+    A tuple representing the positions of the players on the board.
+    """
+
+    current_player: int
+    """The position of the current player."""
+
+    other_player: int
+    """The position of the other player."""
 
 class EntitiesEnum(IntFlag):
-    PLAYER_1              = 0b0001
-    PLAYER_2              = 0b0010
-    BUTTON_INCOME_TRIGGER = 0b0100
-    SPECIAL_PATCH         = 0b1000
+    """
+    An enum that represents the entities that can be on a time board tile.
+    """
 
-# TODO: BUG: Player Positions at start are not correct/ wrongly displayed
+    PLAYER_1              = 0b0001
+    """The first player."""
+
+    PLAYER_2              = 0b0010
+    """The second player."""
+
+    BUTTON_INCOME_TRIGGER = 0b0100
+    """A button income trigger."""
+
+    SPECIAL_PATCH         = 0b1000
+    """A special patch."""
+
+# TODO:BUG: Player Positions at start are not correct / wrongly displayed
 class TimeBoard:
     """The time board of the game."""
 
-    # ================================ instance attributes ================================
+    __slots__ = ('tiles',)
+
+    # ================================ static attributes ================================
+
+    MAX_POSITION: ClassVar[int] = 53
+    """The maximum position on the time board."""
+
+    # ================================ attributes ================================
 
     tiles: np.ndarray((54,), np.uint8)
     """The tiles of the time board."""
 
-    # ================================ static attributes ================================
+    # ================================ constructor ================================
 
-    MAX_POSITION = 53
-    """The maximum position on the time board."""
+    def __init__(self, tiles: np.ndarray((54,), np.uint8)):
+        self.tiles = tiles
 
     # ================================ static methods ================================
 
@@ -53,12 +79,7 @@ class TimeBoard:
         tiles[50] = EntitiesEnum.SPECIAL_PATCH
         return TimeBoard(tiles)
 
-    # ================================ instance methods ================================
-
-    def __init__(self, tiles: np.ndarray((54,), np.uint8)):
-        self.tiles = tiles
-
-    # special patches
+    # ================================ methods ================================
 
     def get_special_patches_in_range(self, range: range) -> npt.NDArray[np.intp]:
         return np.argwhere((self.tiles[self.clamp_range(range)] & EntitiesEnum.SPECIAL_PATCH) > 0) + range.start
@@ -67,14 +88,15 @@ class TimeBoard:
         clamped_index = self.clamp_index(index)
         self.tiles[clamped_index] = self.tiles[clamped_index] ^ EntitiesEnum.SPECIAL_PATCH
 
-    # button income triggers
-
     def get_amount_button_income_triggers_in_range(self, range: range) -> int:
         return np.count_nonzero((self.tiles[self.clamp_range(range)] & EntitiesEnum.BUTTON_INCOME_TRIGGER) > 0)
 
-    # player positions
-
-    def set_player_position(self, player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2], old_position: int, new_position: int) -> None:
+    def set_player_position(
+            self,
+            player: Literal[EntitiesEnum.PLAYER_1, EntitiesEnum.PLAYER_2],
+            old_position: int,
+            new_position: int
+    ) -> None:
         # TODO:PERF: defensive copy as the copy() method uses a view of the array for performance
         self.tiles = self.tiles.copy()
 
@@ -85,8 +107,6 @@ class TimeBoard:
         clamped_position = self.clamp_index(new_position)
         self.tiles[clamped_position] |= player
 
-    # other function
-
     def clamp_range(self, input_range: range) -> range:
         return range(
             max(input_range.start, 0),
@@ -96,14 +116,17 @@ class TimeBoard:
     def clamp_index(self, index: int) -> int:
         return min(max(index, 0), TimeBoard.MAX_POSITION)
 
-    def __eq__(self, o: object) -> bool:
+    def __eq__(self, o: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(o, TimeBoard):
+            return NotImplemented
+
         return self.tiles == o.tiles
 
     def __hash__(self) -> int:
         return hash(self.tiles)
 
     def __repr__(self) -> str:
-        return f'TimeBoard(tiles={self.tiles})'
+        return f'{type(self)}(tiles={self.tiles})'
 
     def __str__(self) -> str:
         def get_str_for_tile(tile: int) -> str:
@@ -142,7 +165,7 @@ class TimeBoard:
     def __copy__(self) -> Self:
         return TimeBoard(self.tiles)
 
-    def __deepcopy__(self, memo: dict) -> Self:
+    def __deepcopy__(self, memo: Mapping) -> Self:
         return TimeBoard(deepcopy(self.tiles, memo))
 
     def copy(self) -> Self:

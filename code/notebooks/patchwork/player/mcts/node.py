@@ -17,6 +17,10 @@ class Node:
     A node in the Monte Carlo Tree Search algorithm.
     """
 
+    __slots__ = ('game', 'state', 'options', 'parent', 'action_taken', 'children', 'score_sum', 'max_score', 'min_score', 'visit_count', '__dict__')
+
+    # ================================ attributes ================================
+
     game: Game
     """The game."""
 
@@ -38,14 +42,16 @@ class Node:
     score_sum: int
     """The sum of the scores of all the nodes in the subtree rooted at this node."""
 
-    max_score: int = -math.inf
+    max_score: int
     """The maximum score of all the nodes in the subtree rooted at this node."""
 
-    min_score: int = math.inf
+    min_score: int
     """The minimum score of all the nodes in the subtree rooted at this node."""
 
     visit_count: int
     """The number of times this node has been visited."""
+
+    # ================================ properties ================================
 
     @cached_property
     def expandable_actions(self) -> List[Action]:
@@ -71,6 +77,8 @@ class Node:
         """
         return self.game.get_termination(self.state)
 
+    # ================================ constructor ================================
+
     def __init__(self, game: Game, state: State, options: MCTSOptions, parent: Optional[Self] = None, action_taken: Optional[Action] = None):
         self.game = game
         self.state = state
@@ -82,6 +90,10 @@ class Node:
 
         self.score_sum = 0
         self.visit_count = 0
+        self.max_score = -math.inf
+        self.min_score = math.inf
+
+    # ================================ methods ================================
 
     def is_fully_expanded(self) -> bool:
         """
@@ -114,6 +126,8 @@ class Node:
         :param child: The child node.
         :return: The upper confidence bound of this node.
         """
+
+        # TODO: Test if it is working correctly
 
         # https://stackoverflow.com/questions/36664993/mcts-uct-with-a-scoring-system
         # There is an alternative way of setting C dynamically that has given me good results. As you play, you keep track of the highest and lowest scores you've ever seen in each node (and subtree). This is the range of scores possible and this gives you a hint of how big C should be in order to give not well explored underdog nodes a fair chance. Every time i descend into the tree and pick a new root i adjust C to be sqrt(2) * score range for the new root. In addition, as rollouts complete and their scores turn out the be a new highest or lowest score i adjust C in the same way. By continually adjusting C this way as you play but also as you pick a new root you keep C as large as it needs to be to converge but as small as it can be to converge fast. Note that the minimum score is as important as the max: if every rollout will yield at minimum a certain score then C won't need to overcome it. Only the difference between max and min matters.
@@ -189,18 +203,21 @@ class Node:
             self.parent.backpropagate(score)
 
     def __repr__(self) -> str:
-        return f'Node(player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score}, ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0})'
+        return f'{type(self)}(player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score}, ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0})'
 
-    def _tree_list(self) -> Generator[str, None, None]:
+    def tree_list(self) -> Generator[str, None, None]:
+        """
+        Yields a list of strings that represent the tree.
+        """
         yield self.__repr__()
 
         for index, child in enumerate(self.children):
             branching_front = '├── ' if index != len(self.children) - 1 else '└── '
             other_front = '│   ' if index != len(self.children) - 1 else '    '
 
-            for inner_index, line in enumerate(child._tree_list()):
+            for inner_index, line in enumerate(child.tree_list()):
                 front = branching_front if inner_index == 0 else other_front
                 yield f'{front}{line}'
 
     def __str__(self) -> str:
-        return '\n'.join(self._tree_list())
+        return '\n'.join(self.tree_list())

@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Literal, Self, Optional
+from typing import Any, ClassVar, List, Literal, Mapping, Optional, Self, Union
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
@@ -10,21 +10,34 @@ from .patch import Patch
 class QuiltBoard:
     """The quilt board of the player."""
 
-    # ================================ instance attributes ================================
+    __slots__ = ('tiles', 'button_income', 'is_full', 'tiles_filled')
+
+    # ================================ static attributes ================================
+
+    ROWS: ClassVar[Literal[9]] = 9
+    """The amount of rows on the quilt board."""
+
+    COLUMNS: ClassVar[Literal[9]] = 9
+    """The amount of columns on the quilt board."""
+
+    TILES: ClassVar[Literal[81]] = ROWS * COLUMNS
+    """The amount of tiles on the quilt board."""
+
+    # ================================ attributes ================================
 
     tiles: np.ndarray[(9,9), np.bool_]
     """The tiles of the board."""
 
-    button_income: int = 0
+    button_income: int
     """The amount of buttons this board generates."""
 
-    is_full: bool = False
+    is_full: bool
     """Whether the board is full."""
 
-    tiles_filled: int = 0
+    tiles_filled: int
     """The amount of tiles that are filled."""
 
-    # ================================ instance properties ================================
+    # ================================ properties ================================
 
     @property
     def score(self) -> int:
@@ -36,16 +49,13 @@ class QuiltBoard:
         """The percentage of tiles that are filled."""
         return self.tiles_filled / QuiltBoard.TILES
 
-    # ================================ static attributes ================================
+    # ================================ constructor ================================
 
-    ROWS = 9
-    """The amount of rows on the quilt board."""
-
-    COLUMNS = 9
-    """The amount of columns on the quilt board."""
-
-    TILES = ROWS * COLUMNS
-    """The amount of tiles on the quilt board."""
+    def __init__(self, button_income: int, tiles: np.ndarray[(9,9), np.bool_], *, tiles_filled: int = 0):
+        self.button_income = button_income
+        self.tiles = tiles
+        self.tiles_filled = tiles_filled
+        self.is_full = self.tiles_filled == QuiltBoard.TILES
 
     # ================================ static methods ================================
 
@@ -54,12 +64,7 @@ class QuiltBoard:
         """Returns an empty quilt board."""
         return QuiltBoard(0, np.zeros((QuiltBoard.ROWS, QuiltBoard.COLUMNS), dtype=bool))
 
-
-    # ================================ instance methods ================================
-
-    def __init__(self, button_income: int, tiles: np.ndarray[(9,9), np.bool_]):
-        self.button_income = button_income
-        self.tiles = tiles
+    # ================================ methods ================================
 
     def add_patch(self, patch: Patch, position: PatchPosition) -> None:
         """Adds a patch to the quilt board at the given position."""
@@ -125,7 +130,7 @@ class QuiltBoard:
 
         return valid_actions_for_patch
 
-        # old implementation
+        # TODO: remove old implementation
         # for transformed_patch in patch.get_unique_transformations():
         #     (transformed_row, transformed_column) = transformed_patch.shape
 
@@ -154,7 +159,10 @@ class QuiltBoard:
 
         # return valid_actions_for_patch
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, QuiltBoard):
+            return NotImplemented
+
         return self.tiles == other.tiles and \
             self.button_income == other.button_income
 
@@ -165,7 +173,7 @@ class QuiltBoard:
         ))
 
     def __repr__(self) -> str:
-        return f'QuiltBoard(board={self.tiles}, button_income={self.button_income})'
+        return f'{type(self)}(board={self.tiles}, button_income={self.button_income})'
 
     def __str__(self) -> str:
         quilt_board_str = ''
@@ -177,10 +185,10 @@ class QuiltBoard:
         return quilt_board_str
 
     def __copy__(self) -> Self:
-        return QuiltBoard(self.button_income, self.tiles)
+        return QuiltBoard(self.button_income, self.tiles, tiles_filled=self.tiles_filled)
 
-    def __deepcopy__(self, memo: dict) -> Self:
-        return QuiltBoard(self.button_income, deepcopy(self.tiles, memo))
+    def __deepcopy__(self, memo: Mapping) -> Self:
+        return QuiltBoard(self.button_income, deepcopy(self.tiles, memo), tiles_filled=self.tiles_filled)
 
     def copy(self) -> Self:
-        return QuiltBoard(self.button_income, self.tiles)
+        return QuiltBoard(self.button_income, self.tiles, tiles_filled=self.tiles_filled)

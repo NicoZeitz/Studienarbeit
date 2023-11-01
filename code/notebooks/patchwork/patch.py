@@ -1,7 +1,7 @@
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Self, Optional, Union
+from typing import Any, ClassVar, List, Self, Optional, Union, Mapping
 import random
 
 import numpy as np
@@ -18,6 +18,12 @@ class Orientation(Enum):
     FLIPPED = 1
 
 class PatchTransformation:
+    """
+    Represents a transformation of a patch.
+    """
+
+    __slots__ = ('_data',)
+
     _data: int
 
     @property
@@ -31,14 +37,17 @@ class PatchTransformation:
     def __init__(self, rotation: Rotation, orientation: Orientation):
         self._data = rotation.value | (orientation.value << 2)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, PatchTransformation):
+            return NotImplemented
+
         return self._data == other._data
 
     def __hash__(self) -> int:
         return hash(self._data)
 
     def __repr__(self) -> str:
-        return f"PatchTransformation(rotation={self.rotation}, orientation={self.orientation})"
+        return f"{type(self)}(rotation={self.rotation}, orientation={self.orientation})"
 
     def __str__(self) -> str:
         return f'({self.rotation.value * 90}° {self.orientation.name})'
@@ -46,22 +55,22 @@ class PatchTransformation:
     def __copy__(self) -> Self:
         return PatchTransformation(self.rotation, self.orientation)
 
-    def __deepcopy__(self, memo: dict) -> Self:
-        return PatchTransformation(self.rotation, self.orientation)
+    def __deepcopy__(self, memo: Mapping) -> Self:
+        return self.__copy__()
 
     def copy(self) -> Self:
-        return deepcopy(self)
+        return self.__copy__()
 
 class PatchImage:
     pass
 
-@dataclass
+@dataclass(slots=True)
 class Patch:
     """
     Represents a patch in the game Patchwork.
     """
 
-    # ================================ instance attributes ================================
+    # ================================ attributes ================================
     id: int
     """The unique id of the patch"""
 
@@ -106,7 +115,7 @@ class Patch:
     transformation: PatchTransformation = PatchTransformation(Rotation.ZERO, Orientation.NORMAL)
     """The transformation of the patch. Different transformations of the same patch are considered the same patch"""
 
-    # ================================ instance properties ================================
+    # ================================ properties ================================
 
     @property
     def is_special(self) -> bool:
@@ -143,13 +152,13 @@ class Patch:
         # TODO: return the back image with correct rotation and orientation information
         pass
 
-    # ================================ private instance attributes ================================
+    # ================================ private attributes ================================
 
-    _unique_transformations: Optional[List[Self]] = None
+    _unique_transformations: Optional[List[Self]] = field(init=False, default=None)
 
     # ================================ private static attributes ================================
 
-    _len_patches: Optional[int] = None
+    _len_patches: ClassVar[Optional[int]] = None
 
     # ================================ static methods ================================
 
@@ -174,7 +183,7 @@ class Patch:
         :return: The amount of patches in the game (excluding special patches)
         """
         if Patch._len_patches is None:
-            Patch._len_patches = len(Patch._patches()) + 1
+            Patch._len_patches = len(Patch.patches()) + 1
 
         return Patch._len_patches
 
@@ -186,12 +195,12 @@ class Patch:
         :param seed: The seed to use for the random shuffle. If None, no seed is used.
         :return: A list of all patches in the game (excluding special patches) in a random order.
         """
-        patches = Patch._patches()
+        patches = Patch.patches()
         random.Random(seed).shuffle(patches)
-        patches.append(Patch._starting_patch())
+        patches.append(Patch.starting_patch())
         return patches
 
-    # ================================ instance methods ================================
+    # ================================ constructor ================================
 
     def __init__(
             self,
@@ -210,8 +219,11 @@ class Patch:
         self.time_cost = time_cost
         self.button_income = button_income
         self.transformation = transformation
+        self._unique_transformations = None
         if compute_unique_transformations:
             self.get_unique_transformations()
+
+    # ================================ methods ================================
 
     def get_unique_transformations(self) -> List[Self]:
         """
@@ -256,14 +268,17 @@ class Patch:
 
         return self._unique_transformations
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
+        if not isinstance(other, Patch):
+            return NotImplemented
+
         return self.id == other.id
 
     def __hash__(self) -> int:
         return hash(self.id)
 
     def __repr__(self) -> str:
-        return f"Patch(id={self.id}, button_cost={self.button_cost}, time_cost={self.time_cost}, button_income={self.button_income}, transformation={self.transformation}, tiles={self.tiles})"
+        return f"{type(self)}(id={self.id}, button_cost={self.button_cost}, time_cost={self.time_cost}, button_income={self.button_income}, transformation={self.transformation}, tiles={self.tiles})"
 
     def __str__(self) -> str:
         patch_str = ""
@@ -292,7 +307,7 @@ class Patch:
         patch._unique_transformations = self._unique_transformations
         return patch
 
-    def __deepcopy__(self, memo: dict) -> Self:
+    def __deepcopy__(self, memo: Mapping) -> Self:
         patch = Patch(
             self.id,
             np.copy(self.tiles),
@@ -311,7 +326,7 @@ class Patch:
     # ================================ private static methods ================================
 
     @staticmethod
-    def _starting_patch() -> Self:
+    def starting_patch() -> Self:
         return Patch(
             0,
             np.array([
@@ -323,7 +338,7 @@ class Patch:
         )
 
     @staticmethod
-    def _patches() -> List[Self]:
+    def patches() -> List[Self]:
         return [
             Patch(1, np.array([
                     [1,0,0],

@@ -11,15 +11,21 @@ class RandomPlayer(Player):
     A player that chooses a random action.
     """
 
+    # ================================ attributes ================================
+
     seed: Optional[int]
     """The seed to use for the random number generator."""
 
     _random: random.Random
     """The random number generator."""
 
+    # ================================ constructor ================================
+
     def __init__(self, name: Optional[str], seed: Optional[int] = None):
         super().__init__(name=name)
         self._random = random.Random(seed)
+
+    # ================================ methods ================================
 
     def get_action(
             self,
