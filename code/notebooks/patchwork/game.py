@@ -100,7 +100,7 @@ class Game:
         # Placing a Special Patch is a special action
         if state.special_patch_placement_move is not None:
             special_patch = Patch.get_special_patch(state.special_patch_placement_move)
-            return state.current_player.quilt_board.get_valid_actions_for_patch(special_patch)
+            return state.current_player.quilt_board.get_valid_actions_for_special_patch(special_patch)
 
         # On your turn, you carry out one of the following actions:
         valid_actions: List[Action] = []

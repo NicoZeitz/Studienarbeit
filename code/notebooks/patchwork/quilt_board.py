@@ -130,34 +130,14 @@ class QuiltBoard:
 
         return valid_actions_for_patch
 
-        # TODO: remove old implementation
-        # for transformed_patch in patch.get_unique_transformations():
-        #     (transformed_row, transformed_column) = transformed_patch.shape
-
-        #     rows = np.size(self.tiles, 0) - transformed_row + 1
-        #     columns = np.size(self.tiles, 1) - transformed_column + 1
-
-        #     for (row, column) in np.ndindex(rows, columns):
-        #         board_tiles_view = self.tiles[
-        #             row    : row    + transformed_row,
-        #             column : column + transformed_column
-        #         ]
-        #         combination = (transformed_patch.tiles | board_tiles_view)
-
-        #         ones_in_patch = np.count_nonzero(transformed_patch.tiles)
-        #         ones_in_board_tiles_view = np.count_nonzero(board_tiles_view)
-        #         ones_in_combination = np.count_nonzero(combination)
-
-        #         if ones_in_combination != ones_in_board_tiles_view + ones_in_patch:
-        #             continue
-
-        #         valid_actions_for_patch.append(Action(
-        #             transformed_patch,
-        #             PatchPosition(row, column),
-        #             patch_index
-        #         ))
-
-        # return valid_actions_for_patch
+    def get_valid_actions_for_special_patch(
+            self,
+            patch: Patch
+    ) -> List[Action]:
+        return list(map(lambda pos: Action(
+            patch,
+            PatchPosition(pos[0], pos[1]),
+        ), np.argwhere(np.bitwise_not(self.tiles))))
 
     def __eq__(self, other: Any) -> Union[NotImplemented, bool]:
         if not isinstance(other, QuiltBoard):
