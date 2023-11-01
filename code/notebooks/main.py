@@ -8,3 +8,4 @@ with cProfile.Profile() as p:
         player_1=MCTSPlayer(name="Player 1 (MCTS)"),
         player_2=RandomPlayer(name="Player 2 (Random)")
     )
+    p.print_stats(sort="cumtime")

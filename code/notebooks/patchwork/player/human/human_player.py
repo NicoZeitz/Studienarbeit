@@ -50,5 +50,6 @@ class HumanPlayer(Player):
                 if valid_actions[index] != None:
                     return valid_actions[index]
 
-            except (ValueError, IndexError):
+            except (ValueError, IndexError) as e:
                 print("Please enter a number valid number in the range.")
+                # raise e

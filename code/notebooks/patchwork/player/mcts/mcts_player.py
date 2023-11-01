@@ -29,7 +29,7 @@ class MCTSPlayer(Player):
         super().__init__(name=name)
         self.options = options if options is not None else {
             'C': math.sqrt(2),
-            'number_of_simulations': 10 # TODO: use higher number (> 1000)
+            'number_of_simulations': 10000 # TODO: use higher number (> 1000)
         }
 
     # ================================ methods ================================

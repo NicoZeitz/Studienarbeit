@@ -44,6 +44,9 @@ class GameLoop:
         avg_get_value_and_terminated = []
         avg_get_player_1_action = []
         avg_get_player_2_action = []
+
+        previous_state = None
+
         while True:
             try:
                 start_time = timer()
@@ -51,8 +54,13 @@ class GameLoop:
                 avg_get_valid_actions.append(timer() - start_time)
 
                 clear_output(wait=True)
+
+                print(previous_state)
+
                 print(f"======================= GAME {self.game} TURN {i} =======================")
                 print(state)
+
+                previous_state = state
 
                 if state.current_active_player == CurrentPlayer.PLAYER_1:
                     start_time = timer()
