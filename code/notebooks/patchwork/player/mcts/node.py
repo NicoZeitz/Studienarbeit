@@ -203,7 +203,7 @@ class Node:
             self.parent.backpropagate(score)
 
     def __repr__(self) -> str:
-        return f'{type(self)}(player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score}, ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0})'
+        return f'{type(self).__name__}(player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score}, ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0})'
 
     def tree_list(self) -> Generator[str, None, None]:
         """

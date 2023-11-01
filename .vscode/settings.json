@@ -1,6 +1,6 @@
 {
-    "python.pipenvPath": "./code/server/.venv",
-    "python.pythonPath": "./.venv/Scripts/python.exe",
+    // "python.pipenvPath": "./code/server/.venv",
+    // "python.pythonPath": "./.venv/Scripts/python.exe",
     "latex-workshop.intellisense.includegraphics.preview.enabled": true,
     "editor.wordWrap": "on",
     // "workbench.colorCustomizations": {
