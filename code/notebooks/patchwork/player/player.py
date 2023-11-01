@@ -26,15 +26,13 @@ class Player(ABC):
     def get_action(
         self,
         game: Game,
-        state: State,
-        valid_actions: List[Action]
+        state: State
     ) -> Action:
         """
         A method that returns an action given the current state of the game and the valid actions.
 
         :param game: The game.
         :param state: The state of the game.
-        :param valid_actions: The valid actions.
         :return: The action to take.
         """
         pass

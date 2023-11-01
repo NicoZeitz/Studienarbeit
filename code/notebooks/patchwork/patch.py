@@ -47,7 +47,7 @@ class PatchTransformation:
         return hash(self._data)
 
     def __repr__(self) -> str:
-        return f"{type(self)}(rotation={self.rotation}, orientation={self.orientation})"
+        return f"{type(self).__name__}(rotation={self.rotation}, orientation={self.orientation})"
 
     def __str__(self) -> str:
         return f'({self.rotation.value * 90}° {self.orientation.name})'
@@ -278,7 +278,7 @@ class Patch:
         return hash(self.id)
 
     def __repr__(self) -> str:
-        return f"{type(self)}(id={self.id}, button_cost={self.button_cost}, time_cost={self.time_cost}, button_income={self.button_income}, transformation={self.transformation}, tiles={self.tiles})"
+        return f"{type(self).__name__}(id={self.id}, button_cost={self.button_cost}, time_cost={self.time_cost}, button_income={self.button_income}, transformation={self.transformation}, tiles={self.tiles})"
 
     def __str__(self) -> str:
         patch_str = ""

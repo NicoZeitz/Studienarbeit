@@ -126,7 +126,7 @@ class TimeBoard:
         return hash(self.tiles)
 
     def __repr__(self) -> str:
-        return f'{type(self)}(tiles={self.tiles})'
+        return f'{type(self).__name__}(tiles={self.tiles})'
 
     def __str__(self) -> str:
         def get_str_for_tile(tile: int) -> str:

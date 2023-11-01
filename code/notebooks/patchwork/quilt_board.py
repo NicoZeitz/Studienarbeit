@@ -173,7 +173,7 @@ class QuiltBoard:
         ))
 
     def __repr__(self) -> str:
-        return f'{type(self)}(board={self.tiles}, button_income={self.button_income})'
+        return f'{type(self).__name__}(board={self.tiles}, button_income={self.button_income})'
 
     def __str__(self) -> str:
         quilt_board_str = ''

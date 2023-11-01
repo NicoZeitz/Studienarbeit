@@ -98,7 +98,7 @@ class Termination:
         return hash(self.state)
 
     def __repr__(self) -> str:
-        return f'{type(self)}(state={self.state}, player_1_score={self.player_1_score}, player_2_score={self.player_2_score})'
+        return f'{type(self).__name__}(state={self.state}, player_1_score={self.player_1_score}, player_2_score={self.player_2_score})'
 
     def __str__(self) -> str:
         return self.state

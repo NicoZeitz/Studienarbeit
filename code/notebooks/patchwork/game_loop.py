@@ -1,8 +1,9 @@
 from typing import Optional
-import time
 from timeit import default_timer as timer
+import time
+import sys
 
-from IPython.display import clear_output
+from IPython.display import clear_output, display_html
 
 from .game import Game
 from .player import Player
@@ -11,22 +12,24 @@ from .state import CurrentPlayer
 from .player import RandomPlayer
 
 class GameLoop:
-    game: int = 0
 
-    def test(self, *, amount: int = 10, sleep: float = 0.5, player_1: Optional[Player] = None, player_2: Optional[Player] = None):
-        for i in range(0, amount):
-            self.run(seed=i, sleep=sleep, player_1=player_1, player_2=player_2)
-            self.game += 1
-            time.sleep(sleep)
-
+    @staticmethod
     def run(
-        self,
         *,
         seed: Optional[int] = None,
         sleep: float = 0,
         player_1: Optional[Player] = None,
         player_2: Optional[Player] = None
     ):
+        """
+        Runs an interactive game of Patchwork.
+
+        :param seed: The seed to use for the random number generator to place the patches.
+        :param sleep: The number of seconds to wait between each turn.
+        :param player_1: The first player.
+        :param player_2: The second player.
+        """
+
         if player_1 is None:
             player_1 = RandomPlayer(name='Player 1 (Random)')
 
@@ -38,37 +41,26 @@ class GameLoop:
 
         i = 1
         action = None
-        valid_actions = []
-        avg_get_valid_actions = []
         avg_get_next_state = []
         avg_get_value_and_terminated = []
         avg_get_player_1_action = []
         avg_get_player_2_action = []
 
-        previous_state = None
-
         while True:
             try:
-                start_time = timer()
-                valid_actions = game.get_valid_actions(state)
-                avg_get_valid_actions.append(timer() - start_time)
-
                 clear_output(wait=True)
 
-                print(previous_state)
-
-                print(f"======================= GAME {self.game} TURN {i} =======================")
-                print(state)
-
-                previous_state = state
+                display_html(f"<style></style>", raw=True) # force vscode to render output before input box appears
+                print(f"======================= TURN {i} =======================")
+                print(state, flush=True)
 
                 if state.current_active_player == CurrentPlayer.PLAYER_1:
                     start_time = timer()
-                    action = player_1.get_action(game, state, valid_actions)
+                    action = player_1.get_action(game, state)
                     avg_get_player_1_action.append(timer() - start_time)
                 else:
                     start_time = timer()
-                    action = player_2.get_action(game, state, valid_actions)
+                    action = player_2.get_action(game, state)
                     avg_get_player_2_action.append(timer() - start_time)
 
                 print(f"Player '{state.current_player.name}' chose action: {str(action)}")
@@ -83,7 +75,7 @@ class GameLoop:
 
                 if termination.is_terminated:
                     clear_output(wait=True)
-                    print(f"======================= GAME {self.game} ENDED AFTER {i} TURNS =======================")
+                    print(f"======================= GAME ENDED AFTER {i} TURNS =======================")
                     print(state)
                     print('\n\n')
                     if termination == Termination.PLAYER_1_WON:
@@ -96,7 +88,6 @@ class GameLoop:
                     print(f"Game took {i} turns")
                     print(f"Player '{state.player_1.name}' score: {termination.player_1_score}")
                     print(f"Player '{state.player_2.name}' score: {termination.player_2_score}")
-                    print(f"Average get_valid_actions time: {sum(avg_get_valid_actions) / len(avg_get_valid_actions) * 1000}ms")
                     print(f"Average get_next_state time: {sum(avg_get_next_state) / len(avg_get_next_state) * 1000}ms")
                     print(f"Average get_value_and_terminated time: {sum(avg_get_value_and_terminated) / len(avg_get_value_and_terminated) * 1000}ms")
                     print(f"Average get_player_1_action time: {sum(avg_get_player_1_action) / len(avg_get_player_1_action) * 1000}ms")

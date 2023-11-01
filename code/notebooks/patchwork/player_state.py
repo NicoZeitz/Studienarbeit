@@ -47,7 +47,7 @@ class PlayerState:
         ))
 
     def __repr__(self) -> str:
-        return f'{type(self)}(name={self.name}, position={self.position}, button_balance={self.button_balance}, quilt_board={self.quilt_board})'
+        return f'{type(self).__name__}(name={self.name}, position={self.position}, button_balance={self.button_balance}, quilt_board={self.quilt_board})'
 
     def __str__(self) -> str:
         player_str = f'Player \'{self.name if self.name is not None else "Unknown"}\' (button balance: {self.button_balance}):\n'

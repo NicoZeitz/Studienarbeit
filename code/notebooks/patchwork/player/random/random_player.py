@@ -30,9 +30,9 @@ class RandomPlayer(Player):
     def get_action(
             self,
             game: Game,
-            state: State,
-            valid_actions: List[Action]
+            state: State
     ) -> Action:
+        valid_actions = game.get_valid_actions(state)
         index = self._random.randint(0, len(valid_actions) - 1)
         action = valid_actions[index]
         return action

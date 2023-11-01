@@ -116,7 +116,7 @@ class Action:
             )
 
     def __repr__(self) -> str:
-        return f'{type(self)}(id={self.id}, patch={self.patch}, patch_position={self.patch_position}, patch_index={self.patch_index})'
+        return f'{type(self).__name__}(id={self.id}, patch={self.patch}, patch_position={self.patch_position}, patch_index={self.patch_index})'
 
     def __str__(self) -> str:
         action_str = f'Action {self.id}'

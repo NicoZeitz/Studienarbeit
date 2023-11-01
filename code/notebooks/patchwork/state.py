@@ -88,7 +88,7 @@ class State:
         ))
 
     def __repr__(self) -> str:
-        return f'{type(self)}(patches={self.patches}, time_board={self.time_board}, player_1={self.player_1}, player_2={self.player_2}, current_player={self.current_active_player}, special_patch_placement_move={self.special_patch_placement_move})'
+        return f'{type(self).__name__}(patches={self.patches}, time_board={self.time_board}, player_1={self.player_1}, player_2={self.player_2}, current_player={self.current_active_player}, special_patch_placement_move={self.special_patch_placement_move})'
 
     def __str__(self) -> str:
         state_str = f'Current player is {self.current_player.name}'

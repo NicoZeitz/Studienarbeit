@@ -1,6 +1,5 @@
 from typing import List, Optional
 import math
-import multiprocessing 
 
 import numpy as np
 
@@ -67,8 +66,7 @@ class MCTSPlayer(Player):
     def get_action(
             self,
             game: Game,
-            state: State,
-            valid_actions: List[Action]
+            state: State
     ) -> Action:
         if len(valid_actions) == 1:
             return valid_actions[0]
@@ -104,10 +102,9 @@ class MCTSPlayer(Player):
 
         chosen_action_index = np.argmax(list(map(lambda child: child.visit_count, root.children)))
 
-        with open('tree.txt', 'wb') as f:
-            f.write(str(root).encode('utf8'))
-
-
+        # TODO: REMOVE
+        # with open('tree.txt', 'wb') as f:
+        #     f.write(str(root).encode('utf8'))
         raise Exception()
 
         return root.children[chosen_action_index].action_taken
