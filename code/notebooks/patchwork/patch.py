@@ -164,9 +164,22 @@ class Patch:
 
     @staticmethod
     def get_special_patch(index: int) -> Self:
-        # TODO: index is still wrong and needs to be converted
+        """
+        Returns the special patch with the given index.
+
+        :param index: The index of the special patch.
+        """
+
+        index_mapping = {
+            0: 26,
+            1: 32,
+            2: 38,
+            3: 44,
+            4: 50
+        }
+
         return Patch(
-            Patch.amount_of_patches() + index,
+            Patch.amount_of_patches() + index_mapping[index],
             np.array([
                 [1]
             ], dtype=bool),
