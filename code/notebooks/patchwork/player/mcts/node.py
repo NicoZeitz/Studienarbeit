@@ -1,7 +1,7 @@
-from typing import Self, Optional, List, Generator
+from functools import cached_property
+from typing import Self, Optional, List, Generator, Union
 import math
 import random
-from functools import cached_property
 
 import numpy as np
 
@@ -109,11 +109,11 @@ class Node:
         :return: The child node with the highest upper confidence bound.
         """
 
-        index = np.argmax(map(lambda child: self.get_upper_confidence_bound(child), self.children))
+        index = np.argmax(map(lambda child: self.get_upper_confidence_bound(child), self.children, self.state.current_active_player))
 
         return self.children[index]
 
-    def get_upper_confidence_bound(self, child: Self) -> float:
+    def get_upper_confidence_bound(self, child: Self, player: Union[CurrentPlayer.PLAYER_1, CurrentPlayer.PLAYER_2]) -> float:
         """
         Calculates the upper confidence bound of this node.
         Formula: Q(s, a) + C * sqrt(ln(N(s)) / N(s, a))

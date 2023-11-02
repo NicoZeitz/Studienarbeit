@@ -229,7 +229,7 @@ class Game:
         # 6. test if player moved over special patch (only a single one possible) and conditionally change the state
         special_patches = new_state.time_board.get_special_patches_in_range(walking_range)
         if special_patches.size != 0:
-            special_patch_index = special_patches[0]
+            special_patch_index = special_patches[0].item()
             new_state.time_board.clear_special_patch(special_patch_index)
 
             # Test if special patch can even be placed

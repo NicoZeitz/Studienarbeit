@@ -58,7 +58,7 @@ class MCTSPlayer(Player):
         super().__init__(name=name)
         self.options = options if options is not None else {
             'C': math.sqrt(2),
-            'number_of_simulations': 10000 # TODO: use higher number (> 1000)
+            'number_of_simulations': 100 # TODO: use higher number (> 1000)
         }
 
     # ================================ methods ================================
@@ -68,9 +68,6 @@ class MCTSPlayer(Player):
             game: Game,
             state: State
     ) -> Action:
-        if len(valid_actions) == 1:
-            return valid_actions[0]
-
         # pool = multiprocessing.Pool(processes=10)
         # results = np.array(pool.starmap(mcts_get_action, ((game, state, self.options) for _ in range(10))))
         # chosen_action_index = np.argmax(np.sum(results, axis=0))
@@ -78,6 +75,10 @@ class MCTSPlayer(Player):
         # return valid_actions[chosen_action_index]
 
         root = Node(game, state, self.options)
+
+        # PERF: fastpath for when there is only one action
+        if len(root.expandable_actions) == 1:
+            return root.expandable_actions[0]
 
         for _ in range(self.options["number_of_simulations"]):
             node = root
@@ -103,8 +104,8 @@ class MCTSPlayer(Player):
         chosen_action_index = np.argmax(list(map(lambda child: child.visit_count, root.children)))
 
         # TODO: REMOVE
-        # with open('tree.txt', 'wb') as f:
-        #     f.write(str(root).encode('utf8'))
+        with open('test_tree.txt', 'wb') as f:
+            f.write(str(root).encode('utf8'))
         raise Exception()
 
         return root.children[chosen_action_index].action_taken
