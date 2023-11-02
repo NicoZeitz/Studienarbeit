@@ -80,9 +80,9 @@ class Action:
 
     def __init__(
             self,
-            patch: Optional[Patch],
-            patch_position: Optional[Position],
-            patch_index: Optional[Literal[0, 1, 2]]
+            patch: Optional[Patch] = None,
+            patch_position: Optional[Position] = None,
+            patch_index: Optional[Literal[0, 1, 2]] = None
     ):
         self.patch = patch
         self.patch_position = patch_position

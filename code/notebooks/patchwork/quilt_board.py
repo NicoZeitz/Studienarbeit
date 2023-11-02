@@ -136,7 +136,7 @@ class QuiltBoard:
     ) -> List[Action]:
         return list(map(lambda pos: Action(
             patch,
-            PatchPosition(pos[0], pos[1]),
+            PatchPosition(pos[0], pos[1])
         ), np.argwhere(np.bitwise_not(self.tiles))))
 
     def __eq__(self, other: Any) -> Union[NotImplemented, bool]:

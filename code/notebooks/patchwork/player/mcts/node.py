@@ -109,11 +109,11 @@ class Node:
         :return: The child node with the highest upper confidence bound.
         """
 
-        index = np.argmax(map(lambda child: self.get_upper_confidence_bound(child), self.children, self.state.current_active_player))
+        index = np.argmax(list(map(lambda child: self.get_upper_confidence_bound(child), self.children)))
 
         return self.children[index]
 
-    def get_upper_confidence_bound(self, child: Self, player: Union[CurrentPlayer.PLAYER_1, CurrentPlayer.PLAYER_2]) -> float:
+    def get_upper_confidence_bound(self, child: Self) -> float:
         """
         Calculates the upper confidence bound of this node.
         Formula: Q(s, a) + C * sqrt(ln(N(s)) / N(s, a))
@@ -133,7 +133,10 @@ class Node:
         # There is an alternative way of setting C dynamically that has given me good results. As you play, you keep track of the highest and lowest scores you've ever seen in each node (and subtree). This is the range of scores possible and this gives you a hint of how big C should be in order to give not well explored underdog nodes a fair chance. Every time i descend into the tree and pick a new root i adjust C to be sqrt(2) * score range for the new root. In addition, as rollouts complete and their scores turn out the be a new highest or lowest score i adjust C in the same way. By continually adjusting C this way as you play but also as you pick a new root you keep C as large as it needs to be to converge but as small as it can be to converge fast. Note that the minimum score is as important as the max: if every rollout will yield at minimum a certain score then C won't need to overcome it. Only the difference between max and min matters.
 
         score_range = self.max_score - self.min_score
-        exploitation = child.score_sum / child.visit_count
+
+        exploitation_multiplier = 1 if self.state.current_active_player == CurrentPlayer.PLAYER_1 else -1
+        exploitation = exploitation_multiplier * child.score_sum / child.visit_count
+
         exploration = self.options["C"] * score_range * math.sqrt(math.log(self.visit_count) / child.visit_count)
 
         return exploitation + exploration
@@ -203,7 +206,7 @@ class Node:
             self.parent.backpropagate(score)
 
     def __repr__(self) -> str:
-        return f'{type(self).__name__}(player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score}, ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0})'
+        return f'{type(self).__name__}(ucb={self.parent.get_upper_confidence_bound(self) if self.parent is not None else 0}, player={self.state.current_player.name}, score_sum={self.score_sum}, visit_count={self.visit_count}, action_taken={self.action_taken}, max_score={self.max_score}, min_score={self.min_score})'
 
     def tree_list(self) -> Generator[str, None, None]:
         """
