@@ -8,7 +8,7 @@ from .mcts_options import MCTSOptions
 
 from ..player import Player
 from ...action import Action
-from ...game import Game
+from ...game import Game, CurrentPlayer
 from ...state import State
 
 def mcts_get_action(game: Game, state: State, options: MCTSOptions) -> List[float]:
@@ -58,12 +58,10 @@ class MCTSPlayer(Player):
         super().__init__(name=name)
         self.options = options if options is not None else {
             'C': math.sqrt(2),
-            'number_of_simulations': 10000 # TODO: use higher number (> 1000)
+            'number_of_simulations': 100 # TODO: use higher number (> 1000)
         }
 
     # ================================ methods ================================
-
-    i = 0
 
     def get_action(
             self,
@@ -101,14 +99,13 @@ class MCTSPlayer(Player):
                 value = termination.score
 
             # 4. Backpropagation
-            node.backpropagate(value)
+            node.backpropagate(value if node.state.current_active_player == CurrentPlayer.PLAYER_1 else -value)
 
         chosen_action_index = np.argmax(list(map(lambda child: child.visit_count, root.children)))
 
-        # TODO: REMOVE
-        MCTSPlayer.i += 1
-
-        with open(f'test_tree_{MCTSPlayer.i}.txt', 'wb') as f:
-            f.write(str(root).encode('utf8'))
+        # # TODO: REMOVE
+        # MCTSPlayer.i += 1
+        # with open(f'test_2_tree_{MCTSPlayer.i}.txt', 'wb') as f:
+        #     f.write(str(root).encode('utf8'))
 
         return root.children[chosen_action_index].action_taken

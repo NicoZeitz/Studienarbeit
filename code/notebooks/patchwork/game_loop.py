@@ -14,6 +14,65 @@ from .player import RandomPlayer
 class GameLoop:
 
     @staticmethod
+    def test(
+        iterations: int = 100,
+        *,
+        player_1: Player,
+        player_2: Player,
+        seed: Optional[int] = None,
+    ):
+        """
+        Runs the game loop multiple times and records the outcome.
+
+        :param iterations: The number of iterations to run.
+        :param player_1: The first player.
+        :param player_2: The second player.
+        """
+
+        game = Game()
+
+        player_1_won = 0
+        player_2_won = 0
+        draw = 0
+        player_1_scores = []
+        player_2_scores = []
+
+        for i in range(iterations):
+            state = game.get_initial_state(seed=seed, player_1_name=player_1.name, player_2_name=player_2.name)
+            action = None
+
+            clear_output(wait=True)
+            print(f"======================= GAME {i} =======================", flush=True)
+
+            while True:
+                if state.current_active_player == CurrentPlayer.PLAYER_1:
+                    action = player_1.get_action(game, state)
+                else:
+                    action = player_2.get_action(game, state)
+
+                state = game.get_next_state(state, action)
+                termination = game.get_termination(state)
+
+                if termination.is_terminated:
+                    if termination == Termination.PLAYER_1_WON:
+                        player_1_won += 1
+                    elif termination == Termination.PLAYER_2_WON:
+                        player_2_won += 1
+                    else:
+                        draw += 1
+
+                    player_1_scores.append(termination.player_1_score)
+                    player_2_scores.append(termination.player_2_score)
+                    break
+
+        clear_output(wait=True)
+        print(f"Player '{state.player_1.name}' won {player_1_won}/{iterations} times")
+        print(f"Player '{state.player_2.name}' won {player_2_won}/{iterations} times")
+        print(f"Draw {draw}/{iterations} times")
+        print(f"Player '{state.player_1.name}' average score: {sum(player_1_scores) / len(player_1_scores)}")
+        print(f"Player '{state.player_2.name}' average score: {sum(player_2_scores) / len(player_2_scores)}")
+
+    @staticmethod
     def run(
         *,
         seed: Optional[int] = None,

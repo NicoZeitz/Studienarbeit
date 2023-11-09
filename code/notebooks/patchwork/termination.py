@@ -1,10 +1,10 @@
 
 from typing import Any, ClassVar, Literal, Optional, Self, Union
 
-TERMINATION_NOT_TERMINATED = Literal['NOT TERMINATED']
-TERMINATION_PLAYER_1_WON = Literal['PLAYER 1 WON']
-TERMINATION_PLAYER_2_WON = Literal['PLAYER 2 WON']
-TERMINATION_DRAW = Literal['DRAW']
+TERMINATION_NOT_TERMINATED = 'NOT TERMINATED'
+TERMINATION_PLAYER_1_WON = 'PLAYER 1 WON'
+TERMINATION_PLAYER_2_WON = 'PLAYER 2 WON'
+TERMINATION_DRAW = 'DRAW'
 
 class Termination:
     """
@@ -15,21 +15,21 @@ class Termination:
 
     # ================================ static attributes ================================
 
-    NOT_TERMINATED: ClassVar[TERMINATION_NOT_TERMINATED] = TERMINATION_NOT_TERMINATED
+    NOT_TERMINATED: ClassVar[type[TERMINATION_NOT_TERMINATED]] = TERMINATION_NOT_TERMINATED
     """The game is not terminated."""
 
-    PLAYER_1_WON: ClassVar[TERMINATION_PLAYER_1_WON] = TERMINATION_PLAYER_1_WON
+    PLAYER_1_WON: ClassVar[type[TERMINATION_PLAYER_1_WON]] = TERMINATION_PLAYER_1_WON
     """Player 1 won."""
 
-    PLAYER_2_WON: ClassVar[TERMINATION_PLAYER_2_WON] = TERMINATION_PLAYER_2_WON
+    PLAYER_2_WON: ClassVar[type[TERMINATION_PLAYER_2_WON]] = TERMINATION_PLAYER_2_WON
     """Player 2 won."""
 
-    DRAW: ClassVar[TERMINATION_DRAW] = TERMINATION_DRAW
+    DRAW: ClassVar[type[TERMINATION_DRAW]] = TERMINATION_DRAW
     """The game ended in a draw."""
 
     # ================================ attributes ================================
 
-    state: Union[TERMINATION_NOT_TERMINATED, TERMINATION_PLAYER_1_WON, TERMINATION_PLAYER_2_WON, TERMINATION_DRAW]
+    state: Union[type[TERMINATION_NOT_TERMINATED], type[TERMINATION_PLAYER_1_WON], type[TERMINATION_PLAYER_2_WON], type[TERMINATION_DRAW]]
     """The state of the game."""
 
     player_1_score: Optional[int]
@@ -42,7 +42,7 @@ class Termination:
 
     def __init__(
             self,
-            state: Union[TERMINATION_NOT_TERMINATED, TERMINATION_PLAYER_1_WON, TERMINATION_PLAYER_2_WON, TERMINATION_DRAW],
+            state: Union[type[TERMINATION_NOT_TERMINATED], type[TERMINATION_PLAYER_1_WON], type[TERMINATION_PLAYER_2_WON], type[TERMINATION_DRAW]],
             *,
             player_1_score: Optional[int] = None,
             player_2_score: Optional[int] = None

@@ -163,25 +163,20 @@ class Node:
         """
         termination = self.termination
         if termination.is_terminated:
-            multiplier = 1 if self.state.current_active_player == CurrentPlayer.PLAYER_1 else -1
-            return multiplier * termination.score
+            # multiplier = 1 if self.state.current_active_player == CurrentPlayer.PLAYER_1 else -1
+            return termination.score
 
         rollout_state = self.state.copy()
         valid_actions = self.expandable_actions
         action = random.choice(valid_actions)
 
         while True:
-            try:
-                rollout_state = self.game.get_next_state(rollout_state, action)
-                termination = self.game.get_termination(rollout_state)
-            except Exception as e:
-                print(e)
-                print(action)
-                raise e
+            rollout_state = self.game.get_next_state(rollout_state, action)
+            termination = self.game.get_termination(rollout_state)
 
             if termination.is_terminated:
-                multiplier = 1 if rollout_state.current_active_player == CurrentPlayer.PLAYER_1 else -1
-                return multiplier * termination.score
+                # multiplier = 1 if rollout_state.current_active_player == CurrentPlayer.PLAYER_1 else -1
+                return termination.score
 
             action = self.game.sample_random_action(rollout_state)
 
