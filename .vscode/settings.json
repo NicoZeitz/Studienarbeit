@@ -67,6 +67,7 @@
     },
     "cSpell.words": [
         "argmax",
+        "argpartition",
         "argwhere",
         "backpropagate",
         "backpropagated",

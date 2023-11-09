@@ -49,7 +49,7 @@ class MinimaxPlayer(Player):
 
     # ================================ constructor ================================
 
-    def __init__(self, name: Optional[str], depth = 2, amount_of_actions_per_patch = 3):
+    def __init__(self, name: Optional[str], depth = 3, amount_of_actions_per_patch = 4):
         super().__init__(name=name)
         self.depth = depth
         self.amount_of_actions_per_patch = amount_of_actions_per_patch
@@ -108,7 +108,7 @@ class MinimaxPlayer(Player):
 
         valid_actions = game.get_valid_actions(state)
 
-        best_actions = self.get_best_actions(game, state, valid_actions)
+        best_actions = self.get_best_actions(state, valid_actions)
 
         if state.current_active_player == CurrentPlayer.PLAYER_1:
             maxEvaluation = -math.inf
@@ -121,7 +121,7 @@ class MinimaxPlayer(Player):
                 if beta <= alpha:
                     break
 
-            return minEvaluation
+            return maxEvaluation
         else:
             minEvaluation = math.inf
             for action in best_actions:
@@ -135,9 +135,13 @@ class MinimaxPlayer(Player):
 
             return minEvaluation
         
-    def get_best_actions(self, game: Game, state: State, actions: List[Action]) -> List[Action]:
+    def get_best_actions(self, state: State, actions: List[Action]) -> List[Action]:
         """
-        
+        Returns the best actions from the given list of actions.
+
+        :param state: The state.
+        :param actions: The actions.
+        :return: The best actions.
         """
 
         best_actions: List[Action] = []
@@ -174,14 +178,24 @@ class MinimaxPlayer(Player):
                 place_first_patch_actions.append(action)
                 place_first_patch_scores.append(score)
 
-        place_first_patch_indices = np.argpartition(place_first_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
-        place_second_patch_indices = np.argpartition(place_first_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
-        place_third_patch_indices = np.argpartition(place_first_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
+        if len(place_first_patch_actions) < self.amount_of_actions_per_patch:
+            best_actions.extend(place_first_patch_actions)
+        else:
+            place_first_patch_indices = np.argpartition(place_first_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
+            best_actions.extend(np.array(place_first_patch_actions)[place_first_patch_indices])
 
-        best_actions.extend(np.array(place_first_patch_actions)[place_first_patch_indices])
-        best_actions.extend(np.array(place_second_patch_actions)[place_second_patch_indices])
-        best_actions.extend(np.array(place_third_patch_actions)[place_third_patch_indices])
-        
+        if len(place_second_patch_actions) < self.amount_of_actions_per_patch:
+            best_actions.extend(place_second_patch_actions)
+        else:
+            place_second_patch_indices = np.argpartition(place_second_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
+            best_actions.extend(np.array(place_second_patch_actions)[place_second_patch_indices])
+
+        if len(place_third_patch_actions) < self.amount_of_actions_per_patch:
+            best_actions.extend(place_third_patch_actions)
+        else:
+            place_third_patch_indices = np.argpartition(place_third_patch_scores, -self.amount_of_actions_per_patch)[-self.amount_of_actions_per_patch:]
+            best_actions.extend(np.array(place_third_patch_actions)[place_third_patch_indices])
+
         return best_actions
 
     def get_score_for_patch_placement(self, quilt_board: QuiltBoard, action: Action) -> int:
@@ -220,9 +234,9 @@ class MinimaxPlayer(Player):
 
     def get_static_evaluation_of_state(self, game: Game, state: State, termination: Termination) -> float:
         if termination.is_terminated:
-            if termination.winner == CurrentPlayer.PLAYER_1:
+            if termination.is_player_1_won:
                 return math.inf
-            elif termination.winner == CurrentPlayer.PLAYER_2:
+            elif termination.is_player_2_won:
                 return -math.inf
             else:
                 return 0
