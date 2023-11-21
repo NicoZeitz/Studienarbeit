@@ -1,0 +1,38 @@
+{
+    "cSpell.words": [
+        "alloc",
+        "backpropagate",
+        "backpropagated",
+        "Backpropagates",
+        "Backpropagation",
+        "bitvec",
+        "Fastpath",
+        "Hasher",
+        "mcts",
+        "rustc",
+        "rustfmt",
+        "Seedable",
+        "simd",
+        "struct",
+        "typenum",
+        "usize",
+        "Xoshiro"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/target": true
+    },
+    "[rust]": {
+        "editor.inlayHints.enabled": "on"
+    },
+    "files.associations": {},
+    "rust-analyzer.checkOnSave": true,
+    "rust-analyzer.lens.implementations.enable": false,
+    "rust-analyzer.cargo.autoreload": true,
+    "rust-analyzer.check.command": "clippy"
+}
