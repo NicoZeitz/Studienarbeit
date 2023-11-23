@@ -1,11 +1,39 @@
-// TODO: remove
-// pub struct MCTSOptions {
-//     /// The number of simulations to run.
-//     pub number_of_simulations: u32,
-//     /// The exploration parameter for the UCT (Upper Confidence Bound 1 applied to trees) algorithm."""
-//     pub c: f64,
-// }
+/// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum MCTSEndCondition {
+    /// The number of simulations to run.
+    Iterations(u32),
+    /// The number of seconds to run simulations for.
+    Time(std::time::Duration),
+}
 
 /// Different options for the Monte Carlo Tree Search (MCTS) algorithm.
 #[derive(Clone, Debug, PartialEq)]
-pub struct MCTSOptions {}
+pub struct MCTSOptions {
+    /// Indicates if there should be multiple mcts searches running in parallel.
+    /// 0 for using all available cores.
+    /// 1 for no parallelization.
+    pub root_parallelization: usize,
+    /// Indicates if the simulation phase is to be run in parallel.
+    /// 0 for using all available cores.
+    /// 1 for no parallelization.
+    pub leaf_parallelization: usize,
+    /// The end condition for the MCTS algorithm.
+    pub end_condition: MCTSEndCondition,
+}
+
+impl MCTSOptions {
+    pub fn new() -> Self {
+        Self {
+            root_parallelization: 1,
+            leaf_parallelization: 1,
+            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(20)),
+        }
+    }
+}
+
+impl Default for MCTSOptions {
+    fn default() -> Self {
+        Self::new()
+    }
+}

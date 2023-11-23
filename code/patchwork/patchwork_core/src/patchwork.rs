@@ -43,10 +43,22 @@ impl Patchwork {
         self.current_player_flag == Patchwork::PLAYER_1
     }
 
+    // Returns if the given player is player 1.
+    #[inline]
+    pub fn is_flag_player_1(&self, player_flag: i8) -> bool {
+        player_flag == Patchwork::PLAYER_1
+    }
+
     // Returns if the current player is player 2.
     #[inline]
     pub fn is_player_2(&self) -> bool {
         self.current_player_flag == Patchwork::PLAYER_2
+    }
+
+    // Returns if the given player is player 2.
+    #[inline]
+    pub fn is_flag_player_2(&self, player_flag: i8) -> bool {
+        player_flag == Patchwork::PLAYER_2
     }
 
     /// Returns the current player.

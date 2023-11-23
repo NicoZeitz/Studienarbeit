@@ -1,11 +1,11 @@
 /// Represents a game.
-pub trait Game {
+pub trait Game: Clone {
     /// Different options for the game.
     type GameOptions;
     /// A type representing a player.
     type Player;
     /// A type representing an action.
-    type Action;
+    type Action: Clone;
     /// A type representing a list of actions.
     type ActionList: std::iter::IntoIterator<Item = Self::Action>;
 

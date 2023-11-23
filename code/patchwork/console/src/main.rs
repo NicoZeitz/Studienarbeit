@@ -5,7 +5,8 @@ pub fn main() {
     let args: Vec<String> = env::args().map(|arg| arg.to_lowercase()).collect();
 
     if args.contains(&"npc".to_string()) {
-        let mut player_1 = RandomPlayer::new("Random Player 1".to_owned(), None);
+        let mut player_1 = MCTSPlayer::new("MCTS Player 1".to_owned(), None);
+        // let mut player_1 = RandomPlayer::new("Random Player 1".to_owned(), None);
         let mut player_2 = RandomPlayer::new("Random Player 2".to_owned(), None);
         game_loop(&mut player_1, &mut player_2);
     } else if args.contains(&"test".to_string()) {

@@ -73,6 +73,53 @@ class GameLoop:
         print(f"Player '{state.player_2.name}' average score: {sum(player_2_scores) / len(player_2_scores)}")
 
     @staticmethod
+    def test_no_output():
+        max_player_1_score = -float('inf')
+        max_player_2_score = -float('inf')
+        min_player_1_score = float('inf')
+        min_player_2_score = float('inf')
+        player_1_wins = 0
+        player_2_wins = 0
+        draws = 0
+
+        for _ in range(1000):
+            player_1 = RandomPlayer(name='Player 1 (Random)')
+            player_2 = RandomPlayer(name='Player 2 (Random)')
+            game = Game()
+            state = game.get_initial_state(player_1_name=player_1.name, player_2_name=player_2.name)
+            while True:
+                if state.current_active_player == CurrentPlayer.PLAYER_1:
+                    action = player_1.get_action(game, state)
+                else:
+                    action = player_2.get_action(game, state)
+
+                state = game.get_next_state(state, action)
+                termination = game.get_termination(state)
+
+                if termination.is_terminated:
+                    if termination == Termination.PLAYER_1_WON:
+                        player_1_wins += 1
+                    elif termination == Termination.PLAYER_2_WON:
+                        player_2_wins += 1
+                    else:
+                        draws += 1
+
+                    max_player_1_score = max(max_player_1_score, termination.player_1_score)
+                    max_player_2_score = max(max_player_2_score, termination.player_2_score)
+                    min_player_1_score = min(min_player_1_score, termination.player_1_score)
+                    min_player_2_score = min(min_player_2_score, termination.player_2_score)
+                    break
+
+        print(f"max_player_1_score: {max_player_1_score}")
+        print(f"max_player_2_score: {max_player_2_score}")
+        print(f"min_player_1_score: {min_player_1_score}")
+        print(f"min_player_2_score: {min_player_2_score}")
+        print(f"player_1_wins: {player_1_wins}")
+        print(f"player_2_wins: {player_2_wins}")
+        print(f"draws: {draws}")
+
+
+    @staticmethod
     def run(
         *,
         seed: Optional[int] = None,

@@ -9,6 +9,7 @@
         "Fastpath",
         "Hasher",
         "mcts",
+        "playout",
         "rustc",
         "rustfmt",
         "Seedable",
