@@ -1,22 +1,21 @@
 use crate::{EvaluationNode, Evaluator};
-use patchwork_core::TerminationType;
 
-pub struct WinLossEvaluator {}
+pub struct ScoreEvaluator {}
 
-impl WinLossEvaluator {
-    /// Creates a new [`WinLossEvaluator`].
+impl ScoreEvaluator {
+    /// Creates a new [`ScoreEvaluator`].
     pub fn new() -> Self {
-        WinLossEvaluator {}
+        ScoreEvaluator {}
     }
 }
 
-impl Default for WinLossEvaluator {
+impl Default for ScoreEvaluator {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Evaluator for WinLossEvaluator {
+impl Evaluator for ScoreEvaluator {
     type Game = patchwork_core::Patchwork;
 
     type Evaluation = f64;
@@ -32,12 +31,14 @@ impl Evaluator for WinLossEvaluator {
         &self,
         node: Node,
     ) -> Self::Evaluation {
-        match node.game().get_termination_result().termination {
-            // TODO: range 0-1
-            TerminationType::Player1Won => 1.0,
-            TerminationType::Player2Won => -1.0,
-            TerminationType::Draw => 0.0,
-        }
+        let game = node.game();
+        let player_1_flag = game.get_player_1_flag();
+        let player_2_flag = game.get_player_2_flag();
+
+        let player_1_score = game.get_score(player_1_flag);
+        let player_2_score = game.get_score(player_2_flag);
+
+        (player_1_score - player_2_score).into()
     }
 
     fn interpret_evaluation_for_player(
@@ -47,18 +48,9 @@ impl Evaluator for WinLossEvaluator {
         evaluation: &Self::Evaluation,
     ) -> Self::Evaluation {
         if state.is_flag_player_1(*player) {
-            // TODO: is this correct?
-            if *evaluation == 1.0 {
-                return *evaluation;
-            } else {
-                return 0.0;
-            }
-        }
-
-        if *evaluation == -1.0 {
-            -*evaluation
+            *evaluation
         } else {
-            0.0
+            -*evaluation
         }
     }
 

@@ -61,6 +61,18 @@ impl Patchwork {
         player_flag == Patchwork::PLAYER_2
     }
 
+    /// Returns the flag for player 1.
+    #[inline]
+    pub fn get_player_1_flag(&self) -> i8 {
+        Patchwork::PLAYER_1
+    }
+
+    /// Returns the flag for player 2.
+    #[inline]
+    pub fn get_player_2_flag(&self) -> i8 {
+        Patchwork::PLAYER_2
+    }
+
     /// Returns the current player.
     #[inline]
     pub fn current_player(&self) -> &PlayerState {

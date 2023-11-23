@@ -10,6 +10,4 @@ pub trait TreePolicyNode {
     fn wins(&self) -> i32;
     // The number of times this node has been visited.
     fn visit_count(&self) -> i32;
-    // The number of times the parent of this node has been visited.
-    fn parent_visit_count(&self) -> i32;
 }

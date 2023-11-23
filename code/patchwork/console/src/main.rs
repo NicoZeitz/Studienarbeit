@@ -2,7 +2,9 @@ use patchwork::prelude::*;
 use std::env;
 
 pub fn main() {
-    let args: Vec<String> = env::args().map(|arg| arg.to_lowercase()).collect();
+    let mut args: Vec<String> = env::args().map(|arg| arg.to_lowercase()).collect();
+
+    args.push("npc".to_string());
 
     if args.contains(&"npc".to_string()) {
         let mut player_1 = MCTSPlayer::new("MCTS Player 1".to_owned(), None);

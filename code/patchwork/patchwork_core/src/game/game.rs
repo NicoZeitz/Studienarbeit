@@ -1,11 +1,13 @@
+use std::fmt;
+
 /// Represents a game.
-pub trait Game: Clone {
+pub trait Game: Clone + Send + fmt::Debug {
     /// Different options for the game.
     type GameOptions;
     /// A type representing a player.
     type Player;
     /// A type representing an action.
-    type Action: Clone;
+    type Action: Clone + Send + Sync + fmt::Debug;
     /// A type representing a list of actions.
     type ActionList: std::iter::IntoIterator<Item = Self::Action>;
 

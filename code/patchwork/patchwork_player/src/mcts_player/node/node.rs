@@ -1,6 +1,5 @@
-use std::cell::RefCell;
-use std::fmt;
-use std::rc::{Rc, Weak};
+use std::sync::{Arc, Mutex, Weak};
+use std::{fmt, thread};
 
 use patchwork_core::Game;
 use rand::seq::SliceRandom;
@@ -9,8 +8,8 @@ use rand::Rng;
 use crate::mcts_player::search_tree::MCTSSpecification;
 use crate::{EvaluationNode, Evaluator, TreePolicy, TreePolicyNode};
 
-type Link<T> = Rc<RefCell<Node<T>>>;
-type WeakLink<T> = Weak<RefCell<Node<T>>>;
+type Link<T> = Arc<Mutex<Node<T>>>;
+type WeakLink<T> = Weak<Mutex<Node<T>>>;
 
 #[derive(Clone)]
 pub struct Node<Spec: MCTSSpecification> {
@@ -35,6 +34,8 @@ pub struct Node<Spec: MCTSSpecification> {
     /// The actions that can still be taken from this node
     pub expandable_actions: Vec<<Spec::Game as patchwork_core::Game>::Action>,
 }
+
+unsafe impl<Spec: MCTSSpecification> Send for Node<Spec> {}
 
 impl<Spec: MCTSSpecification> Node<Spec> {
     pub fn new(
@@ -62,28 +63,36 @@ impl<Spec: MCTSSpecification> Node<Spec> {
     }
 
     pub fn is_fully_expanded(node: &Link<Spec>) -> bool {
-        Node::is_terminal(node) || RefCell::borrow(node).expandable_actions.is_empty()
+        Node::is_terminal(node)
+            || Arc::clone(node)
+                .lock()
+                .unwrap()
+                .expandable_actions
+                .is_empty()
     }
 
     pub fn is_terminal(node: &Link<Spec>) -> bool {
-        RefCell::borrow(node).state.is_terminated()
+        Arc::clone(node).lock().unwrap().state.is_terminated()
     }
 
     pub fn select<Policy: TreePolicy>(node: &Link<Spec>, tree_policy: &Policy) -> Link<Spec> {
-        Rc::clone(tree_policy.select_node(RefCell::borrow(node).children.iter()))
+        let cloned_parent = Mutex::new(node.lock().unwrap().clone());
+        let parent = node.lock().unwrap();
+        let children = parent.children.iter();
+        Arc::clone(tree_policy.select_node(&Arc::new(cloned_parent), children))
     }
 
     ///  Expands this node by adding a child node.
     /// The child node is chosen randomly from the expandable actions.
     pub fn expand(node: &Link<Spec>) -> Link<Spec> {
-        let action = RefCell::borrow_mut(node).expandable_actions.remove(0);
-        let next_state = RefCell::borrow(node).state.get_next_state(&action);
-        let child = Rc::new(RefCell::new(Node::new(
+        let action = node.lock().unwrap().expandable_actions.remove(0);
+        let next_state = node.lock().unwrap().state.get_next_state(&action);
+        let child = Arc::new(Mutex::new(Node::new(
             &next_state,
-            Some(Rc::downgrade(node)),
+            Some(Arc::downgrade(node)),
             Some(action),
         )));
-        RefCell::borrow_mut(node).children.push(Rc::clone(&child));
+        node.lock().unwrap().children.push(Arc::clone(&child));
         child
     }
 
@@ -99,7 +108,7 @@ impl<Spec: MCTSSpecification> Node<Spec> {
         value: Eval::Evaluation,
         evaluator: &Eval,
     ) {
-        let mut mutable_node = RefCell::borrow_mut(node);
+        let mut mutable_node = node.lock().unwrap();
 
         let state = &mutable_node.state;
         let player = &mutable_node.state.get_current_player();
@@ -131,9 +140,27 @@ impl<Spec: MCTSSpecification> Node<Spec> {
     pub fn simulate<Eval: Evaluator<Game = Spec::Game>>(
         node: &Link<Spec>,
         evaluator: &Eval,
-        _leaf_parallelization: usize, // TODO: leaf_parallelization
+        leaf_parallelization: usize,
     ) -> Eval::Evaluation {
-        evaluator.evaluate_intermediate_node(node)
+        if Node::is_terminal(node) {
+            return evaluator.evaluate_terminal_node(node);
+        }
+
+        if leaf_parallelization == 1 {
+            return evaluator.evaluate_intermediate_node(node);
+        }
+
+        let results = thread::scope(|s| {
+            (0..leaf_parallelization)
+                .map(|_| {
+                    let node = Arc::clone(node);
+                    s.spawn(move || evaluator.evaluate_intermediate_node(&node))
+                })
+                .map(|handle| handle.join().unwrap())
+                .collect::<Vec<_>>()
+        });
+
+        evaluator.combine_evaluations(results.into_iter())
     }
 
     pub fn random_rollout(node: &Link<Spec>) -> &Link<Spec> {
@@ -141,7 +168,7 @@ impl<Spec: MCTSSpecification> Node<Spec> {
             return node;
         }
 
-        let mut rollout_state = RefCell::borrow(node).state.clone(); // TODO: can we not clone here?
+        let mut rollout_state = node.lock().unwrap().state.clone(); // TODO: can we not clone here?
         let valid_actions: Vec<_> = rollout_state.get_valid_actions().into_iter().collect();
         let index = rand::thread_rng().gen_range(0..valid_actions.len());
         let mut action = valid_actions[index].clone();
@@ -160,32 +187,23 @@ impl<Spec: MCTSSpecification> Node<Spec> {
 
 impl<Spec: MCTSSpecification> TreePolicyNode for &Link<Spec> {
     fn max_score(&self) -> f64 {
-        RefCell::borrow(self).max_score
+        self.lock().unwrap().max_score
     }
 
     fn min_score(&self) -> f64 {
-        RefCell::borrow(self).min_score
+        self.lock().unwrap().min_score
     }
 
     fn score_sum(&self) -> f64 {
-        RefCell::borrow(self).score_sum
+        self.lock().unwrap().score_sum
     }
 
     fn wins(&self) -> i32 {
-        RefCell::borrow(self).wins
+        self.lock().unwrap().wins
     }
 
     fn visit_count(&self) -> i32 {
-        RefCell::borrow(self).visit_count
-    }
-
-    fn parent_visit_count(&self) -> i32 {
-        RefCell::borrow(self)
-            .parent
-            .as_ref()
-            .and_then(Weak::upgrade)
-            .map(|parent| RefCell::borrow(&parent).visit_count)
-            .unwrap_or(0)
+        self.lock().unwrap().visit_count
     }
 }
 
@@ -193,7 +211,7 @@ impl<Spec: MCTSSpecification> EvaluationNode for &Link<Spec> {
     type Game = Spec::Game;
 
     fn game(&self) -> Self::Game {
-        let state = RefCell::borrow(self).state.clone(); // TODO: can we not clone here?
+        let state = self.lock().unwrap().state.clone(); // TODO: can we not clone here?
         state
     }
 
@@ -202,18 +220,21 @@ impl<Spec: MCTSSpecification> EvaluationNode for &Link<Spec> {
     }
 }
 
-impl<Spec: MCTSSpecification> fmt::Debug for Node<Spec> {
+impl<Spec: MCTSSpecification> fmt::Debug for Node<Spec>
+where
+    <Spec::Game as patchwork_core::Game>::Action: fmt::Debug,
+{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_struct("Node")
             // .field("state", &self.state)
             .field("parent", &self.parent)
-            .field("children", &self.children)
+            // .field("children", &self.children)
             .field("max_score", &self.max_score)
             .field("min_score", &self.min_score)
             .field("score_sum", &self.score_sum)
             .field("wins", &self.wins)
             .field("visit_count", &self.visit_count)
-            // .field("action_taken", &self.action_taken) // TODO:
+            .field("action_taken", &self.action_taken) // TODO:
             // .field("expandable_actions", &self.expandable_actions)
             .finish()
     }
@@ -237,7 +258,7 @@ impl<Spec: MCTSSpecification> fmt::Debug for Node<Spec> {
 //                 let index_in_parent = parent_borrow
 //                     .children
 //                     .iter()
-//                     .position(|child| Rc::ptr_eq(&child.0, &node.0))
+//                     .position(|child| Arc::ptr_eq(&child.0, &node.0))
 //                     .expect("Node is not a child of its parent");
 
 //                 parent_borrow.children.remove(index_in_parent);

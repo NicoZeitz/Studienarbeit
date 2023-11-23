@@ -1,3 +1,5 @@
+use std::num::NonZeroUsize;
+
 /// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum MCTSEndCondition {
@@ -25,9 +27,12 @@ pub struct MCTSOptions {
 impl MCTSOptions {
     pub fn new() -> Self {
         Self {
-            root_parallelization: 1,
+            root_parallelization: std::thread::available_parallelism()
+                .map(|n| <NonZeroUsize as Into<usize>>::into(n) / 2 * 2) // TODO: 1 -> 2
+                .unwrap_or(4),
             leaf_parallelization: 1,
-            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(20)),
+            // end_condition: MCTSEndCondition::Iterations(100_000),
+            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(60)),
         }
     }
 }

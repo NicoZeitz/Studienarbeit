@@ -15,7 +15,7 @@ impl UCTPolicy {
 }
 
 impl TreePolicy for UCTPolicy {
-    fn select_node<Node, NodeIterator>(&self, children: NodeIterator) -> Node
+    fn select_node<Node, NodeIterator>(&self, parent: Node, children: NodeIterator) -> Node
     where
         Node: TreePolicyNode,
         NodeIterator: Iterator<Item = Node>,
@@ -25,7 +25,7 @@ impl TreePolicy for UCTPolicy {
 
         for child in children {
             let child_visit_count = child.visit_count();
-            let parent_visit_count = child.parent_visit_count();
+            let parent_visit_count = parent.visit_count();
 
             let exploitation_score = child.wins() as f64 / child_visit_count as f64;
             let exploration_score = self.exploration_constant
