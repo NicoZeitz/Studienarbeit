@@ -73,7 +73,7 @@ impl Player for MinimaxPlayer {
             )
         };
 
-        for (next_state, action) in filter_actions(game, &valid_actions) {
+        for (next_state, action, _) in filter_actions(game, &valid_actions) {
             let evaluation = Self::minimax(
                 &next_state,
                 self.depth - 1,
@@ -116,7 +116,7 @@ impl MinimaxPlayer {
         filter_actions: &Filter,
     ) -> f64
     where
-        Filter: Fn(&Game, &Game::ActionList) -> Vec<(Game, Game::Action)>,
+        Filter: Fn(&Game, &Game::ActionList) -> Vec<(Game, Game::Action, f64)>,
     {
         if depth == 0 || game.is_terminated() {
             return evaluator.evaluate_node(game);
@@ -130,7 +130,7 @@ impl MinimaxPlayer {
 
         if maximizing_player {
             let mut value = f64::NEG_INFINITY;
-            for (next_state, _) in filter_actions(game, &valid_actions) {
+            for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(
                     &next_state,
                     depth - 1,
@@ -148,7 +148,7 @@ impl MinimaxPlayer {
             value
         } else {
             let mut value = f64::INFINITY;
-            for (next_state, _) in filter_actions(game, &valid_actions) {
+            for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(
                     &next_state,
                     depth - 1,
@@ -172,7 +172,7 @@ impl MinimaxPlayer {
         valid_actions: &[Action],
         amount_actions_per_piece: usize,
         evaluator: &impl game::Evaluator<Game = Patchwork>,
-    ) -> Vec<(Patchwork, Action)> {
+    ) -> Vec<(Patchwork, Action, f64)> {
         let place_first_piece_tuple = valid_actions
             .iter()
             .filter(|a| a.is_first_patch_taken() || a.is_special_patch_placement())
@@ -208,7 +208,6 @@ impl MinimaxPlayer {
             return place_first_piece_tuple
                 .into_iter()
                 .take(amount_actions_per_piece * 3)
-                .map(|(s, a, _)| (s, a))
                 .collect::<Vec<_>>();
         }
 
@@ -271,8 +270,5 @@ impl MinimaxPlayer {
             ordering => ordering,
         });
         result
-            .into_iter()
-            .map(|(s, a, _)| (s, a.clone()))
-            .collect::<Vec<_>>()
     }
 }

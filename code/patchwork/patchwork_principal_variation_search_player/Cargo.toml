@@ -1,8 +1,10 @@
 [package]
-name = "patchwork_negamax_player"
+name = "patchwork_principal_variation_search_player"
 version = "1.0.0"
+authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]
 game = { path = "../game" }
 patchwork_core = { path = "../patchwork_core" }
+rand = "0.8.5"

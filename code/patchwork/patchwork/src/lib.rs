@@ -11,7 +11,7 @@ pub mod player {
     pub use patchwork_human_player::HumanPlayer;
     pub use patchwork_mcts_player::MCTSPlayer;
     pub use patchwork_minimax_player::{MinimaxOptions, MinimaxPlayer};
-    pub use patchwork_negamax_player::NegamaxPlayer;
+    pub use patchwork_principal_variation_search_player::PrincipalVariationSearchPlayer;
     pub use patchwork_random_player::{RandomOptions, RandomPlayer};
 }
 

@@ -3,7 +3,7 @@ use std::sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering};
 use patchwork::{
     player::{
         AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer,
-        NegamaxPlayer, Player, RandomOptions, RandomPlayer,
+        Player, PrincipalVariationSearchPlayer, RandomOptions, RandomPlayer,
     },
     Game, Patchwork, TerminationType,
 };
@@ -59,8 +59,8 @@ impl GameLoop {
                     Some(MinimaxOptions::new(depth, amount_actions_per_piece)),
                 ))
             }
-            "negamax" => Box::new(NegamaxPlayer::new(format!(
-                "Negamax Player {player_position}"
+            "pvs" => Box::new(PrincipalVariationSearchPlayer::new(format!(
+                "PVS Player {player_position}"
             ))),
             "alphazero" => Box::new(AlphaZeroPlayer::new(format!(
                 "AlphaZero Player {player_position}"
@@ -122,20 +122,28 @@ impl GameLoop {
         }
     }
 
-    pub fn compare(iterations: usize, player_1: &str, player_2: &str, update: Option<usize>) {
+    pub fn compare(
+        iterations: usize,
+        player_1: &str,
+        player_2: &str,
+        update: Option<usize>,
+        parallelization: Option<usize>,
+    ) {
         let update = update
             .map(|u| std::time::Duration::from_millis(u as u64))
             .unwrap_or(std::time::Duration::from_millis(100));
+        let parallelization = parallelization
+            .or(std::thread::available_parallelism().map(|p| p.into()).ok())
+            .unwrap_or(1);
+
         let temp_player_1 = GameLoop::get_player(player_1, 1);
         let temp_player_2 = GameLoop::get_player(player_2, 2);
         let player_1_name = temp_player_1.name();
         let player_2_name = temp_player_2.name();
 
-        let amount_parallel = std::thread::available_parallelism().unwrap().into();
-
         println!(
             "Comparing {} iterations with {} threads: {} vs. {}",
-            iterations, amount_parallel, player_1_name, player_2_name
+            iterations, parallelization, player_1_name, player_2_name
         );
 
         let max_player_1_score = AtomicI32::new(i32::MIN);
@@ -155,12 +163,11 @@ impl GameLoop {
         print!("\n\n\n\n\n");
 
         let iterations_done = AtomicU32::new(0);
-        let iterations_per_thread = iterations / amount_parallel;
         std::thread::scope(|s| {
-            for i in 0..amount_parallel {
-                let is_last = i + 1 == amount_parallel;
+            for _ in 0..parallelization {
                 let player_1 = player_1.to_string();
                 let player_2 = player_2.to_string();
+                let iterations = iterations as u32;
                 let iterations_done = &iterations_done;
                 let wins_player_1 = &wins_player_1;
                 let wins_player_2 = &wins_player_2;
@@ -178,22 +185,21 @@ impl GameLoop {
                 s.spawn(move || {
                     let mut player_1 = GameLoop::get_player(&player_1, 1);
                     let mut player_2 = GameLoop::get_player(&player_2, 2);
-                    let iterations_per_thread = if is_last {
-                        iterations - iterations_per_thread * (amount_parallel - 1)
-                    } else {
-                        iterations_per_thread
-                    };
 
-                    for _ in 0..iterations_per_thread {
+                    'outer: while iterations_done.load(Ordering::Acquire) < iterations {
                         let mut state = Patchwork::get_initial_state(None);
                         loop {
+                            if iterations_done.load(Ordering::Acquire) >= iterations {
+                                break 'outer;
+                            }
+
                             let action = if state.is_player_1() {
                                 let start_time = std::time::Instant::now();
                                 let action = player_1.get_action(&state);
                                 let end = u64::try_from(
                                     std::time::Instant::now()
                                         .duration_since(start_time)
-                                        .as_millis(),
+                                        .as_nanos(),
                                 )
                                 .unwrap();
 
@@ -206,7 +212,7 @@ impl GameLoop {
                                 let end = u64::try_from(
                                     std::time::Instant::now()
                                         .duration_since(start_time)
-                                        .as_millis(),
+                                        .as_nanos(),
                                 )
                                 .unwrap();
                                 sum_time_player_2.fetch_add(end, Ordering::Relaxed);
@@ -242,7 +248,7 @@ impl GameLoop {
                                     .fetch_add(termination.player_1_score, Ordering::Relaxed);
                                 sum_player_2_score
                                     .fetch_add(termination.player_2_score, Ordering::Relaxed);
-                                iterations_done.fetch_add(1, Ordering::Relaxed);
+                                iterations_done.fetch_add(1, Ordering::Release);
                                 break;
                             }
                         }
@@ -251,7 +257,7 @@ impl GameLoop {
             }
             loop {
                 let iterations_done = iterations_done.load(Ordering::Relaxed) as usize;
-                if iterations_done == iterations {
+                if iterations_done >= iterations {
                     break;
                 }
                 GameLoop::print_progress(
@@ -335,7 +341,7 @@ impl GameLoop {
             avg_player_1_score,
             max_player_1_score,
             min_player_1_score,
-            std::time::Duration::from_millis(avg_player_1_time.round() as u64)
+            std::time::Duration::from_nanos(avg_player_1_time.round() as u64)
         );
         println!(
             "Player 2: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {:?}]                       ",
@@ -344,7 +350,7 @@ impl GameLoop {
             avg_player_2_score,
             max_player_2_score,
             min_player_2_score,
-            std::time::Duration::from_millis(avg_player_2_time.round() as u64)
+            std::time::Duration::from_nanos(avg_player_2_time.round() as u64)
         );
         println!(
             "          {: >7} draws ({:0>5.2}%)                       ",

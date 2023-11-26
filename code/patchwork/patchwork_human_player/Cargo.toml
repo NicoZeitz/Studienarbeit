@@ -1,6 +1,7 @@
 [package]
 name = "patchwork_human_player"
 version = "1.0.0"
+authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]

@@ -13,8 +13,19 @@ struct Args {
     )]
     compare: Option<usize>,
 
-    #[arg(short = 'u', long = "update", help = "How often to update (in ms)")]
+    #[arg(
+        short = 'u',
+        long = "update",
+        help = "How often to update (in ms; only in comparison)"
+    )]
     update: Option<usize>,
+
+    #[arg(
+        short = 'p',
+        long = "par",
+        help = "How many cores to use (only in comparison)"
+    )]
+    parallelization: Option<usize>,
 
     #[arg(
         short = '1',
@@ -42,6 +53,7 @@ pub fn main() {
             &args.player_1,
             &args.player_2,
             args.update,
+            args.parallelization,
         );
     } else {
         GameLoop::run(&args.player_1, &args.player_2);

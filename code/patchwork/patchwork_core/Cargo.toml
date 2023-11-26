@@ -1,6 +1,7 @@
 [package]
 name = "patchwork_core"
 version = "1.0.0"
+authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]

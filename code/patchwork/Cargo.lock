@@ -12,6 +12,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "algorithms"
+version = "1.0.0"
+
+[[package]]
 name = "anstream"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -239,7 +243,7 @@ dependencies = [
  "patchwork_macros",
  "patchwork_mcts_player",
  "patchwork_minimax_player",
- "patchwork_negamax_player",
+ "patchwork_principal_variation_search_player",
  "patchwork_random_player",
 ]
 
@@ -324,11 +328,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "patchwork_negamax_player"
+name = "patchwork_principal_variation_search_player"
 version = "1.0.0"
 dependencies = [
  "game",
  "patchwork_core",
+ "rand",
 ]
 
 [[package]]
