@@ -7,3 +7,4 @@ edition = "2021"
 game = { path = "../game" }
 patchwork_core = { path = "../patchwork_core" }
 patchwork_evaluator = { path = "../patchwork_evaluator" }
+rand = "0.8.5"

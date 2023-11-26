@@ -1,12 +1,13 @@
-use std::sync::atomic::{self, AtomicI32, AtomicU32, Ordering};
+use std::sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering};
 
 use patchwork::{
     player::{
-        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxPlayer, NegamaxPlayer,
-        Player, RandomPlayer,
+        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer,
+        NegamaxPlayer, Player, RandomOptions, RandomPlayer,
     },
     Game, Patchwork, TerminationType,
 };
+use regex::Regex;
 
 pub struct GameLoop;
 
@@ -18,6 +19,21 @@ impl GameLoop {
                 format!("Random Player {player_position}"),
                 None,
             )),
+            _ if player.starts_with("random") => {
+                let seed = Regex::new(r"random\((?<seed>\d+)\)")
+                    .unwrap()
+                    .captures(player)
+                    .unwrap()
+                    .name("seed")
+                    .unwrap()
+                    .as_str()
+                    .parse()
+                    .unwrap();
+                Box::new(RandomPlayer::new(
+                    format!("Random Player {player_position} ({})", seed),
+                    Some(RandomOptions::new(seed)),
+                ))
+            }
             "greedy" => Box::new(GreedyPlayer::new(format!(
                 "Greedy Player {player_position}"
             ))),
@@ -25,9 +41,24 @@ impl GameLoop {
                 format!("MCTS Player {player_position}"),
                 Default::default(),
             )),
-            "minimax" => Box::new(MinimaxPlayer::new(format!(
-                "Minimax Player {player_position}"
-            ))),
+            "minimax" => Box::new(MinimaxPlayer::new(
+                format!("Minimax Player {player_position}"),
+                Default::default(),
+            )),
+            _ if player.starts_with("minimax") => {
+                let regex = Regex::new(r"minimax\((?<depth>\d+),\s*(?<pieces>\d+)\)").unwrap();
+                let captures = regex.captures(player).unwrap();
+                let depth = captures.name("depth").unwrap().as_str().parse().unwrap();
+                let amount_actions_per_piece =
+                    captures.name("pieces").unwrap().as_str().parse().unwrap();
+                Box::new(MinimaxPlayer::new(
+                    format!(
+                        "Minimax Player {player_position} ({}, {})",
+                        depth, amount_actions_per_piece
+                    ),
+                    Some(MinimaxOptions::new(depth, amount_actions_per_piece)),
+                ))
+            }
             "negamax" => Box::new(NegamaxPlayer::new(format!(
                 "Negamax Player {player_position}"
             ))),
@@ -113,6 +144,10 @@ impl GameLoop {
         let min_player_2_score = AtomicI32::new(i32::MAX);
         let sum_player_1_score = AtomicI32::new(0);
         let sum_player_2_score = AtomicI32::new(0);
+        let sum_time_player_1 = AtomicU64::new(0);
+        let sum_time_player_2 = AtomicU64::new(0);
+        let n_time_player_1 = AtomicU64::new(0);
+        let n_time_player_2 = AtomicU64::new(0);
         let wins_player_1 = AtomicU32::new(0);
         let wins_player_2 = AtomicU32::new(0);
         let draws = AtomicU32::new(0);
@@ -136,6 +171,10 @@ impl GameLoop {
                 let min_player_2_score = &min_player_2_score;
                 let sum_player_1_score = &sum_player_1_score;
                 let sum_player_2_score = &sum_player_2_score;
+                let sum_time_player_1 = &sum_time_player_1;
+                let sum_time_player_2 = &sum_time_player_2;
+                let n_time_player_1 = &n_time_player_1;
+                let n_time_player_2 = &n_time_player_2;
                 s.spawn(move || {
                     let mut player_1 = GameLoop::get_player(&player_1, 1);
                     let mut player_2 = GameLoop::get_player(&player_2, 2);
@@ -149,10 +188,32 @@ impl GameLoop {
                         let mut state = Patchwork::get_initial_state(None);
                         loop {
                             let action = if state.is_player_1() {
-                                player_1.get_action(&state)
+                                let start_time = std::time::Instant::now();
+                                let action = player_1.get_action(&state);
+                                let end = u64::try_from(
+                                    std::time::Instant::now()
+                                        .duration_since(start_time)
+                                        .as_millis(),
+                                )
+                                .unwrap();
+
+                                sum_time_player_1.fetch_add(end, Ordering::Relaxed);
+                                n_time_player_1.fetch_add(1, Ordering::Relaxed);
+                                action
                             } else {
-                                player_2.get_action(&state)
+                                let start_time = std::time::Instant::now();
+                                let action = player_2.get_action(&state);
+                                let end = u64::try_from(
+                                    std::time::Instant::now()
+                                        .duration_since(start_time)
+                                        .as_millis(),
+                                )
+                                .unwrap();
+                                sum_time_player_2.fetch_add(end, Ordering::Relaxed);
+                                n_time_player_2.fetch_add(1, Ordering::Relaxed);
+                                action
                             };
+
                             state = state.get_next_state(&action);
                             if state.is_terminated() {
                                 let termination = state.get_termination_result();
@@ -205,6 +266,10 @@ impl GameLoop {
                     min_player_2_score.load(Ordering::Relaxed),
                     sum_player_1_score.load(Ordering::Relaxed) as f64,
                     sum_player_2_score.load(Ordering::Relaxed) as f64,
+                    sum_time_player_1.load(Ordering::Relaxed) as f64,
+                    n_time_player_1.load(Ordering::Relaxed) as f64,
+                    sum_time_player_2.load(Ordering::Relaxed) as f64,
+                    n_time_player_2.load(Ordering::Relaxed) as f64,
                     player_1_name,
                     player_2_name,
                 );
@@ -226,6 +291,10 @@ impl GameLoop {
             min_player_2_score.load(Ordering::Relaxed),
             sum_player_1_score.load(Ordering::Relaxed) as f64,
             sum_player_2_score.load(Ordering::Relaxed) as f64,
+            sum_time_player_1.load(Ordering::Relaxed) as f64,
+            n_time_player_1.load(Ordering::Relaxed) as f64,
+            sum_time_player_2.load(Ordering::Relaxed) as f64,
+            n_time_player_2.load(Ordering::Relaxed) as f64,
             player_1_name,
             player_2_name,
         );
@@ -244,29 +313,38 @@ impl GameLoop {
         min_player_2_score: i32,
         avg_player_1_score: f64,
         avg_player_2_score: f64,
+        sum_time_player_1: f64,
+        n_time_player_1: f64,
+        sum_time_player_2: f64,
+        n_time_player_2: f64,
         player_1_name: &str,
         player_2_name: &str,
     ) {
         let avg_player_1_score = avg_player_1_score / iteration as f64;
         let avg_player_2_score = avg_player_2_score / iteration as f64;
 
+        let avg_player_1_time = sum_time_player_1 / n_time_player_1;
+        let avg_player_2_time = sum_time_player_2 / n_time_player_2;
+
         print!("\x1b[5A\r");
         println!("Iteration {: >7} / {}", iteration, iterations);
         println!(
-            "Player 1: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}]                       ",
+            "Player 1: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {:?}]                       ",
             wins_player_1,
             (wins_player_1 as f64 / iteration as f64 * 100.0),
             avg_player_1_score,
             max_player_1_score,
             min_player_1_score,
+            std::time::Duration::from_millis(avg_player_1_time.round() as u64)
         );
         println!(
-            "Player 2: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}]                       ",
+            "Player 2: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {:?}]                       ",
             wins_player_2,
             (wins_player_2 as f64 / iteration as f64 * 100.0),
             avg_player_2_score,
             max_player_2_score,
             min_player_2_score,
+            std::time::Duration::from_millis(avg_player_2_time.round() as u64)
         );
         println!(
             "          {: >7} draws ({:0>5.2}%)                       ",

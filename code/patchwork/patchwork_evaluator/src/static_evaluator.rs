@@ -72,6 +72,7 @@ impl StaticEvaluator {
     ) -> f64 {
         let player_state = game.get_player(*player);
         let quilt_board = &player_state.quilt_board;
+        let percentage_played = player_state.position as f64 / TimeBoard::MAX_POSITION as f64;
 
         let end_score = game.get_score(*player) as f64;
         let position_score = (TimeBoard::MAX_POSITION - player_state.position) as f64;
@@ -81,8 +82,13 @@ impl StaticEvaluator {
             &game.time_board,
             player_state.position,
         );
+        // let free_single_tiles_score = get_free_single_tiles_score(quilt_board);
+        // let free_region_score = self.get_free_region_score(quilt_board);
 
-        end_score + position_score + board_score + button_income_score
+        end_score * 2.0 * percentage_played
+            + position_score
+            + board_score * 2.0 * (1.0 - percentage_played)
+            + button_income_score
     }
 
     #[rustfmt::skip]
@@ -134,5 +140,80 @@ impl StaticEvaluator {
 
         // f(x) = 8exp(ln(1/8) * x / 8)
         8.0 * E.powf((amount_button_income_triggers_passed as f64 / 8.0).ln() / 8.0) * button_income
+    }
+
+    #[allow(dead_code)]
+    fn get_free_single_tiles_score(&self, quilt_board: &QuiltBoard) -> f64 {
+        let mut free_single_tiles_score = 0.0;
+
+        for row in 1..(QuiltBoard::ROWS + 1) {
+            for col in 1..(QuiltBoard::COLUMNS + 1) {
+                if quilt_board.get(row, col) {
+                    continue;
+                }
+
+                let mut is_free_single_tile = true;
+
+                // Moore neighborhood
+                is_free_single_tile &= !quilt_board.get(row + 1, col + 1);
+                is_free_single_tile &= !quilt_board.get(row + 1, col);
+                is_free_single_tile &= !quilt_board.get(row + 1, col - 1);
+                is_free_single_tile &= !quilt_board.get(row, col + 1);
+                is_free_single_tile &= !quilt_board.get(row, col - 1);
+                is_free_single_tile &= !quilt_board.get(row - 1, col + 1);
+                is_free_single_tile &= !quilt_board.get(row - 1, col);
+                is_free_single_tile &= !quilt_board.get(row - 1, col - 1);
+
+                free_single_tiles_score += is_free_single_tile as usize as f64;
+            }
+        }
+
+        free_single_tiles_score
+    }
+
+    /// Counts the amount of spaces per region and rewards bigger regions more
+    #[allow(dead_code)]
+    fn get_free_region_score(&self, quilt_board: &QuiltBoard) -> f64 {
+        let mut free_region_score = 0.0;
+
+        let mut visited = [[false; QuiltBoard::COLUMNS]; QuiltBoard::ROWS];
+
+        for row in 0..QuiltBoard::ROWS {
+            for col in 0..QuiltBoard::COLUMNS {
+                if visited[row][col] || quilt_board.get(row, col) {
+                    continue;
+                }
+
+                let mut region_size = 0;
+                let mut stack = vec![(row, col)];
+
+                while let Some((row, col)) = stack.pop() {
+                    // overflow will wrap around
+                    if row >= QuiltBoard::ROWS || col >= QuiltBoard::COLUMNS {
+                        continue;
+                    }
+
+                    if visited[row][col] || quilt_board.get(row, col) {
+                        continue;
+                    }
+
+                    visited[row][col] = true;
+                    region_size += 1;
+
+                    stack.push((row + 1, col + 1));
+                    stack.push((row + 1, col));
+                    stack.push((row + 1, col - 1));
+                    stack.push((row, col + 1));
+                    stack.push((row, col - 1));
+                    stack.push((row - 1, col + 1));
+                    stack.push((row - 1, col));
+                    stack.push((row - 1, col - 1));
+                }
+
+                free_region_score += 81.0 / region_size as f64;
+            }
+        }
+
+        free_region_score
     }
 }

@@ -11,6 +11,7 @@
         "Fastpath",
         "Hasher",
         "mcts",
+        "nanos",
         "Negamax",
         "Neumann",
         "playout",

@@ -123,6 +123,7 @@ version = "1.0.0"
 dependencies = [
  "clap",
  "patchwork",
+ "regex",
 ]
 
 [[package]]
@@ -278,6 +279,7 @@ dependencies = [
  "game",
  "patchwork_core",
  "patchwork_evaluator",
+ "rand",
 ]
 
 [[package]]
@@ -317,6 +319,8 @@ version = "1.0.0"
 dependencies = [
  "game",
  "patchwork_core",
+ "patchwork_evaluator",
+ "rand",
 ]
 
 [[package]]

@@ -191,13 +191,13 @@ impl Display for Patchwork {
         }
 
         write!(f, "\nTime board:\n{}\n", self.time_board)?;
-        writeln!(f, "Next 3 patches:")?;
+        writeln!(f, "Next 6 patches (can only take first 3):")?;
 
-        // only take first 3 patches
+        // only take first 6 patches
         let patch_strings = self
             .patches
             .iter()
-            .take(3)
+            .take(6)
             .map(|patch| format!("{}", patch));
 
         let patch_strings_lines = patch_strings

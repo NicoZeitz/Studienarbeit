@@ -10,7 +10,7 @@ pub mod player {
     pub use patchwork_greedy_player::GreedyPlayer;
     pub use patchwork_human_player::HumanPlayer;
     pub use patchwork_mcts_player::MCTSPlayer;
-    pub use patchwork_minimax_player::MinimaxPlayer;
+    pub use patchwork_minimax_player::{MinimaxOptions, MinimaxPlayer};
     pub use patchwork_negamax_player::NegamaxPlayer;
     pub use patchwork_random_player::{RandomOptions, RandomPlayer};
 }

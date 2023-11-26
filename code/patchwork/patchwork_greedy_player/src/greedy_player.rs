@@ -42,7 +42,7 @@ impl Player for GreedyPlayer {
             return valid_actions[0].clone();
         }
 
-        let maximizing_player = game.is_player_1();
+        let maximizing_player = game.is_maximizing_player(&game.get_current_player());
 
         let mut chosen_action = &valid_actions[0];
         let mut chosen_evaluation = if maximizing_player {
@@ -67,6 +67,10 @@ impl Player for GreedyPlayer {
                     chosen_action = action;
                     chosen_evaluation = evaluation;
                 }
+            }
+            // break ties randomly
+            if evaluation == chosen_evaluation && rand::random() {
+                chosen_action = action;
             }
         }
 
