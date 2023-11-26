@@ -5,20 +5,29 @@
 
 [workspace]
 members = [
+    "console",
+    "game",
     "patchwork",
     "patchwork_core",
     "patchwork_macros",
-    "patchwork_player",
-    "console",
+    "patchwork_evaluator",
+    "patchwork_human_player",
+    "patchwork_random_player",
+    "patchwork_greedy_player",
+    "patchwork_mcts_player",
+    "patchwork_minimax_player",
+    "patchwork_negamax_player",
+    "patchwork_alphazero_player",
+    "tree_policy",
 ]
 resolver = "2"
 
-[workspace.lints.rust]
+[lints.rust]
 missing_debug_implementations = "warn"
 rust_2018_idioms = "warn"
 missing_docs = "warn"
 
-[workspace.lints.clippy]
+[lints.clippy]
 all = "warn"
 pedantic = "warn"
 nursery = "warn"

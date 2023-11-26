@@ -120,8 +120,8 @@ impl Action {
 
     #[rustfmt::skip]
     fn calculate_id(payload: &ActionPayload) -> usize {
-        const ROWS: usize = QuiltBoard::ROWS as usize;
-        const COLUMNS: usize = QuiltBoard::COLUMNS as usize;
+        const ROWS: usize = QuiltBoard::ROWS;
+        const COLUMNS: usize = QuiltBoard::COLUMNS;
 
         match payload {
             // walking action [0, 0]

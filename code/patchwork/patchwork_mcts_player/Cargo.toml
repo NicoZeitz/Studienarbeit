@@ -1,0 +1,11 @@
+[package]
+name = "patchwork_mcts_player"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+game = { path = "../game" }
+patchwork_core = { path = "../patchwork_core" }
+tree_policy = { path = "../tree_policy" }
+patchwork_evaluator = { path = "../patchwork_evaluator" }
+rand = "0.8.5"

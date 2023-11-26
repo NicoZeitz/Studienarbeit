@@ -1,7 +1,8 @@
 use crate::{
-    Action, ActionPatchPlacementPayload, ActionPayload, ActionSpecialPatchPlacementPayload, Game,
+    Action, ActionPatchPlacementPayload, ActionPayload, ActionSpecialPatchPlacementPayload,
     GameOptions, Patch, PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard,
 };
+use game::Game;
 
 /// The game logic for Patchwork.
 impl Game for Patchwork {
@@ -79,15 +80,12 @@ impl Game for Patchwork {
         valid_actions
     }
 
-    fn get_random_action(&self) -> Action {
-        // TODO: more efficient implementation
-        let valid_actions = self.get_valid_actions();
-        let random_index = rand::random::<usize>() % valid_actions.len();
-        valid_actions[random_index].clone()
-    }
-
     fn get_current_player(&self) -> Self::Player {
         self.current_player_flag
+    }
+
+    fn is_maximizing_player(&self, player: &Self::Player) -> bool {
+        *player == Patchwork::PLAYER_1
     }
 
     fn get_next_state(&self, action: &Action) -> Patchwork {
@@ -172,7 +170,8 @@ impl Game for Patchwork {
         // 4. move player by time_cost
         let new_current_player_position = {
             let current_player = new_state.current_player_mut();
-            current_player.position += time_cost;
+            current_player.position =
+                (current_player.position + time_cost).min(TimeBoard::MAX_POSITION);
             current_player.position
         };
         new_state.time_board.set_player_position(
@@ -272,7 +271,7 @@ impl Patchwork {
         }
 
         // player can only place pieces that fit on their board (fastpath)
-        if QuiltBoard::TILES - player.quilt_board.tiles_filled() < patch.amount_tiles() {
+        if QuiltBoard::TILES as u32 - player.quilt_board.tiles_filled() < patch.amount_tiles() {
             return false;
         }
 

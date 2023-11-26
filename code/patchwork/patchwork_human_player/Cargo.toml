@@ -1,0 +1,11 @@
+[package]
+name = "patchwork_human_player"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+game = { path = "../game" }
+patchwork_core = { path = "../patchwork_core" }
+rand = "0.8.5"
+rand_xoshiro = "0.6.0"
+regex = "1.10.2"

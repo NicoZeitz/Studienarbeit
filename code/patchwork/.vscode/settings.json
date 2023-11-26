@@ -1,20 +1,26 @@
 {
     "cSpell.words": [
         "alloc",
+        "alphazero",
         "backpropagate",
         "backpropagated",
         "Backpropagates",
         "Backpropagation",
         "bitvec",
+        "consts",
         "Fastpath",
         "Hasher",
         "mcts",
+        "Negamax",
+        "Neumann",
         "playout",
+        "repr",
         "rustc",
         "rustfmt",
         "Seedable",
         "simd",
         "struct",
+        "termion",
         "typenum",
         "usize",
         "Xoshiro"
@@ -36,5 +42,9 @@
     "rust-analyzer.lens.implementations.enable": false,
     "rust-analyzer.cargo.autoreload": true,
     "rust-analyzer.check.command": "clippy",
-    "debug.disassemblyView.showSourceCode": false
+    "rust-analyzer.restartServerOnConfigChange": true,
+    "rust-analyzer.cargo.extraArgs": [],
+    "rust-analyzer.cargo.extraEnv": {
+        "RUSTFLAGS": "-C debug-assertions=false"
+    }
 }

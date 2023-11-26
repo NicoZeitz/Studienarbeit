@@ -22,11 +22,11 @@ impl Default for QuiltBoard {
 
 impl QuiltBoard {
     /// The amount of rows on the quilt board
-    pub const ROWS: u32 = 9;
+    pub const ROWS: usize = 9;
     /// The amount of columns on the quilt board
-    pub const COLUMNS: u32 = 9;
+    pub const COLUMNS: usize = 9;
     /// The amount of tiles on the quilt board
-    pub const TILES: u32 = QuiltBoard::ROWS * QuiltBoard::COLUMNS;
+    pub const TILES: usize = QuiltBoard::ROWS * QuiltBoard::COLUMNS;
 
     /// Creates a new empty quilt board.
     pub fn new() -> QuiltBoard {
@@ -38,7 +38,7 @@ impl QuiltBoard {
 
     /// Whether the board is full.
     pub fn is_full(&self) -> bool {
-        self.tiles.count_ones() == QuiltBoard::TILES
+        self.tiles.count_ones() == QuiltBoard::TILES as u32
     }
 
     /// The amount of tiles that are filled.
@@ -55,7 +55,37 @@ impl QuiltBoard {
     ///
     /// The score is calculated by taking the amount of tiles that are not filled and multiplying it by -2.
     pub fn score(&self) -> i32 {
-        -2 * (QuiltBoard::TILES - self.tiles_filled()) as i32
+        -2 * (QuiltBoard::TILES as u32 - self.tiles_filled()) as i32
+    }
+
+    /// Gets the tile at the given row and column.
+    ///
+    /// # Arguments
+    ///
+    /// * `row` - The row of the tile.
+    /// * `column` - The column of the tile.
+    ///
+    /// # Returns
+    ///
+    /// The tile at the given row and column.
+    pub fn get(&self, row: usize, column: usize) -> bool {
+        let index = row * QuiltBoard::COLUMNS + column;
+        (self.tiles >> index) & 1 > 0
+    }
+
+    pub fn get_row(&self, row: usize) -> u16 {
+        let start = row * QuiltBoard::COLUMNS;
+        let end = start + QuiltBoard::COLUMNS;
+        (self.tiles >> start) as u16 & ((1 << end) - 1)
+    }
+
+    pub fn get_column(&self, column: usize) -> u16 {
+        let mut result = 0;
+        for row in 0..QuiltBoard::ROWS {
+            let index = row * QuiltBoard::COLUMNS + column;
+            result |= (self.tiles >> index) & 1 << row;
+        }
+        result as u16
     }
 
     /// Updates the quilt board with the next quilt board.
@@ -209,8 +239,8 @@ impl QuiltBoard {
                 let action = Action::new(ActionPayload::SpecialPatchPlacement {
                     payload: ActionSpecialPatchPlacementPayload {
                         patch_id: special_patch.id,
-                        row: row as usize,
-                        column: column as usize,
+                        row,
+                        column,
                         next_quilt_board: self.tiles | (1 << index),
                     },
                 });

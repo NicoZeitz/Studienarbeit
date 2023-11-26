@@ -29,6 +29,9 @@ impl TimeBoard {
     /// The maximum position on the time board.
     pub const MAX_POSITION: usize = 53;
 
+    /// The amount of button income triggers on the time board.
+    pub const AMOUNT_BUTTON_INCOME_TRIGGERS: usize = 9;
+
     /// Creates a new time board.
     pub fn new() -> TimeBoard {
         let mut tiles = [0; 54];

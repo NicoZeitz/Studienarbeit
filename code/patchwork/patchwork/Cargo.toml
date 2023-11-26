@@ -1,10 +1,16 @@
 [package]
 name = "patchwork"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+game = { path = "../game" }
 patchwork_core = { path = "../patchwork_core" }
-patchwork_player = { path = "../patchwork_player" }
+patchwork_macros = { path = "../patchwork_macros" }
+patchwork_alphazero_player = { path = "../patchwork_alphazero_player" }
+patchwork_human_player = { path = "../patchwork_human_player" }
+patchwork_random_player = { path = "../patchwork_random_player" }
+patchwork_greedy_player = { path = "../patchwork_greedy_player" }
+patchwork_mcts_player = { path = "../patchwork_mcts_player" }
+patchwork_minimax_player = { path = "../patchwork_minimax_player" }
+patchwork_negamax_player = { path = "../patchwork_negamax_player" }
