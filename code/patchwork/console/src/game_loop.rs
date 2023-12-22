@@ -2,23 +2,20 @@ use std::sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering};
 
 use patchwork::{
     player::{
-        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer,
-        Player, PrincipalVariationSearchPlayer, RandomOptions, RandomPlayer,
+        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSPlayer, Player,
+        RandomOptions, RandomPlayer,
     },
-    Game, Patchwork, TerminationType,
+    Patchwork, TerminationType,
 };
 use regex::Regex;
 
 pub struct GameLoop;
 
 impl GameLoop {
-    pub fn get_player(player: &str, player_position: usize) -> Box<dyn Player<Game = Patchwork>> {
+    pub fn get_player(player: &str, player_position: usize) -> Box<dyn Player> {
         match player {
             "human" => Box::new(HumanPlayer::new(format!("Human Player {player_position}"))),
-            "random" => Box::new(RandomPlayer::new(
-                format!("Random Player {player_position}"),
-                None,
-            )),
+            "random" => Box::new(RandomPlayer::new(format!("Random Player {player_position}"), None)),
             _ if player.starts_with("random") => {
                 let seed = Regex::new(r"random\((?<seed>\d+)\)")
                     .unwrap()
@@ -34,9 +31,7 @@ impl GameLoop {
                     Some(RandomOptions::new(seed)),
                 ))
             }
-            "greedy" => Box::new(GreedyPlayer::new(format!(
-                "Greedy Player {player_position}"
-            ))),
+            "greedy" => Box::new(GreedyPlayer::new(format!("Greedy Player {player_position}"))),
             "mcts" => Box::new(MCTSPlayer::new(
                 format!("MCTS Player {player_position}"),
                 Default::default(),
@@ -49,8 +44,7 @@ impl GameLoop {
                 let regex = Regex::new(r"minimax\((?<depth>\d+),\s*(?<pieces>\d+)\)").unwrap();
                 let captures = regex.captures(player).unwrap();
                 let depth = captures.name("depth").unwrap().as_str().parse().unwrap();
-                let amount_actions_per_piece =
-                    captures.name("pieces").unwrap().as_str().parse().unwrap();
+                let amount_actions_per_piece = captures.name("pieces").unwrap().as_str().parse().unwrap();
                 Box::new(MinimaxPlayer::new(
                     format!(
                         "Minimax Player {player_position} ({}, {})",
@@ -59,12 +53,8 @@ impl GameLoop {
                     Some(MinimaxOptions::new(depth, amount_actions_per_piece)),
                 ))
             }
-            "pvs" => Box::new(PrincipalVariationSearchPlayer::new(format!(
-                "PVS Player {player_position}"
-            ))),
-            "alphazero" => Box::new(AlphaZeroPlayer::new(format!(
-                "AlphaZero Player {player_position}"
-            ))),
+            "pvs" => Box::new(PVSPlayer::new(format!("PVS Player {player_position}"), None)),
+            "alphazero" => Box::new(AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}"))),
             _ => panic!("Unknown player: {player}"),
         }
     }
@@ -84,9 +74,9 @@ impl GameLoop {
             println!("{}", state);
 
             let action = if state.is_player_1() {
-                player_1.get_action(&state)
+                player_1.get_action(&state).unwrap()
             } else {
-                player_2.get_action(&state)
+                player_2.get_action(&state).unwrap()
             };
 
             println!(
@@ -99,7 +89,9 @@ impl GameLoop {
                 action
             );
 
-            state = state.get_next_state(&action);
+            let mut next_state = state.clone();
+            next_state.do_action(&action, false).unwrap();
+            state = next_state;
 
             if state.is_terminated() {
                 let termination = state.get_termination_result();
@@ -195,32 +187,29 @@ impl GameLoop {
 
                             let action = if state.is_player_1() {
                                 let start_time = std::time::Instant::now();
-                                let action = player_1.get_action(&state);
-                                let end = u64::try_from(
-                                    std::time::Instant::now()
-                                        .duration_since(start_time)
-                                        .as_nanos(),
-                                )
-                                .unwrap();
+                                let action = player_1.get_action(&state).unwrap();
+                                let end =
+                                    u64::try_from(std::time::Instant::now().duration_since(start_time).as_nanos())
+                                        .unwrap();
 
                                 sum_time_player_1.fetch_add(end, Ordering::Relaxed);
                                 n_time_player_1.fetch_add(1, Ordering::Relaxed);
                                 action
                             } else {
                                 let start_time = std::time::Instant::now();
-                                let action = player_2.get_action(&state);
-                                let end = u64::try_from(
-                                    std::time::Instant::now()
-                                        .duration_since(start_time)
-                                        .as_nanos(),
-                                )
-                                .unwrap();
+                                let action = player_2.get_action(&state).unwrap();
+                                let end =
+                                    u64::try_from(std::time::Instant::now().duration_since(start_time).as_nanos())
+                                        .unwrap();
                                 sum_time_player_2.fetch_add(end, Ordering::Relaxed);
                                 n_time_player_2.fetch_add(1, Ordering::Relaxed);
                                 action
                             };
 
-                            state = state.get_next_state(&action);
+                            let mut next_state = state.clone();
+                            next_state.do_action(&action, false).unwrap();
+                            state = next_state;
+
                             if state.is_terminated() {
                                 let termination = state.get_termination_result();
 
@@ -236,18 +225,12 @@ impl GameLoop {
                                     }
                                 }
 
-                                max_player_1_score
-                                    .fetch_max(termination.player_1_score, Ordering::Relaxed);
-                                max_player_2_score
-                                    .fetch_max(termination.player_2_score, Ordering::Relaxed);
-                                min_player_1_score
-                                    .fetch_min(termination.player_1_score, Ordering::Relaxed);
-                                min_player_2_score
-                                    .fetch_min(termination.player_2_score, Ordering::Relaxed);
-                                sum_player_1_score
-                                    .fetch_add(termination.player_1_score, Ordering::Relaxed);
-                                sum_player_2_score
-                                    .fetch_add(termination.player_2_score, Ordering::Relaxed);
+                                max_player_1_score.fetch_max(termination.player_1_score, Ordering::Relaxed);
+                                max_player_2_score.fetch_max(termination.player_2_score, Ordering::Relaxed);
+                                min_player_1_score.fetch_min(termination.player_1_score, Ordering::Relaxed);
+                                min_player_2_score.fetch_min(termination.player_2_score, Ordering::Relaxed);
+                                sum_player_1_score.fetch_add(termination.player_1_score, Ordering::Relaxed);
+                                sum_player_2_score.fetch_add(termination.player_2_score, Ordering::Relaxed);
                                 iterations_done.fetch_add(1, Ordering::Release);
                                 break;
                             }
@@ -358,13 +341,10 @@ impl GameLoop {
             (draws as f64 / iteration as f64 * 100.0)
         );
         let progress_bar_length: i32 = 120;
-        let progress_player_1 =
-            (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
-        let progress_player_2 =
-            (wins_player_2 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
+        let progress_player_1 = (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
+        let progress_player_2 = (wins_player_2 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
         let progress_draws =
-            (progress_bar_length - progress_player_1 as i32 - progress_player_2 as i32).max(0)
-                as usize;
+            (progress_bar_length - progress_player_1 as i32 - progress_player_2 as i32).max(0) as usize;
 
         println!(
             "{} \x1b[0;32m{}\x1b[0m{}\x1b[0;31m{}\x1b[0m {}  ",

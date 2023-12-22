@@ -8,12 +8,8 @@ use std::{
 };
 
 use crate::{mcts_options::NON_ZERO_USIZE_ONE, MCTSEndCondition, MCTSOptions, Node};
-use game::{Evaluator, Game};
+use patchwork_core::{Action, Evaluator, Patchwork};
 use tree_policy::TreePolicy;
-
-pub trait MCTSSpecification: Clone {
-    type Game: game::Game;
-}
 
 // TODO:
 // TreeParallelization (weg)
@@ -21,14 +17,9 @@ pub trait MCTSSpecification: Clone {
 // Tree reuse
 
 /// A Search Tree for the Monte Carlo Tree Search (MCTS) algorithm.
-pub struct SearchTree<
-    'tree_lifetime,
-    Spec: MCTSSpecification,
-    Policy: TreePolicy,
-    Eval: Evaluator<Game = Spec::Game>,
-> {
+pub struct SearchTree<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> {
     // The root node of the search tree.
-    root_node: Arc<RwLock<Node<Spec>>>,
+    root_node: Arc<RwLock<Node>>,
     /// The policy to select nodes during the selection phase.
     tree_policy: &'tree_lifetime Policy,
     /// The evaluator to evaluate the game state.
@@ -37,13 +28,7 @@ pub struct SearchTree<
     options: &'tree_lifetime MCTSOptions,
 }
 
-impl<
-        'tree_lifetime,
-        Spec: MCTSSpecification,
-        Policy: TreePolicy,
-        Eval: Evaluator<Game = Spec::Game>,
-    > SearchTree<'tree_lifetime, Spec, Policy, Eval>
-{
+impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifetime, Policy, Eval> {
     #[allow(dead_code)]
     const AMOUNT_PROGRESS_REPORTS: usize = 10;
 
@@ -56,7 +41,7 @@ impl<
     /// * `evaluator` - The evaluator to evaluate the game state.
     /// * `options` - The options for the search.
     pub fn new(
-        game: &Spec::Game,
+        game: &Patchwork,
         tree_policy: &'tree_lifetime Policy,
         evaluator: &'tree_lifetime Eval,
         options: &'tree_lifetime MCTSOptions,
@@ -72,7 +57,7 @@ impl<
     }
 
     /// Searches for the best action.
-    pub fn search(&self) -> <Spec::Game as game::Game>::Action {
+    pub fn search(&self) -> Action {
         // TODO: reuse old tree
 
         let root = Arc::clone(&self.root_node);
@@ -98,10 +83,7 @@ impl<
 
                         for _ in 0..*iterations {
                             #[cfg(debug_assertions)]
-                            if i % (*iterations
-                                / SearchTree::<Spec, Policy, Eval>::AMOUNT_PROGRESS_REPORTS)
-                                == 0
-                            {
+                            if i % (*iterations / SearchTree::<Policy, Eval>::AMOUNT_PROGRESS_REPORTS) == 0 {
                                 self.report_progress(i, start_time, vec![&self.root_node]);
                             }
                             #[cfg(debug_assertions)]
@@ -123,12 +105,8 @@ impl<
 
                         while std::time::Instant::now().duration_since(start_time) <= *time {
                             #[cfg(debug_assertions)]
-                            if std::time::Instant::now()
-                                .duration_since(start_time)
-                                .as_micros()
-                                % (time.as_micros()
-                                    / SearchTree::<Spec, Policy, Eval>::AMOUNT_PROGRESS_REPORTS
-                                        as u128)
+                            if std::time::Instant::now().duration_since(start_time).as_micros()
+                                % (time.as_micros() / SearchTree::<Policy, Eval>::AMOUNT_PROGRESS_REPORTS as u128)
                                 == 0
                             {
                                 self.report_progress(i, start_time, vec![&self.root_node]);
@@ -164,12 +142,7 @@ impl<
 
                     handles.push(s.spawn(move || {
                         for _ in 0..*iterations {
-                            SearchTree::playout(
-                                Arc::clone(&root),
-                                tree_policy,
-                                evaluator,
-                                leaf_parallelization,
-                            );
+                            SearchTree::playout(Arc::clone(&root), tree_policy, evaluator, leaf_parallelization);
                         }
 
                         let actions = root
@@ -183,14 +156,11 @@ impl<
                             })
                             .collect::<Vec<_>>();
 
-                        let sum_of_visits =
-                            actions.iter().map(|(visits, _)| visits).sum::<i32>() as f64;
+                        let sum_of_visits = actions.iter().map(|(visits, _)| visits).sum::<i32>() as f64;
 
                         actions
                             .iter()
-                            .map(|(visits, action)| {
-                                (*visits as f64 / sum_of_visits, action.clone())
-                            })
+                            .map(|(visits, action)| (*visits as f64 / sum_of_visits, action.clone()))
                             .collect::<Vec<_>>()
                     }));
                 }
@@ -200,18 +170,14 @@ impl<
                     .map(|handle| handle.join().unwrap())
                     .collect::<Vec<_>>();
 
-                let actions = results[0]
-                    .iter()
-                    .map(|(_, action)| action)
-                    .collect::<Vec<_>>();
+                let actions = results[0].iter().map(|(_, action)| action).collect::<Vec<_>>();
 
                 let mut max_action = None;
                 let mut max_probability = 0.0;
 
                 for index in 0..results[0].len() {
                     let summed_probability =
-                        results.iter().map(|result| result[index].0).sum::<f64>()
-                            / actions.len() as f64;
+                        results.iter().map(|result| result[index].0).sum::<f64>() / actions.len() as f64;
 
                     if summed_probability > max_probability {
                         max_action = Some(actions[index].clone());
@@ -243,12 +209,7 @@ impl<
                         handles.push(s.spawn(move || {
                             // while !stop.load(Ordering::SeqCst) {
                             while !stop.load(Ordering::Acquire) {
-                                SearchTree::playout(
-                                    Arc::clone(&root),
-                                    tree_policy,
-                                    evaluator,
-                                    leaf_parallelization,
-                                );
+                                SearchTree::playout(Arc::clone(&root), tree_policy, evaluator, leaf_parallelization);
                             }
 
                             let actions = root
@@ -262,14 +223,11 @@ impl<
                                 })
                                 .collect::<Vec<_>>();
 
-                            let sum_of_visits =
-                                actions.iter().map(|(visits, _)| visits).sum::<i32>() as f64;
+                            let sum_of_visits = actions.iter().map(|(visits, _)| visits).sum::<i32>() as f64;
 
                             actions
                                 .iter()
-                                .map(|(visits, action)| {
-                                    (*visits as f64 / sum_of_visits, action.clone())
-                                })
+                                .map(|(visits, action)| (*visits as f64 / sum_of_visits, action.clone()))
                                 .collect::<Vec<_>>()
                         }));
                     }
@@ -282,18 +240,14 @@ impl<
                         .map(|handle| handle.join().unwrap())
                         .collect::<Vec<_>>();
 
-                    let actions = results[0]
-                        .iter()
-                        .map(|(_, action)| action)
-                        .collect::<Vec<_>>();
+                    let actions = results[0].iter().map(|(_, action)| action).collect::<Vec<_>>();
 
                     let mut max_action = None;
                     let mut max_probability = 0.0;
 
                     for index in 0..results[0].len() {
                         let summed_probability =
-                            results.iter().map(|result| result[index].0).sum::<f64>()
-                                / actions.len() as f64;
+                            results.iter().map(|result| result[index].0).sum::<f64>() / actions.len() as f64;
 
                         if summed_probability > max_probability {
                             max_action = Some(actions[index].clone());
@@ -307,12 +261,7 @@ impl<
         }
     }
 
-    fn playout(
-        root_node: Arc<RwLock<Node<Spec>>>,
-        tree_policy: &Policy,
-        evaluator: &Eval,
-        leaf_parallelization: usize,
-    ) {
+    fn playout(root_node: Arc<RwLock<Node>>, tree_policy: &Policy, evaluator: &Eval, leaf_parallelization: usize) {
         let mut node = root_node;
 
         // 1. Selection
@@ -341,18 +290,9 @@ impl<
     }
 
     #[cfg(debug_assertions)]
-    fn report_progress(
-        &self,
-        _iteration: usize,
-        _start_time: std::time::Instant,
-        _nodes: Vec<&Arc<RwLock<Node<Spec>>>>,
-    ) {
-    }
+    fn report_progress(&self, _iteration: usize, _start_time: std::time::Instant, _nodes: Vec<&Arc<RwLock<Node>>>) {}
 
-    pub fn get_best_action(
-        &self,
-        root: &Arc<RwLock<Node<Spec>>>,
-    ) -> <Spec::Game as game::Game>::Action {
+    pub fn get_best_action(&self, root: &Arc<RwLock<Node>>) -> Action {
         root.read()
             .unwrap()
             .children
@@ -368,10 +308,7 @@ impl<
     }
 
     #[allow(clippy::only_used_in_recursion)]
-    fn internal_tree_to_string(&self, node: RwLockReadGuard<'_, Node<Spec>>) -> Vec<String>
-    where
-        <Spec::Game as game::Game>::Action: std::fmt::Debug,
-    {
+    fn internal_tree_to_string(&self, node: RwLockReadGuard<'_, Node>) -> Vec<String> {
         let mut result = Vec::new();
 
         result.push(format!("{:?}", node));
@@ -391,11 +328,7 @@ impl<
             };
 
             for (inner_index, line) in &mut self.internal_tree_to_string(child).iter().enumerate() {
-                let front = if inner_index == 0 {
-                    branching_front
-                } else {
-                    other_front
-                };
+                let front = if inner_index == 0 { branching_front } else { other_front };
                 result.push(format!("{}{}", front, line));
             }
         }
@@ -403,24 +336,13 @@ impl<
         result
     }
 
-    pub fn tree_to_string(&self) -> String
-    where
-        <Spec::Game as game::Game>::Action: std::fmt::Debug,
-    {
+    pub fn tree_to_string(&self) -> String {
         let root = self.root_node.read().unwrap();
         self.internal_tree_to_string(root).join("\n")
     }
 }
 
-impl<
-        'tree_lifetime,
-        Spec: MCTSSpecification,
-        Policy: TreePolicy,
-        Eval: Evaluator<Game = Spec::Game>,
-    > fmt::Display for SearchTree<'tree_lifetime, Spec, Policy, Eval>
-where
-    <Spec::Game as game::Game>::Action: std::fmt::Debug,
-{
+impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> fmt::Display for SearchTree<'tree_lifetime, Policy, Eval> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.tree_to_string())
     }

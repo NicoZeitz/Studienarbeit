@@ -1,6 +1,4 @@
-use game::{Evaluator, Game, Player};
-use patchwork_core::Patchwork;
-
+use patchwork_core::{Action, Evaluator, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::StaticEvaluator as GreedyEvaluator;
 
 /// A player that selects the action with the highest score.
@@ -29,20 +27,19 @@ impl Default for GreedyPlayer {
 }
 
 impl Player for GreedyPlayer {
-    type Game = Patchwork;
-
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Self::Game) -> <Self::Game as Game>::Action {
-        let valid_actions = game.get_valid_actions();
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+        let mut game = game.clone();
+        let valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
 
         if valid_actions.len() == 1 {
-            return valid_actions[0].clone();
+            return Ok(valid_actions[0].clone());
         }
 
-        let maximizing_player = game.is_maximizing_player(&game.get_current_player());
+        let maximizing_player = game.is_flag_player_1(game.get_current_player());
 
         let mut chosen_action = &valid_actions[0];
         let mut chosen_evaluation = if maximizing_player {
@@ -52,9 +49,9 @@ impl Player for GreedyPlayer {
         };
 
         for action in valid_actions.iter() {
-            let next_state = game.get_next_state(action);
-
-            let evaluation = self.evaluator.evaluate_node(&next_state);
+            game.do_action(action, false)?;
+            let evaluation = self.evaluator.evaluate_node(&game);
+            game.undo_action(action, false)?;
 
             #[allow(clippy::collapsible_else_if)]
             if maximizing_player {
@@ -74,6 +71,6 @@ impl Player for GreedyPlayer {
             }
         }
 
-        chosen_action.clone()
+        Ok(chosen_action.clone())
     }
 }

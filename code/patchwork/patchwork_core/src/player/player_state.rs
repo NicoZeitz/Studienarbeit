@@ -2,6 +2,7 @@ use std::fmt::Display;
 
 use crate::QuiltBoard;
 
+/// Represents the state of a player in the game Patchwork.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PlayerState {
     /// THe position of the player on the time board.
@@ -13,6 +14,7 @@ pub struct PlayerState {
 }
 
 impl PlayerState {
+    /// Creates a new [`PlayerState`] with the default values.
     pub fn new() -> PlayerState {
         PlayerState {
             position: 0,

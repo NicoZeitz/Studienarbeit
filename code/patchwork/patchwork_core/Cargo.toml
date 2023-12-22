@@ -8,7 +8,11 @@ edition = "2021"
 derivative = "2.2.0"
 lazy_static = "1.4.0"
 patchwork_macros = { path = "../patchwork_macros" }
-game = { path = "../game" }
 rand = "0.8.5"
 rand_xoshiro = "0.6.0"
 rayon = "1.8.0"
+thiserror = "1.0.51"
+regex = "1.10.2"
+const_format = "0.2.32"
+pretty_assertions = "1.4.0"
+anyhow = "1.0.76"

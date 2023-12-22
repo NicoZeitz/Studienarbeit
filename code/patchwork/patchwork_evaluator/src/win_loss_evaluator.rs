@@ -1,5 +1,4 @@
-use game::{Evaluator, Game};
-use patchwork_core::{Patchwork, TerminationType};
+use patchwork_core::{Evaluator, Patchwork, TerminationType};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct WinLossEvaluator {}
@@ -18,13 +17,11 @@ impl Default for WinLossEvaluator {
 }
 
 impl Evaluator for WinLossEvaluator {
-    type Game = Patchwork;
-
-    fn evaluate_intermediate_node(&self, game: &Self::Game) -> f64 {
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> f64 {
         self.evaluate_terminal_node(&game.random_rollout())
     }
 
-    fn evaluate_terminal_node(&self, game: &Self::Game) -> f64 {
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> f64 {
         match game.get_termination_result().termination {
             TerminationType::Player1Won => 1.0,
             TerminationType::Player2Won => -1.0,

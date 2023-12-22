@@ -19,7 +19,7 @@ pub struct Termination {
     pub player_2_score: i32,
 }
 impl Termination {
-    /// Returns the score of the game. Positive if player 1 won, negative if player 2 won, 0 if draw.
+    /// Returns the score of the game. Positive if player 1 won, negative if player 2 won, 0 if draw. The score is calculated by taking the difference between the score of player 1 and player 2.
     ///
     /// # Returns
     ///

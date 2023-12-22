@@ -3,6 +3,21 @@ use std::{cmp::Ordering, fmt::Display};
 pub use crate::game::*;
 use crate::{Patch, PlayerState, Termination, TerminationType, TimeBoard};
 
+/// Represents the type of turn that is currently being played.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub(crate) enum TurnType {
+    /// A normal turn.
+    Normal,
+    /// A turn where the player has to place a special patch.
+    SpecialPatchPlacement(usize),
+    /// A turn that was created because a player switch was forced.
+    /// The only available action is to take a null action.
+    NormalPhantom,
+    /// A turn that was created because a player switch was forced while a special patch was being placed.
+    /// The only available action is to take a null action.
+    SpecialPhantom(usize),
+}
+
 /// Represents the full state of the patchwork board game.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Patchwork {
@@ -15,11 +30,12 @@ pub struct Patchwork {
     /// The second player in the game.
     pub player_2: PlayerState,
     /// The player whose turn it is. 1 for player 1, -1 for player 2.
-    pub current_player_flag: i8,
-    /// Whether the current player has to place a special patch as the next move and if so which special patch it is.
-    pub special_patch_placement_move: Option<usize>,
+    pub(crate) current_player_flag: i8,
+    /// The type of turn that is currently being played.
+    pub(crate) turn_type: TurnType,
 }
 
+// Impl block for different getters and setters
 impl Patchwork {
     /// The flag for player 1.
     pub const PLAYER_1: i8 = 1;
@@ -103,10 +119,20 @@ impl Patchwork {
         }
     }
 
+    /// Returns a mutable reference to the other player.
+    #[inline]
+    pub fn other_player_mut(&mut self) -> &mut PlayerState {
+        if self.is_player_1() {
+            &mut self.player_2
+        } else {
+            &mut self.player_1
+        }
+    }
+
     /// Switches the current player.
     #[inline]
     pub fn switch_player(&mut self) {
-        self.current_player_flag = !self.current_player_flag;
+        self.current_player_flag *= -1;
     }
 
     /// Gets the score of the given player.
@@ -153,16 +179,12 @@ impl Patchwork {
 
 impl Display for Patchwork {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Current player is {}",
-            if self.is_player_1() { "1" } else { "2" }
-        )?;
-        if let Some(special_patch_placement_move) = self.special_patch_placement_move {
+        write!(f, "Current player is {}", if self.is_player_1() { "1" } else { "2" })?;
+        if let TurnType::SpecialPatchPlacement(special_patch_placement_action) = self.turn_type {
             write!(
                 f,
                 " (special patch placement move {})",
-                special_patch_placement_move + 1
+                special_patch_placement_action + 1
             )?;
         }
         write!(f, "\n\n")?;
@@ -182,11 +204,7 @@ impl Display for Patchwork {
         // pad each line in player 1 to the same length
         for (player_1_line, player_2_line) in player_1_lines.zip(&mut player_2_lines) {
             write!(f, "{}", player_1_line)?;
-            write!(
-                f,
-                "{}",
-                " ".repeat(max_length - player_1_line.chars().count())
-            )?;
+            write!(f, "{}", " ".repeat(max_length - player_1_line.chars().count()))?;
             writeln!(f, " │ {}", player_2_line)?;
         }
 
@@ -194,11 +212,7 @@ impl Display for Patchwork {
         writeln!(f, "Next 6 patches (can only take first 3):")?;
 
         // only take first 6 patches
-        let patch_strings = self
-            .patches
-            .iter()
-            .take(6)
-            .map(|patch| format!("{}", patch));
+        let patch_strings = self.patches.iter().take(6).map(|patch| format!("{}", patch));
 
         let patch_strings_lines = patch_strings
             .into_iter()
@@ -210,11 +224,7 @@ impl Display for Patchwork {
             })
             .collect::<Vec<_>>();
 
-        let max_amount_of_lines = patch_strings_lines
-            .iter()
-            .map(|lines| lines.len())
-            .max()
-            .unwrap_or(0);
+        let max_amount_of_lines = patch_strings_lines.iter().map(|lines| lines.len()).max().unwrap_or(0);
 
         // pad each patch with newlines on top to max length
         let patch_strings_lines = patch_strings_lines
@@ -240,9 +250,7 @@ impl Display for Patchwork {
 
                 lines
                     .into_iter()
-                    .map(|line| {
-                        format!("{}{}", line, " ".repeat(max_length - line.chars().count()))
-                    })
+                    .map(|line| format!("{}{}", line, " ".repeat(max_length - line.chars().count())))
                     .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();

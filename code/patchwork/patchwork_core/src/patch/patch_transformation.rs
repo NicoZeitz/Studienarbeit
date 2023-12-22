@@ -25,20 +25,9 @@ impl PatchTransformation {
     pub const FLIPPED_ROTATION_270: u8 = 0b111;
 }
 
-impl Debug for PatchTransformation {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        f.debug_struct("PatchTransformation")
-            .field("row", &self.row)
-            .field("column", &self.column)
-            .field("rotation", &self.rotation())
-            .field("flipped", &self.flipped())
-            .field("tiles", &format_args!("{:#083b}", self.tiles))
-            .finish()
-    }
-}
-
 impl PatchTransformation {
     /// Returns the rotation as 0, 90, 180 or 270 degree rotation.
+    /// This is the same as the rotation flag, but in degrees.
     #[inline]
     pub fn rotation(&self) -> u32 {
         match self.transformation {
@@ -58,34 +47,25 @@ impl PatchTransformation {
 
     /// Returns the rotation as 0 (0°), 1 (90°), 2 (180°) or 3 (270°).
     #[inline]
-    pub fn rotation_flag(&self) -> u8 {
+    pub(crate) fn rotation_flag(&self) -> u8 {
         self.transformation & 0b011
     }
 
     /// Returns the orientation as 0 (normal) or 1 (flipped).
     #[inline]
-    pub fn orientation_flag(&self) -> u8 {
+    pub(crate) fn orientation_flag(&self) -> u8 {
         (self.transformation & 0b100) >> 2
     }
+}
 
-    // pub fn get_row_and_column_of_tiles(tiles: u128) -> (u32, u32) {
-    //     let mut min_row = 0;
-    //     let mut min_column = 0;
-
-    //     for row in 0..QuiltBoard::ROWS {
-    //         for column in 0..QuiltBoard::COLUMNS {
-    //             let index = row * QuiltBoard::COLUMNS + column;
-    //             if (tiles >> index) & 1 > 0 {
-    //                 min_row = row.min(min_row);
-    //                 min_column = column.min(min_column);
-    //             }
-    //         }
-
-    //         if min_row != 0 && min_row + 4 < row {
-    //             break;
-    //         }
-    //     }
-
-    //     (min_row, min_column)
-    // }
+impl Debug for PatchTransformation {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        f.debug_struct("PatchTransformation")
+            .field("row", &self.row)
+            .field("column", &self.column)
+            .field("rotation", &self.rotation())
+            .field("flipped", &self.flipped())
+            .field("tiles", &format_args!("{:#083b}", self.tiles))
+            .finish()
+    }
 }

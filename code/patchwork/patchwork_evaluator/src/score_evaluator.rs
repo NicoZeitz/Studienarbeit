@@ -1,5 +1,4 @@
-use game::{Evaluator, Game};
-use patchwork_core::Patchwork;
+use patchwork_core::{Evaluator, Patchwork};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ScoreEvaluator {}
@@ -18,13 +17,11 @@ impl Default for ScoreEvaluator {
 }
 
 impl Evaluator for ScoreEvaluator {
-    type Game = Patchwork;
-
-    fn evaluate_intermediate_node(&self, game: &Self::Game) -> f64 {
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> f64 {
         self.evaluate_terminal_node(&game.random_rollout())
     }
 
-    fn evaluate_terminal_node(&self, game: &Self::Game) -> f64 {
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> f64 {
         let player_1_flag = game.get_player_1_flag();
         let player_2_flag = game.get_player_2_flag();
 

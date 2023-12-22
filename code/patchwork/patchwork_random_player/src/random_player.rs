@@ -1,6 +1,5 @@
 use crate::RandomOptions;
-use game::{Game, Player};
-use patchwork_core::Patchwork;
+use patchwork_core::{Action, Patchwork, Player, PlayerResult};
 use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 
@@ -31,15 +30,13 @@ impl Default for RandomPlayer {
 }
 
 impl Player for RandomPlayer {
-    type Game = Patchwork;
-
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Self::Game) -> <Self::Game as Game>::Action {
-        let mut valid_actions = game.get_valid_actions();
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+        let mut valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
         let random_index = self.rng.gen_range(0..valid_actions.len());
-        valid_actions.remove(random_index)
+        Ok(valid_actions.remove(random_index))
     }
 }

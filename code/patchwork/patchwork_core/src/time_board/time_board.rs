@@ -4,13 +4,13 @@ use std::{fmt::Display, ops::Range};
 /// The entities that can be on a tile of the time board.
 pub mod entities_enum {
     /// The first player.
-    pub const PLAYER_1: u8 = 0b0000_0001;
+    pub const PLAYER_1: u8 = 0b0000_0001; // 1
     /// The second player.
-    pub const PLAYER_2: u8 = 0b0000_0010;
+    pub const PLAYER_2: u8 = 0b0000_0010; // 2
     /// A button income trigger.
-    pub const BUTTON_INCOME_TRIGGER: u8 = 0b0000_0100;
+    pub const BUTTON_INCOME_TRIGGER: u8 = 0b0000_0100; // 4
     /// A special patch.
-    pub const SPECIAL_PATCH: u8 = 0b0000_1000;
+    pub const SPECIAL_PATCH: u8 = 0b0000_1000; // 8
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -57,30 +57,28 @@ impl TimeBoard {
         TimeBoard { tiles }
     }
 
-    pub fn get_special_patch_in_range(&self, range: &Range<usize>) -> Option<usize> {
-        let mut result = None;
-
-        for (index, tile) in self
-            .tiles
-            .iter()
-            .enumerate()
-            .skip(range.start)
-            .take(range.end - range.start)
-        {
-            if *tile & entities_enum::SPECIAL_PATCH == 0 {
-                continue;
+    pub fn is_button_income_trigger_in_range(&self, range: Range<usize>) -> bool {
+        for i in range {
+            if self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+                return true;
             }
-            if result.is_some() {
-                // FIXME: Better error handling
-                panic!(
-                    "[TimeBoard][get_special_patch_in_range] More than one special patch in range!"
-                );
-            }
-
-            result = Some(index);
         }
+        false
+    }
 
-        result
+    pub fn get_amount_button_income_trigger_in_range(&self, range: Range<usize>) -> usize {
+        let mut amount = 0;
+        for i in range {
+            if self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+                amount += 1;
+            }
+        }
+        amount
+    }
+
+    pub fn get_special_patch_in_range(&self, range: Range<usize>) -> Option<usize> {
+        let mut range = range;
+        range.find(|&i| self.tiles[i] & entities_enum::SPECIAL_PATCH > 0)
     }
 
     pub fn clear_special_patch(&mut self, index: usize) {
@@ -88,24 +86,18 @@ impl TimeBoard {
         self.tiles[clamped_index] ^= entities_enum::SPECIAL_PATCH;
     }
 
-    pub fn get_amount_button_income_triggers_in_range(&self, range: &Range<usize>) -> i32 {
-        return self
-            .tiles
-            .iter()
-            .skip(range.start)
-            .take(range.end - range.start)
-            .filter(|tile| *tile & entities_enum::BUTTON_INCOME_TRIGGER > 0)
-            .count()
-            .try_into()
-            .unwrap();
+    pub(crate) fn set_special_patch(&mut self, index: usize) {
+        let clamped_index = index.clamp(0, TimeBoard::MAX_POSITION);
+        self.tiles[clamped_index] |= entities_enum::SPECIAL_PATCH;
     }
 
-    pub fn set_player_position(
-        &mut self,
-        player_flag: i8,
-        old_position: usize,
-        new_position: usize,
-    ) {
+    pub fn clear_special_patches_until(&mut self, index: usize) {
+        for tile in self.tiles.iter_mut().take(index) {
+            *tile &= !entities_enum::SPECIAL_PATCH;
+        }
+    }
+
+    pub fn set_player_position(&mut self, player_flag: i8, old_position: usize, new_position: usize) {
         let player = if player_flag == Patchwork::PLAYER_1 {
             entities_enum::PLAYER_1
         } else {

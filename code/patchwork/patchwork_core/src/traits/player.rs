@@ -1,7 +1,11 @@
+use anyhow::Result;
+
+pub type PlayerResult<T> = Result<T>;
+
+use crate::{Action, Patchwork};
+
 /// A base trait for all players.
 pub trait Player {
-    type Game: crate::Game;
-
     /// Returns the name of the player.
     fn name(&self) -> &str;
 
@@ -14,5 +18,5 @@ pub trait Player {
     /// # Returns
     ///
     /// The action that the player wants to take.
-    fn get_action(&mut self, game: &Self::Game) -> <Self::Game as crate::Game>::Action;
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action>;
 }

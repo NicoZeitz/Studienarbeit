@@ -1,16 +1,13 @@
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-package.name = "patchwork"
 package.version = "1.0.0"
 package.authors = ["Nico Zeitz", "Fabian Wolf"]
 package.description = "The board game Patchwork implemented in Rust with different AI players."
 package.repository = "https://github.com/NicoZeitz/Studienarbeit"
 package.license = "MIT"
 members = [
-    "algorithms",
     "console",
-    "game",
     "patchwork",
     "patchwork_core",
     "patchwork_macros",

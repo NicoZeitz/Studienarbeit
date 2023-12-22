@@ -16,6 +16,7 @@ pub struct Patch {
 }
 
 impl Patch {
+    /// Returns the amount of tiles that this patch has.
     #[inline]
     pub fn amount_tiles(&self) -> u32 {
         PatchManager::get_instance().get_transformations(self.id)[0]

@@ -1,3 +1,5 @@
-mod principal_variation_search_player;
+mod pvs_options;
+mod pvs_player;
 
-pub use principal_variation_search_player::PrincipalVariationSearchPlayer;
+pub use pvs_options::PVSOptions;
+pub use pvs_player::PVSPlayer;

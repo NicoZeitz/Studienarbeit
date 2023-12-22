@@ -5,5 +5,4 @@ authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]
-game = { path = "../game" }
 patchwork_core = { path = "../patchwork_core" }

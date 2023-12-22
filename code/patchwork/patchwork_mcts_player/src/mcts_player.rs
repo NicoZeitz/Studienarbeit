@@ -1,9 +1,8 @@
-use game::Player;
-use patchwork_core::Patchwork;
+use patchwork_core::{Action, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::ScoreEvaluator as Evaluator;
 use tree_policy::ScoredUCTPolicy as TreePolicy;
 
-use crate::{MCTSOptions, MCTSSpecification, SearchTree};
+use crate::{MCTSOptions, SearchTree};
 
 // TODO: report progress to user (win rate, turns taken there, num iterations currently) [debug only]
 
@@ -46,25 +45,15 @@ impl Default for MCTSPlayer {
 
 #[derive(Clone)]
 struct MCTSPlayerSpecification {}
-impl MCTSSpecification for MCTSPlayerSpecification {
-    type Game = Patchwork;
-}
 
 impl Player for MCTSPlayer {
-    type Game = Patchwork;
-
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Self::Game) -> <Self::Game as game::Game>::Action {
-        let search_tree = SearchTree::<MCTSPlayerSpecification, TreePolicy, Evaluator>::new(
-            game,
-            &self.policy,
-            &self.evaluator,
-            &self.options,
-        );
-        search_tree.search()
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+        let search_tree = SearchTree::<TreePolicy, Evaluator>::new(game, &self.policy, &self.evaluator, &self.options);
+        Ok(search_tree.search())
         // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove
     }
 }

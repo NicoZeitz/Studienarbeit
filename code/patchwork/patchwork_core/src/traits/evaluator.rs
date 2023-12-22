@@ -1,4 +1,4 @@
-use crate::Game;
+use crate::Patchwork;
 
 /// A game evaluator for a 2 player Game.
 ///
@@ -7,8 +7,6 @@ use crate::Game;
 /// * `Game` - The type representing a game.
 /// * `Evaluation` - The type representing an evaluation.
 pub trait Evaluator: Sync + Send {
-    type Game: crate::Game;
-
     /// Returns the evaluation of the given intermediate state.
     /// An intermediate state is a state that is not terminal.
     ///
@@ -19,7 +17,7 @@ pub trait Evaluator: Sync + Send {
     /// # Returns
     ///
     /// The evaluation of the given state.
-    fn evaluate_intermediate_node(&self, game: &Self::Game) -> f64;
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> f64;
 
     /// Returns the evaluation of the given terminal state.
     ///
@@ -30,7 +28,7 @@ pub trait Evaluator: Sync + Send {
     /// # Returns
     ///
     /// The evaluation of the given state.
-    fn evaluate_terminal_node(&self, game: &Self::Game) -> f64;
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> f64;
 
     /// Returns the evaluation of the given state.
     ///
@@ -41,7 +39,7 @@ pub trait Evaluator: Sync + Send {
     /// # Returns
     ///
     /// The evaluation of the given state.
-    fn evaluate_node(&self, game: &Self::Game) -> f64 {
+    fn evaluate_node(&self, game: &Patchwork) -> f64 {
         if game.is_terminated() {
             self.evaluate_terminal_node(game)
         } else {

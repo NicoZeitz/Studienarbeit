@@ -1,5 +1,4 @@
-use game::Player;
-use patchwork_core::Patchwork;
+use patchwork_core::{Action, Patchwork, Player, PlayerResult};
 
 /// A computer player that uses the AlphaZero algorithm to choose an action.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -22,13 +21,11 @@ impl Default for AlphaZeroPlayer {
 }
 
 impl Player for AlphaZeroPlayer {
-    type Game = Patchwork;
-
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_action(&mut self, _game: &Self::Game) -> <Self::Game as game::Game>::Action {
+    fn get_action(&mut self, _game: &Patchwork) -> PlayerResult<Action> {
         // TODO:
         todo!()
     }

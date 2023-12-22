@@ -3,8 +3,7 @@ use std::{
     io::{self, Write},
 };
 
-use game::{Game, Player};
-use patchwork_core::{Action, ActionPayload, PatchTransformation, Patchwork, QuiltBoard};
+use patchwork_core::{Action, ActionPayload, PatchTransformation, Patchwork, Player, PlayerResult, QuiltBoard};
 use rand::Rng;
 use regex::Regex;
 
@@ -29,21 +28,17 @@ impl Default for HumanPlayer {
 }
 
 impl Player for HumanPlayer {
-    type Game = patchwork_core::Patchwork;
-
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Self::Game) -> <Self::Game as Game>::Action {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
         let valid_actions = game.get_valid_actions();
 
-        match valid_actions[0].payload {
-            ActionPayload::SpecialPatchPlacement { payload: _ } => {
-                self.handle_special_patch_action(valid_actions)
-            }
+        Ok(match valid_actions[0].payload {
+            ActionPayload::SpecialPatchPlacement { .. } => self.handle_special_patch_action(valid_actions),
             _ => self.handle_normal_action(game, valid_actions),
-        }
+        })
     }
 }
 
@@ -60,7 +55,10 @@ impl HumanPlayer {
     // The action.
     fn handle_special_patch_action(&mut self, valid_actions: Vec<Action>) -> Action {
         let mut valid_actions = valid_actions;
-        let initial_prompt = format!("Player '{}' has to place the special patch. Please enter the row and column of the patch (row, column):", self.name);
+        let initial_prompt = format!(
+            "Player '{}' has to place the special patch. Please enter the row and column of the patch (row, column):",
+            self.name
+        );
         let mut prompt = initial_prompt.clone();
 
         loop {
@@ -111,8 +109,8 @@ impl HumanPlayer {
             let patch_position = (row - 1, column - 1);
 
             for action in &valid_actions {
-                if let ActionPayload::SpecialPatchPlacement { payload } = &action.payload {
-                    if payload.row == patch_position.0 && payload.column == patch_position.1 {
+                if let ActionPayload::SpecialPatchPlacement { row, column, .. } = &action.payload {
+                    if *row == patch_position.0 && *column == patch_position.1 {
                         return action.clone();
                     }
                 }
@@ -125,8 +123,7 @@ impl HumanPlayer {
                 valid_actions
                     .iter()
                     .map(|a| match &a.payload {
-                        ActionPayload::SpecialPatchPlacement { payload } =>
-                            format!("({}, {})", payload.row, payload.column),
+                        ActionPayload::SpecialPatchPlacement { row, column, .. } => format!("({}, {})", row, column),
                         _ => "".to_string(),
                     })
                     .collect::<Vec<_>>()
@@ -161,10 +158,7 @@ impl HumanPlayer {
             }
         }
 
-        let mut available_actions = actions
-            .iter()
-            .map(|a| format!("'{}'", a))
-            .collect::<Vec<_>>();
+        let mut available_actions = actions.iter().map(|a| format!("'{}'", a)).collect::<Vec<_>>();
         available_actions.sort_unstable();
 
         let initial_prompt = format!(
@@ -228,12 +222,7 @@ impl HumanPlayer {
     ///
     /// * `state` - The current state.
     /// * `valid_actions` - The valid actions.
-    fn handle_place_patch(
-        &mut self,
-        state: &Patchwork,
-        valid_actions: Vec<Action>,
-        patch_index: usize,
-    ) -> Action {
+    fn handle_place_patch(&mut self, state: &Patchwork, valid_actions: Vec<Action>, patch_index: usize) -> Action {
         let initial_prompt = format!("You chose to place the following patch: \n{}\nPlease enter the  rotation (0, 90, 180, 270) and orientation (if flipped: y/n) of the patch:", state.patches[patch_index]);
         let mut prompt = initial_prompt.clone();
 
@@ -266,10 +255,7 @@ impl HumanPlayer {
             let orientation = optional_orientation.unwrap_or('x');
 
             if orientation != 'y' && orientation != 'n' {
-                prompt = format!(
-                    "Please enter 'y' or 'n' for orientation. {}",
-                    initial_prompt
-                );
+                prompt = format!("Please enter 'y' or 'n' for orientation. {}", initial_prompt);
                 continue;
             }
 
@@ -292,10 +278,14 @@ impl HumanPlayer {
             let new_valid_actions = valid_actions
                 .iter()
                 .filter(|action| {
-                    if let ActionPayload::PatchPlacement { payload } = &action.payload {
-                        payload.patch_index == patch_index
-                            && payload.patch_rotation == rotation
-                            && payload.patch_orientation == orientation
+                    if let ActionPayload::PatchPlacement {
+                        patch_index: index,
+                        patch_orientation,
+                        patch_rotation,
+                        ..
+                    } = &action.payload
+                    {
+                        *index == patch_index && *patch_rotation == rotation && *patch_orientation == orientation
                     } else {
                         false
                     }
@@ -307,7 +297,10 @@ impl HumanPlayer {
                 return self.handle_place_patch_position(new_valid_actions);
             }
 
-            prompt = format!("Rotation '{}' and Orientation '{}' is not valid. Please enter a valid rotation and orientation. {}", rotation, orientation, initial_prompt);
+            prompt = format!(
+                "Rotation '{}' and Orientation '{}' is not valid. Please enter a valid rotation and orientation. {}",
+                rotation, orientation, initial_prompt
+            );
         }
     }
 
@@ -353,11 +346,7 @@ impl HumanPlayer {
             let row: usize = optional_row.unwrap();
             let column: usize = optional_column.unwrap();
 
-            if row > QuiltBoard::ROWS
-                || column > QuiltBoard::COLUMNS
-                || row == 0
-                || column == 0
-            {
+            if row > QuiltBoard::ROWS || column > QuiltBoard::COLUMNS || row == 0 || column == 0 {
                 prompt = format!(
                     "Please enter valid numbers for row (1-{}) and column (1-{}). {}",
                     QuiltBoard::ROWS,
@@ -370,8 +359,8 @@ impl HumanPlayer {
             let patch_position = (row - 1, column - 1);
 
             for action in &valid_actions {
-                if let ActionPayload::PatchPlacement { payload } = &action.payload {
-                    if payload.row == patch_position.0 && payload.column == patch_position.1 {
+                if let ActionPayload::PatchPlacement { row, column, .. } = &action.payload {
+                    if *row == patch_position.0 && *column == patch_position.1 {
                         return action.clone();
                     }
                 }
@@ -384,8 +373,7 @@ impl HumanPlayer {
                 valid_actions
                     .iter()
                     .map(|a| match &a.payload {
-                        ActionPayload::PatchPlacement { payload } =>
-                            format!("({}, {})", payload.row + 1, payload.column + 1),
+                        ActionPayload::PatchPlacement { row, column, .. } => format!("({}, {})", row + 1, column + 1),
                         _ => "".to_string(),
                     })
                     .collect::<Vec<_>>()
@@ -399,9 +387,7 @@ impl HumanPlayer {
         let mut human_input = String::new();
         print!("{} ", prompt);
         io::stdout().lock().flush().unwrap();
-        io::stdin()
-            .read_line(&mut human_input)
-            .expect("Failed to read line"); // TODO: use anyhow and better error handling
+        io::stdin().read_line(&mut human_input).expect("Failed to read line"); // TODO: use anyhow and better error handling
 
         human_input = human_input.trim().to_lowercase();
         self.handle_exit_input(&human_input);

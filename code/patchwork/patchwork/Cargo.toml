@@ -5,7 +5,6 @@ authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]
-game = { path = "../game" }
 patchwork_core = { path = "../patchwork_core" }
 patchwork_macros = { path = "../patchwork_macros" }
 patchwork_alphazero_player = { path = "../patchwork_alphazero_player" }

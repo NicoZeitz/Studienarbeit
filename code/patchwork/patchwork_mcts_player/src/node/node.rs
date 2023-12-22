@@ -1,23 +1,22 @@
 use std::sync::{Arc, RwLock, Weak};
 use std::{fmt, thread};
 
-use game::{Evaluator, Game};
+use patchwork_core::{Action, Evaluator, Patchwork};
 use rand::seq::SliceRandom;
 
-use crate::MCTSSpecification;
 use tree_policy::{TreePolicy, TreePolicyNode};
 
-type Link<T> = Arc<RwLock<Node<T>>>;
-type WeakLink<T> = Weak<RwLock<Node<T>>>;
+type Link = Arc<RwLock<Node>>;
+type WeakLink = Weak<RwLock<Node>>;
 
 #[derive(Clone)]
-pub struct Node<Spec: MCTSSpecification> {
+pub struct Node {
     /// The state of the game at this node.
-    pub state: Spec::Game,
+    pub state: Patchwork,
     /// The parent node. None if this is the root node.
-    pub parent: Option<WeakLink<Spec>>,
+    pub parent: Option<WeakLink>,
     /// The children nodes.
-    pub children: Vec<Link<Spec>>,
+    pub children: Vec<Link>,
     /// The maximum score of all the nodes in the subtree rooted at this node.
     pub max_score: f64,
     // The minimum score of all the nodes in the subtree rooted at this node.
@@ -29,22 +28,15 @@ pub struct Node<Spec: MCTSSpecification> {
     // The number of times this node has been visited.
     pub visit_count: i32,
     /// The action that was taken to get to this node. None if this is the root node.
-    pub action_taken: Option<<Spec::Game as game::Game>::Action>,
+    pub action_taken: Option<Action>,
     /// The actions that can still be taken from this node
-    pub expandable_actions: Vec<<Spec::Game as game::Game>::Action>,
+    pub expandable_actions: Vec<Action>,
 }
 
-unsafe impl<Spec: MCTSSpecification> Send for Node<Spec> {}
-
-impl<Spec: MCTSSpecification> Node<Spec> {
-    pub fn new(
-        state: &Spec::Game,
-        parent: Option<WeakLink<Spec>>,
-        action_taken: Option<<Spec::Game as game::Game>::Action>,
-    ) -> Self {
+impl Node {
+    pub fn new(state: &Patchwork, parent: Option<WeakLink>, action_taken: Option<Action>) -> Self {
         let new_state = state.clone();
-        let mut expandable_actions: Vec<<Spec::Game as game::Game>::Action> =
-            new_state.get_valid_actions().into_iter().collect();
+        let mut expandable_actions: Vec<Action> = new_state.get_valid_actions().into_iter().collect();
         expandable_actions.shuffle(&mut rand::thread_rng());
 
         Self {
@@ -61,33 +53,28 @@ impl<Spec: MCTSSpecification> Node<Spec> {
         }
     }
 
-    pub fn is_fully_expanded(node: &Link<Spec>) -> bool {
-        Node::is_terminal(node)
-            || Arc::clone(node)
-                .read()
-                .unwrap()
-                .expandable_actions
-                .is_empty()
+    pub fn is_fully_expanded(node: &Link) -> bool {
+        Node::is_terminal(node) || Arc::clone(node).read().unwrap().expandable_actions.is_empty()
     }
 
-    pub fn is_terminal(node: &Link<Spec>) -> bool {
+    pub fn is_terminal(node: &Link) -> bool {
         Arc::clone(node).read().unwrap().state.is_terminated()
     }
 
-    pub fn select<Policy: TreePolicy>(node: &Link<Spec>, tree_policy: &Policy) -> Link<Spec> {
+    pub fn select<Policy: TreePolicy>(node: &Link, tree_policy: &Policy) -> Link {
         let cloned_parent = Arc::new(RwLock::new(node.read().unwrap().clone()));
         let parent = node.read().unwrap();
-        let children = parent.children.iter().map(|c| TreePolicyNodeWrapper(c));
-        let selected_node =
-            tree_policy.select_node(TreePolicyNodeWrapper(&cloned_parent), children);
+        let children = parent.children.iter().map(TreePolicyNodeWrapper);
+        let selected_node = tree_policy.select_node(TreePolicyNodeWrapper(&cloned_parent), children);
         Arc::clone(selected_node.0)
     }
 
     ///  Expands this node by adding a child node.
     /// The child node is chosen randomly from the expandable actions.
-    pub fn expand(node: &Link<Spec>) -> Link<Spec> {
+    pub fn expand(node: &Link) -> Link {
         let action = node.write().unwrap().expandable_actions.remove(0);
-        let next_state = node.read().unwrap().state.get_next_state(&action);
+        let mut next_state = node.read().unwrap().state.clone();
+        next_state.do_action(&action, false).unwrap();
         let child = Arc::new(RwLock::new(Node::new(
             &next_state,
             Some(Arc::downgrade(node)),
@@ -104,10 +91,10 @@ impl<Spec: MCTSSpecification> Node<Spec> {
     /// - `node`: The node to backpropagate from.
     /// - `score`: The score at the end of the game that should be backpropagated.
     /// - `evaluator`: The evaluator to use to interpret the score.
-    pub fn backpropagate(node: &Link<Spec>, value: f64) {
+    pub fn backpropagate(node: &Link, value: f64) {
         let mut mutable_node = node.write().unwrap();
         let player = &mutable_node.state.get_current_player();
-        let maximizing_player = mutable_node.state.is_maximizing_player(player);
+        let maximizing_player = mutable_node.state.get_player_1_flag() == *player;
         let value_multiplier = if maximizing_player { 1.0 } else { -1.0 };
         let score = value * value_multiplier;
 
@@ -131,11 +118,7 @@ impl<Spec: MCTSSpecification> Node<Spec> {
         }
     }
 
-    pub fn simulate<Eval: Evaluator<Game = Spec::Game>>(
-        node: &Link<Spec>,
-        evaluator: &Eval,
-        leaf_parallelization: usize,
-    ) -> f64 {
+    pub fn simulate<Eval: Evaluator>(node: &Link, evaluator: &Eval, leaf_parallelization: usize) -> f64 {
         let game = Arc::new({
             let node = node.read().unwrap();
             node.state.clone()
@@ -161,9 +144,9 @@ impl<Spec: MCTSSpecification> Node<Spec> {
     }
 }
 
-struct TreePolicyNodeWrapper<'a, Spec: MCTSSpecification>(&'a Link<Spec>);
+struct TreePolicyNodeWrapper<'a>(&'a Link);
 
-impl<'a, Spec: MCTSSpecification> TreePolicyNode for TreePolicyNodeWrapper<'a, Spec> {
+impl<'a> TreePolicyNode for TreePolicyNodeWrapper<'a> {
     fn max_score(&self) -> f64 {
         self.0.read().unwrap().max_score
     }
@@ -186,10 +169,7 @@ impl<'a, Spec: MCTSSpecification> TreePolicyNode for TreePolicyNodeWrapper<'a, S
 }
 
 // TODO: implement debug and so on for all structures when inner types support it as well
-impl<Spec: MCTSSpecification> fmt::Debug for Node<Spec>
-where
-    <Spec::Game as game::Game>::Action: fmt::Debug,
-{
+impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_struct("Node")
             // .field("state", &self.state)
