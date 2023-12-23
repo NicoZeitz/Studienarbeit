@@ -33,10 +33,15 @@ impl Notation for Action {
     /// # Example
     ///
     /// ```
-    /// let null_action = "N";                         /* N */
-    /// let walking_action = "W0";                     /* W starting_index */
-    /// let patch_placement_action = "P0/0/0/0/0/0/0";   /* P patch_id / patch_index / rotation / orientation / row / column / starting_index */
-    /// let special_patch_placement_action = "S0/0/0"; /* S patch_id / row / column */
+    /// let null_action = Action::load_from_notation("N");                         /* N */
+    /// let walking_action = Action::load_from_notation("W0");                     /* W starting_index */
+    /// let patch_placement_action = Action::load_from_notation("P0/0/0/0/0/0/0"); /* P patch_id / patch_index / rotation / orientation / row / column / starting_index */
+    /// let special_patch_placement_action = Action::load_from_notation("S0/0/0"); /* S patch_id / row / column */
+    ///
+    /// let null_action_notation = null_action.save_to_notation().unwrap();
+    /// let walking_action_notation = walking_action.save_to_notation().unwrap();
+    /// let patch_placement_action_notation = patch_placement_action.save_to_notation().unwrap();
+    /// let special_patch_placement_action_notation = special_patch_placement_action.save_to_notation().unwrap();
     /// ```
     fn save_to_notation(&self) -> Result<String, PatchworkError> {
         Ok(match self.payload {

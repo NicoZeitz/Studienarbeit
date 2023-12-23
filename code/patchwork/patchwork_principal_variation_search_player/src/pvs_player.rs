@@ -1,10 +1,26 @@
-use patchwork_core::{Action, Patchwork, Player, PlayerResult};
+use std::sync::{atomic::AtomicBool, Arc};
+
+use patchwork_core::{Action, Evaluator as EvaluatorTrait, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::StaticEvaluator as Evaluator;
 
 use crate::PVSOptions;
 
+/// The diagnostics of a search.
+/// TODO: Implement
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+pub struct SearchDiagnostics {
+    pub nodes: usize,
+}
+
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+///
+/// # Features
+/// - [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening)
+/// - [Alpha-Beta Pruning](https://www.chessprogramming.org/Alpha-Beta)
+/// - [Principal Variation Search (PVS)](https://www.chessprogramming.org/Principal_Variation_Search)
+/// - [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows)
+/// - [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions)
+#[derive(Debug, Clone)]
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,
@@ -12,8 +28,12 @@ pub struct PVSPlayer {
     pub options: PVSOptions,
     /// The evaluator to evaluate the game state.
     pub evaluator: Evaluator,
+    /// search diagnostics
+    pub diagnostics: SearchDiagnostics,
     /// The best action found so far.
     best_action: Option<Action>,
+    /// Whether the search has been canceled.
+    search_canceled: Arc<AtomicBool>,
 }
 
 impl PVSPlayer {
@@ -24,7 +44,9 @@ impl PVSPlayer {
             name: name.into(),
             options,
             evaluator: Default::default(),
+            diagnostics: Default::default(),
             best_action: None,
+            search_canceled: Arc::new(AtomicBool::new(false)),
         }
     }
 }
@@ -43,251 +65,202 @@ impl Player for PVSPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, _game: &Patchwork) -> PlayerResult<Action> {
-        todo!()
-        // self.search(game)
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+        std::thread::scope(|s| {
+            let search_canceled = Arc::clone(&self.search_canceled);
+            let time_limit = self.options.time_limit;
+
+            // stop search after time limit
+            s.spawn(move || {
+                std::thread::sleep(time_limit);
+                search_canceled.store(true, std::sync::atomic::Ordering::SeqCst);
+            });
+
+            let mut game = game.clone();
+
+            // do the search
+            let action = self.search(&mut game)?;
+
+            // reset the parameters for the next search
+            self.diagnostics = Default::default();
+            self.search_canceled.store(false, std::sync::atomic::Ordering::SeqCst);
+
+            Ok(action)
+        })
     }
 }
 
 impl PVSPlayer {
-    // fn search(&mut self, game: &Patchwork) -> Action {
-    //     let search_canceled = AtomicBool::new(false);
+    const NEGATIVE_INFINITY: f64 = f64::NEG_INFINITY;
+    const POSITIVE_INFINITY: f64 = f64::INFINITY;
+    const LMR_REDUCED_BY_DEPTH: usize = 1;
+    const LMR_FULL_DEPTH_ACTIONS: usize = 4;
+    const LMR_REDUCTION_LIMIT: usize = 3;
 
-    //     std::thread::scope(|s| {
-    //         s.spawn(|| {
-    //             std::thread::sleep(self.options.time_limit);
-    //             search_canceled.store(true, std::sync::atomic::Ordering::SeqCst);
-    //         });
+    fn search(&mut self, game: &mut Patchwork) -> PlayerResult<Action> {
+        let mut delta = 100.0; // TODO: test which value should be used
+        let mut alpha = PVSPlayer::NEGATIVE_INFINITY; // TODO: initialize to score_estimate - delta
+        let mut beta = PVSPlayer::POSITIVE_INFINITY; // TODO: initialize to score_estimate + delta
+        let mut depth = 1;
 
-    //         let chosen_action = None;
-    //         let alpha = isize::MIN;
-    //         let beta = isize::MAX;
+        // [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening) loop
+        while depth < usize::MAX {
+            let evaluation = self.principal_variation_search(game, depth, alpha, beta)?;
 
-    //         // iterative deepening loop
-    //         for depth in 1..usize::MAX {
-    //             let (action, evaluation) = self.principal_variation_search(game, depth, alpha, beta);
+            if self.search_canceled.load(std::sync::atomic::Ordering::SeqCst) {
+                break;
+            }
 
-    //             if search_canceled.load(std::sync::atomic::Ordering::SeqCst) {
-    //                 return action;
-    //             }
-    //         }
+            // [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows) with exponential backoff
+            if evaluation <= alpha {
+                // Evaluation is below aspiration window [Fail-Low](https://www.chessprogramming.org/Fail-Low#Root_with_Aspiration)
+                // The best found evaluation is less than or equal to the lower bound (alpha), so we need to research at the same depth
+                beta = (alpha + beta) / 2.0; // adjust beta towards alpha
+                alpha = evaluation - delta;
+                delta += delta / 3.0; // use same exponential backoff as in [Stockfish](https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp#L429C17-L429C36)
+                continue;
+            } else if evaluation >= beta {
+                // Evaluation is above aspiration window [Fail-High](https://www.chessprogramming.org/Fail-High#Root_with_Aspiration)
+                // The best found evaluation is greater or equal to the upper bound (beta), so we need to research at the same depth
+                beta = evaluation + delta;
+                delta += delta / 3.0;
+                continue;
+            }
 
-    //         // should not happen
-    //         chosen_action.unwrap_or_else(|| game.get_valid_actions().into_iter().collect::<Vec<_>>()[0].clone())
-    //     })
-    // }
+            // Evaluation is within the aspiration window,
+            // so we can move on to the next depth with a window set around the eval
 
-    // fn principal_variation_search(&mut self, game: Game, depth: usize, alpha: isize, beta: isize) {
-    //     if depth == 0 || game.is_terminated() {
-    //         return self.evaluator.evaluate_node(game);
-    //     }
+            delta = 100.0; // TODO: use avg of root node scores like in Stockfish `delta = Value(9) + int(avg) * avg / 14847;`
+            alpha = evaluation - delta;
+            beta = evaluation + delta;
+            depth += 1;
+        }
 
-    //     let actions = game.get_valid_actions();
+        Ok(self.best_action.take().unwrap_or_else(|| {
+            println!("No best action found. Returning random valid action. (Walking) THIS SHOULD NOT HAPPEN!");
+            game.get_random_action()
+        }))
+    }
 
-    //     for action in actions {}
+    /// Does a Principal Variation Search (PVS) with the given parameters.
+    #[allow(clippy::needless_range_loop)]
+    fn principal_variation_search(
+        &mut self,
+        game: &mut Patchwork,
+        depth: usize,
+        alpha: f64,
+        beta: f64,
+    ) -> PlayerResult<f64> {
+        // TODO: fast cutoff if search time is up
 
-    //     let mut bSearchPv = true;
-    // }
-    // // int pvSearch( int alpha, int beta, int depth ) {
-    // //     if( depth == 0 ) return quiesce(alpha, beta);
-    // //     bool bSearchPv = true;
-    // //     for ( all moves)  {
-    // //        make
-    // //        if ( bSearchPv ) {
-    // //           score = -pvSearch(-beta, -alpha, depth - 1);
-    // //        } else {
-    // //           score = -zwSearch(-alpha, depth - 1);
-    // //           if ( score > alpha ) // in fail-soft ... && score < beta ) is common
-    // //              score = -pvSearch(-beta, -alpha, depth - 1); // re-search
-    // //        }
-    // //        unmake
-    // //        if( score >= beta )
-    // //           return beta;   // fail-hard beta-cutoff
-    // //        if( score > alpha ) {
-    // //           alpha = score; // alpha acts like max in MiniMax
-    // //           bSearchPv = false;   // *1)
-    // //        }
-    // //     }
-    // //     return alpha;
-    // //  }
+        if depth == 0 || game.is_terminated() {
+            return self.evaluation(game);
+        }
 
-    // //  // fail-hard zero window search, returns either beta-1 or beta
-    // //  int zwSearch(int beta, int depth ) {
-    // //     // alpha == beta - 1
-    // //     // this is either a cut- or all-node
-    // //     if( depth == 0 ) return quiesce(beta-1, beta);
-    // //     for ( all moves)  {
-    // //       make
-    // //       score = -zwSearch(1-beta, depth - 1);
-    // //       unmake
-    // //       if( score >= beta )
-    // //          return beta;   // fail-hard beta-cutoff
-    // //     }
-    // //     return beta-1; // fail-hard, return alpha
-    // //  }
+        let actions = game.get_valid_actions();
 
-    // fn iterative_deepening_search<Game: game::Game>(&self, game: &Game) -> Game::Action {
-    //     let search_canceled = AtomicBool::new(false);
+        // TODO: Save Principal Variation (PV)
 
-    //     std::thread::scope(|s| {
-    //         s.spawn(|| {
-    //             std::thread::sleep(self.options.time_limit);
-    //             search_canceled.store(true, std::sync::atomic::Ordering::SeqCst);
-    //         });
+        // TODO: is this useful for patchwork?
+        // NULL MOVE PRUNING
+        //       // Null move search:
+        //       if(ok_to_do_nullmove_at_this_node()) {
+        //         make_nullmove();
+        //         value = -search(-beta, -beta, -(beta-1), depth-4);
+        //         unmake_nullmove();
+        //         if(value >= beta) return value;
+        //       }
 
-    //         let maximizing_player = game.is_maximizing_player(&game.get_current_player());
+        // TODO: move sorter, move pvNode first
+        // TODO: late move pruning (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
 
-    //         let mut chosen_action: Option<Game::Action> = None;
-    //         let mut chosen_evaluation = if maximizing_player {
-    //             f64::NEG_INFINITY
-    //         } else {
-    //             f64::INFINITY
-    //         };
+        let mut is_pv_node = true;
+        let mut best_action = Some(actions[0].clone());
+        let mut alpha = alpha;
 
-    //         for depth in 1..usize::MAX {
-    //             if search_canceled.load(std::sync::atomic::Ordering::SeqCst) {
-    //                 break;
-    //             }
+        for i in 0..actions.len() {
+            let action = &actions[i];
 
-    //             let (action, evaluation) =
-    //                 PVSPlayer::principal_variation_search(game, f64::NEG_INFINITY, f64::INFINITY, depth, false);
+            game.do_action(action, true)?;
 
-    //             // break ties randomly
-    //             if evaluation == chosen_evaluation && rand::random() {
-    //                 chosen_action = Some(action);
-    //             } else {
-    //                 #[allow(clippy::collapsible_else_if)]
-    //                 if maximizing_player {
-    //                     if evaluation > chosen_evaluation {
-    //                         chosen_action = Some(action);
-    //                         chosen_evaluation = evaluation;
-    //                     }
-    //                 } else {
-    //                     if evaluation < chosen_evaluation {
-    //                         chosen_action = Some(action);
-    //                         chosen_evaluation = evaluation;
-    //                     }
-    //                 }
-    //             }
-    //         }
+            let mut evaluation = f64::NAN;
+            if is_pv_node {
+                // Full window search for pv node
+                evaluation = -self.principal_variation_search(game, depth - 1, -beta, -alpha)?
+            } else {
+                // Apply [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions) if we're not in the early moves (and this is not a PV node)
+                // Reduce the depth of the search for later actions as these are less likely to be good (assuming the action ordering is good)
+                // Code adapted from https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html
+                // TODO: add search extensions (e.g. special patch placement) and ignore these here (By LMR)
+                let mut needs_full_search = true;
+                if i >= PVSPlayer::LMR_FULL_DEPTH_ACTIONS && depth >= PVSPlayer::LMR_REDUCTION_LIMIT
+                /* && ok_to_reduce() */
+                {
+                    // Search this move with reduced depth
+                    evaluation = -self.zero_window_search(game, depth - 1 - PVSPlayer::LMR_REDUCED_BY_DEPTH, -alpha)?;
+                    needs_full_search = evaluation > alpha;
+                }
 
-    //         chosen_action.unwrap()
-    //     })
-    // }
+                if needs_full_search {
+                    // Null-window search
+                    evaluation = -self.zero_window_search(game, depth - 1, -alpha)?;
 
-    // fn principal_variation_search_old<Game: game::Game>(
-    //     game: &Game,
-    //     alpha: f64,
-    //     beta: f64,
-    //     depth: usize,
-    //     force_null_move: bool,
-    // ) -> f64 {
-    //     if depth == 0 || game.is_terminated() {
-    //         return evaluator.evaluate_node(game);
-    //     }
+                    if evaluation > alpha && evaluation < beta {
+                        // Re-search with full window
+                        evaluation = -self.principal_variation_search(game, depth - 1, -beta, -alpha)?;
+                    }
+                }
 
-    //     let mut b_search_pv = true;
+                debug_assert!(!f64::is_nan(evaluation));
+            }
 
-    //     if force_null_move {
-    //         // TODO:
-    //     }
+            game.undo_action(action, true)?;
 
-    //     let current_player = game.is_maximizing_player(&game.get_current_player());
+            if evaluation >= beta {
+                return Ok(beta); // fail-hard beta-cutoff
+            }
+            if evaluation > alpha {
+                alpha = evaluation; // alpha acts like max in MiniMax
+                best_action = Some(action.clone());
+            }
+            is_pv_node = false;
+        }
 
-    //     for action in game.get_valid_actions() {
-    //         let next_state = game.do_action(&action);
-    //         let next_player = game.is_maximizing_player(&game.get_current_player());
-    //         let player_changed = current_player != next_player;
+        self.best_action = best_action;
 
-    //         let mut score;
+        // TODO: Transposition Table with Symmetry Reduction
 
-    //         if b_search_pv {
-    //             // TODO: minus
-    //             score = -PVSPlayer::principal_variation_search(&next_state, -beta, -alpha, depth - 1, !player_changed);
-    //         } else {
-    //             // TODO: minus
-    //             score = -PVSPlayer::zero_window_search(&next_state, -alpha, depth - 1, !player_changed);
-    //             if score > alpha {
-    //                 // TODO: minus
-    //                 score =
-    //                     -PVSPlayer::principal_variation_search(&next_state, -beta, -alpha, depth - 1, !player_changed);
-    //             }
-    //         };
+        Ok(alpha)
+    }
 
-    //         if score >= beta {
-    //             return beta;
-    //         }
-    //         if score > alpha {
-    //             alpha = score;
-    //             b_search_pv = false;
-    //         }
-    //     }
+    /// Does a Zero/Scout Window Search (ZWS) with the given parameters.
+    ///
+    /// fail-hard zero window search, returns either `beta-1` or `beta`
+    /// only takes the beta parameter because `alpha == beta - 1`
+    fn zero_window_search(&mut self, game: &mut Patchwork, depth: usize, beta: f64) -> PlayerResult<f64> {
+        // TODO: fast cutoff if search time is up
 
-    //     return alpha;
-    // }
+        if depth == 0 || game.is_terminated() {
+            return self.evaluation(game);
+        }
 
-    // fn zero_window_search<Game: game::Game>(game: &Game, beta: f64, depth: usize, force_null_move: bool) -> f64 {
-    //     if depth == 0 || game.is_terminated() {
-    //         return evaluator.evaluate_node(game);
-    //     }
+        let actions = game.get_valid_actions();
+        for action in actions {
+            game.do_action(&action, true)?;
 
-    //     if force_null_move {
-    //         // TODO:
-    //     }
+            let evaluation = -self.zero_window_search(game, depth - 1, 1.0 - beta)?;
 
-    //     let current_player = game.is_maximizing_player(&game.get_current_player());
+            game.undo_action(&action, true)?;
 
-    //     for action in game.get_valid_actions() {
-    //         let next_state = game.do_action(&action);
-    //         let next_player = game.is_maximizing_player(&game.get_current_player());
-    //         let player_changed = current_player != next_player;
+            if evaluation >= beta {
+                return Ok(beta); // fail-hard beta-cutoff
+            }
+        }
+        Ok(beta - 1.0) // fail-hard, return alpha
+    }
 
-    //         // TODO: minus
-    //         let score = -PVSPlayer::zero_window_search(&next_state, 1.0 - beta, depth - 1, !player_changed);
-
-    //         if score >= beta {
-    //             return beta;
-    //         }
-    //     }
-
-    //     return beta - 1.0;
-    // }
+    // TODO: rename method and do search extensions and so on
+    fn evaluation(&mut self, game: &Patchwork) -> PlayerResult<f64> {
+        Ok(self.evaluator.evaluate_node(game))
+    }
 }
-
-// int pvSearch( int alpha, int beta, int depth ) {
-//     if( depth == 0 ) return quiesce(alpha, beta);
-//     bool bSearchPv = true;
-//     for ( all moves)  {
-//        make
-//        if ( bSearchPv ) {
-//           score = -pvSearch(-beta, -alpha, depth - 1);
-//        } else {
-//           score = -zwSearch(-alpha, depth - 1);
-//           if ( score > alpha ) // in fail-soft ... && score < beta ) is common
-//              score = -pvSearch(-beta, -alpha, depth - 1); // re-search
-//        }
-//        unmake
-//        if( score >= beta )
-//           return beta;   // fail-hard beta-cutoff
-//        if( score > alpha ) {
-//           alpha = score; // alpha acts like max in MiniMax
-//           bSearchPv = false;   // *1)
-//        }
-//     }
-//     return alpha;
-//  }
-
-//  // fail-hard zero window search, returns either beta-1 or beta
-//  int zwSearch(int beta, int depth ) {
-//     // alpha == beta - 1
-//     // this is either a cut- or all-node
-//     if( depth == 0 ) return quiesce(beta-1, beta);
-//     for ( all moves)  {
-//       make
-//       score = -zwSearch(1-beta, depth - 1);
-//       unmake
-//       if( score >= beta )
-//          return beta;   // fail-hard beta-cutoff
-//     }
-//     return beta-1; // fail-hard, return alpha
-//  }

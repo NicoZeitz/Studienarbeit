@@ -23,6 +23,7 @@
         "rustfmt",
         "Seedable",
         "simd",
+        "Stockfish",
         "struct",
         "termion",
         "thiserror",
