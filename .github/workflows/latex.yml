@@ -15,6 +15,9 @@ on:
         tags:
             - '*'
 
+permissions:
+    contents: write
+
 jobs:
     build_latex:
         runs-on: ubuntu-latest
@@ -26,12 +29,14 @@ jobs:
               with:
                   working_directory: ./T3_3101
                   root_file: Praxisbericht.tex
-            - name: Upload PDF file
-              uses: actions/upload-artifact@v3
-              with:
-                  name: PDF
-                  path: ./T3_3101/Praxisbericht.pdf
+            # - name: Upload PDF file
+            #   uses: actions/upload-artifact@v3
+            #   with:
+            #       name: PDF
+            #       path: ./T3_3101/Praxisbericht.pdf
             - name: Release Studienarbeit LaTeX document
               uses: softprops/action-gh-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   files: ./T3_3101/Praxisbericht.pdf
