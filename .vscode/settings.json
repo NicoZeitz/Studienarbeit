@@ -38,6 +38,7 @@
         "**/**.acn": true,
         "**/**.acr": true,
         "**/**.alg": true,
+        "**/**.bbl": true,
         "**/**.fls": true,
         "**/**.synctex(busy)": true,
         "**/**.fdb_latexmk": true,
