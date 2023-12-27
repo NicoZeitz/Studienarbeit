@@ -135,7 +135,7 @@ impl PVSPlayer {
     /// longer than 54*2 turns with phantom moves 108*2=216
     pub const MAX_DEPTH: usize = 256;
 
-    // TODO: better estimations for delta, alpha & beta
+    // TODO: better estimations for delta, alpha and beta
     /// Starting value for alpha (lower bound)
     pub const STARTING_ALPHA: isize = -5;
     /// Starting value for beta (upper bound)

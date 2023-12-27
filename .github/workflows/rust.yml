@@ -18,29 +18,33 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - uses: dtolnay/rust-toolchain@stable
-            - working-directory: ./code/patchwork
-            - run: cargo check --all-features
+            - name: Cargo Check
+              working-directory: ./code/patchwork
+              run: cargo check --all-features
     test:
         name: cargo test
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: dtolnay/rust-toolchain@stable
-            - working-directory: ./code/patchwork
-            - run: cargo test --all-features
+            - name: Cargo Test
+              working-directory: ./code/patchwork
+              run: cargo test --all-features
     fmt:
         name: cargo fmt
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: dtolnay/rust-toolchain@stable
-            - working-directory: ./code/patchwork
-            - run: cargo fmt --all -- --check
+            - name: Cargo Fmt
+              working-directory: ./code/patchwork
+              run: cargo fmt --all -- --check
     clippy:
         name: cargo clippy
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: dtolnay/rust-toolchain@stable
-            - working-directory: ./code/patchwork
-            - run: cargo clippy --all -- -D warnings
+            - name: Cargo Clippy
+              working-directory: ./code/patchwork
+              run: cargo clippy --all -- -D warnings
