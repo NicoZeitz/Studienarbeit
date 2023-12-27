@@ -1,0 +1,207 @@
+% Deutsche Spielregeln: https://lookout-spiele.de/wp-content/uploads/Patchwork.pdf
+
+\chapter{Analyse des Brettspiels}
+\label{chapter:analyse-des-bretspiels}
+
+TODO:
+
+Terminiologie?
+Patch -> Flick/Flicken
+Button -> Knopf/Knöpfe
+
+\section{Spielregeln}
+
+machen wir das in diesem Kapitel oder in den Grundlagen (wahrscheinlich hier)
+
+
+\section{Titel mit Spieltheorie}
+
+spieltheorie
+
+Buzzword bingo
+
+Sequential game
+perfect information / Spiel mit perfekter Information
+zero-sum game
+2 players
+strategy
+turn based
+no randomness / Kein Zufall (außer beim Spielbeginn)
+
+Längste Anzahl an Ply/Spielzügen --> jeder walkt + legen von special patches (da kaufen eines Spielteils immer >= 1 vorgehen)
+
+\textbf{Anzahl der möglichen Startpositionen}
+
+Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263130836933693530167218012160000000 \approx 2,6 \cdot 10^{35}$ Möglichkeiten. Somit gibt es $2,6 \cdot 10^{35}$ mögliche Startpositionen. Das sind schon mehr mögliche Startpositionen als in Schach existieren (TODO: QUELLE).
+
+\textbf{Obere Schranke für die maximal mögliche Anzahl an Zügen in einem Ply}
+\textbf{Supremum/Maximum für die maximal mögliche Anzahl an Zügen in eimem Ply}
+
+bla bla mit Spiegelungen und Rotationen (Diedergruppe der Ordnung 4 vgl. $D_4$-Gruppe)
+
+
+tatsächlicher Wert
+
+% #
+% #  gibt es in der Form 2 mal --> 8*7*8 = 448
+% ##
+
+% #
+% ## --> 8*7*8 = 448
+% ##
+
+% 3*448=1344
+
+% nicht verwendet
+
+% ##
+% ##  --> 7*7*8=392 (kostet aber 8 somit nicht möglich)
+% ##
+
+% #
+% ## --> 8*8*4 = 256
+
+% ## --> 8*9*2 = 144
+
+% #  --> 9*9*1 = 81
+
+
+$\left(9-\text{Breite}+1\right)\cdot\left(9-\text{Länge}+1\right)\cdot\text{Transformationen}$
+
+bei flicke der breite ... und länge ... kann man es auf ... positionen im board legen
+
+max amount of moves
+* upper bound
+* real value
+
+\section{Obere und untere Schranke für die Wertung eines Spielers}
+
+In dieser Sektion wird eine obere und eine untere Schranke für die Wertung eines Spielers am Ende des Spiels festgesetzt. Da sich die Wertung aus dem am Ende vorhandenen Vorrat an Knopf-Plättchen und der Anzahl der Lücken im eigenen Spielbrett zusammensetzt, werden zunächst die maximal möglichen Werte für diese beiden Komponenten bestimmt. Anschließend werden die Schranken für die Wertung eines Spielers am Ende des Spiels festgesetzt.
+
+\subsection*{Maximal mögliche Anzahl zusätzlichen Knopf-Plättchen an bei der Knopf-Wertung}
+
+
+Max Button Income
+% /// The maximum amount of button income a player can have is bounded
+% /// by the number of tiles in the quilt board.
+% ///
+% /// The highest possible upper bound that is realistic would therefore be `81`
+% /// (The amount of tiles in the quilt board). But this would require that
+% /// all patches that are layed out have at least the same button income as
+% /// the amount of tiles they cover. This is not true for any patch in the
+% /// game.
+% ///
+% /// Therefore variable uses a more conservative upper bound of `32`.
+% /// For this the patches were ordered by the percentage of button income in
+% /// relation to the amount of tiles they cover. Then the first patches were
+% /// chosen until the amount of tiles covered was `>= 81`. With this a
+% /// maximum button income of 33 as upper bound was found.
+% ///
+% /// Here is the list of all patches and the patches that were chosen ordered
+% /// by the percentage of button income in relation to the amount of tiles:
+% ///
+% /// ```txt
+% /// index:  4, tiles: 4, buttons: 3, percentage: 0.75
+% /// index:  1, tiles: 5, buttons: 3, percentage: 0.6
+% /// index:  3, tiles: 6, buttons: 3, percentage: 0.5
+% /// index:  9, tiles: 4, buttons: 2, percentage: 0.5
+% /// index: 12, tiles: 6, buttons: 3, percentage: 0.5
+% /// index: 14, tiles: 4, buttons: 2, percentage: 0.5
+% /// index: 17, tiles: 5, buttons: 2, percentage: 0.4
+% /// index: 18, tiles: 5, buttons: 2, percentage: 0.4
+% /// index: 29, tiles: 5, buttons: 2, percentage: 0.4
+% /// index: 13, tiles: 6, buttons: 2, percentage: 0.3333333333333333
+% /// index: 15, tiles: 6, buttons: 2, percentage: 0.3333333333333333
+% /// index: 30, tiles: 6, buttons: 2, percentage: 0.3333333333333333
+% /// index: 19, tiles: 4, buttons: 1, percentage: 0.25
+% /// index: 26, tiles: 4, buttons: 1, percentage: 0.25
+% /// index: 28, tiles: 4, buttons: 1, percentage: 0.25
+% /// index: 10, tiles: 5, buttons: 1, percentage: 0.2
+% /// index: 27, tiles: 5, buttons: 1, percentage: 0.2
+% /// --------------- CUTOFF AFTER 84 >= 81 TILES COVERED ---------------
+% /// index: 31, tiles: 5, buttons: 1, percentage: 0.2
+% /// index: 16, tiles: 6, buttons: 1, percentage: 0.16666666666666666
+% /// index: 32, tiles: 6, buttons: 1, percentage: 0.16666666666666666
+% /// index: 20, tiles: 7, buttons: 1, percentage: 0.14285714285714285
+% /// index:  2, tiles: 8, buttons: 1, percentage: 0.125
+% /// index:  0, tiles: 2, buttons: 0, percentage: 0
+% /// index:  5, tiles: 6, buttons: 0, percentage: 0
+% /// index:  6, tiles: 6, buttons: 0, percentage: 0
+% /// index:  7, tiles: 7, buttons: 0, percentage: 0
+% /// index:  8, tiles: 5, buttons: 0, percentage: 0
+% /// index: 11, tiles: 6, buttons: 0, percentage: 0
+% /// index: 21, tiles: 3, buttons: 0, percentage: 0
+% /// index: 22, tiles: 5, buttons: 0, percentage: 0
+% /// index: 23, tiles: 3, buttons: 0, percentage: 0
+% /// index: 24, tiles: 4, buttons: 0, percentage: 0
+% /// index: 25, tiles: 3, buttons: 0, percentage: 0
+% /// ```
+% ///
+% /// But this is not the least upper bound (supremum) as the tiles covered
+% /// are `84` in the end and not `81`. The actual supremum is a button
+% /// income of `32`. This is the case because the most one can cover below
+% /// the limit of 81 tiles is reached is only a button income of `32`.
+% /// Then at least 79 tiles are covered and all patches with 2 tiles or less
+% /// do not have any button income. To show that this is actually not only
+% /// the supremum but a reachable maximum a quilt board has to be constructed
+% /// that has a button income of 32. This is done in the following:
+% ///
+% /// ```txt
+% /// 28 28 28 28 10 10 10 XX 13
+% /// 19 19 19 10 10 13 13 13 13
+% /// 19 04 18 18 18 18 12 12 13
+% /// 04 04 18 XX 12 12 12 12 14
+% /// 04 30 29 29 29 17 14 14 14
+% /// 30 30 30 29 17 17 17 03 03
+% /// 30 26 30 29 01 17 03 03 03
+% /// 26 26 15 15 01 01 03 09 09
+% /// 26 15 15 15 15 01 01 09 09
+% ///
+% /// where the tiles covered with XX are still free and all the other tiles
+% /// have the id of the patch that covers them.
+% /// ```
+% ///
+% /// This quilt board has a button income of 32, has a time cost of 66 and
+% /// covers at least 79 tiles but can be filled up with two special patches
+% /// to cover the full quilt board. While this is a maximum that can be
+% /// created on the quilt board, it is not achievable in the game as the
+% /// time cost of 66 is greater than the allowed time cost of 54.
+% ///
+% /// TODO: improve the bound even more
+% ///
+
+\subsection*{Maximal mögliche Anzahl an Knopf-Plättchen}
+
+
+Bounds for lowest possible score, highest possible score, max button income, max button balance
+
+Max button balance
+TODO: take update from zobrist hash in rust implementation
+% /// The maximum button balance a player can have is bounded by the game.
+% ///
+% /// * A player has `5` buttons at the start of the game.
+% /// * There are only `9` button income triggers that can yield a maximum amount
+% ///   of `33` buttons each (see `MAX_BUTTON_INCOME` estimate below).
+% /// * The player can get `1` button income for every tile he walks on the
+% ///   time track with the walking action. There are `54` tiles on the time track.
+% /// * The only other income source are the `7` buttons from a full quilt board.
+% ///
+% /// Because of this the maximum button balance a player can have is bounded
+% /// by `5 + 9 · 33 + 7 + 54 · 1 = 363`. This is a upper bound and not the
+% /// actual maximum because of the same reason as the `MAX_BUTTON_INCOME`
+% /// estimate below. Furthermore the player can only choose between the
+% /// walking action and the action to place a tile. Therefore he cannot get
+% /// both at the same time. It would probably be possible to lower the bound
+% /// to `5 + 9 · 33 + 7 + 54 · 1 = 309` (remove the walking actions) and
+% /// still be correct. But to be safe the bound is kept at `363`.
+
+
+MAX possible score
+363 = same as max button balance
+
+min score
+0 als bound für income + -81*2 als Punkte am Ende
+
+-81*2 + 0 = -162
+
+nicht realistisch, da man immer durch laufen mindestens 1 punkte bekommt. einzige möglichkeit punkte loszuwerden ist das quilt board zu füllen
