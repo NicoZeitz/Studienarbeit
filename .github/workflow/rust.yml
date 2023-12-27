@@ -1,0 +1,46 @@
+name: Rust Continuous integration
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - code/patchwork/**
+    pull_request:
+        branches:
+            - main
+        paths:
+            - code/patchwork/**
+
+jobs:
+    check:
+        name: cargo check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dtolnay/rust-toolchain@stable
+            - working-directory: ./code/patchwork
+            - run: cargo check --all-features
+    test:
+        name: cargo test
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dtolnay/rust-toolchain@stable
+            - working-directory: ./code/patchwork
+            - run: cargo test --all-features
+    fmt:
+        name: cargo fmt
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dtolnay/rust-toolchain@stable
+            - working-directory: ./code/patchwork
+            - run: cargo fmt --all -- --check
+    clippy:
+        name: cargo clippy
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dtolnay/rust-toolchain@stable
+            - working-directory: ./code/patchwork
+            - run: cargo clippy --all -- -D warnings

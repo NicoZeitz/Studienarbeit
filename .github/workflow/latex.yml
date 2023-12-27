@@ -1,5 +1,11 @@
 name: Build Studienarbeit LaTeX document
-on: push
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - T3_3101/**
+
 jobs:
     build_latex:
         runs-on: ubuntu-latest
@@ -9,13 +15,14 @@ jobs:
             - name: Compile Studienarbeit LaTeX document
               uses: xu-cheng/latex-action@v3
               with:
+                  working_directory: ./T3_3101
                   root_file: Praxisbericht.tex
             - name: Upload PDF file
               uses: actions/upload-artifact@v3
               with:
                   name: PDF
-                  path: Praxisbericht.pdf
+                  path: ./T3_3101/Praxisbericht.pdf
             - name: Release Studienarbeit LaTeX document
               uses: softprops/action-gh-release@v1
               with:
-                  files: Praxisbericht.pdf
+                  files: ./T3_3101/Praxisbericht.pdf
