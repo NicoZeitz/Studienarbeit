@@ -4,7 +4,7 @@ use std::{fmt, thread};
 use patchwork_core::{Action, Evaluator, Patchwork};
 use rand::seq::SliceRandom;
 
-use tree_policy::{TreePolicy, TreePolicyNode};
+use patchwork_tree_policy::{TreePolicy, TreePolicyNode};
 
 type Link = Arc<RwLock<Node>>;
 type WeakLink = Weak<RwLock<Node>>;
@@ -18,11 +18,11 @@ pub struct Node {
     /// The children nodes.
     pub children: Vec<Link>,
     /// The maximum score of all the nodes in the subtree rooted at this node.
-    pub max_score: f64,
+    pub max_score: isize,
     // The minimum score of all the nodes in the subtree rooted at this node.
-    pub min_score: f64,
+    pub min_score: isize,
     // The sum of the scores of all the nodes in the subtree rooted at this node.
-    pub score_sum: f64,
+    pub score_sum: isize,
     // The number of times this node has been visited where the player whose turn it is to move
     pub wins: i32,
     // The number of times this node has been visited.
@@ -43,10 +43,10 @@ impl Node {
             state: new_state,
             parent,
             children: vec![],
-            max_score: f64::NEG_INFINITY,
-            min_score: f64::INFINITY,
+            max_score: isize::MIN,
+            min_score: isize::MAX,
             wins: 0,
-            score_sum: 0.0,
+            score_sum: 0,
             visit_count: 0,
             action_taken,
             expandable_actions,
@@ -61,11 +61,11 @@ impl Node {
         Arc::clone(node).read().unwrap().state.is_terminated()
     }
 
-    pub fn select<Policy: TreePolicy>(node: &Link, tree_policy: &Policy) -> Link {
+    pub fn select<Policy: TreePolicy>(node: &Link, patchwork_tree_policy: &Policy) -> Link {
         let cloned_parent = Arc::new(RwLock::new(node.read().unwrap().clone()));
         let parent = node.read().unwrap();
         let children = parent.children.iter().map(TreePolicyNodeWrapper);
-        let selected_node = tree_policy.select_node(TreePolicyNodeWrapper(&cloned_parent), children);
+        let selected_node = patchwork_tree_policy.select_node(TreePolicyNodeWrapper(&cloned_parent), children);
         Arc::clone(selected_node.0)
     }
 
@@ -91,17 +91,17 @@ impl Node {
     /// - `node`: The node to backpropagate from.
     /// - `score`: The score at the end of the game that should be backpropagated.
     /// - `evaluator`: The evaluator to use to interpret the score.
-    pub fn backpropagate(node: &Link, value: f64) {
+    pub fn backpropagate(node: &Link, value: isize) {
         let mut mutable_node = node.write().unwrap();
         let player = &mutable_node.state.get_current_player();
         let maximizing_player = mutable_node.state.get_player_1_flag() == *player;
-        let value_multiplier = if maximizing_player { 1.0 } else { -1.0 };
-        let score = value * value_multiplier;
+        let color = if maximizing_player { 1 } else { -1 };
+        let score = color * value;
 
         mutable_node.visit_count += 1;
         mutable_node.score_sum += score;
 
-        if score > 0.0 {
+        if score > 0 {
             mutable_node.wins += 1;
         }
         if score < mutable_node.min_score {
@@ -118,7 +118,7 @@ impl Node {
         }
     }
 
-    pub fn simulate<Eval: Evaluator>(node: &Link, evaluator: &Eval, leaf_parallelization: usize) -> f64 {
+    pub fn simulate<Eval: Evaluator>(node: &Link, evaluator: &Eval, leaf_parallelization: usize) -> isize {
         let game = Arc::new({
             let node = node.read().unwrap();
             node.state.clone()
@@ -148,15 +148,15 @@ struct TreePolicyNodeWrapper<'a>(&'a Link);
 
 impl<'a> TreePolicyNode for TreePolicyNodeWrapper<'a> {
     fn max_score(&self) -> f64 {
-        self.0.read().unwrap().max_score
+        self.0.read().unwrap().max_score as f64
     }
 
     fn min_score(&self) -> f64 {
-        self.0.read().unwrap().min_score
+        self.0.read().unwrap().min_score as f64
     }
 
     fn score_sum(&self) -> f64 {
-        self.0.read().unwrap().score_sum
+        self.0.read().unwrap().score_sum as f64
     }
 
     fn wins(&self) -> i32 {

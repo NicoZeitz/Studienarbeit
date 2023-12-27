@@ -1,8 +1,11 @@
 [package]
 name = "patchwork_minimax_player"
-version = "1.0.0"
-authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
 patchwork_core = { path = "../patchwork_core" }

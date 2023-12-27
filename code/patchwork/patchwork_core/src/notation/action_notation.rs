@@ -5,7 +5,8 @@ use regex::Regex;
 use crate::{Action, ActionPayload, Notation, PatchManager, PatchworkError, QuiltBoard, TimeBoard};
 
 lazy_static! {
-    static ref ACTION_NOTATION_REGEX: Regex = Regex::new(r"^(?:(?P<null_action>N)|W(?P<start_index>\d+)|P(?P<p_patch_id>\d+)/(?P<p_index>\d+)/(?P<p_rotation>\d+)/(?P<p_orientation>\d+)/(?P<p_row>\d+)/(?P<p_column>\d+)/(?P<p_starting_index>\d+)|S(?P<s_patch_id>\d+)/(?P<s_row>\d+)/(?P<s_column>\d+))$").unwrap();
+    // TODO: extract unicode characters that are used to split out of string for easier changing
+    static ref ACTION_NOTATION_REGEX: Regex = Regex::new(r"^(?:(?P<null_action>N)|W(?P<start_index>\d+)|P(?P<p_patch_id>\d+)I(?P<p_index>\d+)═(?P<p_row>\d+)‖(?P<p_column>\d+)↻(?P<p_rotation>\d+)↔(?P<p_orientation>\d+)W(?P<p_starting_index>\d+)|S(?P<s_patch_id>\d+)═(?P<s_row>\d+)‖(?P<s_column>\d+))$").unwrap();
 }
 
 impl Notation for Action {
@@ -25,18 +26,18 @@ impl Notation for Action {
     ///     c. 'P' for a normal patch placement action
     ///     d. 'S' for a special patch placement action
     /// 2. The payload of the action
-    ///    a. For a null action this is empty
-    ///    b. For a walking action this the starting index to walk from
-    ///    c. For a normal patch placement action this is the patch id, the patch index, the patch rotation, the patch orientation, the row, the column and the starting index from where the player starts separated by slashes (e.g. P0/0/0/0/0/0)
-    ///    d. For a special patch placement action this is the patch id, the row and the column separated by slashes (e.g. S0/0/0)
+    ///    a. For a null action this is empty (e.g. N)
+    ///    b. For a walking action this the starting index to walk from (e.g. W0)
+    ///    c. For a normal patch placement action this is the patch id, the patch index, the row, the column, the patch rotation, the patch orientation and the starting index from where the player starts (e.g. P0I0═0‖0↻0↔0W0)
+    ///    d. For a special patch placement action this is the patch id, the row and the column (e.g. S0═0‖0)
     ///
     /// # Example
     ///
     /// ```
-    /// let null_action = Action::load_from_notation("N");                         /* N */
-    /// let walking_action = Action::load_from_notation("W0");                     /* W starting_index */
-    /// let patch_placement_action = Action::load_from_notation("P0/0/0/0/0/0/0"); /* P patch_id / patch_index / rotation / orientation / row / column / starting_index */
-    /// let special_patch_placement_action = Action::load_from_notation("S0/0/0"); /* S patch_id / row / column */
+    /// let null_action = Action::load_from_notation("N");                          /* N */
+    /// let walking_action = Action::load_from_notation("W0");                      /* W starting_index */
+    /// let patch_placement_action = Action::load_from_notation("P0I0═0‖0↻0↔0W0"); /* P patch_id I patch_index ═ row ‖ column ↻ rotation ↔ orientation W starting_index */
+    /// let special_patch_placement_action = Action::load_from_notation("S0═0‖0"); /* S patch_id ═ row ‖ column */
     ///
     /// let null_action_notation = null_action.save_to_notation().unwrap();
     /// let walking_action_notation = walking_action.save_to_notation().unwrap();
@@ -58,8 +59,8 @@ impl Notation for Action {
                 next_quilt_board: _,
                 previous_quilt_board: _,
             } => format!(
-                "P{:?}/{:?}/{:?}/{:?}/{:?}/{:?}/{:?}",
-                patch.id, patch_index, patch_rotation, patch_orientation, row, column, starting_index
+                "P{:?}I{:?}═{:?}‖{:?}↻{:?}↔{:?}W{:?}",
+                patch.id, patch_index, row, column, patch_rotation, patch_orientation, starting_index
             ),
             ActionPayload::SpecialPatchPlacement {
                 patch_id,
@@ -67,7 +68,7 @@ impl Notation for Action {
                 column,
                 next_quilt_board: _,
                 previous_quilt_board: _,
-            } => format!("S{:?}/{:?}/{:?}", patch_id, row, column),
+            } => format!("S{:?}═{:?}‖{:?}", patch_id, row, column),
         })
     }
 

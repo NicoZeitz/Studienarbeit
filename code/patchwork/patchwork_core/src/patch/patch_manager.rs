@@ -5,34 +5,34 @@ use patchwork_macros::generate_patches;
 use rand::prelude::*;
 use rand_xoshiro::Xoshiro256PlusPlus;
 
-pub(crate) struct PatchManager {
+pub struct PatchManager {
     /// The patches.
-    pub(crate) patches: [Patch; Self::AMOUNT_OF_PATCHES],
+    pub patches: [Patch; Self::AMOUNT_OF_PATCHES],
     /// The tiles of every patch.
-    pub(crate) tiles: [Vec<Vec<u8>>; Self::AMOUNT_OF_PATCHES],
+    pub tiles: [Vec<Vec<u8>>; Self::AMOUNT_OF_PATCHES],
     /// The different ways this patch can be placed on the board.
-    pub(crate) transformations: [Vec<PatchTransformation>; Self::AMOUNT_OF_PATCHES],
+    pub transformations: [Vec<PatchTransformation>; Self::AMOUNT_OF_PATCHES],
 }
 
 impl PatchManager {
     /// The amount of starting patches in the game.
-    pub(crate) const STARTING_PATCHES: usize = 1;
+    pub const STARTING_PATCHES: usize = 1;
 
     /// The amount of normal patches in the game (not special and not starting).
-    pub(crate) const NORMAL_PATCHES: usize = 32;
+    pub const NORMAL_PATCHES: usize = 32;
 
     /// The amount of special patches in the game.
-    pub(crate) const SPECIAL_PATCHES: usize = 5;
+    pub const SPECIAL_PATCHES: usize = 5;
 
     /// The amount of patches in the game.
-    pub(crate) const AMOUNT_OF_PATCHES: usize = Self::SPECIAL_PATCHES + Self::STARTING_PATCHES + Self::NORMAL_PATCHES;
+    pub const AMOUNT_OF_PATCHES: usize = Self::SPECIAL_PATCHES + Self::STARTING_PATCHES + Self::NORMAL_PATCHES;
 
     /// Gets the instance of the patch manager.
     ///
     /// # Returns
     ///
     /// * The instance of the patch manager
-    pub(crate) fn get_instance() -> &'static Self {
+    pub fn get_instance() -> &'static Self {
         &INSTANCE
     }
 
@@ -45,8 +45,12 @@ impl PatchManager {
     /// # Returns
     ///
     /// A list of all patches in the game (excluding special patches) in a random order.
-    pub(crate) fn generate_patches(&self, seed: Option<u64>) -> Vec<&Patch> {
-        let mut patches = self.get_normal_patches();
+    pub fn generate_patches(&self, seed: Option<u64>) -> Vec<&Patch> {
+        let mut patches = Vec::with_capacity(Self::STARTING_PATCHES + Self::NORMAL_PATCHES);
+        for patch in &self.patches[Self::STARTING_PATCHES..Self::STARTING_PATCHES + Self::NORMAL_PATCHES] {
+            patches.push(patch);
+        }
+
         if let Some(seed) = seed {
             let mut rng = Xoshiro256PlusPlus::seed_from_u64(seed);
             patches.shuffle(&mut rng);
@@ -59,6 +63,8 @@ impl PatchManager {
 
     ///  Gets the special patch with the given index.
     ///
+    /// Reverse function of `get_position_from_special_patch_id`.
+    ///
     /// # Arguments
     ///
     /// * `index` - The index of the special patch.
@@ -66,7 +72,7 @@ impl PatchManager {
     /// # Returns
     ///
     /// The special patch with the given index.
-    pub(crate) fn get_special_patch(&self, index: usize) -> &Patch {
+    pub fn get_special_patch(&self, index: usize) -> &Patch {
         let mapped_index = match index {
             26 => 0,
             32 => 1,
@@ -79,7 +85,18 @@ impl PatchManager {
         &self.patches[id]
     }
 
-    pub(crate) fn get_position_from_special_patch_id(&self, patch_id: usize) -> usize {
+    /// Gets the position of the special patch with the given id.
+    ///
+    /// Reverse function of `get_special_patch`.
+    ///
+    /// # Arguments
+    ///
+    /// * `patch_id` - The id of the special patch.
+    ///
+    /// # Returns
+    ///
+    /// The position of the special patch with the given id.
+    pub fn get_position_from_special_patch_id(&self, patch_id: usize) -> usize {
         match patch_id {
             33 => 26,
             34 => 32,
@@ -100,7 +117,7 @@ impl PatchManager {
     /// # Returns
     ///
     /// * The tiles of the patch
-    pub(crate) fn get_tiles(&self, patch_id: usize) -> &Vec<Vec<u8>> {
+    pub fn get_tiles(&self, patch_id: usize) -> &Vec<Vec<u8>> {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager][get_tiles] Invalid patch id"
@@ -118,7 +135,7 @@ impl PatchManager {
     /// # Returns
     ///
     /// * The transformations of the patch
-    pub(crate) fn get_transformations(&self, patch_id: usize) -> &Vec<PatchTransformation> {
+    pub fn get_transformations(&self, patch_id: usize) -> &Vec<PatchTransformation> {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager][get_transformations] Invalid patch id"
@@ -131,7 +148,7 @@ impl PatchManager {
     /// # Returns
     ///
     /// The starting patch.
-    fn get_starting_patch(&self) -> &Patch {
+    pub fn get_starting_patch(&self) -> &Patch {
         &self.patches[0]
     }
 
@@ -140,7 +157,7 @@ impl PatchManager {
     /// # Returns
     ///
     /// A list of all patches in the game (excluding the special as well as the starting patches).
-    fn get_normal_patches(&self) -> Vec<&Patch> {
+    pub fn get_normal_patches(&self) -> Vec<&Patch> {
         self.patches[Self::STARTING_PATCHES..Self::STARTING_PATCHES + Self::NORMAL_PATCHES]
             .iter()
             .collect()

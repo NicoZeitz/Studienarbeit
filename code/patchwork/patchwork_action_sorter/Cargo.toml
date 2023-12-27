@@ -1,5 +1,5 @@
 [package]
-name = "patchwork_evaluator"
+name = "patchwork_action_sorter"
 edition = "2021"
 version.workspace = true
 authors.workspace = true

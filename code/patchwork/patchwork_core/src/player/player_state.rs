@@ -8,17 +8,19 @@ pub struct PlayerState {
     /// THe position of the player on the time board.
     pub position: usize,
     /// The amount of buttons the player has.
-    pub button_balance: i32,
+    pub button_balance: isize,
     /// The quilt board of the player.
     pub quilt_board: QuiltBoard,
 }
 
 impl PlayerState {
+    pub const STARTING_BUTTON_BALANCE: isize = 5;
+
     /// Creates a new [`PlayerState`] with the default values.
     pub fn new() -> PlayerState {
         PlayerState {
             position: 0,
-            button_balance: 5,
+            button_balance: PlayerState::STARTING_BUTTON_BALANCE,
             quilt_board: QuiltBoard::new(),
         }
     }

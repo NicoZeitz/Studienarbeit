@@ -1,6 +1,6 @@
 use std::f64::consts::E;
 
-use patchwork_core::{Evaluator, Patchwork, QuiltBoard, TerminationType, TimeBoard};
+use patchwork_core::{Evaluator, Patchwork, QuiltBoard, StableEvaluator, TerminationType, TimeBoard};
 
 /// A static evaluator for [`Patchwork`].
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -19,19 +19,21 @@ impl Default for StaticEvaluator {
     }
 }
 
+// TODO: implement evaluator so that it is always in a specific range
+impl StableEvaluator for StaticEvaluator {}
 impl Evaluator for StaticEvaluator {
-    fn evaluate_intermediate_node(&self, game: &Patchwork) -> f64 {
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> isize {
         let player_1_score = self.evaluate_state_for_player(game, game.get_player_1_flag());
         let player_2_score = self.evaluate_state_for_player(game, game.get_player_2_flag());
 
-        player_1_score - player_2_score
+        (player_1_score - player_2_score) as isize // TODO: better implementation
     }
 
-    fn evaluate_terminal_node(&self, game: &Patchwork) -> f64 {
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> isize {
         match game.get_termination_result().termination {
-            TerminationType::Player1Won => f64::INFINITY,
-            TerminationType::Player2Won => f64::NEG_INFINITY,
-            TerminationType::Draw => 0.0,
+            TerminationType::Player1Won => isize::MAX,
+            TerminationType::Player2Won => isize::MIN,
+            TerminationType::Draw => 0,
         }
     }
 }

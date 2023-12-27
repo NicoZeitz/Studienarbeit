@@ -144,6 +144,7 @@ impl Patchwork {
     /// # Returns
     ///
     /// Whether the action was successfully taken.
+    #[allow(unused_variables)]
     pub fn do_action(&mut self, action: &Action, force_player_switch: bool) -> Result<(), PatchworkError> {
         // IF null action
         if let ActionPayload::Null = action.payload {
@@ -165,8 +166,9 @@ impl Patchwork {
                     Ok(())
                 }
                 _ => Err(PatchworkError::InvalidActionError {
-                    reason: "Did not expect null action",
+                    reason: "[Patchwork][do_action] Did not expect null action",
                     action: Box::new(action.clone()),
+                    state: Box::new(self.clone()),
                 }),
             };
         }
@@ -192,7 +194,7 @@ impl Patchwork {
                 let current_player = self.current_player_mut();
                 current_player.quilt_board.do_action(action);
                 if current_player.quilt_board.is_full() {
-                    current_player.button_balance += 7;
+                    current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                 }
                 self.switch_player();
                 self.time_board.clear_special_patch(special_patch_index);
@@ -200,8 +202,9 @@ impl Patchwork {
                 Ok(())
             } else {
                 Err(PatchworkError::InvalidActionError {
-                    reason: "Did not expect special patch placement action",
+                    reason: "[Patchwork][do_action] Did not expect special patch placement action",
                     action: Box::new(action.clone()),
+                    state: Box::new(self.clone()),
                 })
             };
         }
@@ -215,12 +218,22 @@ impl Patchwork {
         match action.payload {
             // IF walking
             ActionPayload::Walking { starting_index } => {
-                debug_assert!(now_current_player_position == starting_index);
+                #[cfg(debug_assertions)]
+                if now_current_player_position != starting_index {
+                    println!("{}", self);
+                    println!("State:\n{:?}", self);
+                    println!("Action: \n{:?}", action);
+                    println!(
+                        "Starting Index {} of Walking action does not match current player position {}",
+                        starting_index, now_current_player_position
+                    );
+                    debug_assert_eq!(now_current_player_position, starting_index);
+                }
 
                 //   1. add +1 to current player button balance for every tile walked over
                 let current_player = self.current_player_mut();
                 time_cost = now_other_player_position - now_current_player_position + 1;
-                current_player.button_balance += time_cost as i32;
+                current_player.button_balance += time_cost as isize;
             }
             // IF patch placement
             ActionPayload::PatchPlacement { patch, patch_index, .. } => {
@@ -232,10 +245,10 @@ impl Patchwork {
                 self.patches.remove(self.patches.len() - 1);
 
                 let current_player = self.current_player_mut();
-                current_player.button_balance -= patch.button_cost as i32;
+                current_player.button_balance -= patch.button_cost as isize;
                 current_player.quilt_board.do_action(action);
                 if current_player.quilt_board.is_full() {
-                    current_player.button_balance += 7;
+                    current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                 }
 
                 time_cost = patch.time_cost;
@@ -263,7 +276,8 @@ impl Patchwork {
 
         // 5. test if player moved over button income trigger (only a single one possible) and add button income
         {
-            let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range.clone()) as i32;
+            let button_income_trigger =
+                self.time_board.is_button_income_trigger_in_range(walking_range.clone()) as isize;
             let current_player = self.current_player_mut();
             let button_income = current_player.quilt_board.button_income;
             current_player.button_balance += button_income_trigger * button_income;
@@ -324,8 +338,9 @@ impl Patchwork {
                         Ok(())
                     }
                     _ => Err(PatchworkError::InvalidActionError {
-                        reason: "Did not expect null action",
+                        reason: "[Patchwork][undo_action] Did not expect null action",
                         action: Box::new(action.clone()),
+                        state: Box::new(self.clone()),
                     }),
                 }
             }
@@ -338,8 +353,9 @@ impl Patchwork {
 
                 if matches!(self.turn_type, TurnType::NormalPhantom) && !self.is_terminated() {
                     return Err(PatchworkError::InvalidActionError {
-                        reason: "Did not expect walking action",
+                        reason: "[Patchwork][undo_action] Did not expect walking action",
                         action: Box::new(action.clone()),
+                        state: Box::new(self.clone()),
                     });
                 }
 
@@ -358,13 +374,14 @@ impl Patchwork {
                 {
                     let current_player = self.current_player_mut();
                     now_current_player_position = current_player.position;
-                    current_player.button_balance -= time_cost as i32;
+                    current_player.button_balance -= time_cost as isize;
                     current_player.position = starting_index;
                 }
 
                 {
                     let walking_range = (starting_index + 1)..(now_current_player_position + 1);
-                    let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range) as i32;
+                    let button_income_trigger =
+                        self.time_board.is_button_income_trigger_in_range(walking_range) as isize;
                     let current_player = self.current_player_mut();
                     let button_income = current_player.quilt_board.button_income;
                     current_player.button_balance -= button_income_trigger * button_income;
@@ -403,16 +420,17 @@ impl Patchwork {
                     let current_player = self.current_player_mut();
                     now_current_player_position = current_player.position;
                     if current_player.quilt_board.is_full() {
-                        current_player.button_balance -= 7;
+                        current_player.button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                     }
 
-                    current_player.button_balance += patch.button_cost as i32;
+                    current_player.button_balance += patch.button_cost as isize;
                     current_player.position = previous_current_player_position;
                 }
                 {
                     let walking_range = (previous_current_player_position + 1)
                         ..(previous_current_player_position + patch.time_cost + 1);
-                    let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range) as i32;
+                    let button_income_trigger =
+                        self.time_board.is_button_income_trigger_in_range(walking_range) as isize;
                     let current_player = self.current_player_mut();
                     let button_income = current_player.quilt_board.button_income;
                     current_player.button_balance -= button_income_trigger * button_income;
@@ -438,7 +456,7 @@ impl Patchwork {
 
                 self.current_player_mut().quilt_board.undo_action(action);
                 if self.current_player().quilt_board.is_full() {
-                    self.current_player_mut().button_balance -= 7;
+                    self.current_player_mut().button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                 }
                 Ok(())
             }
@@ -495,7 +513,7 @@ impl Patchwork {
     #[inline]
     fn can_player_take_patch(&self, player: &PlayerState, patch: &Patch) -> bool {
         // player can only place pieces that they can afford
-        if patch.button_cost as i32 > player.button_balance {
+        if patch.button_cost as isize > player.button_balance {
             return false;
         }
 

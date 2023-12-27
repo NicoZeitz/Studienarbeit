@@ -5,7 +5,9 @@ authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]
+patchwork_action_sorter = { path = "../patchwork_action_sorter" }
 patchwork_core = { path = "../patchwork_core" }
+patchwork_evaluator = { path = "../patchwork_evaluator" }
 patchwork_macros = { path = "../patchwork_macros" }
 patchwork_alphazero_player = { path = "../patchwork_alphazero_player" }
 patchwork_human_player = { path = "../patchwork_human_player" }

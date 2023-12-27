@@ -42,11 +42,7 @@ impl Player for GreedyPlayer {
         let maximizing_player = game.is_flag_player_1(game.get_current_player());
 
         let mut chosen_action = &valid_actions[0];
-        let mut chosen_evaluation = if maximizing_player {
-            f64::NEG_INFINITY
-        } else {
-            f64::INFINITY
-        };
+        let mut chosen_evaluation = if maximizing_player { isize::MIN } else { isize::MAX };
 
         for action in valid_actions.iter() {
             game.do_action(action, false)?;

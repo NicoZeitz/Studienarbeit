@@ -1,9 +1,9 @@
-use std::sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering};
+use std::sync::atomic::{self, AtomicIsize, AtomicU32, AtomicU64, Ordering};
 
 use patchwork::{
     player::{
-        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSPlayer, Player,
-        RandomOptions, RandomPlayer,
+        AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions, PVSPlayer,
+        Player, RandomOptions, RandomPlayer,
     },
     Patchwork, TerminationType,
 };
@@ -12,9 +12,12 @@ use regex::Regex;
 pub struct GameLoop;
 
 impl GameLoop {
+    #[allow(clippy::field_reassign_with_default)]
     pub fn get_player(player: &str, player_position: usize) -> Box<dyn Player> {
         match player {
+            // HUMAN
             "human" => Box::new(HumanPlayer::new(format!("Human Player {player_position}"))),
+            // SIMPLE ENGINES
             "random" => Box::new(RandomPlayer::new(format!("Random Player {player_position}"), None)),
             _ if player.starts_with("random") => {
                 let seed = Regex::new(r"random\((?<seed>\d+)\)")
@@ -32,10 +35,7 @@ impl GameLoop {
                 ))
             }
             "greedy" => Box::new(GreedyPlayer::new(format!("Greedy Player {player_position}"))),
-            "mcts" => Box::new(MCTSPlayer::new(
-                format!("MCTS Player {player_position}"),
-                Default::default(),
-            )),
+            // TREE SEARCH ENGINES
             "minimax" => Box::new(MinimaxPlayer::new(
                 format!("Minimax Player {player_position}"),
                 Default::default(),
@@ -54,7 +54,25 @@ impl GameLoop {
                 ))
             }
             "pvs" => Box::new(PVSPlayer::new(format!("PVS Player {player_position}"), None)),
+            _ if player.starts_with("pvs") => {
+                let regex = Regex::new(r"pvs\((?<time>\d+)\)").unwrap();
+                let captures = regex.captures(player).unwrap();
+                let time = captures.name("time").unwrap().as_str().parse().unwrap();
+                let mut options = PVSOptions::default();
+                options.time_limit = std::time::Duration::from_secs(time);
+
+                Box::new(PVSPlayer::new(
+                    format!("PVS Player {player_position} ({})", time),
+                    Some(options),
+                ))
+            }
+            // MCTS ENGINES
+            "mcts" => Box::new(MCTSPlayer::new(
+                format!("MCTS Player {player_position}"),
+                Default::default(),
+            )),
             "alphazero" => Box::new(AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}"))),
+            // ERROR
             _ => panic!("Unknown player: {player}"),
         }
     }
@@ -73,11 +91,24 @@ impl GameLoop {
             println!("=================================================== TURN {} ==================================================", i);
             println!("{}", state);
 
+            #[cfg(debug_assertions)]
+            let old_state = state.clone();
+
             let action = if state.is_player_1() {
                 player_1.get_action(&state).unwrap()
             } else {
                 player_2.get_action(&state).unwrap()
             };
+
+            #[cfg(debug_assertions)]
+            if old_state != state {
+                println!("=================================================== ERROR ===================================================");
+                println!("Old state:");
+                println!("{}", old_state);
+                println!("New state:");
+                println!("{}", state);
+                panic!("State changed!");
+            }
 
             println!(
                 "Player '{}' chose action: {}",
@@ -138,12 +169,12 @@ impl GameLoop {
             iterations, parallelization, player_1_name, player_2_name
         );
 
-        let max_player_1_score = AtomicI32::new(i32::MIN);
-        let max_player_2_score = AtomicI32::new(i32::MIN);
-        let min_player_1_score = AtomicI32::new(i32::MAX);
-        let min_player_2_score = AtomicI32::new(i32::MAX);
-        let sum_player_1_score = AtomicI32::new(0);
-        let sum_player_2_score = AtomicI32::new(0);
+        let max_player_1_score = AtomicIsize::new(isize::MIN);
+        let max_player_2_score = AtomicIsize::new(isize::MIN);
+        let min_player_1_score = AtomicIsize::new(isize::MAX);
+        let min_player_2_score = AtomicIsize::new(isize::MAX);
+        let sum_player_1_score = AtomicIsize::new(0);
+        let sum_player_2_score = AtomicIsize::new(0);
         let sum_time_player_1 = AtomicU64::new(0);
         let sum_time_player_2 = AtomicU64::new(0);
         let n_time_player_1 = AtomicU64::new(0);
@@ -296,10 +327,10 @@ impl GameLoop {
         wins_player_1: usize,
         wins_player_2: usize,
         draws: usize,
-        max_player_1_score: i32,
-        max_player_2_score: i32,
-        min_player_1_score: i32,
-        min_player_2_score: i32,
+        max_player_1_score: isize,
+        max_player_2_score: isize,
+        min_player_1_score: isize,
+        min_player_2_score: isize,
         avg_player_1_score: f64,
         avg_player_2_score: f64,
         sum_time_player_1: f64,
@@ -354,5 +385,81 @@ impl GameLoop {
             "█".repeat(progress_player_2),
             player_2_name,
         );
+    }
+}
+
+#[cfg(test)]
+mod integration_tests {
+    use patchwork::{
+        player::{PVSOptions, Size},
+        GameOptions, NoopActionSorter, StaticEvaluator,
+    };
+
+    use super::*;
+
+    #[test]
+    fn random_player() {
+        let player = Box::<RandomPlayer>::default();
+        test_player(player);
+    }
+
+    #[test]
+    fn greedy_player() {
+        let player = Box::<GreedyPlayer>::default();
+        test_player(player);
+    }
+
+    #[test]
+    fn pvs_player() {
+        let player = Box::new(PVSPlayer::new(
+            "PVS Player",
+            Some(PVSOptions::new(
+                std::time::Duration::from_secs(2),
+                Box::<StaticEvaluator>::default(),
+                Box::<NoopActionSorter>::default(),
+                Size::MB(10),
+                Some(Box::new(std::io::stdout())),
+            )),
+        ));
+        test_player(player);
+    }
+
+    // TODO: test other players
+
+    fn test_player(mut player: Box<dyn Player>) {
+        let mut state = Patchwork::get_initial_state(Some(GameOptions { seed: 42 }));
+        loop {
+            let action_result = player.get_action(&state);
+
+            let action = match action_result {
+                Ok(action) => action,
+                Err(error) => {
+                    println!("Player '{}' get_action failed with: {}", player.name(), error);
+                    println!("State: {}", state);
+                    panic!("{}", error);
+                }
+            };
+
+            let valid_actions = state.get_valid_actions();
+            if !valid_actions.contains(&action) {
+                println!("Player '{}' chose invalid action: {}", player.name(), action);
+                println!("State: {}", state);
+                panic!("Invalid action!");
+            }
+
+            match state.do_action(&action, false) {
+                Ok(_) => {}
+                Err(error) => {
+                    println!("Player '{}' do_action failed with: {}", player.name(), error);
+                    println!("State:");
+                    println!("{}", state);
+                    panic!("{}", error);
+                }
+            }
+
+            if state.is_terminated() {
+                break;
+            }
+        }
     }
 }

@@ -39,6 +39,7 @@ impl Display for Patch {
             writeln!(f)?;
         }
 
+        writeln!(f, "ID: {}", self.id)?;
         writeln!(f, "Income: {}", self.button_income)?;
         writeln!(f, "Button cost: {}", self.button_cost)?;
         write!(f, "Time cost: {}", self.time_cost)

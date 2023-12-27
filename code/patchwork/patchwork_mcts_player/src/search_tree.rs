@@ -9,7 +9,7 @@ use std::{
 
 use crate::{mcts_options::NON_ZERO_USIZE_ONE, MCTSEndCondition, MCTSOptions, Node};
 use patchwork_core::{Action, Evaluator, Patchwork};
-use tree_policy::TreePolicy;
+use patchwork_tree_policy::TreePolicy;
 
 // TODO:
 // TreeParallelization (weg)
@@ -21,7 +21,7 @@ pub struct SearchTree<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> {
     // The root node of the search tree.
     root_node: Arc<RwLock<Node>>,
     /// The policy to select nodes during the selection phase.
-    tree_policy: &'tree_lifetime Policy,
+    patchwork_tree_policy: &'tree_lifetime Policy,
     /// The evaluator to evaluate the game state.
     evaluator: &'tree_lifetime Eval,
     /// The options for the search.
@@ -37,12 +37,12 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Arguments
     ///
     /// * `game` - The game to search.
-    /// * `tree_policy` - The policy to select nodes during the selection phase.
+    /// * `patchwork_tree_policy` - The policy to select nodes during the selection phase.
     /// * `evaluator` - The evaluator to evaluate the game state.
     /// * `options` - The options for the search.
     pub fn new(
         game: &Patchwork,
-        tree_policy: &'tree_lifetime Policy,
+        patchwork_tree_policy: &'tree_lifetime Policy,
         evaluator: &'tree_lifetime Eval,
         options: &'tree_lifetime MCTSOptions,
     ) -> Self {
@@ -50,7 +50,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
         SearchTree {
             root_node,
-            tree_policy,
+            patchwork_tree_policy,
             evaluator,
             options,
         }
@@ -91,7 +91,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
                             SearchTree::playout(
                                 Arc::clone(&root),
-                                self.tree_policy,
+                                self.patchwork_tree_policy,
                                 self.evaluator,
                                 (*leaf_parallelization).into(),
                             );
@@ -116,7 +116,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
                             SearchTree::playout(
                                 Arc::clone(&root),
-                                self.tree_policy,
+                                self.patchwork_tree_policy,
                                 self.evaluator,
                                 (*leaf_parallelization).into(),
                             );
@@ -137,12 +137,17 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                 let mut handles = Vec::with_capacity(root_parallelization);
                 for _ in 0..root_parallelization {
                     let root = Arc::new(RwLock::new(root.read().unwrap().clone()));
-                    let tree_policy = self.tree_policy;
+                    let patchwork_tree_policy = self.patchwork_tree_policy;
                     let evaluator = self.evaluator;
 
                     handles.push(s.spawn(move || {
                         for _ in 0..*iterations {
-                            SearchTree::playout(Arc::clone(&root), tree_policy, evaluator, leaf_parallelization);
+                            SearchTree::playout(
+                                Arc::clone(&root),
+                                patchwork_tree_policy,
+                                evaluator,
+                                leaf_parallelization,
+                            );
                         }
 
                         let actions = root
@@ -202,14 +207,19 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                     let mut handles = Vec::with_capacity(root_parallelization);
                     for _ in 0..root_parallelization {
                         let root = Arc::new(RwLock::new(root.read().unwrap().clone()));
-                        let tree_policy = self.tree_policy;
+                        let patchwork_tree_policy = self.patchwork_tree_policy;
                         let evaluator = self.evaluator;
                         let stop = Arc::clone(&stop);
 
                         handles.push(s.spawn(move || {
                             // while !stop.load(Ordering::SeqCst) {
                             while !stop.load(Ordering::Acquire) {
-                                SearchTree::playout(Arc::clone(&root), tree_policy, evaluator, leaf_parallelization);
+                                SearchTree::playout(
+                                    Arc::clone(&root),
+                                    patchwork_tree_policy,
+                                    evaluator,
+                                    leaf_parallelization,
+                                );
                             }
 
                             let actions = root
@@ -261,12 +271,17 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         }
     }
 
-    fn playout(root_node: Arc<RwLock<Node>>, tree_policy: &Policy, evaluator: &Eval, leaf_parallelization: usize) {
+    fn playout(
+        root_node: Arc<RwLock<Node>>,
+        patchwork_tree_policy: &Policy,
+        evaluator: &Eval,
+        leaf_parallelization: usize,
+    ) {
         let mut node = root_node;
 
         // 1. Selection
         while Node::is_fully_expanded(&node) && !Node::is_terminal(&node) {
-            node = Node::select(&node, tree_policy);
+            node = Node::select(&node, patchwork_tree_policy);
         }
 
         let value = if !&node.read().unwrap().state.is_terminated() {

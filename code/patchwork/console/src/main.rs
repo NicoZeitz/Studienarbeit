@@ -6,11 +6,7 @@ use game_loop::GameLoop;
 
 #[derive(Parser, Debug)]
 struct Args {
-    #[arg(
-        short = 'c',
-        long = "compare",
-        help = "Runs a comparison with the given players"
-    )]
+    #[arg(short = 'c', long = "compare", help = "Runs a comparison with the given players")]
     compare: Option<usize>,
 
     #[arg(
@@ -20,11 +16,7 @@ struct Args {
     )]
     update: Option<usize>,
 
-    #[arg(
-        short = 'p',
-        long = "par",
-        help = "How many cores to use (only in comparison)"
-    )]
+    #[arg(short = 'p', long = "par", help = "How many cores to use (only in comparison)")]
     parallelization: Option<usize>,
 
     #[arg(
@@ -39,7 +31,7 @@ struct Args {
         short = '2',
         long = "player-2",
         help = "The player that plays second",
-        default_value = "random"
+        default_value = "pvs"
     )]
     player_2: String,
 }

@@ -1,6 +1,6 @@
 use patchwork_core::{Action, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::ScoreEvaluator as Evaluator;
-use tree_policy::ScoredUCTPolicy as TreePolicy;
+use patchwork_tree_policy::ScoredUCTPolicy as TreePolicy;
 
 use crate::{MCTSOptions, SearchTree};
 

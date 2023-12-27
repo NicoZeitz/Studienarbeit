@@ -5,7 +5,7 @@ use crate::{Patch, PlayerState, Termination, TerminationType, TimeBoard};
 
 /// Represents the type of turn that is currently being played.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub(crate) enum TurnType {
+pub enum TurnType {
     /// A normal turn.
     Normal,
     /// A turn where the player has to place a special patch.
@@ -29,10 +29,10 @@ pub struct Patchwork {
     pub player_1: PlayerState,
     /// The second player in the game.
     pub player_2: PlayerState,
+    /// The type of turn that is currently being played.
+    pub turn_type: TurnType,
     /// The player whose turn it is. 1 for player 1, -1 for player 2.
     pub(crate) current_player_flag: i8,
-    /// The type of turn that is currently being played.
-    pub(crate) turn_type: TurnType,
 }
 
 // Impl block for different getters and setters
@@ -145,7 +145,7 @@ impl Patchwork {
     /// # Returns
     ///
     /// The score of the given player.
-    pub fn get_score(&self, player: i8) -> i32 {
+    pub fn get_score(&self, player: i8) -> isize {
         let player = &self.get_player(player);
         player.quilt_board.score() + player.button_balance
     }

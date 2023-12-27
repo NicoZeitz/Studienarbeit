@@ -81,6 +81,10 @@ impl TimeBoard {
         range.find(|&i| self.tiles[i] & entities_enum::SPECIAL_PATCH > 0)
     }
 
+    pub fn has_special_patch_at(&self, index: usize) -> bool {
+        self.tiles[index] & entities_enum::SPECIAL_PATCH > 0
+    }
+
     pub fn clear_special_patch(&mut self, index: usize) {
         let clamped_index = index.clamp(0, TimeBoard::MAX_POSITION);
         self.tiles[clamped_index] ^= entities_enum::SPECIAL_PATCH;

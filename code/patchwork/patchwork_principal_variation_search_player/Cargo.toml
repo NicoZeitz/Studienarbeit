@@ -1,10 +1,15 @@
 [package]
 name = "patchwork_principal_variation_search_player"
-version = "1.0.0"
-authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
 patchwork_core = { path = "../patchwork_core" }
 patchwork_evaluator = { path = "../patchwork_evaluator" }
+patchwork_action_sorter = { path = "../patchwork_action_sorter" }
 rand = "0.8.5"
+itertools = "0.12.0"

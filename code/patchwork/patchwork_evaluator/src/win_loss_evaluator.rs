@@ -17,15 +17,15 @@ impl Default for WinLossEvaluator {
 }
 
 impl Evaluator for WinLossEvaluator {
-    fn evaluate_intermediate_node(&self, game: &Patchwork) -> f64 {
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> isize {
         self.evaluate_terminal_node(&game.random_rollout())
     }
 
-    fn evaluate_terminal_node(&self, game: &Patchwork) -> f64 {
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> isize {
         match game.get_termination_result().termination {
-            TerminationType::Player1Won => 1.0,
-            TerminationType::Player2Won => -1.0,
-            TerminationType::Draw => 0.0,
+            TerminationType::Player1Won => 1,
+            TerminationType::Player2Won => -1,
+            TerminationType::Draw => 0,
         }
     }
 }

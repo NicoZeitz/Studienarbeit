@@ -9,6 +9,7 @@ package.license = "MIT"
 members = [
     "console",
     "patchwork",
+    "patchwork_action_sorter",
     "patchwork_core",
     "patchwork_macros",
     "patchwork_evaluator",
@@ -19,7 +20,7 @@ members = [
     "patchwork_minimax_player",
     "patchwork_principal_variation_search_player",
     "patchwork_alphazero_player",
-    "tree_policy",
+    "patchwork_tree_policy",
 ]
 resolver = "2"
 

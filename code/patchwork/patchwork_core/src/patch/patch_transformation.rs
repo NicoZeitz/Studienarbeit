@@ -47,13 +47,13 @@ impl PatchTransformation {
 
     /// Returns the rotation as 0 (0°), 1 (90°), 2 (180°) or 3 (270°).
     #[inline]
-    pub(crate) fn rotation_flag(&self) -> u8 {
+    pub fn rotation_flag(&self) -> u8 {
         self.transformation & 0b011
     }
 
     /// Returns the orientation as 0 (normal) or 1 (flipped).
     #[inline]
-    pub(crate) fn orientation_flag(&self) -> u8 {
+    pub fn orientation_flag(&self) -> u8 {
         (self.transformation & 0b100) >> 2
     }
 }

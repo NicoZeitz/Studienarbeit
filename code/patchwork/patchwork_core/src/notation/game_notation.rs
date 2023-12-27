@@ -43,6 +43,7 @@ impl Notation for Patchwork {
     /// let state = Patchwork::load_from_notation("000000000000000000000/5/0/0 000000000000000000000/5/0/0 0 1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/0 -");
     /// let notation = state.save_to_notation().unwrap();
     /// ```
+    // TODO: allow better notation with B for button balance, I for income and so on
     fn save_to_notation(&self) -> Result<String, PatchworkError> {
         // TODO: uncomment
         // if matches!(self.turn_type, TurnType::NormalPhantom | TurnType::SpecialPhantom(_)) {
@@ -140,11 +141,11 @@ impl Notation for Patchwork {
             .ok_or(error.clone())?;
         let player_1_income = captures
             .name("player_1_income")
-            .and_then(|s| s.as_str().parse::<i32>().ok())
+            .and_then(|s| s.as_str().parse::<isize>().ok())
             .ok_or(error.clone())?;
         let player_1_button_income = captures
             .name("player_1_button_income")
-            .and_then(|s| s.as_str().parse::<i32>().ok())
+            .and_then(|s| s.as_str().parse::<isize>().ok())
             .ok_or(error.clone())?;
         let player_1_position = captures
             .name("player_1_position")
@@ -157,11 +158,11 @@ impl Notation for Patchwork {
             .ok_or(error.clone())?;
         let player_2_income = captures
             .name("player_2_income")
-            .and_then(|s| s.as_str().parse::<i32>().ok())
+            .and_then(|s| s.as_str().parse::<isize>().ok())
             .ok_or(error.clone())?;
         let player_2_button_income = captures
             .name("player_2_button_income")
-            .and_then(|s| s.as_str().parse::<i32>().ok())
+            .and_then(|s| s.as_str().parse::<isize>().ok())
             .ok_or(error.clone())?;
         let player_2_position = captures
             .name("player_2_position")

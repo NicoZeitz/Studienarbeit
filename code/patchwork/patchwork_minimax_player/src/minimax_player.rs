@@ -15,7 +15,7 @@ pub struct MinimaxPlayer {
     /// This is used to reduce the branching factor.
     pub amount_actions_per_piece: usize,
     /// The evaluator to evaluate the game state.
-    pub evaluator: MinimaxEvaluator,
+    pub evaluator: MinimaxEvaluator, // TODO: use boxed stable evaluator
 }
 
 impl MinimaxPlayer {
@@ -55,11 +55,7 @@ impl Player for MinimaxPlayer {
         let maximizing_player = game.is_flag_player_1(game.get_current_player());
 
         let mut chosen_action = valid_actions[0].clone();
-        let mut chosen_evaluation = if maximizing_player {
-            f64::NEG_INFINITY
-        } else {
-            f64::INFINITY
-        };
+        let mut chosen_evaluation = if maximizing_player { isize::MIN } else { isize::MAX };
 
         let filter_actions = |game: &Patchwork, valid_actions: &Vec<Action>| {
             Self::get_best_actions(game, valid_actions, self.amount_actions_per_piece, &self.evaluator)
@@ -69,8 +65,8 @@ impl Player for MinimaxPlayer {
             let evaluation = Self::minimax(
                 &next_state,
                 self.depth - 1,
-                f64::NEG_INFINITY,
-                f64::INFINITY,
+                isize::MIN,
+                isize::MAX,
                 &self.evaluator,
                 &filter_actions,
             );
@@ -102,13 +98,13 @@ impl MinimaxPlayer {
     fn minimax<Filter>(
         game: &Patchwork,
         depth: usize,
-        alpha: f64,
-        beta: f64,
+        alpha: isize,
+        beta: isize,
         evaluator: &impl Evaluator,
         filter_actions: &Filter, // TODO: generic filtering
-    ) -> f64
+    ) -> isize
     where
-        Filter: Fn(&Patchwork, &Vec<Action>) -> Vec<(Patchwork, Action, f64)>,
+        Filter: Fn(&Patchwork, &Vec<Action>) -> Vec<(Patchwork, Action, isize)>,
     {
         if depth == 0 || game.is_terminated() {
             return evaluator.evaluate_node(game);
@@ -121,7 +117,7 @@ impl MinimaxPlayer {
         let valid_actions = game.get_valid_actions();
 
         if maximizing_player {
-            let mut value = f64::NEG_INFINITY;
+            let mut value = isize::MIN;
             for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(&next_state, depth - 1, alpha, beta, evaluator, filter_actions);
                 value = value.max(evaluation);
@@ -132,7 +128,7 @@ impl MinimaxPlayer {
             }
             value
         } else {
-            let mut value = f64::INFINITY;
+            let mut value = isize::MAX;
             for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(&next_state, depth - 1, alpha, beta, evaluator, filter_actions);
                 value = value.min(evaluation);
@@ -150,7 +146,7 @@ impl MinimaxPlayer {
         valid_actions: &[Action],
         amount_actions_per_piece: usize,
         evaluator: &impl Evaluator,
-    ) -> Vec<(Patchwork, Action, f64)> {
+    ) -> Vec<(Patchwork, Action, isize)> {
         let place_first_piece_tuple = valid_actions
             .iter()
             .filter(|a| a.is_first_patch_taken() || a.is_special_patch_placement())
@@ -170,7 +166,7 @@ impl MinimaxPlayer {
         {
             let mut place_first_piece_tuple = place_first_piece_tuple;
             place_first_piece_tuple.sort_by(|(_, _, e1), (_, _, e2)| {
-                match e2.partial_cmp(e1).unwrap() {
+                match e2.cmp(e1) {
                     // break ties randomly
                     std::cmp::Ordering::Equal => {
                         if rand::random() {
@@ -235,7 +231,7 @@ impl MinimaxPlayer {
         result.extend(place_second_piece_tuple);
         result.extend(place_third_piece_tuple);
 
-        result.sort_by(|(_, _, e1), (_, _, e2)| match e2.partial_cmp(e1).unwrap() {
+        result.sort_by(|(_, _, e1), (_, _, e2)| match e2.cmp(e1) {
             // break ties randomly
             std::cmp::Ordering::Equal => {
                 if rand::random() {
