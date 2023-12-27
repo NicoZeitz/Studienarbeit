@@ -11,7 +11,9 @@ on:
         branches:
             - main
         paths:
-            - T3_3101/**
+            # run when something in ./T3_3101/ folder changes
+            - 'T3_3101/**'
+            - '**/*.tex'
         tags:
             - '*'
 
