@@ -1,31 +1,39 @@
 {
-    // "python.pipenvPath": "./code/server/.venv",
-    // "python.pythonPath": "./.venv/Scripts/python.exe",
+    // Rust
+    "rust-analyzer.linkedProjects": ["code\\patchwork\\Cargo.toml"],
+    "[rust]": {
+        "editor.inlayHints.enabled": "on"
+    },
+    "rust-analyzer.checkOnSave": true,
+    "rust-analyzer.lens.implementations.enable": false,
+    "rust-analyzer.cargo.autoreload": true,
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.restartServerOnConfigChange": true,
+    "rust-analyzer.inlayHints.typeHints.enable": true,
+    "rust-analyzer.inlayHints.closureReturnTypeHints.enable": "never",
+    "rust-analyzer.inlayHints.closingBraceHints.enable": false,
+    "rust-analyzer.inlayHints.chainingHints.enable": true,
+    "rust-analyzer.inlayHints.parameterHints.enable": false,
+    "rust-analyzer.inlayHints.reborrowHints.enable": "never",
+    "rust-analyzer.inlayHints.bindingModeHints.enable": false,
+    "rust-analyzer.inlayHints.maxLength": 10000,
+    // Latex
     "latex-workshop.intellisense.includegraphics.preview.enabled": true,
-    "editor.wordWrap": "on",
-    // "workbench.colorCustomizations": {
-    //     "activityBar.activeBackground": "#3c4d0a",
-    //     "activityBar.activeBorder": "#1684a9",
-    //     "activityBar.background": "#3c4d0a",
-    //     "activityBar.foreground": "#e7e7e7",
-    //     "activityBar.inactiveForeground": "#e7e7e799",
-    //     "activityBarBadge.background": "#1684a9",
-    //     "activityBarBadge.foreground": "#e7e7e7",
-    //     "sash.hoverBorder": "#3c4d0a",
-    //     "statusBar.background": "#192004",
-    //     "statusBar.foreground": "#e7e7e7",
-    //     "statusBarItem.hoverBackground": "#3c4d0a",
-    //     "statusBarItem.remoteBackground": "#192004",
-    //     "statusBarItem.remoteForeground": "#e7e7e7",
-    //     "titleBar.activeBackground": "#192004",
-    //     "titleBar.activeForeground": "#e7e7e7",
-    //     "titleBar.inactiveBackground": "#19200499",
-    //     "titleBar.inactiveForeground": "#e7e7e799"
-    // },
-    // "peacock.color": "#192004",
     "emmet.includeLanguages": {
         "tex": "html",
-        "latex": "html"
+        "latex": "html",
+        "typescriptreact": "html",
+        "javascriptreact": "html"
+    },
+    // Other
+    "explorer.fileNesting.patterns": {
+        "Cargo.toml": "clippy.toml, rust-toolchain.toml, rustfmt.toml, Cargo.lock",
+        "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.spec.ts",
+        "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+        "*.jsx": "${capture}.js",
+        "*.tsx": "${capture}.ts",
+        "package.json": "package-lock.json, yarn.lock, tsconfig.*.json, tsconfig-*.json, tscondif.tsbuildinfo, tailwind.config.js, vite.config.ts, postcss.config.js, tsconfig.json, .eslintrc.js",
+        ".env": ".env.example"
     },
     "files.exclude": {
         "**/.git": true,
@@ -34,6 +42,13 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
+        // npm
+        "**/node_modules": true,
+        // Python
+        "**/__pycache__": true,
+        "**/.ipynb_checkpoints": true,
+        // Rust
+        "**/target": true,
         // Latex
         "**/**.acn": true,
         "**/**.acr": true,
@@ -66,6 +81,7 @@
         "**/**.bcf": true,
         "**/**.run.xml": true
     },
+    // Spelling
     "cSpell.words": [
         "alloc",
         "alphazero",
@@ -115,6 +131,7 @@
         "struct",
         "Studienarbeit",
         "supremum",
+        "tailwindcss",
         "termion",
         "thiserror",
         "typenum",

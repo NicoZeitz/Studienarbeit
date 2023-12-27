@@ -5,6 +5,8 @@ on:
             - main
         paths:
             - T3_3101/**
+        tags:
+            - '*'
 
 jobs:
     build_latex:
