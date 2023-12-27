@@ -34,11 +34,11 @@ use crate::{
 /// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#:~:text=Late%20Move%20Pruning%20%E2%80%8B,by%20the%20move%20ordering%20algorithm.) Remove late moves in move ordering
 /// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
 /// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
-//  - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
+/// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
 ///
 /// # Features that could maybe be implemented (look into it what it is)
-//     -   (Reverse) Futility Pruning
-//     -   Delta Pruning
+///    -   (Reverse) Futility Pruning
+///    -   Delta Pruning
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,

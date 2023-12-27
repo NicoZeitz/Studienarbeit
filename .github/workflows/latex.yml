@@ -39,4 +39,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
+                  token: ${{ github.token }}
+                  name: Release Version ${{ github.ref_name }} of Studienarbeit LaTeX document
                   files: ./T3_3101/Praxisbericht.pdf
