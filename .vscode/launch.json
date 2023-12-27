@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "preLaunchTask": "Build Rust Console",
+            "name": "(Windows) Debug executable 'console'",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/console.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/code/patchwork",
+            "environment": [],
+            "console": "internalConsole"
+        },
+        {
+            "preLaunchTask": "Build Rust Console",
+            "name": "(Windows/External Terminal) Debug executable 'console'",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/console.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/code/patchwork",
+            "environment": [],
+            "console": "externalTerminal"
+        }
+    ]
+}

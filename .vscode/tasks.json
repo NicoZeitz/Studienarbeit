@@ -3,51 +3,84 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
+        // task to run cargo build in the code/patchwork directory
         {
-            "label": "Server",
-            "detail": "Start the server",
+            "label": "Build Rust",
+            "detail": "Build all rust crates for the patchwork game",
             "icon": {
-                "color": "terminal.ansiBlue",
-                "id": "server"
+                "color": "terminal.ansiRed",
+                "id": "console"
             },
-            "command": "${config:python.pythonPath}",
-            "args": ["server.py"],
             "type": "shell",
+            "command": "cargo",
+            "args": ["build", "--workspace"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "options": {
-                "cwd": "${workspaceFolder}/code/server"
+                "cwd": "${workspaceFolder}/code/patchwork"
             },
             "presentation": {
-                "echo": false,
+                "echo": true,
                 "reveal": "always",
                 "focus": false,
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false
-            },
-            "problemMatcher": []
+            }
         },
+        // task to run the ui standalone
         {
-            "label": "Webapp (Development)",
-            "detail": "Start the development server",
+            "label": "Run UI",
+            "detail": "Run the UI standalone",
             "icon": {
                 "color": "terminal.ansiGreen",
                 "id": "browser"
             },
-            "path": "code/ui",
             "type": "npm",
             "script": "dev",
-            "presentation": {
-                "echo": false,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
+            "group": {
+                "kind": "test",
+                "isDefault": true
             },
             "options": {
                 "cwd": "${workspaceFolder}/code/ui"
             },
-            "problemMatcher": []
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        // task to build the ui
+        {
+            "label": "Build UI",
+            "detail": "Build the UI",
+            "icon": {
+                "color": "terminal.ansiGreen",
+                "id": "tools"
+            },
+            "type": "npm",
+            "script": "build",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/code/ui"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
         }
     ]
 }
