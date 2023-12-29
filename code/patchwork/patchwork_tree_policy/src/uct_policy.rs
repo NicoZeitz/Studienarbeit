@@ -9,9 +9,7 @@ pub struct UCTPolicy {
 
 impl UCTPolicy {
     pub fn new(exploration_constant: f64) -> Self {
-        Self {
-            exploration_constant,
-        }
+        Self { exploration_constant }
     }
 }
 
@@ -35,8 +33,8 @@ impl TreePolicy for UCTPolicy {
             let parent_visit_count = parent.visit_count();
 
             let exploitation_score = child.wins() as f64 / child_visit_count as f64;
-            let exploration_score = self.exploration_constant
-                * ((parent_visit_count as f64).ln() / child_visit_count as f64).sqrt();
+            let exploration_score =
+                self.exploration_constant * ((parent_visit_count as f64).ln() / child_visit_count as f64).sqrt();
 
             let score = exploitation_score + exploration_score;
 
@@ -46,6 +44,6 @@ impl TreePolicy for UCTPolicy {
             }
         }
 
-        best_node.expect("[UCTPolicy][select_node] No children were given to select.")
+        best_node.expect("[UCTPolicy::select_node] No children were given to select.")
     }
 }

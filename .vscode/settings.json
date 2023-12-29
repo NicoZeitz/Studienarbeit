@@ -1,6 +1,7 @@
 {
     // Rust
     "rust-analyzer.linkedProjects": ["code\\patchwork\\Cargo.toml"],
+    "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
         "editor.inlayHints.enabled": "on"
     },
@@ -92,8 +93,10 @@
         "backpropagated",
         "Backpropagates",
         "Backpropagation",
+        "bincode",
         "bitvec",
         "Cayley",
+        "CHOOSABLE",
         "clippy",
         "concatcp",
         "consts",
@@ -120,6 +123,7 @@
         "Nico",
         "nocapture",
         "playout",
+        "powf",
         "Praxisbericht",
         "repr",
         "rfind",
@@ -133,6 +137,7 @@
         "supremum",
         "tailwindcss",
         "termion",
+        "Texel's",
         "thiserror",
         "typenum",
         "typeshed",

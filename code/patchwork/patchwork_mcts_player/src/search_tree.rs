@@ -8,7 +8,7 @@ use std::{
 };
 
 use crate::{mcts_options::NON_ZERO_USIZE_ONE, MCTSEndCondition, MCTSOptions, Node};
-use patchwork_core::{Action, Evaluator, Patchwork};
+use patchwork_core::{ActionId, Evaluator, Patchwork};
 use patchwork_tree_policy::TreePolicy;
 
 // TODO:
@@ -57,14 +57,16 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     }
 
     /// Searches for the best action.
-    pub fn search(&self) -> Action {
+    #[allow(clippy::let_unit_value)]
+    #[allow(clippy::explicit_counter_loop)]
+    pub fn search(&self) -> ActionId {
         // TODO: reuse old tree
 
         let root = Arc::clone(&self.root_node);
 
         // PERF: fastpath for when there is only one action
         if root.read().unwrap().expandable_actions.len() == 1 {
-            return root.read().unwrap().expandable_actions[0].clone();
+            return root.read().unwrap().expandable_actions[0];
         }
 
         match &self.options {
@@ -157,7 +159,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                             .iter()
                             .map(|child| {
                                 let child = child.read().unwrap();
-                                (child.visit_count, child.action_taken.clone().unwrap())
+                                (child.visit_count, child.action_taken.unwrap())
                             })
                             .collect::<Vec<_>>();
 
@@ -165,7 +167,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
                         actions
                             .iter()
-                            .map(|(visits, action)| (*visits as f64 / sum_of_visits, action.clone()))
+                            .map(|(visits, action)| (*visits as f64 / sum_of_visits, *action))
                             .collect::<Vec<_>>()
                     }));
                 }
@@ -185,7 +187,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                         results.iter().map(|result| result[index].0).sum::<f64>() / actions.len() as f64;
 
                     if summed_probability > max_probability {
-                        max_action = Some(actions[index].clone());
+                        max_action = Some(*actions[index]);
                         max_probability = summed_probability;
                     }
                 }
@@ -229,7 +231,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                                 .iter()
                                 .map(|child| {
                                     let child = child.read().unwrap();
-                                    (child.visit_count, child.action_taken.clone().unwrap())
+                                    (child.visit_count, child.action_taken.unwrap())
                                 })
                                 .collect::<Vec<_>>();
 
@@ -237,7 +239,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
                             actions
                                 .iter()
-                                .map(|(visits, action)| (*visits as f64 / sum_of_visits, action.clone()))
+                                .map(|(visits, action)| (*visits as f64 / sum_of_visits, *action))
                                 .collect::<Vec<_>>()
                         }));
                     }
@@ -260,7 +262,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                             results.iter().map(|result| result[index].0).sum::<f64>() / actions.len() as f64;
 
                         if summed_probability > max_probability {
-                            max_action = Some(actions[index].clone());
+                            max_action = Some(*actions[index]);
                             max_probability = summed_probability;
                         }
                     }
@@ -307,7 +309,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     #[cfg(debug_assertions)]
     fn report_progress(&self, _iteration: usize, _start_time: std::time::Instant, _nodes: Vec<&Arc<RwLock<Node>>>) {}
 
-    pub fn get_best_action(&self, root: &Arc<RwLock<Node>>) -> Action {
+    pub fn get_best_action(&self, root: &Arc<RwLock<Node>>) -> ActionId {
         root.read()
             .unwrap()
             .children
@@ -318,7 +320,6 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             .read()
             .unwrap()
             .action_taken
-            .clone()
             .unwrap()
     }
 

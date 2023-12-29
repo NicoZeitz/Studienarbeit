@@ -1,20 +1,26 @@
 use std::fmt::Display;
 
-use crate::QuiltBoard;
+use crate::{QuiltBoard, TimeBoard};
 
 /// Represents the state of a player in the game Patchwork.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct PlayerState {
-    /// THe position of the player on the time board.
-    pub position: usize,
+    /// The position of the player on the time board.
+    ///
+    /// This can be greater than [`TimeBoard::MAX_POSITION`] to allow for
+    /// undo actions
+    ///
+    /// To get the correct position use the [`get_position`] method.
+    pub(crate) position: u8,
     /// The amount of buttons the player has.
-    pub button_balance: isize,
+    pub button_balance: i32,
     /// The quilt board of the player.
     pub quilt_board: QuiltBoard,
 }
 
 impl PlayerState {
-    pub const STARTING_BUTTON_BALANCE: isize = 5;
+    /// The starting amount of buttons for a player.
+    pub const STARTING_BUTTON_BALANCE: i32 = 5;
 
     /// Creates a new [`PlayerState`] with the default values.
     pub fn new() -> PlayerState {
@@ -23,6 +29,20 @@ impl PlayerState {
             button_balance: PlayerState::STARTING_BUTTON_BALANCE,
             quilt_board: QuiltBoard::new(),
         }
+    }
+
+    /// Returns the position of the player on the time board.
+    ///
+    /// # Returns
+    ///
+    /// The position of the player on the time board.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    #[inline(always)]
+    pub fn get_position(&self) -> u8 {
+        self.position.min(TimeBoard::MAX_POSITION)
     }
 }
 
@@ -37,9 +57,7 @@ impl Display for PlayerState {
         write!(
             f,
             "Player (button balance: {}):\n{}",
-            // TODO: can we get the player name here without duplicating the string?
-            self.button_balance,
-            self.quilt_board
+            self.button_balance, self.quilt_board
         )
     }
 }

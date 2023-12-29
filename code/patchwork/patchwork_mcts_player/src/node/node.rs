@@ -1,7 +1,7 @@
 use std::sync::{Arc, RwLock, Weak};
 use std::{fmt, thread};
 
-use patchwork_core::{Action, Evaluator, Patchwork};
+use patchwork_core::{ActionId, Evaluator, Patchwork};
 use rand::seq::SliceRandom;
 
 use patchwork_tree_policy::{TreePolicy, TreePolicyNode};
@@ -18,33 +18,33 @@ pub struct Node {
     /// The children nodes.
     pub children: Vec<Link>,
     /// The maximum score of all the nodes in the subtree rooted at this node.
-    pub max_score: isize,
+    pub max_score: i32,
     // The minimum score of all the nodes in the subtree rooted at this node.
-    pub min_score: isize,
+    pub min_score: i32,
     // The sum of the scores of all the nodes in the subtree rooted at this node.
-    pub score_sum: isize,
+    pub score_sum: i32,
     // The number of times this node has been visited where the player whose turn it is to move
     pub wins: i32,
     // The number of times this node has been visited.
     pub visit_count: i32,
     /// The action that was taken to get to this node. None if this is the root node.
-    pub action_taken: Option<Action>,
+    pub action_taken: Option<ActionId>,
     /// The actions that can still be taken from this node
-    pub expandable_actions: Vec<Action>,
+    pub expandable_actions: Vec<ActionId>,
 }
 
 impl Node {
-    pub fn new(state: &Patchwork, parent: Option<WeakLink>, action_taken: Option<Action>) -> Self {
+    pub fn new(state: &Patchwork, parent: Option<WeakLink>, action_taken: Option<ActionId>) -> Self {
         let new_state = state.clone();
-        let mut expandable_actions: Vec<Action> = new_state.get_valid_actions().into_iter().collect();
+        let mut expandable_actions: Vec<ActionId> = new_state.get_valid_actions().into_iter().collect();
         expandable_actions.shuffle(&mut rand::thread_rng());
 
         Self {
             state: new_state,
             parent,
             children: vec![],
-            max_score: isize::MIN,
-            min_score: isize::MAX,
+            max_score: i32::MIN,
+            min_score: i32::MAX,
             wins: 0,
             score_sum: 0,
             visit_count: 0,
@@ -74,7 +74,7 @@ impl Node {
     pub fn expand(node: &Link) -> Link {
         let action = node.write().unwrap().expandable_actions.remove(0);
         let mut next_state = node.read().unwrap().state.clone();
-        next_state.do_action(&action, false).unwrap();
+        next_state.do_action(action, false).unwrap();
         let child = Arc::new(RwLock::new(Node::new(
             &next_state,
             Some(Arc::downgrade(node)),
@@ -91,7 +91,7 @@ impl Node {
     /// - `node`: The node to backpropagate from.
     /// - `score`: The score at the end of the game that should be backpropagated.
     /// - `evaluator`: The evaluator to use to interpret the score.
-    pub fn backpropagate(node: &Link, value: isize) {
+    pub fn backpropagate(node: &Link, value: i32) {
         let mut mutable_node = node.write().unwrap();
         let player = &mutable_node.state.get_current_player();
         let maximizing_player = mutable_node.state.get_player_1_flag() == *player;
@@ -118,7 +118,7 @@ impl Node {
         }
     }
 
-    pub fn simulate<Eval: Evaluator>(node: &Link, evaluator: &Eval, leaf_parallelization: usize) -> isize {
+    pub fn simulate<Eval: Evaluator>(node: &Link, evaluator: &Eval, leaf_parallelization: usize) -> i32 {
         let game = Arc::new({
             let node = node.read().unwrap();
             node.state.clone()

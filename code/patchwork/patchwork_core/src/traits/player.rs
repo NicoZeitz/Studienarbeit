@@ -2,7 +2,7 @@ use anyhow::Result;
 
 pub type PlayerResult<T> = Result<T>;
 
-use crate::{Action, Patchwork};
+use crate::{ActionId, Patchwork};
 
 /// A base trait for all players.
 pub trait Player {
@@ -18,5 +18,5 @@ pub trait Player {
     /// # Returns
     ///
     /// The action that the player wants to take.
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action>;
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId>;
 }

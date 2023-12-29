@@ -8,7 +8,6 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-derivative = "2.2.0"
 lazy_static = "1.4.0"
 patchwork_macros = { path = "../patchwork_macros" }
 rand = "0.8.5"
@@ -18,3 +17,10 @@ regex = "1.10.2"
 const_format = "0.2.32"
 pretty_assertions = "1.4.0"
 anyhow = "1.0.76"
+itertools = "0.12.0"
+serde = { version = "1.0.193", features = ["derive"] }
+bincode = "1.3.3"
+serde_bytes = "0.11.13"
+
+[features]
+performance_tests = []

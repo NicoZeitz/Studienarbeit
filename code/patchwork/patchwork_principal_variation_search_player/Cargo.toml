@@ -13,3 +13,4 @@ patchwork_evaluator = { path = "../patchwork_evaluator" }
 patchwork_action_sorter = { path = "../patchwork_action_sorter" }
 rand = "0.8.5"
 itertools = "0.12.0"
+array-init = "2.1.0"

@@ -14,8 +14,6 @@ impl RandomOptions {
 
 impl Default for RandomOptions {
     fn default() -> Self {
-        Self {
-            seed: rand::random(),
-        }
+        Self { seed: rand::random() }
     }
 }

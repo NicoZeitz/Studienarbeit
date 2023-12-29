@@ -3,17 +3,17 @@ use std::sync::atomic::AtomicUsize;
 /// Diagnostics for the transposition table.
 #[derive(Debug)]
 pub(crate) struct TranspositionTableDiagnostics {
-    // =========== general ===========
+    // ─────────── general ───────────
     /// The capacity of the transposition table (in Entries).
     pub capacity: AtomicUsize,
     /// The amount of entries in the transposition table.
     pub entries: AtomicUsize,
-    // =========== probe ===========
+    // ─────────── probe ───────────
     /// The amount of accesses to the transposition table.
     pub accesses: AtomicUsize,
     /// The amount of misses to the transposition table.
     pub misses: AtomicUsize,
-    // =========== store ===========
+    // ─────────── store ───────────
     /// The amount of overwrites to the transposition table.
     pub overwrites: AtomicUsize,
 }
@@ -37,7 +37,7 @@ impl TranspositionTableDiagnostics {
         }
     }
 
-    // ============================================ GETTERS ============================================
+    // ──────────────────────────────────────────── GETTERS ────────────────────────────────────────────
 
     /// Gets the amount of transposition table hits
     pub(crate) fn hits(&self) -> usize {
@@ -58,7 +58,7 @@ impl TranspositionTableDiagnostics {
         self.misses.load(Self::LOAD_ORDERING) as f64 / self.accesses.load(Self::LOAD_ORDERING) as f64
     }
 
-    // ============================================ SETTERS ============================================
+    // ──────────────────────────────────────────── SETTERS ────────────────────────────────────────────
 
     /// Increments the amount of entries in the transposition table.
     /// This should only be called when an entry is stored.
@@ -92,7 +92,7 @@ impl TranspositionTableDiagnostics {
         self.overwrites.store(0, Self::STORE_ORDERING);
     }
 
-    // ============================================= OTHER =============================================
+    // ───────────────────────────────────────────── OTHER ─────────────────────────────────────────────
 
     /// Prints the diagnostics of the transposition table.
     ///

@@ -1,4 +1,4 @@
-use patchwork_core::{Action, Evaluator, Patchwork, Player, PlayerResult};
+use patchwork_core::{ActionId, Evaluator, Patchwork, Player, PlayerResult};
 
 use patchwork_evaluator::StaticEvaluator as MinimaxEvaluator;
 
@@ -45,19 +45,19 @@ impl Player for MinimaxPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let valid_actions = game.get_valid_actions();
 
         if valid_actions.len() == 1 {
-            return Ok(valid_actions[0].clone());
+            return Ok(valid_actions[0]);
         }
 
         let maximizing_player = game.is_flag_player_1(game.get_current_player());
 
-        let mut chosen_action = valid_actions[0].clone();
-        let mut chosen_evaluation = if maximizing_player { isize::MIN } else { isize::MAX };
+        let mut chosen_action = valid_actions[0];
+        let mut chosen_evaluation = if maximizing_player { i32::MIN } else { i32::MAX };
 
-        let filter_actions = |game: &Patchwork, valid_actions: &Vec<Action>| {
+        let filter_actions = |game: &Patchwork, valid_actions: &Vec<ActionId>| {
             Self::get_best_actions(game, valid_actions, self.amount_actions_per_piece, &self.evaluator)
         };
 
@@ -65,8 +65,8 @@ impl Player for MinimaxPlayer {
             let evaluation = Self::minimax(
                 &next_state,
                 self.depth - 1,
-                isize::MIN,
-                isize::MAX,
+                i32::MIN,
+                i32::MAX,
                 &self.evaluator,
                 &filter_actions,
             );
@@ -98,13 +98,13 @@ impl MinimaxPlayer {
     fn minimax<Filter>(
         game: &Patchwork,
         depth: usize,
-        alpha: isize,
-        beta: isize,
+        alpha: i32,
+        beta: i32,
         evaluator: &impl Evaluator,
         filter_actions: &Filter, // TODO: generic filtering
-    ) -> isize
+    ) -> i32
     where
-        Filter: Fn(&Patchwork, &Vec<Action>) -> Vec<(Patchwork, Action, isize)>,
+        Filter: Fn(&Patchwork, &Vec<ActionId>) -> Vec<(Patchwork, ActionId, i32)>,
     {
         if depth == 0 || game.is_terminated() {
             return evaluator.evaluate_node(game);
@@ -117,7 +117,7 @@ impl MinimaxPlayer {
         let valid_actions = game.get_valid_actions();
 
         if maximizing_player {
-            let mut value = isize::MIN;
+            let mut value = i32::MIN;
             for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(&next_state, depth - 1, alpha, beta, evaluator, filter_actions);
                 value = value.max(evaluation);
@@ -128,7 +128,7 @@ impl MinimaxPlayer {
             }
             value
         } else {
-            let mut value = isize::MAX;
+            let mut value = i32::MAX;
             for (next_state, _, _) in filter_actions(game, &valid_actions) {
                 let evaluation = Self::minimax(&next_state, depth - 1, alpha, beta, evaluator, filter_actions);
                 value = value.min(evaluation);
@@ -143,18 +143,18 @@ impl MinimaxPlayer {
 
     fn get_best_actions(
         game: &Patchwork,
-        valid_actions: &[Action],
+        valid_actions: &[ActionId],
         amount_actions_per_piece: usize,
         evaluator: &impl Evaluator,
-    ) -> Vec<(Patchwork, Action, isize)> {
+    ) -> Vec<(Patchwork, ActionId, i32)> {
         let place_first_piece_tuple = valid_actions
             .iter()
             .filter(|a| a.is_first_patch_taken() || a.is_special_patch_placement())
             .map(|action| {
                 let mut state = game.clone(); // TODO: avoid cloning
-                state.do_action(action, false).unwrap();
+                state.do_action(*action, false).unwrap();
                 let evaluation = evaluator.evaluate_node(&state);
-                (state, action.clone(), evaluation)
+                (state, *action, evaluation)
             })
             .take(amount_actions_per_piece)
             .collect::<Vec<_>>();
@@ -191,9 +191,9 @@ impl MinimaxPlayer {
             .find(|a| a.is_walking())
             .map(|action| {
                 let mut state = game.clone(); // TODO: avoid cloning
-                state.do_action(action, false).unwrap();
+                state.do_action(*action, false).unwrap();
                 let evaluation = evaluator.evaluate_node(&state);
-                (state, action.clone(), evaluation)
+                (state, *action, evaluation)
             })
             .unwrap();
 
@@ -202,9 +202,9 @@ impl MinimaxPlayer {
             .filter(|a| a.is_second_patch_taken())
             .map(|action| {
                 let mut state = game.clone(); // TODO: avoid cloning
-                state.do_action(action, false).unwrap();
+                state.do_action(*action, false).unwrap();
                 let evaluation = evaluator.evaluate_node(&state);
-                (state, action.clone(), evaluation)
+                (state, *action, evaluation)
             })
             .take(amount_actions_per_piece)
             .collect::<Vec<_>>();
@@ -213,9 +213,9 @@ impl MinimaxPlayer {
             .filter(|a| a.is_third_patch_taken())
             .map(|action| {
                 let mut state = game.clone(); // TODO: avoid cloning
-                state.do_action(action, false).unwrap();
+                state.do_action(*action, false).unwrap();
                 let evaluation = evaluator.evaluate_node(&state);
-                (state, action.clone(), evaluation)
+                (state, *action, evaluation)
             })
             .take(amount_actions_per_piece)
             .collect::<Vec<_>>();

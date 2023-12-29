@@ -9,9 +9,7 @@ pub struct ScoredUCTPolicy {
 
 impl ScoredUCTPolicy {
     pub fn new(exploration_constant: f64) -> Self {
-        Self {
-            exploration_constant,
-        }
+        Self { exploration_constant }
     }
 }
 
@@ -45,6 +43,6 @@ impl TreePolicy for ScoredUCTPolicy {
             }
         }
 
-        best_node.expect("[ScoredUCTPolicy][select_node] No children were given to select.")
+        best_node.expect("[ScoredUCTPolicy::select_node] No children were given to select.")
     }
 }

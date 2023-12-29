@@ -1,4 +1,4 @@
-use patchwork_core::{Action, Patchwork, Player, PlayerResult};
+use patchwork_core::{ActionId, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::ScoreEvaluator as Evaluator;
 use patchwork_tree_policy::ScoredUCTPolicy as TreePolicy;
 
@@ -51,7 +51,7 @@ impl Player for MCTSPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let search_tree = SearchTree::<TreePolicy, Evaluator>::new(game, &self.policy, &self.evaluator, &self.options);
         Ok(search_tree.search())
         // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove

@@ -45,10 +45,10 @@ struct Patches {
 }
 
 struct Patch {
-    pub id: usize,
-    pub button_cost: usize,
-    pub time_cost: usize,
-    pub button_income: usize,
+    pub id: u8,
+    pub button_cost: u8,
+    pub time_cost: u8,
+    pub button_income: u8,
 }
 
 struct PatchTiling {
@@ -60,8 +60,8 @@ struct PatchTransformations {
 }
 
 struct PatchTransformation {
-    pub row: usize,
-    pub column: usize,
+    pub row: u8,
+    pub column: u8,
     pub transformation: u8,
     pub tiling: u128,
 }
@@ -88,9 +88,7 @@ impl Parse for Patches {
 }
 
 impl Patches {
-    fn parse_single_wrapped(
-        input: syn::parse::ParseStream,
-    ) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
+    fn parse_single_wrapped(input: syn::parse::ParseStream) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
         input.parse::<kw::patch>()?;
         let content;
         parenthesized!(content in input);
@@ -98,9 +96,7 @@ impl Patches {
         Ok((patch, tiling, transformation))
     }
 
-    fn parse_single(
-        input: syn::parse::ParseStream,
-    ) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
+    fn parse_single(input: syn::parse::ParseStream) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
         let id = Patches::parse_property::<kw::id>(input)?;
         let button_cost = Patches::parse_property::<kw::button_cost>(input)?;
         let time_cost = Patches::parse_property::<kw::time_cost>(input)?;
@@ -120,12 +116,10 @@ impl Patches {
         Ok((patch, tiling, transformation))
     }
 
-    fn parse_property<Keyword: syn::parse::Parse>(
-        input: syn::parse::ParseStream,
-    ) -> syn::Result<usize> {
+    fn parse_property<Keyword: syn::parse::Parse>(input: syn::parse::ParseStream) -> syn::Result<u8> {
         input.parse::<Keyword>()?;
         input.parse::<Token![:]>()?;
-        let value: usize = input.parse::<syn::LitInt>()?.base10_parse()?;
+        let value: u8 = input.parse::<syn::LitInt>()?.base10_parse()?;
         input.parse::<Token![,]>()?;
         Ok(value)
     }
@@ -213,9 +207,7 @@ impl ToTokens for PatchTransformation {
             transformation,
             tiling,
         } = self;
-        let tiling_literal = format!("{:#083b}u128", tiling)
-            .parse::<proc_macro2::Literal>()
-            .unwrap();
+        let tiling_literal = format!("{:#083b}u128", tiling).parse::<proc_macro2::Literal>().unwrap();
 
         tokens.extend(quote! {
             PatchTransformation {
@@ -249,8 +241,8 @@ fn generate_transformations(tiles: &Vec<Vec<u8>>) -> Vec<PatchTransformation> {
                 }
                 saved_transformations.insert(tiling);
                 transformations.push(PatchTransformation {
-                    row,
-                    column,
+                    row: row as u8,
+                    column: column as u8,
                     transformation,
                     tiling,
                 });

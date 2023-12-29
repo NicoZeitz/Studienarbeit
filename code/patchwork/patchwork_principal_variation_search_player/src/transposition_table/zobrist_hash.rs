@@ -22,24 +22,24 @@ use patchwork_core::{PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct ZobristHash {
     /// A table of random numbers for each patch.
-    zobrist_patches_table: [u64; (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES)
-        * (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES)],
+    zobrist_patches_table:
+        [u64; (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize)],
     /// A table of random number for each special patch.
-    zobrist_special_patches_table: [u64; PatchManager::SPECIAL_PATCHES],
+    zobrist_special_patches_table: [u64; PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize],
     /// A random number if it is player 2's turn.
     zobrist_player_2_to_move: u64,
     /// A table of random numbers for each tile on the board for player 1.
-    zobrist_player_1_quilt_board_table: [u64; QuiltBoard::TILES],
+    zobrist_player_1_quilt_board_table: [u64; QuiltBoard::TILES as usize],
     /// A table of random numbers for each position on the time board for player 1.
-    zobrist_player_1_position_table: [u64; TimeBoard::MAX_POSITION + 1], // +1 to include 0 and the maximum position
+    zobrist_player_1_position_table: [u64; TimeBoard::MAX_POSITION as usize + 1], // +1 to include 0 and the maximum position
     /// A table of random numbers for each button balance for player 1.
     zobrist_player_1_button_balance_table: [u64; Self::MAX_BUTTON_BALANCE + 1], // also +1
     /// A table of random numbers for each button income for player 1.
     zobrist_player_1_button_income_table: [u64; Self::MAX_BUTTON_INCOME + 1], // also +1
     /// A table of random numbers for each tile on the board for player 2.
-    zobrist_player_2_quilt_board_table: [u64; QuiltBoard::TILES],
+    zobrist_player_2_quilt_board_table: [u64; QuiltBoard::TILES as usize],
     /// A table of random numbers for each position on the time board for player 2.
-    zobrist_player_2_position_table: [u64; TimeBoard::MAX_POSITION + 1], // also +1
+    zobrist_player_2_position_table: [u64; TimeBoard::MAX_POSITION as usize + 1], // also +1
     /// A table of random numbers for each button balance for player 2.
     zobrist_player_2_button_balance_table: [u64; Self::MAX_BUTTON_BALANCE + 1], // also +1
     /// A table of random numbers for each button income for player 2.
@@ -55,7 +55,8 @@ impl ZobristHash {
     ///
     /// TODO: Test how this behaves if we hash more of the patches as this will result in a more accurate hash.
     /// 3 is the minimum possible as otherwise the best actions could be incorrect
-    pub(crate) const AMOUNT_OF_PATCHES: usize = 9;
+    pub(crate) const AMOUNT_OF_PATCHES: usize =
+        PatchManager::AMOUNT_OF_STARTING_PATCHES as usize + PatchManager::AMOUNT_OF_NON_STARTING_PATCHES as usize;
 
     /// The maximum button balance a player can have is bounded by the game.
     ///
@@ -75,9 +76,9 @@ impl ZobristHash {
     /// to `5 + 9 · 32 + 7 + 54 · 1 = 300` (remove the walking actions) and
     /// still be correct. But to be safe the bound is kept at `353`.
     pub(crate) const MAX_BUTTON_BALANCE: usize = PlayerState::STARTING_BUTTON_BALANCE as usize
-        + TimeBoard::AMOUNT_BUTTON_INCOME_TRIGGERS * Self::MAX_BUTTON_INCOME
+        + TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS * Self::MAX_BUTTON_INCOME
         + QuiltBoard::FULL_BOARD_BUTTON_INCOME as usize
-        + TimeBoard::MAX_POSITION;
+        + TimeBoard::MAX_POSITION as usize;
 
     /// The maximum amount of button income a player can have is bounded
     /// by the number of tiles in the quilt board.
@@ -188,34 +189,34 @@ impl ZobristHash {
     #[allow(clippy::needless_range_loop)]
     pub(crate) fn new() -> Self {
         // TODO: maybe we can reduce the amount of memory required by using 2 rank 1 vectors and then using the dot product to create a matrix on the fly?
-        let mut zobrist_patches_table = [0; (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES)
-            * (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES)];
-        let mut zobrist_special_patches_table = [0; PatchManager::SPECIAL_PATCHES];
-        let mut zobrist_player_1_quilt_board_table = [0; QuiltBoard::TILES];
-        let mut zobrist_player_1_position_table = [0; TimeBoard::MAX_POSITION + 1];
+        let mut zobrist_patches_table =
+            [0; (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize)];
+        let mut zobrist_special_patches_table = [0; PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize];
+        let mut zobrist_player_1_quilt_board_table = [0; QuiltBoard::TILES as usize];
+        let mut zobrist_player_1_position_table = [0; TimeBoard::MAX_POSITION as usize + 1];
         let mut zobrist_player_1_button_balance_table = [0; Self::MAX_BUTTON_BALANCE + 1];
         let mut zobrist_player_1_button_income_table = [0; Self::MAX_BUTTON_INCOME + 1];
-        let mut zobrist_player_2_quilt_board_table = [0; QuiltBoard::TILES];
-        let mut zobrist_player_2_position_table = [0; TimeBoard::MAX_POSITION + 1];
+        let mut zobrist_player_2_quilt_board_table = [0; QuiltBoard::TILES as usize];
+        let mut zobrist_player_2_position_table = [0; TimeBoard::MAX_POSITION as usize + 1];
         let mut zobrist_player_2_button_balance_table = [0; Self::MAX_BUTTON_BALANCE + 1];
         let mut zobrist_player_2_button_income_table = [0; Self::MAX_BUTTON_INCOME + 1];
 
-        for i in 0..((PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES)
-            * (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES))
+        for i in
+            0..((PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize))
         {
             zobrist_patches_table[i] = rand::random();
         }
 
-        for i in 0..PatchManager::SPECIAL_PATCHES {
+        for i in 0..PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize {
             zobrist_special_patches_table[i] = rand::random();
         }
 
-        for i in 0..QuiltBoard::TILES {
+        for i in 0..QuiltBoard::TILES as usize {
             zobrist_player_1_quilt_board_table[i] = rand::random();
             zobrist_player_2_quilt_board_table[i] = rand::random();
         }
 
-        for i in 0..TimeBoard::MAX_POSITION + 1 {
+        for i in 0..TimeBoard::MAX_POSITION as usize + 1 {
             zobrist_player_1_position_table[i] = rand::random();
             zobrist_player_2_position_table[i] = rand::random();
         }
@@ -262,16 +263,16 @@ impl ZobristHash {
         // Hash the next patches
         // cannot hash more patches than there are
         for position_index in 0..(Self::AMOUNT_OF_PATCHES.min(game.patches.len())) {
-            let patch_index = game.patches[position_index].id;
+            let patch_index = game.patches[position_index].id as usize;
 
-            let index = patch_index * (PatchManager::STARTING_PATCHES + PatchManager::NORMAL_PATCHES) + position_index;
+            let index = patch_index * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) + position_index;
 
             hash ^= self.zobrist_patches_table[index];
         }
 
         // Hash special patches on board
         for (index, special_patch_index) in [26, 32, 38, 44, 50].iter().enumerate() {
-            if game.time_board.has_special_patch_at(*special_patch_index) {
+            if game.time_board.is_special_patch_at(*special_patch_index) {
                 hash ^= self.zobrist_special_patches_table[index];
             }
         }
@@ -286,12 +287,12 @@ impl ZobristHash {
             for column in 0..QuiltBoard::COLUMNS {
                 let index = row * QuiltBoard::COLUMNS + column;
 
-                if game.player_1.quilt_board.get_index(index) {
-                    hash ^= self.zobrist_player_1_quilt_board_table[index];
+                if game.player_1.quilt_board.get_at(index) {
+                    hash ^= self.zobrist_player_1_quilt_board_table[index as usize];
                 }
 
-                if game.player_2.quilt_board.get_index(index) {
-                    hash ^= self.zobrist_player_2_quilt_board_table[index];
+                if game.player_2.quilt_board.get_at(index) {
+                    hash ^= self.zobrist_player_2_quilt_board_table[index as usize];
                 }
             }
         }
@@ -299,10 +300,10 @@ impl ZobristHash {
         // Hash position, button income and button balance of both players
         let player_1 = &game.player_1;
         let player_2 = &game.player_2;
-        hash ^= self.zobrist_player_1_position_table[player_1.position];
+        hash ^= self.zobrist_player_1_position_table[player_1.get_position() as usize];
         hash ^= self.zobrist_player_1_button_balance_table[player_1.button_balance as usize];
         hash ^= self.zobrist_player_1_button_income_table[player_1.quilt_board.button_income as usize];
-        hash ^= self.zobrist_player_2_position_table[player_2.position];
+        hash ^= self.zobrist_player_2_position_table[player_2.get_position() as usize];
         hash ^= self.zobrist_player_2_button_balance_table[player_2.button_balance as usize];
         hash ^= self.zobrist_player_2_button_income_table[player_2.quilt_board.button_income as usize];
 

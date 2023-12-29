@@ -1,4 +1,4 @@
-use patchwork_core::{Action, Evaluator, Patchwork, Player, PlayerResult};
+use patchwork_core::{ActionId, Evaluator, Patchwork, Player, PlayerResult};
 use patchwork_evaluator::StaticEvaluator as GreedyEvaluator;
 
 /// A player that selects the action with the highest score.
@@ -31,42 +31,42 @@ impl Player for GreedyPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let mut game = game.clone();
         let valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
 
         if valid_actions.len() == 1 {
-            return Ok(valid_actions[0].clone());
+            return Ok(valid_actions[0]);
         }
 
         let maximizing_player = game.is_flag_player_1(game.get_current_player());
 
-        let mut chosen_action = &valid_actions[0];
-        let mut chosen_evaluation = if maximizing_player { isize::MIN } else { isize::MAX };
+        let mut chosen_action = valid_actions[0];
+        let mut chosen_evaluation = if maximizing_player { i32::MIN } else { i32::MAX };
 
         for action in valid_actions.iter() {
-            game.do_action(action, false)?;
+            game.do_action(*action, false)?;
             let evaluation = self.evaluator.evaluate_node(&game);
-            game.undo_action(action, false)?;
+            game.undo_action(*action, false)?;
 
             #[allow(clippy::collapsible_else_if)]
             if maximizing_player {
                 if evaluation > chosen_evaluation {
-                    chosen_action = action;
+                    chosen_action = *action;
                     chosen_evaluation = evaluation;
                 }
             } else {
                 if evaluation < chosen_evaluation {
-                    chosen_action = action;
+                    chosen_action = *action;
                     chosen_evaluation = evaluation;
                 }
             }
             // break ties randomly
             if evaluation == chosen_evaluation && rand::random() {
-                chosen_action = action;
+                chosen_action = *action;
             }
         }
 
-        Ok(chosen_action.clone())
+        Ok(chosen_action)
     }
 }

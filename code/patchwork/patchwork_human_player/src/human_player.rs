@@ -3,7 +3,7 @@ use std::{
     io::{self, Write},
 };
 
-use patchwork_core::{Action, ActionPayload, PatchTransformation, Patchwork, Player, PlayerResult, QuiltBoard};
+use patchwork_core::{ActionId, PatchManager, PatchTransformation, Patchwork, Player, PlayerResult, QuiltBoard};
 use rand::Rng;
 use regex::Regex;
 
@@ -32,13 +32,14 @@ impl Player for HumanPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<Action> {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let valid_actions = game.get_valid_actions();
 
-        Ok(match valid_actions[0].payload {
-            ActionPayload::SpecialPatchPlacement { .. } => self.handle_special_patch_action(valid_actions),
-            _ => self.handle_normal_action(game, valid_actions),
-        })
+        if valid_actions[0].is_special_patch_placement() {
+            Ok(self.handle_special_patch_action(valid_actions))
+        } else {
+            Ok(self.handle_normal_action(game, valid_actions))
+        }
     }
 }
 
@@ -53,7 +54,7 @@ impl HumanPlayer {
     // # Returns
     //
     // The action.
-    fn handle_special_patch_action(&mut self, valid_actions: Vec<Action>) -> Action {
+    fn handle_special_patch_action(&mut self, valid_actions: Vec<ActionId>) -> ActionId {
         let mut valid_actions = valid_actions;
         let initial_prompt = format!(
             "Player '{}' has to place the special patch. Please enter the row and column of the patch (row, column):",
@@ -80,8 +81,8 @@ impl HumanPlayer {
                 continue;
             }
 
-            let optional_row = human_inputs[0].parse::<usize>();
-            let optional_column = human_inputs[1].parse::<usize>();
+            let optional_row = human_inputs[0].parse::<u8>();
+            let optional_column = human_inputs[1].parse::<u8>();
 
             if optional_row.is_err() || optional_column.is_err() {
                 prompt = format!(
@@ -93,8 +94,8 @@ impl HumanPlayer {
                 continue;
             }
 
-            let row: usize = optional_row.unwrap();
-            let column: usize = optional_column.unwrap();
+            let row = optional_row.unwrap();
+            let column = optional_column.unwrap();
 
             if row > QuiltBoard::ROWS || column > QuiltBoard::COLUMNS {
                 prompt = format!(
@@ -109,10 +110,11 @@ impl HumanPlayer {
             let patch_position = (row - 1, column - 1);
 
             for action in &valid_actions {
-                if let ActionPayload::SpecialPatchPlacement { row, column, .. } = &action.payload {
-                    if *row == patch_position.0 && *column == patch_position.1 {
-                        return action.clone();
-                    }
+                let action_row = action.get_row();
+                let action_column = action.get_column();
+
+                if action_row == patch_position.0 && action_column == patch_position.1 {
+                    return *action;
                 }
             }
 
@@ -122,9 +124,14 @@ impl HumanPlayer {
                 column,
                 valid_actions
                     .iter()
-                    .map(|a| match &a.payload {
-                        ActionPayload::SpecialPatchPlacement { row, column, .. } => format!("({}, {})", row, column),
-                        _ => "".to_string(),
+                    .map(|action| {
+                        if action.is_special_patch_placement() {
+                            let action_row = action.get_row();
+                            let action_column = action.get_column();
+                            format!("({}, {})", action_row + 1, action_column + 1)
+                        } else {
+                            "".to_string()
+                        }
                     })
                     .collect::<Vec<_>>()
                     .join(", "),
@@ -143,7 +150,7 @@ impl HumanPlayer {
     /// # Returns
     ///
     /// The action.
-    fn handle_normal_action(&mut self, state: &Patchwork, valid_actions: Vec<Action>) -> Action {
+    fn handle_normal_action(&mut self, state: &Patchwork, valid_actions: Vec<ActionId>) -> ActionId {
         let mut valid_actions = valid_actions;
         let mut actions: HashSet<&str, _> = HashSet::new();
         actions.insert("walk");
@@ -187,7 +194,7 @@ impl HumanPlayer {
                         .iter()
                         .filter(|action| action.is_first_patch_taken())
                         .cloned()
-                        .collect::<Vec<Action>>(),
+                        .collect::<Vec<ActionId>>(),
                     0,
                 );
             } else if human_input == "take 2" && actions.contains("take 2") {
@@ -197,7 +204,7 @@ impl HumanPlayer {
                         .iter()
                         .filter(|action| action.is_second_patch_taken())
                         .cloned()
-                        .collect::<Vec<Action>>(),
+                        .collect::<Vec<ActionId>>(),
                     1,
                 );
             } else if human_input == "take 3" && actions.contains("take 3") {
@@ -207,7 +214,7 @@ impl HumanPlayer {
                         .iter()
                         .filter(|action| action.is_third_patch_taken())
                         .cloned()
-                        .collect::<Vec<Action>>(),
+                        .collect::<Vec<ActionId>>(),
                     2,
                 );
             }
@@ -222,8 +229,8 @@ impl HumanPlayer {
     ///
     /// * `state` - The current state.
     /// * `valid_actions` - The valid actions.
-    fn handle_place_patch(&mut self, state: &Patchwork, valid_actions: Vec<Action>, patch_index: usize) -> Action {
-        let initial_prompt = format!("You chose to place the following patch: \n{}\nPlease enter the  rotation (0, 90, 180, 270) and orientation (if flipped: y/n) of the patch:", state.patches[patch_index]);
+    fn handle_place_patch(&mut self, state: &Patchwork, valid_actions: Vec<ActionId>, patch_index: u8) -> ActionId {
+        let initial_prompt = format!("You chose to place the following patch: \n{}\nPlease enter the  rotation (0, 90, 180, 270) and orientation (if flipped: y/n) of the patch:", state.patches[patch_index as usize]);
         let mut prompt = initial_prompt.clone();
 
         loop {
@@ -260,10 +267,10 @@ impl HumanPlayer {
             }
 
             let rotation = match rotation {
-                0 => PatchTransformation::ROTATION_0 as usize,
-                90 => PatchTransformation::ROTATION_90 as usize,
-                180 => PatchTransformation::ROTATION_180 as usize,
-                270 => PatchTransformation::ROTATION_270 as usize,
+                0 => PatchTransformation::ROTATION_0,
+                90 => PatchTransformation::ROTATION_90,
+                180 => PatchTransformation::ROTATION_180,
+                270 => PatchTransformation::ROTATION_270,
                 _ => {
                     prompt = format!(
                         "Please enter a valid number for rotation (0, 90, 180, 270). {}",
@@ -273,25 +280,26 @@ impl HumanPlayer {
                 }
             };
 
-            let orientation = if orientation == 'n' { 0 } else { 1 };
+            let orientation: u8 = if orientation == 'n' { 0 } else { 1 };
 
             let new_valid_actions = valid_actions
                 .iter()
                 .filter(|action| {
-                    if let ActionPayload::PatchPlacement {
-                        patch_index: index,
-                        patch_orientation,
-                        patch_rotation,
-                        ..
-                    } = &action.payload
-                    {
-                        *index == patch_index && *patch_rotation == rotation && *patch_orientation == orientation
+                    if action.is_patch_placement() {
+                        let index = action.get_patch_index();
+                        let patch_id = action.get_patch_id();
+                        let patch_transformation_index = action.get_patch_transformation_index();
+                        let transformation = PatchManager::get_transformation(patch_id, patch_transformation_index);
+
+                        index == patch_index
+                            && rotation == transformation.rotation_flag()
+                            && orientation == transformation.orientation_flag()
                     } else {
                         false
                     }
                 })
                 .cloned()
-                .collect::<Vec<Action>>();
+                .collect::<Vec<ActionId>>();
 
             if !new_valid_actions.is_empty() {
                 return self.handle_place_patch_position(new_valid_actions);
@@ -313,7 +321,7 @@ impl HumanPlayer {
     /// # Returns
     ///
     /// The action.
-    fn handle_place_patch_position(&mut self, valid_actions: Vec<Action>) -> Action {
+    fn handle_place_patch_position(&mut self, valid_actions: Vec<ActionId>) -> ActionId {
         let initial_prompt = "Please enter the row and column of the patch (row, column):";
         let mut prompt = initial_prompt.to_string();
 
@@ -330,8 +338,8 @@ impl HumanPlayer {
                 continue;
             }
 
-            let optional_row = human_inputs[0].parse::<usize>();
-            let optional_column = human_inputs[1].parse::<usize>();
+            let optional_row = human_inputs[0].parse::<u8>();
+            let optional_column = human_inputs[1].parse::<u8>();
 
             if optional_row.is_err() || optional_column.is_err() {
                 prompt = format!(
@@ -343,8 +351,8 @@ impl HumanPlayer {
                 continue;
             }
 
-            let row: usize = optional_row.unwrap();
-            let column: usize = optional_column.unwrap();
+            let row = optional_row.unwrap();
+            let column = optional_column.unwrap();
 
             if row > QuiltBoard::ROWS || column > QuiltBoard::COLUMNS || row == 0 || column == 0 {
                 prompt = format!(
@@ -359,9 +367,12 @@ impl HumanPlayer {
             let patch_position = (row - 1, column - 1);
 
             for action in &valid_actions {
-                if let ActionPayload::PatchPlacement { row, column, .. } = &action.payload {
-                    if *row == patch_position.0 && *column == patch_position.1 {
-                        return action.clone();
+                if action.is_patch_placement() {
+                    let action_row = action.get_row();
+                    let action_column = action.get_column();
+
+                    if action_row == patch_position.0 && action_column == patch_position.1 {
+                        return *action;
                     }
                 }
             }
@@ -372,9 +383,14 @@ impl HumanPlayer {
                 column,
                 valid_actions
                     .iter()
-                    .map(|a| match &a.payload {
-                        ActionPayload::PatchPlacement { row, column, .. } => format!("({}, {})", row + 1, column + 1),
-                        _ => "".to_string(),
+                    .map(|action| {
+                        if action.is_patch_placement() {
+                            let action_row = action.get_row();
+                            let action_column = action.get_column();
+                            format!("({}, {})", action_row + 1, action_column + 1)
+                        } else {
+                            "".to_string()
+                        }
                     })
                     .collect::<Vec<_>>()
                     .join(", "),

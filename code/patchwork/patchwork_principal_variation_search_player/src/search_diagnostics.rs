@@ -13,6 +13,8 @@ pub struct SearchDiagnostics {
     pub aspiration_window_fail_low: usize,
     /// The number of times the aspiration window failed high.
     pub aspiration_window_fail_high: usize,
+    /// The number of times the zero window search was performed.
+    pub zero_window_search: usize,
     /// The number of times the zero window search failed.
     pub zero_window_search_fail: usize,
     /// The number of times a special patch extension was made.
@@ -29,6 +31,7 @@ impl Default for SearchDiagnostics {
             fail_high_first: 0,
             aspiration_window_fail_low: 0,
             aspiration_window_fail_high: 0,
+            zero_window_search: 0,
             zero_window_search_fail: 0,
             special_patch_extensions: 0,
         }
@@ -36,6 +39,19 @@ impl Default for SearchDiagnostics {
 }
 
 impl SearchDiagnostics {
+    #[inline]
+    pub fn reset(&mut self) {
+        self.nodes_searched = 0;
+        self.start_time = std::time::Instant::now();
+        self.fail_high = 0;
+        self.fail_high_first = 0;
+        self.aspiration_window_fail_low = 0;
+        self.aspiration_window_fail_high = 0;
+        self.zero_window_search = 0;
+        self.zero_window_search_fail = 0;
+        self.special_patch_extensions = 0;
+    }
+
     /// Increments the number of nodes searched.
     #[inline]
     pub fn increment_nodes_searched(&mut self) {
@@ -80,6 +96,11 @@ impl SearchDiagnostics {
         self.aspiration_window_fail_high += 1;
     }
 
+    /// Increments the number of times the zero window search was performed.
+    #[inline]
+    pub fn increment_zero_window_search(&mut self) {
+        self.zero_window_search += 1;
+    }
     /// Increments the number of times the zero window search failed.
     #[inline]
     pub fn increment_zero_window_search_fail(&mut self) {
@@ -90,5 +111,11 @@ impl SearchDiagnostics {
     #[inline]
     pub fn increment_special_patch_extensions(&mut self) {
         self.special_patch_extensions += 1;
+    }
+
+    /// Returns the rate of failing zero window searches in relation to the number of zero window searches.
+    #[inline]
+    pub fn zero_window_search_fail_rate(&self) -> f64 {
+        self.zero_window_search_fail as f64 / self.zero_window_search as f64
     }
 }

@@ -1,4 +1,4 @@
-use patchwork_core::Action;
+use patchwork_core::ActionId;
 
 use crate::ActionSorter;
 
@@ -6,8 +6,8 @@ use crate::ActionSorter;
 pub struct NoopActionSorter;
 
 impl ActionSorter for NoopActionSorter {
-    fn score_action(&self, action: &Action, pv_action: Option<&Action>) -> isize {
-        if pv_action.is_some() && *action == *pv_action.unwrap() {
+    fn score_action(&self, action: ActionId, pv_action: Option<ActionId>) -> isize {
+        if pv_action.is_some() && action == pv_action.unwrap() {
             return 10000;
         }
 
@@ -22,7 +22,7 @@ impl Default for NoopActionSorter {
 }
 
 // TODO: write something like this for the real sorter
-#[cfg(test)]
+#[cfg(feature = "performance_tests")]
 mod performance_tests {
     use super::*;
     use patchwork_core::Patchwork;

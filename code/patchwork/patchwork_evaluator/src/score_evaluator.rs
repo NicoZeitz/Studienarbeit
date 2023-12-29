@@ -18,11 +18,11 @@ impl Default for ScoreEvaluator {
 
 impl StableEvaluator for ScoreEvaluator {}
 impl Evaluator for ScoreEvaluator {
-    fn evaluate_intermediate_node(&self, game: &Patchwork) -> isize {
+    fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
         self.evaluate_terminal_node(&game.random_rollout())
     }
 
-    fn evaluate_terminal_node(&self, game: &Patchwork) -> isize {
+    fn evaluate_terminal_node(&self, game: &Patchwork) -> i32 {
         let player_1_flag = game.get_player_1_flag();
         let player_2_flag = game.get_player_2_flag();
 

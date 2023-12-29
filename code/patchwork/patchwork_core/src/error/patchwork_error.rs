@@ -1,13 +1,13 @@
 use thiserror::Error;
 
-use crate::{Action, Patchwork};
+use crate::{ActionId, Patchwork};
 
 #[derive(Debug, Error, Clone, Eq, PartialEq, Hash)]
 pub enum PatchworkError {
     #[error("Invalid action in the current state of the game")]
     InvalidActionError {
         reason: &'static str,
-        action: Box<Action>,
+        action: ActionId,
         state: Box<Patchwork>,
     },
     #[error("The Game is in its initial state and no actions can be undone")]
