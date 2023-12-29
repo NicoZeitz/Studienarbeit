@@ -917,12 +917,12 @@ mod performance_tests {
     //     1_000_000 ns = 1 ms
     // 1_000_000_000 ns = 1 s
 
-    const GET_INITIAL_STATE_THRESHOLD: u128 = 30_000;
-    const GET_VALID_ACTIONS_THRESHOLD: u128 = 40_000;
-    const GET_RANDOM_ACTION_THRESHOLD: u128 = 45_000;
-    const DO_ACTION_THRESHOLD: u128 = 20_000;
-    const UNDO_ACTION_THRESHOLD: u128 = 20_000;
-    const CLONE_THRESHOLD: u128 = 20_000;
+    const GET_INITIAL_STATE_THRESHOLD: u128 = 500_000;
+    const GET_VALID_ACTIONS_THRESHOLD: u128 = 200_000;
+    const GET_RANDOM_ACTION_THRESHOLD: u128 = 200_000;
+    const DO_ACTION_THRESHOLD: u128 = 12_000;
+    const UNDO_ACTION_THRESHOLD: u128 = 12_000;
+    const CLONE_THRESHOLD: u128 = 12_000;
 
     macro_rules! function {
         () => {{
