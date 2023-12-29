@@ -160,7 +160,7 @@ impl MinimaxPlayer {
             .collect::<Vec<_>>();
 
         if place_first_piece_tuple
-            .get(0)
+            .first()
             .map(|(_, a, _)| a.is_special_patch_placement())
             .unwrap_or(false)
         {
