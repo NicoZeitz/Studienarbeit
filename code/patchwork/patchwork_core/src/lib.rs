@@ -12,7 +12,6 @@ mod traits;
 
 pub use crate::action::*;
 pub use crate::error::*;
-pub use crate::game::*;
 pub use crate::notation::*;
 pub use crate::patch::*;
 pub use crate::patchwork::*;
