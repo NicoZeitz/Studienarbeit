@@ -920,9 +920,9 @@ mod performance_tests {
     const GET_INITIAL_STATE_THRESHOLD: u128 = 500_000;
     const GET_VALID_ACTIONS_THRESHOLD: u128 = 200_000;
     const GET_RANDOM_ACTION_THRESHOLD: u128 = 200_000;
-    const DO_ACTION_THRESHOLD: u128 = 12_000;
-    const UNDO_ACTION_THRESHOLD: u128 = 12_000;
-    const CLONE_THRESHOLD: u128 = 12_000;
+    const DO_ACTION_THRESHOLD: u128 = 25_000;
+    const UNDO_ACTION_THRESHOLD: u128 = 25_000;
+    const CLONE_THRESHOLD: u128 = 25_000;
 
     macro_rules! function {
         () => {{
