@@ -147,8 +147,6 @@ impl TranspositionTableDiagnostics {
                 writeln!(writer, "│  ...   │         ...          │  ...  │ ... │     ...    │     ...    │       ...       │")?;
                 break;
             } else {
-                println!("{:?}", entry.data);
-
                 let (table_depth, table_evaluation, table_evaluation_type, table_action) = Entry::unpack_data(entry.data);
                 writeln!(writer, "│{: >7?} │ {: >20?} | {: >5?} | {: >3?} | {: >10} | {: >10?} |{: >16} │", index, entry.key, table_depth, entry.age, format!("{:?}", table_evaluation_type), table_evaluation, table_action.save_to_notation().unwrap_or("######".to_string()))?;
                 written_entries += 1;
