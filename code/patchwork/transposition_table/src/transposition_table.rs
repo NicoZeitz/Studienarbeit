@@ -245,6 +245,10 @@ impl TranspositionTable {
             return;
         }
 
+        let mut writer = std::io::stdout();
+        let _ = self.diagnostics.write_diagnostics(&mut writer);
+        let _ = self.diagnostics.write_transposition_table(&mut writer, self, None);
+
         // TODO: Mate = game end store here independent of amount it too to get to mate, normally mate is stored as big number/big negative number -/+ the amount of moves it takes to get to mate
         // if(score > IS_MATE) score += pos->ply;
         // else if(score < -IS_MATE) score -= pos->ply;

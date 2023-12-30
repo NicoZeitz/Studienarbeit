@@ -1,5 +1,9 @@
 use std::sync::atomic::AtomicUsize;
 
+use patchwork_core::Notation;
+
+use crate::{Entry, TranspositionTable};
+
 /// Diagnostics for the transposition table.
 #[derive(Debug)]
 pub struct TranspositionTableDiagnostics {
@@ -113,5 +117,43 @@ impl TranspositionTableDiagnostics {
         writeln!(writer, "│├──► Hit:   {: >17} / {:6.2}%              │", self.hits(), self.hit_ratio() * 100.0)?;
         writeln!(writer, "│└──► Miss:  {: >17} / {:6.2}%              │", self.misses.load(Self::LOAD_ORDERING), self.miss_ratio() * 100.0)?;
         writeln!(writer, "└─────────────────────────────────────────────────────┘")
+    }
+
+    /// Prints the transposition table.
+    ///
+    /// # Arguments
+    ///
+    /// * `printer` - The printer to print the transposition table to.
+    /// * `transposition_table` - The transposition table to print.
+    /// * `max_entries` - The maximum amount of entries to print. If `None` is given all entries are printed.
+    ///
+    /// # Returns
+    ///
+    /// * `Result<(), std::io::Error>` - The result of the printing.
+    #[rustfmt::skip]
+    pub fn write_transposition_table(&self, writer: &mut dyn std::io::Write, transposition_table: &TranspositionTable, max_entries: Option<usize>) -> Result<(), std::io::Error> {
+        writeln!(writer, "┌────────┬───────────────────── Transposition Table Entries ────────────┬─────────────────┐")?;
+        writeln!(writer, "│ Index  │         Key          │ Depth │ Age │    Type    │ Evaluation │    Action       │")?;
+        writeln!(writer, "├────────┼──────────────────────┼───────┼─────┼────────────┼────────────┼─────────────────┤")?;
+        let max_entries_value = max_entries.unwrap_or(0);
+        let mut written_entries = 0;
+        for (index, entry) in transposition_table.entries.iter().enumerate() {
+            if entry.key == 0 {
+                continue;
+            }
+
+
+            if max_entries.is_some() && written_entries > max_entries_value {
+                writeln!(writer, "│  ...   │         ...          │  ...  │ ... │     ...    │     ...    │       ...       │")?;
+                break;
+            } else {
+                println!("{:?}", entry.data);
+
+                let (table_depth, table_evaluation, table_evaluation_type, table_action) = Entry::unpack_data(entry.data);
+                writeln!(writer, "│{: >7?} │ {: >20?} | {: >5?} | {: >3?} | {: >10} | {: >10?} |{: >16} │", index, entry.key, table_depth, entry.age, format!("{:?}", table_evaluation_type), table_evaluation, table_action.save_to_notation().unwrap_or("######".to_string()))?;
+                written_entries += 1;
+            }
+        }
+        writeln!(writer, "└────────┴──────────────────────┴───────┴─────┴────────────┴────────────┴─────────────────┘")
     }
 }

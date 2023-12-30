@@ -103,7 +103,7 @@ pub enum DiagnosticsFeature {
 impl Default for DiagnosticsFeature {
     fn default() -> Self {
         if cfg!(debug_assertions) {
-            Self::Enabled {
+            Self::Verbose {
                 writer: Box::new(std::io::stdout()),
             }
         } else {

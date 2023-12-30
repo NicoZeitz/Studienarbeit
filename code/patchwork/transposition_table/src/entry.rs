@@ -85,7 +85,7 @@ impl Entry {
     /// * `isize` - The evaluation
     #[inline]
     pub fn get_evaluation(data: u64) -> i32 {
-        let extracted = (data >> 21) & 0x1FFFFFFFFF;
+        let extracted = (data >> 27) & 0x1FFFFFFFFF;
 
         (unsafe { std::mem::transmute::<u64, i64>(extracted) }) as i32 + evaluator_constants::NEGATIVE_INFINITY
     }
@@ -135,8 +135,53 @@ impl Entry {
         data |=  evaluation_type     as u64;        //  2 bits for evaluation type
         data |= (depth               as u64) << 2;  //  8 bits for depth     (as a max depth of 256 is used)
         data |= (action_id.as_bits() as u64) << 10; // 17 bits for action id (as a max of 2026 actions are possible)
-        data |= unsafe {std::mem::transmute::<i64, u64>(adjusted_evaluation) } << 21; // 37 bits left for evaluation
+        data |= unsafe {std::mem::transmute::<i64, u64>(adjusted_evaluation) } << 27; // 37 bits left for evaluation
 
         data
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn pack_unpack(depth: usize, evaluation: i32, evaluation_type: EvaluationType, action_id: ActionId) {
+        let data = Entry::pack_data(depth, evaluation, evaluation_type, action_id);
+        let (unpacked_depth, unpacked_evaluation, unpacked_evaluation_type, unpacked_action_id) =
+            Entry::unpack_data(data);
+
+        assert_eq!(depth, unpacked_depth);
+        assert_eq!(evaluation, unpacked_evaluation);
+        assert_eq!(evaluation_type, unpacked_evaluation_type);
+        assert_eq!(action_id, unpacked_action_id);
+    }
+
+    #[test]
+    fn test_pack_unpack() {
+        pack_unpack(255, 1000, EvaluationType::Exact, ActionId::walking(13));
+        pack_unpack(
+            3,
+            -999,
+            EvaluationType::UpperBound,
+            ActionId::special_patch_placement(34),
+        );
+        pack_unpack(
+            0,
+            0,
+            EvaluationType::LowerBound,
+            ActionId::patch_placement(17, 2, 1, true),
+        );
+        pack_unpack(
+            10,
+            evaluator_constants::POSITIVE_INFINITY,
+            EvaluationType::Exact,
+            ActionId::null(),
+        );
+        pack_unpack(
+            10,
+            evaluator_constants::NEGATIVE_INFINITY,
+            EvaluationType::LowerBound,
+            ActionId::phantom(),
+        );
     }
 }

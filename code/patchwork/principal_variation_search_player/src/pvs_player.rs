@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use patchwork_core::{evaluator_constants, ActionId, Notation, Patchwork, Player, PlayerResult, TurnType};
 use pv_table::PVTable;
-use transposition_table::{Entry, EvaluationType, TranspositionTable};
+use transposition_table::{EvaluationType, TranspositionTable};
 
 use crate::{DiagnosticsFeature, PVSOptions, SearchDiagnostics};
 
@@ -634,28 +634,8 @@ impl PVSPlayer {
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {
             transposition_table.diagnostics.write_diagnostics(writer)?;
-
             if is_verbose {
-                writeln!(writer, "┌────────┬───────────────────── Transposition Table Entries ────────────┬─────────────────┐")?;
-                writeln!(writer, "│ Index  │         Key          │ Depth │ Age │    Type    │ Evaluation │    Action       │")?;
-                writeln!(writer, "├────────┼──────────────────────┼───────┼─────┼────────────┼────────────┼─────────────────┤")?;
-                let mut written_entries = 0;
-                for (index, entry) in transposition_table.entries.iter().enumerate() {
-                    if entry.key == 0 {
-                        continue;
-                    }
-
-
-                    if written_entries > 100 {
-                        writeln!(writer, "│  ...   │         ...          │  ...  │ ... │     ...    │     ...    │       ...       │")?;
-                        break;
-                    } else {
-                        let (table_depth, table_evaluation, table_evaluation_type, table_action) = Entry::unpack_data(entry.data);
-                        writeln!(writer, "│{: >7?} │ {: >20?} | {: >5?} | {: >3?} | {: >10} | {: >10?} |{: >16} │", index, entry.key, table_depth, entry.age, format!("{:?}", table_evaluation_type), table_evaluation, table_action.save_to_notation().unwrap_or("######".to_string()))?;
-                        written_entries += 1;
-                    }
-                }
-                writeln!(writer, "└────────┴──────────────────────┴───────┴─────┴────────────┴────────────┴─────────────────┘")?;
+                transposition_table.diagnostics.write_transposition_table(writer, transposition_table, Some(100))?;
             }
         }
         writeln!(writer, "─────────────────────────────────────────────────────────────")?;
