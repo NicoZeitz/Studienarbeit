@@ -3,12 +3,26 @@
 version = 3
 
 [[package]]
+name = "action_sorter"
+version = "1.0.0"
+dependencies = [
+ "patchwork_core",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b2969dcb958b36655471fc61f7e416fa76033bdd4bfed0678d8fee1e2d07a1f0"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "alphazero_player"
+version = "1.0.0"
+dependencies = [
+ "patchwork_core",
 ]
 
 [[package]]
@@ -61,9 +75,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.76"
+version = "1.0.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59d2a3357dde987206219e78ecfbbb6e8dad06cbb65292758d3270e6254f7355"
+checksum = "c9d19de80eff169429ac1e9f48fffb163916b448a44e8e046186232046d9e1f9"
 
 [[package]]
 name = "approx"
@@ -73,12 +87,6 @@ checksum = "3f2a05fd1bd10b2527e20a2cd32d8873d115b8b39fe219ee25f42a8aca6ba278"
 dependencies = [
  "num-traits",
 ]
-
-[[package]]
-name = "array-init"
-version = "2.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d62b7694a562cdf5a74227903507c56ab2cc8bdd1f781ed5cb4cf9c9f810bfc"
 
 [[package]]
 name = "autocfg"
@@ -171,9 +179,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "clap"
-version = "4.4.11"
+version = "4.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfaff671f6b22ca62406885ece523383b9b64022e341e53e009a62ebc47a45f2"
+checksum = "dcfab8ba68f3668e89f6ff60f5b205cea56aa7b769451a59f34b8682f51c056d"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -181,9 +189,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.4.11"
+version = "4.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a216b506622bb1d316cd51328dce24e07bdff4a6128a47c7e7fad11878d5adbb"
+checksum = "fb7fb5e4e979aec3be7791562fcba452f94ad85e954da024396433e0e25a79e9"
 dependencies = [
  "anstream",
  "anstyle",
@@ -311,6 +319,16 @@ name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
+
+[[package]]
+name = "evaluator"
+version = "1.0.0"
+dependencies = [
+ "candle-core",
+ "candle-nn",
+ "linfa",
+ "patchwork_core",
+]
 
 [[package]]
 name = "gemm"
@@ -441,6 +459,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "greedy_player"
+version = "1.0.0"
+dependencies = [
+ "evaluator",
+ "patchwork_core",
+ "rand",
+]
+
+[[package]]
 name = "half"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -465,6 +492,16 @@ name = "hermit-abi"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d77f7ec81a6d05a3abb01ab6eb7590f6083d08449fe5a1c8b1e620283546ccb7"
+
+[[package]]
+name = "human_player"
+version = "1.0.0"
+dependencies = [
+ "patchwork_core",
+ "rand",
+ "rand_xoshiro",
+ "regex",
+]
 
 [[package]]
 name = "itertools"
@@ -524,10 +561,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "mcts_player"
+version = "1.0.0"
+dependencies = [
+ "evaluator",
+ "patchwork_core",
+ "rand",
+ "tree_policy",
+]
+
+[[package]]
 name = "memchr"
-version = "2.6.4"
+version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
+checksum = "523dc4f511e55ab87b694dc30d0f820d60906ef06413f93d4d7a1385599cc149"
 
 [[package]]
 name = "memmap2"
@@ -537,6 +584,15 @@ checksum = "f49388d20533534cd19360ad3d6a7dadc885944aa802ba3995040c5ec11288c6"
 dependencies = [
  "libc",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "minimax_player"
+version = "1.0.0"
+dependencies = [
+ "evaluator",
+ "patchwork_core",
+ "rand",
 ]
 
 [[package]]
@@ -609,31 +665,17 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 name = "patchwork"
 version = "1.0.0"
 dependencies = [
- "patchwork_action_sorter",
- "patchwork_alphazero_player",
+ "action_sorter",
+ "alphazero_player",
+ "evaluator",
+ "greedy_player",
+ "human_player",
+ "mcts_player",
+ "minimax_player",
  "patchwork_core",
- "patchwork_evaluator",
- "patchwork_greedy_player",
- "patchwork_human_player",
  "patchwork_macros",
- "patchwork_mcts_player",
- "patchwork_minimax_player",
- "patchwork_principal_variation_search_player",
- "patchwork_random_player",
-]
-
-[[package]]
-name = "patchwork_action_sorter"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
-]
-
-[[package]]
-name = "patchwork_alphazero_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
+ "principal_variation_search_player",
+ "random_player",
 ]
 
 [[package]]
@@ -656,35 +698,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "patchwork_evaluator"
-version = "1.0.0"
-dependencies = [
- "candle-core",
- "candle-nn",
- "linfa",
- "patchwork_core",
-]
-
-[[package]]
-name = "patchwork_greedy_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
- "patchwork_evaluator",
- "rand",
-]
-
-[[package]]
-name = "patchwork_human_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
- "rand",
- "rand_xoshiro",
- "regex",
-]
-
-[[package]]
 name = "patchwork_macros"
 version = "1.0.0"
 dependencies = [
@@ -692,50 +705,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "patchwork_mcts_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
- "patchwork_evaluator",
- "patchwork_tree_policy",
- "rand",
-]
-
-[[package]]
-name = "patchwork_minimax_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
- "patchwork_evaluator",
- "rand",
-]
-
-[[package]]
-name = "patchwork_principal_variation_search_player"
-version = "1.0.0"
-dependencies = [
- "array-init",
- "itertools",
- "patchwork_action_sorter",
- "patchwork_core",
- "patchwork_evaluator",
- "rand",
-]
-
-[[package]]
-name = "patchwork_random_player"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
- "rand",
- "rand_xoshiro",
-]
-
-[[package]]
-name = "patchwork_tree_policy"
-version = "1.0.0"
 
 [[package]]
 name = "ppv-lite86"
@@ -751,6 +720,19 @@ checksum = "af7cee1a6c8a5b9208b3cb1061f10c0cb689087b3d8ce85fb9d2dd7a29b6ba66"
 dependencies = [
  "diff",
  "yansi",
+]
+
+[[package]]
+name = "principal_variation_search_player"
+version = "1.0.0"
+dependencies = [
+ "action_sorter",
+ "evaluator",
+ "itertools",
+ "patchwork_core",
+ "pv_table",
+ "rand",
+ "transposition_table",
 ]
 
 [[package]]
@@ -772,6 +754,13 @@ dependencies = [
  "libm",
  "num-complex",
  "reborrow",
+]
+
+[[package]]
+name = "pv_table"
+version = "1.0.0"
+dependencies = [
+ "patchwork_core",
 ]
 
 [[package]]
@@ -830,6 +819,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f97cdb2a36ed4183de61b2f824cc45c9f1037f28afe0a322e9fff4c108b5aaa"
 dependencies = [
  "rand_core",
+]
+
+[[package]]
+name = "random_player"
+version = "1.0.0"
+dependencies = [
+ "patchwork_core",
+ "rand",
+ "rand_xoshiro",
 ]
 
 [[package]]
@@ -996,9 +994,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
-version = "2.0.42"
+version = "2.0.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b7d0a2c048d661a1a59fcd7355baa232f7ed34e0ee4df2eef3c1c1c0d3852d8"
+checksum = "ee659fb5f3d355364e1f3e5bc10fb82068efbf824a1e9d1c9504244a6469ad53"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1019,23 +1017,36 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.51"
+version = "1.0.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f11c217e1416d6f036b870f14e0413d480dbf28edbee1f877abaf0206af43bb7"
+checksum = "83a48fd946b02c0a526b2e9481c8e2a17755e47039164a86c4070446e3a4614d"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.51"
+version = "1.0.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01742297787513b79cf8e29d1056ede1313e2420b7b3b15d0a768b4921f549df"
+checksum = "e7fbe9b594d6568a6a1443250a7e67d80b74e1e96f6d1715e1e21cc1888291d3"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "transposition_table"
+version = "1.0.0"
+dependencies = [
+ "itertools",
+ "patchwork_core",
+ "rand",
+]
+
+[[package]]
+name = "tree_policy"
+version = "1.0.0"
 
 [[package]]
 name = "unicode-ident"

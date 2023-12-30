@@ -1,0 +1,17 @@
+[package]
+name = "principal_variation_search_player"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork_core = { path = "../patchwork_core" }
+pv_table = { path = "../pv_table" }
+evaluator = { path = "../evaluator" }
+action_sorter = { path = "../action_sorter" }
+rand = "0.8.5"
+itertools = "0.12.0"
+transposition_table = { path = "../transposition_table" }

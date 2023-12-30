@@ -7,7 +7,7 @@ use crate::{Notation, PatchManager, Patchwork, PatchworkError, PlayerState, Quil
 
 lazy_static! {
     static ref STATE_REGEX: Regex = Regex::new(
-        r"^(?P<player_1_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_1_button_balance>-?\d+)I(?P<player_1_button_income>\d+)P(?P<player_1_position>\d+) (?P<player_2_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_2_button_balance>-?\d+)I(?P<player_2_button_income>\d+)P(?P<player_2_position>\d+) (?P<current_player>[01]) (?P<special_patch_placement_move>(?:[NY]) (?P<patches>(?:(?:\d+/)*\d+)|-))(?P<phantom> \(Phantom\))?$",
+        r"^(?P<player_1_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_1_button_balance>-?\d+)I(?P<player_1_button_income>\d+)P(?P<player_1_position>\d+) (?P<player_2_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_2_button_balance>-?\d+)I(?P<player_2_button_income>\d+)P(?P<player_2_position>\d+) (?P<current_player>[01]) (?P<special_patch_placement_move>[NY]) (?:(?P<patches>(?:(?:\d+/)*\d+)|-))(?P<phantom> \(Phantom\))?$",
     ).unwrap();
 }
 
@@ -39,7 +39,9 @@ impl Notation for Patchwork {
     ///
     /// ```
     /// // The state of an example starting game
-    /// let state = Patchwork::load_from_notation("000000000000000000000B5I0P0 000000000000000000000B5I0P0 0 N 1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/0");
+    /// use patchwork_core::{Patchwork, Notation};
+    ///
+    /// let state = Patchwork::load_from_notation("000000000000000000000B5I0P0 000000000000000000000B5I0P0 0 N 1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/0").unwrap();
     /// let notation = state.save_to_notation().unwrap();
     /// ```
     fn save_to_notation(&self) -> Result<String, PatchworkError> {

@@ -64,11 +64,13 @@ impl Notation for Action {
     /// # Example
     ///
     /// ```
-    /// let walking_action = Action::load_from_notation("W0");                     /* W0 */
-    /// let patch_placement_action = Action::load_from_notation("P0I0═0‖0↻0↔0");   /* P patch_id I patch_index ═ row ‖ column ↻ rotation ↔ orientation */
-    /// let special_patch_placement_action = Action::load_from_notation("S═0‖0");  /* S ═ row ‖ column */
-    /// let phantom_action = Action::load_from_notation("N");                      /* N */
-    /// let null_action = Action::load_from_notation("_");                         /* _ */
+    /// use patchwork_core::{Action, Notation};
+    ///
+    /// let walking_action = Action::load_from_notation("W0").unwrap();                       /* W0 */
+    /// let patch_placement_action = Action::load_from_notation("P0I0═0‖0↻0↔0P0").unwrap();   /* P patch_id I patch_index ═ row ‖ column ↻ rotation ↔ orientation P previous_player */
+    /// let special_patch_placement_action = Action::load_from_notation("S═0‖0").unwrap();    /* S ═ row ‖ column */
+    /// let phantom_action = Action::load_from_notation("N").unwrap();                        /* N */
+    /// let null_action = Action::load_from_notation("_").unwrap();                           /* _ */
     ///
     /// let walking_action_notation = walking_action.save_to_notation().unwrap();
     /// let patch_placement_action_notation = patch_placement_action.save_to_notation().unwrap();
@@ -122,6 +124,13 @@ impl Notation for Action {
                 reason: "[Action::load_from_notation] Invalid action notation",
             })?;
 
+        if captures.name("null_action").is_some() {
+            return Ok(Action::Null);
+        }
+        if captures.name("phantom_action").is_some() {
+            return Ok(Action::Phantom);
+        }
+
         if let Some(w_starting_index) = captures.name("w_starting_index") {
             let starting_index =
                 w_starting_index
@@ -132,12 +141,6 @@ impl Notation for Action {
                         reason: "[Action::load_from_notation] Invalid starting index for action",
                     })?;
             return Ok(Action::Walking { starting_index });
-        }
-        if captures.name("null_action").is_some() {
-            return Ok(Action::Null);
-        }
-        if captures.name("phantom_action").is_some() {
-            return Ok(Action::Phantom);
         }
 
         if let Some(patch_id) = captures.name("p_patch_id") {
@@ -270,17 +273,9 @@ impl Notation for Action {
             });
         }
 
-        if let Some(patch_id) = captures.name("s_patch_id") {
-            let s_row = captures.name("s_row").unwrap();
+        if let Some(s_row) = captures.name("s_row") {
             let s_column = captures.name("s_column").unwrap();
 
-            let patch_id: u8 = patch_id
-                .as_str()
-                .parse()
-                .map_err(|_| PatchworkError::InvalidNotationError {
-                    notation: notation.to_string(),
-                    reason: "[Action::load_from_notation] Invalid patch id for action",
-                })?;
             let row: u8 = s_row
                 .as_str()
                 .parse()
@@ -295,23 +290,6 @@ impl Notation for Action {
                     notation: notation.to_string(),
                     reason: "[Action::load_from_notation] Invalid column for action",
                 })?;
-
-            if !(PatchManager::AMOUNT_OF_STARTING_PATCHES + PatchManager::AMOUNT_OF_NON_STARTING_PATCHES
-                ..PatchManager::AMOUNT_OF_PATCHES)
-                .contains(&patch_id)
-            {
-                return Err(PatchworkError::InvalidNotationError {
-                    notation: notation.to_string(),
-
-                    reason: concatcp!(
-                        "[Action::load_from_notation] Patch id has to be in range from ",
-                        PatchManager::AMOUNT_OF_STARTING_PATCHES + PatchManager::AMOUNT_OF_NON_STARTING_PATCHES,
-                        " (inclusive) to ",
-                        PatchManager::AMOUNT_OF_PATCHES - 1,
-                        " (inclusive)",
-                    ),
-                });
-            }
 
             if row > QuiltBoard::ROWS {
                 return Err(PatchworkError::InvalidNotationError {

@@ -20,7 +20,7 @@ jobs:
             - uses: dtolnay/rust-toolchain@stable
             - name: Cargo Check
               working-directory: ./code/patchwork
-              run: cargo check --all-features
+              run: cargo check --all-features --all-targets
     test:
         name: cargo test
         runs-on: ubuntu-latest
@@ -30,6 +30,9 @@ jobs:
             - name: Cargo Test
               working-directory: ./code/patchwork
               run: cargo test --workspace --all-targets
+            - name: Cargo Doc Test
+              working-directory: ./code/patchwork
+              run: cargo test --workspace --doc
             - name: Cargo Performance Tests
               working-directory: ./code/patchwork
               run: cargo test --no-default-features --features performance_tests --release --workspace --all-targets performance_tests -- --nocapture --test-threads=1

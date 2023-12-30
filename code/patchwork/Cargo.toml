@@ -7,20 +7,20 @@ package.description = "The board game Patchwork implemented in Rust with differe
 package.repository = "https://github.com/NicoZeitz/Studienarbeit"
 package.license = "MIT"
 members = [
+    "action_sorter",
+    "alphazero_player",
     "console",
-    "patchwork",
-    "patchwork_action_sorter",
+    "evaluator",
+    "greedy_player",
+    "human_player",
+    "mcts_player",
+    "minimax_player",
     "patchwork_core",
     "patchwork_macros",
-    "patchwork_evaluator",
-    "patchwork_human_player",
-    "patchwork_random_player",
-    "patchwork_greedy_player",
-    "patchwork_mcts_player",
-    "patchwork_minimax_player",
-    "patchwork_principal_variation_search_player",
-    "patchwork_alphazero_player",
-    "patchwork_tree_policy",
+    "patchwork",
+    "principal_variation_search_player",
+    "random_player",
+    "tree_policy", "pv_table", "transposition_table",
 ]
 resolver = "2"
 

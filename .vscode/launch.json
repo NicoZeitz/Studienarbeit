@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "Build Rust Console",
+            "preLaunchTask": "Build Rust",
             "name": "(Windows) Debug executable 'console'",
             "type": "cppvsdbg",
             "request": "launch",
@@ -17,7 +17,7 @@
             "console": "internalConsole"
         },
         {
-            "preLaunchTask": "Build Rust Console",
+            "preLaunchTask": "Build Rust",
             "name": "(Windows/External Terminal) Debug executable 'console'",
             "type": "cppvsdbg",
             "request": "launch",
