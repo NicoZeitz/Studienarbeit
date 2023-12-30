@@ -6,6 +6,7 @@ use patchwork_core::ActionId;
 ///
 /// A table that stores the principal variation of a game state.
 /// The principal variations are stored as a [Triangular PV-Table](https://www.chessprogramming.org/Triangular_PV-Table)
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PVTable {
     // FEATURE:PV_TABLE
     /// A triangular table of actions.
@@ -19,7 +20,6 @@ pub struct PVTable {
     /// have a size of `≈0.13 MB`. Theoretically we could store the whole table
     /// on the stack, but this would be a wast of memory as well as producing
     /// a stack overflow.
-    #[allow(unused)] // FEATURE:PV_TABLE
     table: Vec<ActionId>,
 }
 

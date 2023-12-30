@@ -101,6 +101,7 @@
         "concatcp",
         "consts",
         "Deque",
+        "doctests",
         "dtolnay",
         "dtype",
         "Fastpath",

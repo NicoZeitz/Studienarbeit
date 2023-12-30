@@ -899,11 +899,11 @@ mod history_tests {
     }
 }
 
-#[cfg(feature = "performance_tests")]
 #[allow(clippy::redundant_closure_call)]
 #[allow(dead_code)]
 #[allow(unused_macros)]
 #[allow(unused_imports)]
+#[cfg(test)]
 mod performance_tests {
 
     use std::time::{Duration, Instant};
