@@ -903,7 +903,7 @@ mod history_tests {
 #[allow(dead_code)]
 #[allow(unused_macros)]
 #[allow(unused_imports)]
-#[cfg(test)]
+#[cfg(feature = "performance_tests")]
 mod performance_tests {
 
     use std::time::{Duration, Instant};
