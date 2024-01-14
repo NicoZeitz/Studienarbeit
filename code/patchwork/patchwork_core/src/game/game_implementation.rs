@@ -782,6 +782,104 @@ mod tests {
     }
 }
 
+// =================================================== START TODO: REMOVE ===================================================
+
+#[cfg(test)]
+mod record_tests {
+    use std::{
+        fs::OpenOptions,
+        io::Write,
+        sync::{atomic::AtomicUsize, Arc},
+        thread,
+    };
+
+    use super::*;
+
+    #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+    struct Game {
+        pub turns: Vec<GameTurn>,
+    }
+
+    #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+    struct GameTurn {
+        pub state: Patchwork,
+        pub action: Option<ActionId>,
+    }
+
+    #[test]
+    fn record_all_games() {
+        let mut workers = Vec::<thread::JoinHandle<()>>::new();
+        let games_done = Arc::new(AtomicUsize::new(0));
+
+        for _ in 0..(thread::available_parallelism().unwrap().get() - 1) {
+            let games_done = Arc::clone(&games_done);
+
+            let worker = thread::spawn(move || loop {
+                let previous_value = games_done.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                let value = previous_value + 1;
+
+                if value > 1000 {
+                    return;
+                }
+
+                println!("────────────── Recording game {:03} ──────────────", value);
+                record_games(&format!("{:04}.game.bin", value), true, 10_000);
+            });
+
+            workers.push(worker);
+        }
+
+        for worker in workers {
+            worker.join().unwrap();
+        }
+    }
+
+    fn record_games(file_name: &str, force_swap: bool, amount_of_games_to_capture: usize) {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(format!("G:/games/force_swap/{}", file_name))
+            .unwrap();
+
+        let mut games = Vec::<Game>::new();
+
+        for i in 0..amount_of_games_to_capture {
+            let mut game = Game {
+                turns: Vec::<GameTurn>::new(),
+            };
+
+            let mut state = Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 }));
+            let mut random = Xoshiro256PlusPlus::seed_from_u64(i as u64);
+
+            while !state.is_terminated() {
+                let mut valid_actions: Vec<ActionId> = state.get_valid_actions();
+                let random_index = random.gen::<usize>() % valid_actions.len();
+                let action = valid_actions.remove(random_index);
+
+                game.turns.push(GameTurn {
+                    state: state.clone(),
+                    action: Some(action),
+                });
+
+                state.do_action(action, force_swap).unwrap();
+            }
+
+            game.turns.push(GameTurn {
+                state: state.clone(),
+                action: None,
+            });
+
+            games.push(game);
+        }
+
+        let encoded: Vec<u8> = bincode::serialize(&games).unwrap();
+        file.write_all(&encoded).unwrap();
+    }
+}
+
+// ==================================================== END TODO: REMOVE ====================================================
+
 #[cfg(test)]
 mod history_tests {
     use std::{fs::OpenOptions, io::Write};
@@ -903,7 +1001,7 @@ mod history_tests {
 #[allow(dead_code)]
 #[allow(unused_macros)]
 #[allow(unused_imports)]
-#[cfg(test)]
+#[cfg(feature = "performance_tests")]
 mod performance_tests {
 
     use std::time::{Duration, Instant};

@@ -5,13 +5,32 @@ use crate::ActionSorter;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct NoopActionSorter;
 
+// TODO: write a real sorter
+
+// 1. PV-Action -> MAX-Score
+// 2. TT / Hash Moves (if nothing available internal iterative deepening
+// 3. Handcrafted Action Ordering
+//    * Heavily penalize moving actions (especially starting at later starting indices or with much money)
+// Train parameters with texels tuning
+// Look into: Killer Heuristic, History Heuristic
+
+// A typical move ordering consists as follows:
+// * PV-move of the principal variation from the previous iteration of an iterative deepening framework for the leftmost path, often implicitly done by 2.
+// * Hash move from hash tables
+// * Winning captures/promotions
+// * Equal captures/promotions
+// * Killer moves (non capture), often with mate killers first
+// * Non-captures sorted by history heuristic and that like
+// * Losing captures (* but see below
+
 impl ActionSorter for NoopActionSorter {
     fn score_action(&self, action: ActionId, pv_action: Option<ActionId>) -> isize {
         if pv_action.is_some() && action == pv_action.unwrap() {
             return 10000;
         }
 
-        0
+        // return random number between 0 and 1000 TODO: real impl
+        ((action.as_bits() as u64 * action.as_bits() as u64) % 1000) as isize
     }
 }
 

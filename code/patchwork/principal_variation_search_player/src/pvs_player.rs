@@ -6,7 +6,9 @@ use patchwork_core::{evaluator_constants, ActionId, Notation, Patchwork, Player,
 use pv_table::PVTable;
 use transposition_table::{EvaluationType, TranspositionTable};
 
-use crate::{DiagnosticsFeature, PVSOptions, SearchDiagnostics};
+use crate::{
+    pvs_options::FailingStrategy, DiagnosticsFeature, PVSOptions, SearchDiagnostics, TranspositionTableFeature,
+};
 
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
 ///
@@ -18,13 +20,13 @@ use crate::{DiagnosticsFeature, PVSOptions, SearchDiagnostics};
 /// - [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows)
 /// - [Transposition Table](https://www.chessprogramming.org/Transposition_Table)
 /// - [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions)
+/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
 ///     - PV Actions sorted first
 ///
-/// BUG:
-///
 /// TODO:
+/// - https://www.chessprogramming.org/Legal_Move#Legality_Test for transposition table entries from key collisions
 /// # Features that still need to be implemented
 /// - PV Table
 /// - Move Ordering
@@ -33,16 +35,19 @@ use crate::{DiagnosticsFeature, PVSOptions, SearchDiagnostics};
 ///     - Killer Moves (TODO)
 ///     - Thread escape move check
 ///     - History Heuristic
-/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#:~:text=Late%20Move%20Pruning%20%E2%80%8B,by%20the%20move%20ordering%20algorithm.) Remove late moves in move ordering
+///     - Move Ordering via Machine Learning (something like [Neural MoveMap Heuristic](https://www.chessprogramming.org/Neural_MoveMap_Heuristic))
+///  Remove late moves in move ordering
 /// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
 /// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
 /// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
 /// - [Automated Tuning](https://www.chessprogramming.org/Automated_Tuning) via regression, reinforcement learning or supervised learning for evaluation
 ///   - [Texel's Tuning Method](https://www.chessprogramming.org/Texel%27s_Tuning_Method)
+/// - [ƎUИИ Efficiently Updatable Neural Networks](https://www.chessprogramming.org/NNUE) implementation in Rust [Carp Engine](https://github.com/dede1751/carp/tree/main/chess/src/nnue)
 ///
 /// # Features that could maybe be implemented (look into it what it is)
-///    -   (Reverse) Futility Pruning
+///    -   (Reverse) Futility Pruning --> pretty sure
 ///    -   Delta Pruning
+///    -   https://www.chessprogramming.org/PV_Extensions
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,
@@ -68,8 +73,11 @@ impl PVSPlayer {
     pub fn new(name: impl Into<String>, options: Option<PVSOptions>) -> Self {
         let options = options.unwrap_or_default();
         let transposition_table = match options.features.transposition_table {
-            crate::TranspositionTableFeature::Disabled => None,
-            crate::TranspositionTableFeature::Enabled { size } => Some(TranspositionTable::new(size)),
+            TranspositionTableFeature::Disabled => None,
+            TranspositionTableFeature::Enabled { size, strategy }
+            | TranspositionTableFeature::SymmetryEnabled { size, strategy } => {
+                Some(TranspositionTable::new(size, strategy == FailingStrategy::FailSoft))
+            }
         };
 
         PVSPlayer {
@@ -100,6 +108,12 @@ impl Player for PVSPlayer {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
+        // PERF: shortcut for only one available action
+        let valid_action = game.get_valid_actions();
+        if valid_action.len() == 1 {
+            return Ok(valid_action[0]);
+        }
+
         std::thread::scope(|s| {
             let search_canceled = Arc::clone(&self.search_canceled);
             let time_limit = self.options.time_limit;
@@ -116,12 +130,14 @@ impl Player for PVSPlayer {
                 transposition_table.increment_age();
             }
 
-            // thread to stop search after time limit
+            // TODO: record a max depth reached inside pvs search, if there are no more actions available, we can stop searching (endgame)
             s.spawn(move || {
+                // Periodic check if the search was already canceled by itself
                 let start_time = std::time::Instant::now();
                 while start_time.elapsed() < time_limit && !search_canceled.load(std::sync::atomic::Ordering::Acquire) {
                     std::thread::sleep(std::time::Duration::from_millis(100));
                 }
+                // Stop search after time limit
                 search_canceled.store(true, std::sync::atomic::Ordering::Release);
             });
 
@@ -139,9 +155,18 @@ impl Player for PVSPlayer {
 }
 
 impl PVSPlayer {
-    pub const LMR_REDUCED_BY_DEPTH: usize = 1;
-    pub const LMR_FULL_DEPTH_ACTIONS: usize = 4;
-    pub const LMR_REDUCTION_LIMIT: usize = 3;
+    /// The amount of actions where the following search is for sure not reduced
+    /// by LMR. After these amount of actions the LMR is applied.
+    pub const LMR_AMOUNT_FULL_DEPTH_ACTIONS: usize = 3;
+    /// The maximum depth at which LMR will be applied.
+    pub const LMR_DEPTH_LIMIT: usize = 2;
+
+    /// The amount of actions that are for sure not pruned by LMP. After these
+    /// amount of actions the LMP is applied.
+    pub const LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 7;
+    /// The maximum depth at which LMP will be applied.
+    pub const LMP_DEPTH_LIMIT: usize = 2;
+
     pub const MAX_SEARCH_EXTENSIONS: usize = 16; // can never be reached as we only have a search extension for special patches that cannot activate another special patch placement
 
     /// The maximum depth to search.
@@ -159,6 +184,15 @@ impl PVSPlayer {
     /// Minimum delta for aspiration windows
     pub const MINIMUM_DELTA: i32 = 1;
 
+    /// The minimum bound for alpha. Ensures that the minimum alpha value is
+    /// less than the minimum evaluation to avoid a fail-low with the maximum
+    /// window size.
+    pub const MIN_ALPHA_BOUND: i32 = evaluator_constants::NEGATIVE_INFINITY - 1;
+    /// The maximum bound for beta. Ensures that the maximum beta value is
+    /// greater than the maximum evaluation to avoid a fail-high with the
+    /// maximum window size.
+    pub const MAX_BETA_BOUND: i32 = evaluator_constants::POSITIVE_INFINITY + 1;
+
     /// Does a Iterative Deepening Principal Variation Search (PVS) with the given parameters.
     ///
     /// # Arguments
@@ -171,8 +205,8 @@ impl PVSPlayer {
     /// The best action found by the search or an error if some error occurred.
     fn search(&mut self, game: &mut Patchwork) -> PlayerResult<ActionId> {
         let mut delta = Self::MINIMUM_DELTA;
-        let mut alpha = evaluator_constants::NEGATIVE_INFINITY;
-        let mut beta = evaluator_constants::POSITIVE_INFINITY;
+        let mut alpha = Self::MIN_ALPHA_BOUND;
+        let mut beta = Self::MAX_BETA_BOUND;
         let mut depth = 1;
 
         if self.options.features.aspiration_window {
@@ -192,12 +226,23 @@ impl PVSPlayer {
 
             // TODO: we fail too often
             // [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows) with exponential backoff
+            //
+            // Due to search instability issues we cannot assume that the search can be done with the non-failing bound
+            // adjusted right under/over the other bound
+            // [Aspiration Windows](https://web.archive.org/web/20071031095918/http://www.brucemo.com/compchess/programming/aspiration.htm)
             if evaluation <= alpha {
                 // Evaluation is below aspiration window [Fail-Low](https://www.chessprogramming.org/Fail-Low#Root_with_Aspiration)
                 // The best found evaluation is less than or equal to the lower bound (alpha), so we need to research at the same depth
 
+                debug_assert!(
+                    self.options.features.aspiration_window, // this should never happen if aspiration windows are off
+                    "[PVSPlayer::search] Assert evaluation({}) <= alpha({}) should imply aspiration window but was not.",
+                    evaluation,
+                    alpha
+                );
+
                 beta = (alpha + beta) / 2; // adjust beta towards alpha
-                alpha = (evaluation - delta).min(evaluator_constants::NEGATIVE_INFINITY);
+                alpha = (evaluation - delta).min(Self::MIN_ALPHA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY); // use same exponential backoff as in [Stockfish](https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp#L429C17-L429C36)
                 self.diagnostics.increment_aspiration_window_fail_low();
                 continue;
@@ -205,7 +250,14 @@ impl PVSPlayer {
                 // Evaluation is above aspiration window [Fail-High](https://www.chessprogramming.org/Fail-High#Root_with_Aspiration)
                 // The best found evaluation is greater or equal to the upper bound (beta), so we need to research at the same depth
 
-                beta = (evaluation + delta).min(evaluator_constants::POSITIVE_INFINITY);
+                debug_assert!(
+                    self.options.features.aspiration_window, // this should never happen if aspiration windows are off
+                    "[PVSPlayer::search] Assert evaluation({}) >= beta({}) should imply aspiration window but was not.",
+                    evaluation,
+                    beta
+                );
+
+                beta = (evaluation + delta).min(Self::MAX_BETA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY);
                 self.diagnostics.increment_aspiration_window_fail_high();
                 continue;
@@ -213,18 +265,20 @@ impl PVSPlayer {
 
             let _ = self.write_diagnostics(game, depth); // ignore errors
 
-            if self.best_evaluation.is_some() && self.best_evaluation.unwrap() == evaluator_constants::POSITIVE_INFINITY
-            {
-                // We found a winning game or only have one option available, so we can stop searching
+            if let Some(evaluator_constants::POSITIVE_INFINITY) = self.best_evaluation {
+                // We found a winning game, so we can stop searching
                 break;
             }
 
-            // Evaluation is within the aspiration window,
-            // so we can move on to the next depth with a window set around the eval
+            if self.options.features.aspiration_window {
+                // Evaluation is within the aspiration window,
+                // so we can move on to the next depth with a window set around the eval
 
-            delta = Self::MINIMUM_DELTA; // TODO: use avg of root node scores like in Stockfish `delta = Value(9) + int(avg) * avg / 14847;`
-            alpha = evaluation - delta;
-            beta = evaluation + delta;
+                delta = Self::MINIMUM_DELTA; // TODO: use avg of root node scores like in Stockfish `delta = Value(9) + int(avg) * avg / 14847;`
+                alpha = evaluation - delta;
+                beta = evaluation + delta;
+            }
+
             depth += 1;
             self.diagnostics.reset_iterative_deepening_iteration();
         }
@@ -287,14 +341,6 @@ impl PVSPlayer {
 
         let mut actions = game.get_valid_actions();
 
-        // shortcut for only one available action
-        if actions.len() == 1 && ply_from_root == 0 {
-            self.search_canceled.store(true, std::sync::atomic::Ordering::Release);
-            self.best_action = Some(actions[0]);
-            self.best_evaluation = Some(evaluator_constants::POSITIVE_INFINITY);
-            return Ok(evaluator_constants::POSITIVE_INFINITY);
-        }
-
         // TODO: is this useful for patchwork?
         // NULL MOVE PRUNING
         //       // Null move search:
@@ -305,20 +351,7 @@ impl PVSPlayer {
         //         if(value >= beta) return value;
         //       }
 
-        // FEATURE:PV_TABLE: use pv table here
-        let pv_action = if ply_from_root == 0 {
-            if let Some(pv_action) = self.best_action {
-                Some(pv_action)
-            } else if let Some(ref mut transposition_table) = self.transposition_table {
-                transposition_table.probe_pv_move(game)
-            } else {
-                None
-            }
-        } else if let Some(ref mut transposition_table) = self.transposition_table {
-            transposition_table.probe_pv_move(game)
-        } else {
-            None
-        };
+        let pv_action = self.get_pv_action(game, ply_from_root);
 
         // TODO: move sorter, move pvNode first (with https://www.chessprogramming.org/Triangular_PV-Table or transposition table)
         self.options.action_sorter.sort_actions(&mut actions, pv_action);
@@ -336,16 +369,24 @@ impl PVSPlayer {
         //     }
 
         //     debug_assert_eq!(actions[0], pv_action);
-        // }
+        //
 
         let mut is_pv_node = true;
-        let mut best_action = None;
+        let mut best_action = ActionId::null();
         let mut alpha = alpha;
         let mut evaluation_bound = EvaluationType::UpperBound;
 
-        // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
         for i in 0..actions.len() {
             let action = actions[i];
+
+            // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
+            // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
+            if i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS && self.options.features.late_move_pruning {
+                self.diagnostics.increment_late_move_pruning();
+                // TODO: check some things here to allow
+                // -> make it more like futility pruning
+                continue;
+            }
 
             game.do_action(action, true)?;
 
@@ -370,9 +411,15 @@ impl PVSPlayer {
                 // Code adapted from https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html
                 // Search Extensions are not applied to the reduced depth search
                 let mut needs_full_search = true;
-                if extension == 0 && i >= PVSPlayer::LMR_FULL_DEPTH_ACTIONS && depth >= PVSPlayer::LMR_REDUCTION_LIMIT {
+                if extension == 0
+                    && i >= PVSPlayer::LMR_AMOUNT_FULL_DEPTH_ACTIONS
+                    && depth >= PVSPlayer::LMR_DEPTH_LIMIT
+                {
+                    self.diagnostics.increment_late_move_reductions();
+
+                    let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
                     // Search this move with reduced depth
-                    evaluation = -self.zero_window_search(game, depth - 1 - PVSPlayer::LMR_REDUCED_BY_DEPTH, -alpha)?;
+                    evaluation = -self.zero_window_search(game, depth - 1 - lmr_depth_reduction, -alpha)?;
                     needs_full_search = evaluation > alpha;
                 }
 
@@ -385,8 +432,8 @@ impl PVSPlayer {
                     )?;
 
                     if evaluation > alpha && evaluation < beta {
-                        self.diagnostics.increment_zero_window_search_fail();
                         // Re-search with full window
+                        self.diagnostics.increment_zero_window_search_fail();
                         evaluation = -self.principal_variation_search(
                             game,
                             ply_from_root + 1,
@@ -408,43 +455,40 @@ impl PVSPlayer {
             if evaluation >= beta {
                 self.diagnostics.increment_fail_high(is_pv_node);
 
-                if let Some(ref mut transposition_table) = self.transposition_table {
-                    transposition_table.store_evaluation_with_symmetries(
-                        game,
-                        depth,
-                        beta,
-                        EvaluationType::LowerBound,
-                        action,
-                    );
-                }
-                return Ok(beta); // fail-hard beta-cutoff
+                self.store_transposition_table(game, depth, beta, EvaluationType::LowerBound, action);
+
+                return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
+                    evaluation // Fail-soft beta-cutoff
+                } else {
+                    beta // Fail-hard beta-cutoff
+                });
             }
 
             if evaluation > alpha {
                 evaluation_bound = EvaluationType::Exact;
                 alpha = evaluation; // alpha acts like max in MiniMax
-                best_action = Some(action);
+                best_action = action;
             }
 
             is_pv_node = false;
         }
+        // If we are in the first ply then the evaluation_bound has to be exact
+        // or iff aspiration windows are used can also be an upper bound
+        debug_assert!(
+            ply_from_root != 0 || evaluation_bound == EvaluationType::Exact || self.options.features.aspiration_window,
+            "[PVSPlayer::principal_variation_search] Assert about ply_from_root: {}, evaluation_bound: {:?}, aspiration_windows: {}",
+            ply_from_root,
+            evaluation_bound,
+            self.options.features.aspiration_window
+        );
 
-        if let Some(ref mut transposition_table) = self.transposition_table {
-            // store null action in transposition table if it is a EvaluationType::UpperBound TODO: here it errors
-            let phantom_action = ActionId::phantom();
-            let transposition_table_action = best_action.unwrap_or(phantom_action);
+        // In case of a UpperBound we store a null action, as the true best
+        // action is unknown
+        self.store_transposition_table(game, depth, alpha, evaluation_bound, best_action);
 
-            transposition_table.store_evaluation_with_symmetries(
-                game,
-                depth,
-                alpha,
-                evaluation_bound,
-                transposition_table_action,
-            );
-        }
-
+        // TODO: remove these
         if ply_from_root == 0 {
-            self.best_action = best_action;
+            self.best_action = Some(best_action);
             self.best_evaluation = Some(alpha);
         }
 
@@ -482,7 +526,11 @@ impl PVSPlayer {
             game.undo_action(action, true)?;
 
             if evaluation >= beta {
-                return Ok(beta); // fail-hard beta-cutoff
+                return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
+                    evaluation // Fail-soft beta-cutoff
+                } else {
+                    beta // Fail-hard beta-cutoff
+                });
             }
         }
         Ok(beta - 1) // fail-hard, return alpha
@@ -535,6 +583,7 @@ impl PVSPlayer {
     /// The question is if this is even needed in patchwork
     fn evaluation(&mut self, game: &mut Patchwork) -> PlayerResult<i32> {
         self.diagnostics.increment_nodes_searched();
+        self.diagnostics.increment_leaf_nodes_searched();
 
         // Force a turn for phantom moves
         let mut needs_undo_action = false;
@@ -548,12 +597,72 @@ impl PVSPlayer {
         let color = game.get_current_player() as i32;
         let evaluation = color * self.options.evaluator.evaluate_node(game);
 
+        // self.store_transposition_table(game, 0, evaluation, EvaluationType::Exact, ActionId::null());
+
         // Reset to phantom action
         if needs_undo_action {
             game.undo_action(ActionId::phantom(), true)?;
+            // self.store_transposition_table(game, 0, evaluation, EvaluationType::Exact, ActionId::null());
         }
 
         Ok(evaluation)
+    }
+
+    /// Stores the given search position inside the transposition table if the
+    /// transposition table is enabled.
+    ///
+    /// Also stores the symmetries of the given action if the transposition
+    /// table with symmetries is enabled.
+    ///
+    /// # Arguments
+    ///
+    /// * `game` - The game to store the position for.
+    /// * `depth` - The depth at which the evaluation was calculated
+    /// * `evaluation` - The evaluation of the position
+    /// * `lower_bound` - The lower bound of the evaluation
+    /// * `action` - The best action to take in this position
+    fn store_transposition_table(
+        &mut self,
+        game: &mut Patchwork,
+        depth: usize,
+        evaluation: i32,
+        evaluation_type: EvaluationType,
+        action: ActionId,
+    ) {
+        let Some(ref mut transposition_table) = self.transposition_table else {
+            return;
+        };
+
+        match self.options.features.transposition_table {
+            TranspositionTableFeature::Disabled => unreachable!("[PVSPlayer::store_transposition_table] Transposition table exists but the feature is actually disabled."),
+            TranspositionTableFeature::Enabled { .. } => transposition_table.store_evaluation(game, depth, evaluation, evaluation_type, action),
+            TranspositionTableFeature::SymmetryEnabled { .. } => transposition_table.store_evaluation_with_symmetries(game, depth, evaluation, evaluation_type, action),
+        }
+    }
+
+    /// Gets the principal variation action for the given game state.
+    ///
+    /// # Arguments
+    ///
+    /// * `game` - The game to get the principal variation action for.
+    /// * `ply_from_root` - The ply from the root node.
+    ///
+    /// # Returns
+    ///
+    /// The principal variation action for the given game state.
+    fn get_pv_action(&self, game: &mut Patchwork, ply_from_root: usize) -> Option<ActionId> {
+        // FEATURE:PV_TABLE: use pv table here
+        if ply_from_root == 0 {
+            if let Some(pv_action) = self.best_action {
+                return Some(pv_action);
+            }
+        }
+
+        if let Some(ref transposition_table) = self.transposition_table {
+            return transposition_table.probe_pv_move(game);
+        }
+
+        None
     }
 
     /// Writes a single diagnostic to the diagnostics writer.
@@ -622,15 +731,43 @@ impl PVSPlayer {
             Err(_) => "######".to_string(),
         }).unwrap_or("NONE".to_string());
 
+        let mut features = vec![];
+        if self.options.features.aspiration_window {
+            features.push("AW");
+        }
+        if matches!(self.options.features.transposition_table, TranspositionTableFeature::Enabled { .. }) {
+            features.push("TT");
+        } else if matches!(self.options.features.transposition_table, TranspositionTableFeature::SymmetryEnabled { .. }) {
+            features.push("TT(S)");
+        }
+        if self.options.features.late_move_reductions {
+            features.push("LMR");
+        }
+        if self.options.features.late_move_pruning {
+            features.push("LMP");
+        }
+        if self.options.features.search_extensions {
+            features.push("SE");
+        }
+        let features = features.join(", ");
+
+        // [Branching Factor](https://www.chessprogramming.org/Branching_Factor)
+        let average_branching_factor = (self.diagnostics.leaf_nodes_searched as f64).powf(1.0 / depth as f64);
+        let effective_branching_factor = self.diagnostics.nodes_searched as f64 / self.diagnostics.nodes_searched_previous_iteration as f64;
+        let mean_branching_factor = self.diagnostics.nodes_searched as f64 / (self.diagnostics.nodes_searched - self.diagnostics.leaf_nodes_searched) as f64;
+
         writeln!(writer, "───────────── Principal Variation Search Player ─────────────")?;
+        writeln!(writer, "Features:            [{}]", features)?;
         writeln!(writer, "Depth:               {:?}", depth)?;
         writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.diagnostics.start_time))?;
         writeln!(writer, "Nodes searched:      {:?}", self.diagnostics.nodes_searched)?;
+        writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / MEAN {:.2}", average_branching_factor, effective_branching_factor, mean_branching_factor)?;
         writeln!(writer, "Best Action:         {} ({} pts)", best_action, best_evaluation)?;
-        writeln!(writer, "Move Ordering:       {:?}", (self.diagnostics.fail_high_first as f64) / (self.diagnostics.fail_high as f64))?;
+        writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.diagnostics.fail_high_first as f64) / (self.diagnostics.fail_high as f64), self.diagnostics.fail_high_first, self.diagnostics.fail_high)?;
         writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.diagnostics.aspiration_window_fail_low, self.diagnostics.aspiration_window_fail_high)?;
         writeln!(writer, "Zero window search:  {:?} fails ({:.2}%)", self.diagnostics.zero_window_search_fail, self.diagnostics.zero_window_search_fail_rate() * 100.0)?;
-        writeln!(writer, "Special patch ext.:  {:?}", self.diagnostics.special_patch_extensions)?;
+        writeln!(writer, "Special patch ext.:  {:?} ({})", self.diagnostics.special_patch_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
+        writeln!(writer, "LMR / LMP:           {:?} / {:?}", self.diagnostics.late_move_reductions, self.diagnostics.late_move_pruning)?;
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {
             transposition_table.diagnostics.write_diagnostics(writer)?;

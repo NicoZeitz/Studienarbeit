@@ -17,6 +17,7 @@ pub struct TranspositionTable {
     pub zobrist_hash: ZobristHash,
     pub current_age: AtomicUsize,
     pub diagnostics: TranspositionTableDiagnostics,
+    fail_soft: bool,
 }
 
 impl TranspositionTable {
@@ -34,7 +35,7 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝑛)` where `𝑛` is the size of the transposition table as all entries
     /// are initialized.
-    pub fn new(size: Size) -> Self {
+    pub fn new(size: Size, fail_soft: bool) -> Self {
         let size = match size {
             Size::B(size) => size as usize,
             Size::KB(size) => size as usize * 1024,
@@ -51,6 +52,7 @@ impl TranspositionTable {
             zobrist_hash: ZobristHash::new(),
             current_age: AtomicUsize::new(0),
             diagnostics: TranspositionTableDiagnostics::new(entries),
+            fail_soft,
         }
     }
 
@@ -114,22 +116,59 @@ impl TranspositionTable {
             return None;
         }
 
-        match table_evaluation_type {
-            EvaluationType::Exact => Some((table_action, table_evaluation)),
-            EvaluationType::UpperBound => {
-                if table_evaluation <= alpha {
-                    Some((table_action, alpha))
-                } else {
-                    self.diagnostics.increment_misses();
-                    None
+        if self.fail_soft {
+            // Fail-Soft Implementation
+
+            match table_evaluation_type {
+                // Any Node - even if alpha-beta range changed we would still
+                // return table_evaluation as we have no need to stay within the
+                // alpha-beta range
+                EvaluationType::Exact => Some((table_action, table_evaluation)),
+                EvaluationType::UpperBound => {
+                    // All-Node
+                    if table_evaluation <= alpha {
+                        Some((table_action, table_evaluation))
+                    } else {
+                        self.diagnostics.increment_misses();
+                        None
+                    }
+                }
+                EvaluationType::LowerBound => {
+                    // Cut-Node
+                    if table_evaluation >= beta {
+                        Some((table_action, table_evaluation))
+                    } else {
+                        self.diagnostics.increment_misses();
+                        None
+                    }
                 }
             }
-            EvaluationType::LowerBound => {
-                if table_evaluation >= beta {
-                    Some((table_action, beta))
-                } else {
-                    self.diagnostics.increment_misses();
-                    None
+        } else {
+            // Fail-Hard Implementation
+
+            match table_evaluation_type {
+                EvaluationType::Exact => {
+                    // Cached at PV-Node but the alpha-beta range could have changed
+                    let table_evaluation = table_evaluation.clamp(alpha, beta);
+                    Some((table_action, table_evaluation))
+                }
+                EvaluationType::UpperBound => {
+                    // All-Node
+                    if table_evaluation <= alpha {
+                        Some((table_action, alpha))
+                    } else {
+                        self.diagnostics.increment_misses();
+                        None
+                    }
+                }
+                EvaluationType::LowerBound => {
+                    // Cut-Node
+                    if table_evaluation >= beta {
+                        Some((table_action, beta))
+                    } else {
+                        self.diagnostics.increment_misses();
+                        None
+                    }
                 }
             }
         }
@@ -222,32 +261,16 @@ impl TranspositionTable {
 
         let index = (hash % self.entries.len() as u64) as usize;
 
-        let replace = if self.entries[index].key == 0 {
-            // first entry in the key bucket
-
-            self.diagnostics.increment_entries();
-            true
-        } else if self.entries[index].age < self.current_age.load(std::sync::atomic::Ordering::SeqCst) {
-            // override older entries
-
-            self.diagnostics.increment_overwrites();
-            true
-        } else if Entry::get_depth(self.entries[index].data) <= depth {
-            // override entries with smaller depth
-
-            self.diagnostics.increment_overwrites();
-            true
-        } else {
-            false
-        };
-
-        if !replace {
+        if !self.should_replace(
+            self.entries[index].key,
+            self.entries[index].data,
+            self.entries[index].age,
+            depth,
+            evaluation_type,
+            self.current_age.load(std::sync::atomic::Ordering::Acquire),
+        ) {
             return;
         }
-
-        let mut writer = std::io::stdout();
-        let _ = self.diagnostics.write_diagnostics(&mut writer);
-        let _ = self.diagnostics.write_transposition_table(&mut writer, self, None);
 
         // TODO: Mate = game end store here independent of amount it too to get to mate, normally mate is stored as big number/big negative number -/+ the amount of moves it takes to get to mate
         // if(score > IS_MATE) score += pos->ply;
@@ -259,8 +282,76 @@ impl TranspositionTable {
         self.entries[index] = Entry {
             key,
             data,
-            age: self.current_age.load(std::sync::atomic::Ordering::SeqCst),
+            age: self.current_age.load(std::sync::atomic::Ordering::Acquire),
         };
+    }
+
+    /// Checks if an entry should be replaced.
+    /// Returns true if the entry should be replaced.
+    ///
+    /// # Arguments
+    ///
+    /// * `entry_key` - The key of the entry to check.
+    /// * `entry_data` - The data of the entry to check.
+    /// * `entry_age` - The age of the entry to check.
+    /// * `new_key` - The key of the new entry.
+    /// * `new_depth` - The depth of the new entry.
+    /// * `new_evaluation_type` - The evaluation type of the new entry.
+    /// * `current_age` - The current age of the transposition table.
+    ///
+    /// # Returns
+    ///
+    /// * `bool` - True if the entry should be replaced.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(1)`
+    #[inline(always)]
+    fn should_replace(
+        &self,
+        entry_key: u64,
+        entry_data: u64,
+        entry_age: usize,
+        new_depth: usize,
+        new_evaluation_type: EvaluationType,
+        current_age: usize,
+    ) -> bool {
+        if entry_key == 0 {
+            // first entry in the key bucket
+            self.diagnostics.increment_entries();
+            return true;
+        }
+
+        if entry_age < current_age {
+            // override older entries
+            self.diagnostics.increment_overwrites();
+            return true;
+        }
+
+        let entry_depth = Entry::get_depth(entry_data);
+
+        if entry_depth <= new_depth {
+            // override entries with lower depth
+            self.diagnostics.increment_overwrites();
+            return true;
+        }
+
+        let entry_evaluation_type = Entry::get_evaluation_type(entry_data);
+
+        if entry_evaluation_type != EvaluationType::Exact {
+            // override entries that do not have an exact evaluation bound
+
+            let is_same_depth = entry_depth == new_depth;
+            let is_same_age = entry_age == current_age;
+
+            if is_same_age && is_same_depth && new_evaluation_type == EvaluationType::Exact {
+                // override entries that do not have an exact evaluation bound
+                self.diagnostics.increment_overwrites();
+                return true;
+            }
+        }
+
+        false
     }
 
     /// Increments the age of the transposition table.

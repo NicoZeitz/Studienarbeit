@@ -411,20 +411,7 @@ mod tests {
     // fn pvs_player() {
     //     let player = Box::new(PVSPlayer::new(
     //         "PVS Player",
-    //         Some(PVSOptions::new(
-    //             std::time::Duration::from_secs(2),
-    //             Box::<StaticEvaluator>::default(),
-    //             Box::<NoopActionSorter>::default(),
-    //             PVSFeatures {
-    //                 aspiration_window: true,
-    //                 transposition_table: TranspositionTableFeature::Enabled { size: Size::MiB(10) },
-    //                 late_move_reductions: true,
-    //                 search_extensions: true,
-    //                 diagnostics: DiagnosticsFeature::Enabled {
-    //                     writer: Box::new(std::io::stdout()),
-    //                 },
-    //             },
-    //         )),
+    //         None
     //     ));
     //     test_player(player);
     // }
