@@ -57,5 +57,3 @@ impl Player for MCTSPlayer {
         // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove
     }
 }
-
-impl MCTSPlayer {}

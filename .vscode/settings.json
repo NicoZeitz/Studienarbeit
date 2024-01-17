@@ -132,6 +132,7 @@
         "rustc",
         "rustfmt",
         "Seedable",
+        "Sidenote",
         "simd",
         "Stockfish",
         "struct",

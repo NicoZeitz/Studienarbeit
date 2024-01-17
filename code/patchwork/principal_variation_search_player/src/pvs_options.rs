@@ -1,4 +1,4 @@
-use action_sorter::{ActionSorter, NoopActionSorter};
+use action_orderer::{ActionSorter, NoopActionSorter};
 use evaluator::StaticEvaluator;
 use patchwork_core::StableEvaluator;
 use transposition_table::Size;
@@ -10,7 +10,7 @@ pub struct PVSOptions {
     /// The evaluator to evaluate the game state.
     pub evaluator: Box<dyn StableEvaluator>,
     /// The action sorter to sort the actions.
-    pub action_sorter: Box<dyn ActionSorter>,
+    pub action_orderer: Box<dyn ActionSorter>,
     /// The features to enable or disable.
     pub features: PVSFeatures,
 }
@@ -20,13 +20,13 @@ impl PVSOptions {
     pub fn new(
         time_limit: std::time::Duration,
         evaluator: Box<dyn StableEvaluator>,
-        action_sorter: Box<dyn ActionSorter>,
+        action_orderer: Box<dyn ActionSorter>,
         features: PVSFeatures,
     ) -> Self {
         Self {
             time_limit,
             evaluator,
-            action_sorter,
+            action_orderer,
             features,
         }
     }
@@ -37,7 +37,7 @@ impl Default for PVSOptions {
         Self {
             time_limit: std::time::Duration::from_secs(20), // TODO: real time limit
             evaluator: Box::<StaticEvaluator>::default(),
-            action_sorter: Box::<NoopActionSorter>::default(),
+            action_orderer: Box::<NoopActionSorter>::default(),
             features: Default::default(),
         }
     }

@@ -9,9 +9,8 @@ license.workspace = true
 
 [dependencies]
 patchwork_core = { path = "../patchwork_core" }
-pv_table = { path = "../pv_table" }
 evaluator = { path = "../evaluator" }
-action_sorter = { path = "../action_sorter" }
+action_orderer = { path = "../action_orderer" }
 rand = "0.8.5"
 itertools = "0.12.0"
 transposition_table = { path = "../transposition_table" }

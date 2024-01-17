@@ -5,7 +5,7 @@ authors = ["Nico Zeitz", "Fabian Wolf"]
 edition = "2021"
 
 [dependencies]
-action_sorter = { path = "../action_sorter" }
+action_orderer = { path = "../action_orderer" }
 patchwork_core = { path = "../patchwork_core" }
 evaluator = { path = "../evaluator" }
 patchwork_macros = { path = "../patchwork_macros" }

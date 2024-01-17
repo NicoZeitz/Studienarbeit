@@ -1,9 +1,9 @@
 use std::sync::{atomic::AtomicBool, Arc};
 
+use action_orderer::ActionList;
 use itertools::Itertools;
 
 use patchwork_core::{evaluator_constants, ActionId, Notation, Patchwork, Player, PlayerResult, TurnType};
-use pv_table::PVTable;
 use transposition_table::{EvaluationType, TranspositionTable};
 
 use crate::{
@@ -28,7 +28,6 @@ use crate::{
 /// TODO:
 /// - https://www.chessprogramming.org/Legal_Move#Legality_Test for transposition table entries from key collisions
 /// # Features that still need to be implemented
-/// - PV Table
 /// - Move Ordering
 ///     - Something like MMV-LVA but for patchwork (e.g. ending score)
 ///     - Actions that are inside the transposition table
@@ -37,6 +36,8 @@ use crate::{
 ///     - History Heuristic
 ///     - Move Ordering via Machine Learning (something like [Neural MoveMap Heuristic](https://www.chessprogramming.org/Neural_MoveMap_Heuristic))
 ///  Remove late moves in move ordering
+/// - (Reverse) Futility Pruning
+/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#:~:text=Late%20Move%20Pruning%20%E2%80%8B,by%20the%20move%20ordering%20algorithm.) Remove late moves in move ordering
 /// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
 /// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
 /// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
@@ -55,9 +56,6 @@ pub struct PVSPlayer {
     pub options: PVSOptions,
     /// search diagnostics
     pub diagnostics: SearchDiagnostics,
-    /// The principal variation table.
-    #[allow(unused)] // FEATURE:PV_TABLE
-    pv_table: PVTable,
     /// The transposition table.
     transposition_table: Option<TranspositionTable>,
     /// The best action found so far.
@@ -84,7 +82,6 @@ impl PVSPlayer {
             name: name.into(),
             options,
             diagnostics: Default::default(),
-            pv_table: Default::default(),
             transposition_table,
             best_action: None,
             best_evaluation: None,
@@ -353,31 +350,47 @@ impl PVSPlayer {
 
         let pv_action = self.get_pv_action(game, ply_from_root);
 
-        // TODO: move sorter, move pvNode first (with https://www.chessprogramming.org/Triangular_PV-Table or transposition table)
-        self.options.action_sorter.sort_actions(&mut actions, pv_action);
+        let mut scores = vec![0; actions.len()];
+        let mut action_list = ActionList::new(&mut actions, &mut scores);
 
-        // TODO: ensure when code is but free
-        // // PV-Node should always be sorted first
-        // #[cfg(debug_assertions)]
-        // if pv_action.is_some() {
-        //     let pv_action = pv_action.unwrap();
-        //     if actions[0] != pv_action {
-        //         println!("PV-Node action is not sorted first!");
-        //         println!("PLY_FROM_ROOT {:?}", ply_from_root);
-        //         println!("BEST_ACTION: {:?}", self.best_action);
-        //         println!("PROBE PV: {:?}", self.transposition_table.probe_pv_move(game));
-        //     }
-
-        //     debug_assert_eq!(actions[0], pv_action);
-        //
+        self.options.action_orderer.score_actions(&mut action_list, pv_action);
 
         let mut is_pv_node = true;
         let mut best_action = ActionId::null();
         let mut alpha = alpha;
         let mut evaluation_bound = EvaluationType::UpperBound;
 
-        for i in 0..actions.len() {
-            let action = actions[i];
+        // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
+        for i in 0..action_list.len() {
+            // Move Ordering
+            // [How move ordering works](https://rustic-chess.org/search/ordering/how.html)
+            // Sidenote: Why do we assign sort scores to the moves, and then use pick_move() to swap one move to the
+            // current index of the move list while alpha/beta iterates over it? Couldn't we just physically sort the
+            // list before the move loop starts, and be done with it?
+            // It's possible, but we don't do that because of how alpha/beta works. If alpha/beta encounters a move that
+            // is so good that searching further down the move list is no longer required, then it will exit and return
+            // the evaluation score of that move. (This is a so-called beta-cutoff.) If you physically sorted all the
+            // moves before the move loop starts, you may have sorted lots of moves that may never be examined by
+            // alpha/beta. This costs time, and thus it makes the engine slower.
+            // You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
+            // ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
+            // The result is the same, but move ordering is the faster approach, as described above.
+            let action = self.options.action_orderer.pick_action(&mut action_list, i);
+
+            #[cfg(debug_assertions)]
+            if i == 0 && pv_action.is_some() {
+                let pv_action = pv_action.unwrap();
+                if action != pv_action {
+                    println!("PV-Node action is not sorted first!");
+                    println!("PLY_FROM_ROOT {:?}", ply_from_root);
+                    println!("BEST_ACTION: {:?}", self.best_action);
+                    println!(
+                        "PROBE PV: {:?}",
+                        self.transposition_table.as_ref().map(|t| t.probe_pv_move(game))
+                    );
+                }
+                debug_assert_eq!(action, pv_action, "Chosen Action != PV-Action");
+            }
 
             // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
             // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
@@ -593,6 +606,18 @@ impl PVSPlayer {
         }
 
         // TODO: mate scores
+        // if (moves.Length == 0)
+        // {
+        //     if (moveGenerator.InCheck())
+        //     {
+        //         int mateScore = immediateMateScore - plyFromRoot;
+        //         return -mateScore;
+        //     }
+        //     else
+        //     {
+        //         return 0;
+        //     }
+        // }
 
         let color = game.get_current_player() as i32;
         let evaluation = color * self.options.evaluator.evaluate_node(game);
@@ -649,7 +674,8 @@ impl PVSPlayer {
     ///
     /// # Returns
     ///
-    /// The principal variation action for the given game state.
+    /// The principal variation action for the given game state or `None` if no
+    /// principal variation action could be found.
     fn get_pv_action(&self, game: &mut Patchwork, ply_from_root: usize) -> Option<ActionId> {
         // FEATURE:PV_TABLE: use pv table here
         if ply_from_root == 0 {
@@ -657,6 +683,8 @@ impl PVSPlayer {
                 return Some(pv_action);
             }
         }
+
+        // FEATURE:PV_TABLE: use pv table here
 
         if let Some(ref transposition_table) = self.transposition_table {
             return transposition_table.probe_pv_move(game);

@@ -7,7 +7,7 @@ package.description = "The board game Patchwork implemented in Rust with differe
 package.repository = "https://github.com/NicoZeitz/Studienarbeit"
 package.license = "MIT"
 members = [
-    "action_sorter",
+    "action_orderer",
     "alphazero_player",
     "console",
     "evaluator",

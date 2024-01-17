@@ -1,4 +1,4 @@
-pub use action_sorter::*;
+pub use action_orderer::*;
 pub use evaluator::*;
 pub use patchwork_core::{
     Action, ActionId, GameOptions, NaturalActionId, Patch, PatchTransformation, Patchwork, PlayerState, QuiltBoard,

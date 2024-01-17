@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "action_sorter"
+name = "action_orderer"
 version = "1.0.0"
 dependencies = [
  "patchwork_core",
@@ -665,7 +665,7 @@ checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 name = "patchwork"
 version = "1.0.0"
 dependencies = [
- "action_sorter",
+ "action_orderer",
  "alphazero_player",
  "evaluator",
  "greedy_player",
@@ -726,11 +726,10 @@ dependencies = [
 name = "principal_variation_search_player"
 version = "1.0.0"
 dependencies = [
- "action_sorter",
+ "action_orderer",
  "evaluator",
  "itertools",
  "patchwork_core",
- "pv_table",
  "rand",
  "transposition_table",
 ]

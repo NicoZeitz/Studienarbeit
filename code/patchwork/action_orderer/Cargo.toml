@@ -1,5 +1,5 @@
 [package]
-name = "action_sorter"
+name = "action_orderer"
 edition = "2021"
 version.workspace = true
 authors.workspace = true

@@ -12,8 +12,6 @@ use patchwork_core::{ActionId, Evaluator, Patchwork};
 use tree_policy::TreePolicy;
 
 // TODO:
-// TreeParallelization (weg)
-// Run MCTS while other player is thinking
 // Tree reuse
 
 /// A Search Tree for the Monte Carlo Tree Search (MCTS) algorithm.
