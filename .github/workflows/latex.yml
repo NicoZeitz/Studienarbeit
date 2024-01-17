@@ -10,10 +10,10 @@ on:
     push:
         branches:
             - main
-        paths:
-            # run when something in ./T3_3101/ folder changes
-            - 'T3_3101/**'
-            - '**/*.tex'
+        # paths:
+        #     # run when something in ./T3_3101/ folder changes
+        #     - 'T3_3101/**'
+        #     - '**/*.tex'
         tags:
             - '*'
 
