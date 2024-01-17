@@ -241,6 +241,7 @@ impl Patchwork {
                 let current_player = self.current_player_mut();
                 current_player.quilt_board.do_action(action);
                 if current_player.quilt_board.is_full() {
+                    // TODO:BUG: wrong 7x7
                     current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                 }
 
@@ -316,6 +317,7 @@ impl Patchwork {
 
             current_player.quilt_board.do_action(action);
             if current_player.quilt_board.is_full() {
+                // TODO:BUG: wrong 7x7
                 current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
             }
 
@@ -508,6 +510,7 @@ impl Patchwork {
             {
                 let current_player = self.current_player_mut();
                 now_current_player_position = current_player.position;
+                // TODO:BUG: wrong 7x7
                 if current_player.quilt_board.is_full() {
                     current_player.button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
                 }
@@ -552,6 +555,7 @@ impl Patchwork {
         self.time_board.set_special_patch(special_patch_index);
 
         if self.current_player().quilt_board.is_full() {
+            // TODO:BUG: wrong 7x7
             self.current_player_mut().button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
         }
 

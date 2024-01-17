@@ -3,39 +3,104 @@
 \chapter{Analyse des Brettspiels}
 \label{chapter:analyse-des-bretspiels}
 
-TODO:
-
-Terminiologie?
-Patch -> Flick/Flicken
-Button -> Knopf/Knöpfe
+Im folgenden Abschnitt werden zuerst die Spielregeln von Patchwork genauer erläutert. Darauf aufbauend wird das Spiel nachfolgend mit verschiedenen Ansätzen aus der Spieltheorie analysiert, was später für die Erstellung der unterschiedlichen Computergegner relevant ist.
 
 \section{Spielregeln}
+\label{section:spielregeln}
 
-machen wir das in diesem Kapitel oder in den Grundlagen (wahrscheinlich hier)
+% Terminiologie?
+% Patch -> Flick/Flicken
+% Button -> Knopf/Knöpfe
 
+Bevor der eigentliche Spielverlauf starten kann, muss das Spiel vorbereitet werden. Hierzu erhalten beide Spieler eine der beiden Decken, auch als Ablageplan bezeichnet, den dazugehörigen Zeitstein und jeweils 5 Knöpfe, welche die Währung im Spiel repräsentieren. Anschließend wird der zentrale Zeitplan in die Mitte des Spielfelds gelegt. Der Zeitplan ist beidseitig mit unterschiedlichen Designs bedruckt, da diese jedoch in allen spielrelevanten Belangen gleich sind, ist die gewählte Seite für den Spielverlauf irrelevant. Die kleinen, braunen Spezialflicken werden jetzt auf den dafür vorgesehenen gedruckten Feldern auf den Zeitplan platziert, welche sich zwischen den Spielfeldern befinden. Nun werden die beiden Zeitsteine der Spieler auf das Startfeld des Zeitplans gestellt. Beginnen darf im Spiel nach dem vollständigen Aufbau des Spielfelds, wer zuletzt eine Nähnadel in der Hand hatte. Daraus ergibt sich, dass bei einem Spiel gegen einen in dieser Arbeit beschriebenen Computergegner, der menschliche Spieler immer mit dem Spiel beginnen muss, da dieser Computergegner noch keine Nähnadeln halten können. Alle Flicken werden nun in einem Kreis oder einer Ellipse um den Zeitplan herum zufällig verteilt und die Spielfigur zwischen dem kleinsten Flicken, der nur zwei Felder auf einem Ablageplan einnimmt, und dem im Uhrzeigersinn folgenden Flicken gesetzt. Die übrig gebliebenen Knöpfe werden zusammen mit dem Sonderplättchen $7\times7$ bereitgelegt. % TODO: \cite{PatchworkSpielanleitung}
 
-\section{Titel mit Spieltheorie}
+Jetzt kann das Spiel beginnen: Anders als in einem klassischen Spiel sind in diesem Spiel die beiden Spieler nicht unbedingt immer abwechselnd an der Reihe.
 
-spieltheorie
+TODO:
 
-Buzzword bingo
+\section{Spieltheoretische Analyse}
 
-Sequential game
-perfect information / Spiel mit perfekter Information
-zero-sum game
-2 players
-strategy
-turn based
-no randomness / Kein Zufall (außer beim Spielbeginn)
+Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettspiel. Sequentielle Spiele sind rundenbasierte Spiele, bei denen die Spieler nacheinander ziehen \cite[S. 53]{2014.GameTheoryThroughExamples}. Außerdem ist Patchwork ein Spiel mit \emph{perfekter Information}, \dash dass beide Spieler zu jeder Zeit genau wissen, was der andere Spieler getan hat und wie der jetzige Zustand des Spiels ist. Des Weiteren ist Patchwork ein \emph{Strategiespiel}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \emph{Nullsummenspiel}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen, Verlieren oder Unentschieden des gesamten Spiels.
 
-Längste Anzahl an Ply/Spielzügen --> jeder walkt + legen von special patches (da kaufen eines Spielteils immer >= 1 vorgehen)
+\subsection*{Anzahl der möglichen Startpositionen}
 
-\textbf{Anzahl der möglichen Startpositionen}
+Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263130836933693530167218012160000000 \approx 2,6 \cdot 10^{35}$ Möglichkeiten. Somit gibt es $2,6 \cdot 10^{35}$ mögliche Startpositionen.
 
-Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263130836933693530167218012160000000 \approx 2,6 \cdot 10^{35}$ Möglichkeiten. Somit gibt es $2,6 \cdot 10^{35}$ mögliche Startpositionen. Das sind schon mehr mögliche Startpositionen als in Schach existieren (TODO: QUELLE).
+\subsection*{Isomorphie der Zeitpläne}
 
-\textbf{Obere Schranke für die maximal mögliche Anzahl an Zügen in einem Ply}
-\textbf{Supremum/Maximum für die maximal mögliche Anzahl an Zügen in eimem Ply}
+Wie bereits in »\nameref{section:spielregeln}« erläutert, existieren zwei verschiedene Zeitpläne, welche jedoch nur anders gestaltet sind. Somit sind beide Zeitpläne isomorph zueinander, \dash sie weisen dieselbe Struktur auf, obwohl der konkrete Aufbau verschieden ist. Diese innere Struktur ist zusammen mit den beiden Zeitplänen in \ref{tabelle:isomorphie-zeitplan} veranschaulicht.
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}[t]{cc}
+        \adjustbox{center, width=0.35\textwidth, valign=m, margin=0 1ex 0 0}{\begin{tikzpicture}
+                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game_board_side_1.png}};
+                                                                                     \drawshadow{image}
+                                                                                 \end{tikzpicture}} &
+        \adjustbox{center, width=0.35\textwidth, valign=m, margin=0 1ex 0 0}{\begin{tikzpicture}
+                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game_board_side_2.png}};
+                                                                                     \drawshadow{image}
+                                                                                 \end{tikzpicture}} \\
+        \multicolumn{2}{c}{\adjustbox{valign=m, margin=0 2ex 0 2ex}{Zugrundeliegende Struktur des Zeitplans:}}                                                                         \\
+        \multicolumn{2}{c}{\adjustbox{width=0.995\textwidth}{\includegraphics{res/pictures/ZeitplanStruktur.pdf}}}                                                                     \\
+    \end{tabular}
+    \vspace{5pt}
+    \caption{Die Zeitpläne zusammen mit der zugrundeliegenden Struktur}
+    \label{tabelle:isomorphie-zeitplan}
+\end{table}
+
+Aus diesem Grund kann Patchwork nachfolgend als ein Spiel betrachtet werden, da die Auswahl eines konkreten Zeitplans keinen Unterschied für die Betrachtung ausmacht.
+
+\subsection*{Länge des Spiels}
+
+In der Spieltheorie ist der Begriff eines Spielzuges nicht eindeutig. Ein Spielzug könnte eine einzelne Aktion eines Spielers sein, \zB das Auswählen und Legen eines Flickens in Patchwork von einem Spieler. Jedoch kann ein Spielzug auch so verstanden werden, dass beide Spieler eine Aktion machen müssen. So wird beispielsweise in rundenbasierten Spielen wie Schach ein Spielzug oft so angesehen, dass einmal die weiße und einmal die schwarze Seite gezogen haben müssen. Aufgrund dieser Zweideutigkeit wird ein Spielzug in der Spieltheorie mit einem \hyperref[text:ply]{\emph{Ply}} genauer definiert.
+
+\begin{defStrich}[Ply]
+    Ein Spielzug, welcher von einem Spieler gezogen wird, und stellt die kleinste mögliche Aktion in einem Spiel dar. \cite[S. 213]{1959.GameTheoryStudiesCheckers}
+\end{defStrich}
+\label{text:ply}
+\vspace{-0.2cm}
+
+Durch diese Definition kann genau definiert werden, was mögliche \hyperref[text:ply]{\emph{Plys}} in Patchwork sind. Die obige Definition für einen Spielzug, bei dem beide Spieler gezogen haben müssen, ist in Patchwork sowieso schwierig umzusetzen, da ein Spieler mehrere \hyperref[text:ply]{\emph{Plys}} hintereinander ausführen kann. Insgesamt gibt es drei mögliche Arten von \hyperref[text:ply]{\emph{Plys}} in Patchwork:
+
+\begin{itemize}
+    \item Vorrücken des Zeitsteins und Knöpfe erhalten
+    \item Einen Flicken nehmen und auf der Decke platzieren
+    \item Das Legen eines Spezialflicken auf die Decke
+\end{itemize}
+
+Immer wenn ein Spieler an der Reihe ist, kann er zwischen dem Vorrücken und dem Platzieren von drei Flicken unterscheiden. Die Aktion einen Spezialflicken auf die Decke zu legen, kommt im Spiel immer genau fünfmal vor.
+
+Patchwork endet, sobald beide Zeitsteine der Spieler das Zielfeld auf der Zeitleiste erreicht haben. Um ein möglichst langes Spiel zu spielen, muss also die Anzahl der Felder, die ein Spieler mit seinem Zeitstein pro \hyperref[text:ply]{\emph{Ply}} vorzieht, minimiert werden.
+
+Für die Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} ist die Anzahl der Felder immer durch den ausgewählten Flicken vorgegeben und beträgt mindestens 1 und maximal 6.
+
+Die Anzahl der Felder bei der Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} ist abhängig von der relativen Position der einzelnen Zeitsteine zueinander. Die maximale Anzahl an Feldern, die ein Zeitstein in einem Zug vorrücken kann, beträgt 7. Da immer ein Spielerwechsel stattfindet, sobald der Zeitstein des derzeitigen Spielers weiter vorrangeschritten ist als der Zeitstein des Gegners, muss für eine maximale Anzahl die Distanz zwischen den Zeitsteinen möglichst groß sein. Ein Zeitstein kann sich von dem anderem Zeitstein nur um maximal 6 Felder entfernen. Das ist der Fall, wenn der Flicken mit Zeitkosten 6 ausgewählt wird, während sich beide Zeitsteine auf demselben Feld befinden. Nach dieser Aktion ist der andere Spieler an der Reihe, welche sein Zeitstein um 7 Felder fortbewegen kann (Distanz von 6 Feldern $+$ 1 Feld, um weiter vorrangeschritten zu sein als der andere Zeitstein). Die minimale Anzahl an Felder bei der Vorrücken-Aktion beträgt 1 und kann bei drei Spielzuständen auftreten. Zuerst ist es möglich, dass beide Zeitsteine auf demselben Feld sind, sodass der Spieler, welcher an der Reihe ist, seinen Zeitstein nur 1 Feld vorrückt. Weiterhin ist es möglich, dass ein Zeitstein auf dem Feld vor dem Ziel ist, während der andere Spieler bereits im Ziel ist. In dieser Situation darf der Zeitstein auch nur um ein Feld vorgerückt werden. Zuletzt existiert noch die Situation am Spielanfang. Da hier auch beide Zeitsteine auf demselben Feld \textemdash{} dem Startfeld des Zeitplans \textemdash{} sind, darf der Startspieler den Zeitstein auch nur um ein Feld vorrücken.
+
+Um die Länge des Spiels zu maximieren, sollte jeder Spieler so wenige Felder wie möglich vorrücken. Nutzt jeder Spieler immer die \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion, so gibt es insgesamt 54 \hyperref[text:ply]{\emph{Plys}}, da auf dem Zeitplan insgesamt 53 Felder sowie ein Start- und ein Zielfeld existieren. Während beim ersten und letzen \hyperref[text:ply]{\emph{Ply}} der Erste bzw. Zweite Spieler seinen Zeitstein nur um 1 Feld vorrückt, muss der Zeitstein während des Spiels immer 2 Felder vorgerückt werden, da die vorherige Aktion \textemdash{} auch eine \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion \textemdash{} impliziert, dass der Zeitstein des Gegners genau 1 Feld vor dem eigenen Zeitstein liegt.
+
+\begin{table}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}[t]{c|c|c|c}
+            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/00_front.png}} &
+            \adjustbox{valign=t, raise=0ex}{\includegraphics[width=0.3\textwidth]{res/pictures/assets/06_front.png}}      &
+            \adjustbox{valign=t, raise=-9.05ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/21_front.png}}  &
+            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.5\textwidth]{res/pictures/assets/27_front.png}}   \\
+        \end{tabular}
+    }
+    \vspace{5pt}
+    \caption{Die vier Flicken mit Zeitkosten 1}
+    \label{tabelle:flicken-mit-zeitkosten-1}
+\end{table}
+
+Die Zeitkosten bei der Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} sind immer fest, wobei es insgesamt neun Flicken gibt, bei denen die Zeitkosten auch 2 betragen. So können optimal 9 Vorrücken-Aktionen durch die Auswahl dieser Flicken ersetzt werden. Weiterhin gibt es aber auch noch die vier in \ref{tabelle:flicken-mit-zeitkosten-1} dargestellten Flicken, welche nur Zeitkosten von 1 besitzen. Wird nun ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit 2 Zeitkosten durch eine Kombination aus Flicken mit Zeitkosten 1 auswählen und auf der Decke Platzieren und anschließend ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten 1 ersetzt, ist das Spiel um 4 weitere \hyperref[text:ply]{\emph{Plys}} verlängert. Das ist möglich, da davon wie oben beschrieben der Zeitstein des derzeitigen Spielers immer direkt hinter dem Zeitstein des Gegners ist. Wird nun ein Flicken mit Zeitkosten 1 ausgewählt, befindet sich der Zeitstein des derzeitigen Spielers auf dem Zeitstein des Gegners. So kann ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten von 1 anstatt 2 ausgeführt werden. Da alle anderen Flicken höhere Zeitkosten verlangen, ist keine weitere Optimierung des Spiels hinsichtlich der der maximalen Länge mehr möglich.
+
+Die maximale Länge des Brettspiels ergibt sich somit aus der Kombination der 54 Vorrücken-\hyperref[text:ply]{\emph{Plys}} zusammen mit den 4 zusätzlich gewonnenen \hyperref[text:ply]{\emph{Plys}} durch das Legen von Flicken mit Zeitkosten 1. Weiterhin kommen noch die fünf \hyperref[text:ply]{\emph{Plys}} für das Legen von Spezialflicken hinzu. Somit beträgt die maximale Länge von Patchwork \textbf{63} \hyperref[text:ply]{\emph{Plys}}.
+
+\subsection*{Obere Schranke für die maximal mögliche Anzahl an Aktionen in einem \hyperref[text:ply]{Ply}}
+
+\textbf{Supremum/Maximum für die maximal mögliche Anzahl an Aktionen in eimem Ply}
 
 bla bla mit Spiegelungen und Rotationen (Diedergruppe der Ordnung 4 vgl. $D_4$-Gruppe)
 
@@ -74,7 +139,7 @@ max amount of moves
 * upper bound
 * real value
 
-\section{Obere und untere Schranke für die Wertung eines Spielers}
+\subsection*{Obere und untere Schranke für die Wertung eines Spielers}
 
 In dieser Sektion wird eine obere und eine untere Schranke für die Wertung eines Spielers am Ende des Spiels festgesetzt. Da sich die Wertung aus dem am Ende vorhandenen Vorrat an Knopf-Plättchen und der Anzahl der Lücken im eigenen Spielbrett zusammensetzt, werden zunächst die maximal möglichen Werte für diese beiden Komponenten bestimmt. Anschließend werden die Schranken für die Wertung eines Spielers am Ende des Spiels festgesetzt.
 

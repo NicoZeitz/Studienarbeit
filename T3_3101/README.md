@@ -66,6 +66,14 @@ Artificial Intelligence to your game (English Edition). Packt Publishing, 2017
 -   Bibtex Formatter: https://flamingtempura.github.io/bibtex-tidy/index.html
 -   ISBN to Bibtex: https://www.bibtex.com/c/isbn-to-bibtex-converter/
 
+## Commands
+
+```sh
+pdfinfo -box .\ZeitplanStruktur.pdf
+
+node  "C:\Users\nico.zeitz@sap.com\OneDrive - SAP SE\Praxisphasen\Praxisphasenbericht\Helper\svg-to-pdf\index.mjs" --scale 2 --recursive --folder "C:\SAPDevelop\Studienarbeit\T3_3101\res\pictures"
+```
+
 # Sonstiges
 
 ??? für noch zu ändernde Stellen
