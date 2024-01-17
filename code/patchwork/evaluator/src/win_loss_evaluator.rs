@@ -25,7 +25,6 @@ impl Evaluator for WinLossEvaluator {
         match game.get_termination_result().termination {
             TerminationType::Player1Won => 1,
             TerminationType::Player2Won => -1,
-            TerminationType::Draw => 0,
         }
     }
 }

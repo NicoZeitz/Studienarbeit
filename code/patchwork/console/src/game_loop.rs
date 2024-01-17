@@ -133,7 +133,6 @@ impl GameLoop {
                 match termination.termination {
                     TerminationType::Player1Won => println!("Player 1 won!"),
                     TerminationType::Player2Won => println!("Player 2 won!"),
-                    TerminationType::Draw => println!("Draw!"),
                 }
 
                 println!("{}", termination.player_1_score);
@@ -181,7 +180,6 @@ impl GameLoop {
         let n_time_player_2 = AtomicU64::new(0);
         let wins_player_1 = AtomicU32::new(0);
         let wins_player_2 = AtomicU32::new(0);
-        let draws = AtomicU32::new(0);
 
         print!("\n\n\n\n\n");
 
@@ -194,7 +192,6 @@ impl GameLoop {
                 let iterations_done = &iterations_done;
                 let wins_player_1 = &wins_player_1;
                 let wins_player_2 = &wins_player_2;
-                let draws = &draws;
                 let max_player_1_score = &max_player_1_score;
                 let max_player_2_score = &max_player_2_score;
                 let min_player_1_score = &min_player_1_score;
@@ -251,9 +248,6 @@ impl GameLoop {
                                     TerminationType::Player2Won => {
                                         wins_player_2.fetch_add(1, Ordering::Relaxed);
                                     }
-                                    TerminationType::Draw => {
-                                        draws.fetch_add(1, Ordering::Relaxed);
-                                    }
                                 }
 
                                 max_player_1_score.fetch_max(termination.player_1_score, Ordering::Relaxed);
@@ -279,7 +273,6 @@ impl GameLoop {
                     iterations,
                     wins_player_1.load(Ordering::Relaxed) as usize,
                     wins_player_2.load(Ordering::Relaxed) as usize,
-                    draws.load(Ordering::Relaxed) as usize,
                     max_player_1_score.load(Ordering::Relaxed),
                     max_player_2_score.load(Ordering::Relaxed),
                     min_player_1_score.load(Ordering::Relaxed),
@@ -304,7 +297,6 @@ impl GameLoop {
             iterations,
             wins_player_1.load(Ordering::Relaxed) as usize,
             wins_player_2.load(Ordering::Relaxed) as usize,
-            draws.load(Ordering::Relaxed) as usize,
             max_player_1_score.load(Ordering::Relaxed),
             max_player_2_score.load(Ordering::Relaxed),
             min_player_1_score.load(Ordering::Relaxed),
@@ -326,7 +318,6 @@ impl GameLoop {
         iterations: usize,
         wins_player_1: usize,
         wins_player_2: usize,
-        draws: usize,
         max_player_1_score: i32,
         max_player_2_score: i32,
         min_player_1_score: i32,
@@ -366,22 +357,14 @@ impl GameLoop {
             min_player_2_score,
             std::time::Duration::from_nanos(avg_player_2_time.round() as u64)
         );
-        println!(
-            "          {: >7} draws ({:0>5.2}%)                       ",
-            draws,
-            (draws as f64 / iteration as f64 * 100.0)
-        );
         let progress_bar_length: i32 = 120;
         let progress_player_1 = (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
-        let progress_player_2 = (wins_player_2 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
-        let progress_draws =
-            (progress_bar_length - progress_player_1 as i32 - progress_player_2 as i32).max(0) as usize;
+        let progress_player_2 = (progress_bar_length - progress_player_1 as i32).max(0) as usize;
 
         println!(
-            "{} \x1b[0;32m{}\x1b[0m{}\x1b[0;31m{}\x1b[0m {}  ",
+            "{} \x1b[0;32m{}\x1b[0;31m{}\x1b[0m {}  ",
             player_1_name,
             "█".repeat(progress_player_1),
-            "█".repeat(progress_draws),
             "█".repeat(progress_player_2),
             player_2_name,
         );

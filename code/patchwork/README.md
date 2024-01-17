@@ -40,8 +40,3 @@
 4. Launch the program: `process launch`
 5. (Optional) Continue execution: `process continue`
 6. (Optional) See backtrace after stack overflow: `thread backtrace`
-
-# BUG:
-
--   No draw possible. Needs to be implemented.
--   The 7x7 board is wrongly implemented.

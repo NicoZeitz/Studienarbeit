@@ -53,7 +53,6 @@ pub trait Evaluator: Sync + Send {
         match game.get_termination_result().termination {
             TerminationType::Player1Won => evaluator_constants::POSITIVE_INFINITY,
             TerminationType::Player2Won => evaluator_constants::NEGATIVE_INFINITY,
-            TerminationType::Draw => 0,
         }
     }
 

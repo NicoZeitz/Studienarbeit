@@ -1,9 +1,7 @@
 use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 
-use crate::{
-    ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, QuiltBoard, TimeBoard, TurnType,
-};
+use crate::{ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, TimeBoard, TurnType};
 
 /// The game logic for Patchwork.
 impl Patchwork {
@@ -30,7 +28,7 @@ impl Patchwork {
         // 3. Place your time tokens on the starting space of the
         //    time board. The player who last used a needle begins
         let time_board = TimeBoard::default();
-        let current_player_flag = Patchwork::PLAYER_1;
+        let current_player_flag = Patchwork::get_player_1_flag();
 
         // 4. Place the (regular) patches in a circle or oval around the time
         //     board.
@@ -50,7 +48,7 @@ impl Patchwork {
             time_board,
             player_1,
             player_2,
-            current_player_flag,
+            status_flags: current_player_flag,
             turn_type: TurnType::Normal,
         }
     }
@@ -240,9 +238,10 @@ impl Patchwork {
 
                 let current_player = self.current_player_mut();
                 current_player.quilt_board.do_action(action);
-                if current_player.quilt_board.is_full() {
-                    // TODO:BUG: wrong 7x7
-                    current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
+                if current_player.quilt_board.is_special_tile_continition_reached()
+                    && !self.is_special_tile_condition_reached()
+                {
+                    self.set_special_tile_condition(self.get_current_player());
                 }
 
                 self.switch_player();
@@ -316,9 +315,10 @@ impl Patchwork {
             current_player.button_balance -= patch.button_cost as i32;
 
             current_player.quilt_board.do_action(action);
-            if current_player.quilt_board.is_full() {
-                // TODO:BUG: wrong 7x7
-                current_player.button_balance += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
+            if current_player.quilt_board.is_special_tile_continition_reached()
+                && !self.is_special_tile_condition_reached()
+            {
+                self.set_special_tile_condition(self.get_current_player());
             }
 
             time_cost = patch.time_cost;
@@ -332,8 +332,11 @@ impl Patchwork {
             next_current_player_position = current_player.position.min(TimeBoard::MAX_POSITION);
         }
 
+        if next_current_player_position >= TimeBoard::MAX_POSITION && !self.is_goal_reached() {
+            self.set_goal_reached(self.get_current_player());
+        }
         self.time_board.move_player_position(
-            self.current_player_flag,
+            self.status_flags,
             now_current_player_position,
             next_current_player_position,
         );
@@ -349,10 +352,11 @@ impl Patchwork {
         }
 
         // 6. test if player moved over special patch (only a single one possible) and conditionally change the state
-        if self.time_board.is_special_patches_in_range(walking_range) {
+        if let Some(special_patch_index) = self.time_board.get_single_special_patch_in_range(walking_range) {
             // Test if special patch can even be placed
             if self.current_player().quilt_board.is_full() {
                 // If not throw the special patch away and switch player
+                self.time_board.unset_special_patch(special_patch_index);
                 self.switch_player();
                 return Ok(());
             }
@@ -444,6 +448,10 @@ impl Patchwork {
                 });
             }
 
+            if self.current_player().position >= TimeBoard::MAX_POSITION {
+                self.unset_goal_reached(self.get_current_player());
+            }
+
             if (self.current_player().position < TimeBoard::MAX_POSITION
                 && !matches!(self.turn_type, TurnType::SpecialPatchPlacement))
                 || force_player_switch
@@ -479,7 +487,7 @@ impl Patchwork {
             }
 
             self.time_board
-                .move_player_position(self.current_player_flag, now_current_player_position, starting_index);
+                .move_player_position(self.status_flags, now_current_player_position, starting_index);
 
             return Ok(());
         }
@@ -505,16 +513,17 @@ impl Patchwork {
             }
 
             let previous_current_player_position = self.current_player().position - patch.time_cost;
+            if previous_current_player_position >= TimeBoard::MAX_POSITION {
+                self.unset_goal_reached(self.get_current_player());
+            }
+
+            let previous_special_tile_condition_reached =
+                self.current_player().quilt_board.is_special_tile_continition_reached();
 
             let now_current_player_position;
             {
                 let current_player = self.current_player_mut();
                 now_current_player_position = current_player.position;
-                // TODO:BUG: wrong 7x7
-                if current_player.quilt_board.is_full() {
-                    current_player.button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
-                }
-
                 current_player.button_balance += patch.button_cost as i32;
                 current_player.position = previous_current_player_position;
             }
@@ -529,8 +538,14 @@ impl Patchwork {
 
             self.current_player_mut().quilt_board.undo_action(action);
 
+            let now_special_tile_condition_reached =
+                self.current_player().quilt_board.is_special_tile_continition_reached();
+            if previous_special_tile_condition_reached && !now_special_tile_condition_reached {
+                self.unset_special_tile_condition(self.get_current_player());
+            }
+
             self.time_board.move_player_position(
-                self.current_player_flag,
+                self.status_flags,
                 now_current_player_position,
                 previous_current_player_position,
             );
@@ -554,12 +569,16 @@ impl Patchwork {
         self.turn_type = TurnType::SpecialPatchPlacement;
         self.time_board.set_special_patch(special_patch_index);
 
-        if self.current_player().quilt_board.is_full() {
-            // TODO:BUG: wrong 7x7
-            self.current_player_mut().button_balance -= QuiltBoard::FULL_BOARD_BUTTON_INCOME;
-        }
+        let previous_special_tile_condition_reached =
+            self.current_player().quilt_board.is_special_tile_continition_reached();
 
         self.current_player_mut().quilt_board.undo_action(action);
+
+        let now_special_tile_condition_reached =
+            self.current_player().quilt_board.is_special_tile_continition_reached();
+        if previous_special_tile_condition_reached && !now_special_tile_condition_reached {
+            self.unset_special_tile_condition(self.get_current_player());
+        }
 
         Ok(())
     }
@@ -580,8 +599,8 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     #[inline(always)]
-    pub const fn get_current_player(&self) -> i8 {
-        self.current_player_flag
+    pub const fn get_current_player(&self) -> u8 {
+        self.status_flags
     }
 
     /// Gets whether the given state is terminated. This is true if both players are at the end of the time board.

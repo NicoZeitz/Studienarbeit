@@ -50,8 +50,8 @@ impl Default for StaticEvaluator {
 impl StableEvaluator for StaticEvaluator {}
 impl Evaluator for StaticEvaluator {
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
-        let player_1_score = self.evaluate_state_for_player(game, game.get_player_1_flag());
-        let player_2_score = self.evaluate_state_for_player(game, game.get_player_2_flag());
+        let player_1_score = self.evaluate_state_for_player(game, Patchwork::get_player_1_flag());
+        let player_2_score = self.evaluate_state_for_player(game, Patchwork::get_player_2_flag());
 
         (player_1_score - player_2_score) as i32 // TODO: better implementation
     }
@@ -60,7 +60,6 @@ impl Evaluator for StaticEvaluator {
         match game.get_termination_result().termination {
             TerminationType::Player1Won => evaluator_constants::POSITIVE_INFINITY,
             TerminationType::Player2Won => evaluator_constants::NEGATIVE_INFINITY,
-            TerminationType::Draw => 0,
         }
     }
 }
@@ -91,7 +90,7 @@ impl StaticEvaluator {
     /// # Returns
     ///
     /// The evaluation of the game state for the given player.
-    fn evaluate_state_for_player(&self, game: &Patchwork, player: i8) -> f64 {
+    fn evaluate_state_for_player(&self, game: &Patchwork, player: u8) -> f64 {
         let player_state = game.get_player(player);
         let quilt_board = &player_state.quilt_board;
         let percentage_played = player_state.get_position() as f64 / TimeBoard::MAX_POSITION as f64;

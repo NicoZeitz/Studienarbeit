@@ -23,8 +23,8 @@ impl Evaluator for ScoreEvaluator {
     }
 
     fn evaluate_terminal_node(&self, game: &Patchwork) -> i32 {
-        let player_1_flag = game.get_player_1_flag();
-        let player_2_flag = game.get_player_2_flag();
+        let player_1_flag = Patchwork::get_player_1_flag();
+        let player_2_flag = Patchwork::get_player_2_flag();
 
         let player_1_score = game.get_score(player_1_flag);
         let player_2_score = game.get_score(player_2_flag);

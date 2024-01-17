@@ -7,7 +7,7 @@ use crate::{Notation, PatchManager, Patchwork, PatchworkError, PlayerState, Quil
 
 lazy_static! {
     static ref STATE_REGEX: Regex = Regex::new(
-        r"^(?P<player_1_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_1_button_balance>-?\d+)I(?P<player_1_button_income>\d+)P(?P<player_1_position>\d+) (?P<player_2_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_2_button_balance>-?\d+)I(?P<player_2_button_income>\d+)P(?P<player_2_position>\d+) (?P<current_player>[01]) (?P<special_patch_placement_move>[NY]) (?:(?P<patches>(?:(?:\d+/)*\d+)|-))(?P<phantom> \(Phantom\))?$",
+        r"^(?P<player_1_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_1_button_balance>-?\d+)I(?P<player_1_button_income>\d+)P(?P<player_1_position>\d+) (?P<player_2_quilt_board>(?:[A-Fa-f0-9]){21})B(?P<player_2_button_balance>-?\d+)I(?P<player_2_button_income>\d+)P(?P<player_2_position>\d+) (?P<status_flags>\d+) (?P<special_patch_placement_move>[NY]) (?:(?P<patches>(?:(?:\d+/)*\d+)|-))(?P<phantom> \(Phantom\))?$",
     ).unwrap();
 }
 
@@ -29,7 +29,7 @@ impl Notation for Patchwork {
     ///     c. The button income (separated by a 'I')
     ///     d. The position on the time board (separated by a 'P')
     /// 2. All Information about player 2 stored the same way as player 1 (e.g. 000000000000000000000B5I0P0)
-    /// 3. The current player - '0' for player 1 and '1' for player 2 (e.g. 0)
+    /// 3. Different Flags for the game status (e.g. 0)
     /// 4. If the current move is a special patch placement move ('Y' for yes and 'N' for no)
     /// 5. The patches still left to take - A list of patch ids separated by (e.g. 1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/0)
     ///    a slash starting from the first patch the current player can take
@@ -107,16 +107,9 @@ impl Notation for Patchwork {
             .and_then(|s| s.as_str().parse::<u8>().ok())
             .ok_or(error.clone())?;
 
-        let current_player = captures
-            .name("current_player")
-            .and_then(|s| s.as_str().parse::<i8>().ok())
-            .map(|i| {
-                if i == 0 {
-                    Patchwork::PLAYER_1
-                } else {
-                    Patchwork::PLAYER_2
-                }
-            })
+        let status_flags = captures
+            .name("status_flags")
+            .and_then(|s| s.as_str().parse::<u8>().ok())
             .ok_or(error.clone())?;
 
         let special_patch_placement_move = captures
@@ -168,8 +161,8 @@ impl Notation for Patchwork {
         }
 
         let mut time_board = TimeBoard::default();
-        time_board.move_player_position(Patchwork::PLAYER_1, 0, player_1_position); // too big player positions will be clamped
-        time_board.move_player_position(Patchwork::PLAYER_2, 0, player_2_position);
+        time_board.move_player_position(Patchwork::get_player_1_flag(), 0, player_1_position); // too big player positions will be clamped
+        time_board.move_player_position(Patchwork::get_player_2_flag(), 0, player_2_position);
         time_board.unset_special_patches_until(further_player_position);
 
         Ok(Patchwork {
@@ -191,7 +184,7 @@ impl Notation for Patchwork {
                     button_income: player_2_button_income,
                 },
             },
-            current_player_flag: current_player,
+            status_flags,
             turn_type: if special_patch_placement_move {
                 TurnType::SpecialPatchPlacement
             } else {

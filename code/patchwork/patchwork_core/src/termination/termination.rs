@@ -5,8 +5,6 @@ pub enum TerminationType {
     Player1Won,
     /// Player 2 won the game.
     Player2Won,
-    /// The game ended in a draw.
-    Draw,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

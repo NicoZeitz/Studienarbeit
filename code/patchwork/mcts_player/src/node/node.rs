@@ -94,7 +94,7 @@ impl Node {
     pub fn backpropagate(node: &Link, value: i32) {
         let mut mutable_node = node.write().unwrap();
         let player = &mutable_node.state.get_current_player();
-        let maximizing_player = mutable_node.state.get_player_1_flag() == *player;
+        let maximizing_player = Patchwork::is_flag_player_1(*player);
         let color = if maximizing_player { 1 } else { -1 };
         let score = color * value;
 

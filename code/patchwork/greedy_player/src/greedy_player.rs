@@ -39,7 +39,7 @@ impl Player for GreedyPlayer {
             return Ok(valid_actions[0]);
         }
 
-        let maximizing_player = game.is_flag_player_1(game.get_current_player());
+        let maximizing_player = Patchwork::is_flag_player_1(game.get_current_player());
 
         let mut chosen_action = valid_actions[0];
         let mut chosen_evaluation = if maximizing_player { i32::MIN } else { i32::MAX };

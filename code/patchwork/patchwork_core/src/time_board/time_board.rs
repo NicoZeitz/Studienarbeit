@@ -1,4 +1,3 @@
-use crate::Patchwork;
 use std::{fmt::Display, ops::Range};
 
 /// The entities that can be on a tile of the time board.
@@ -485,16 +484,10 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
-    pub fn get_player_position(&self, player_flag: i8) -> u8 {
-        let player = if player_flag == Patchwork::PLAYER_1 {
-            entities_enum::PLAYER_1
-        } else {
-            entities_enum::PLAYER_2
-        };
-
+    pub fn get_player_position(&self, player_flag: u8) -> u8 {
         self.tiles
             .iter()
-            .position(|&tile| tile & player > 0)
+            .position(|&tile| tile & player_flag > 0)
             .expect("[TimeBoard::get_player_position] There is no player on the time board. This is a bug in the patchwork_core library.") as u8
     }
 
@@ -508,16 +501,10 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
-    pub fn set_player_position(&mut self, player_flag: i8, position: usize) {
-        let player = if player_flag == Patchwork::PLAYER_1 {
-            entities_enum::PLAYER_1
-        } else {
-            entities_enum::PLAYER_2
-        };
-
+    pub fn set_player_position(&mut self, player_flag: u8, position: usize) {
         let clamped_position = position.min(TimeBoard::MAX_POSITION as usize);
-        self.tiles.iter_mut().for_each(|tile| *tile &= !player);
-        self.tiles[clamped_position] |= player;
+        self.tiles.iter_mut().for_each(|tile| *tile &= !player_flag);
+        self.tiles[clamped_position] |= player_flag;
     }
 
     /// Moves the player from the old_position to the new_position.
@@ -537,12 +524,7 @@ impl TimeBoard {
     ///
     /// This function is undefined behavior if the given old position is not valid.
     /// This will panic in debug mode.
-    pub fn move_player_position(&mut self, player_flag: i8, old_position: u8, new_position: u8) {
-        let player = if player_flag == Patchwork::PLAYER_1 {
-            entities_enum::PLAYER_1
-        } else {
-            entities_enum::PLAYER_2
-        };
+    pub fn move_player_position(&mut self, player_flag: u8, old_position: u8, new_position: u8) {
         let old_position = old_position.min(TimeBoard::MAX_POSITION);
 
         debug_assert_eq!(
@@ -552,11 +534,11 @@ impl TimeBoard {
         );
 
         // reset old position
-        self.tiles[old_position as usize] ^= player;
+        self.tiles[old_position as usize] ^= player_flag;
 
         // set new position
         let clamped_position = (new_position as usize).min(TimeBoard::MAX_POSITION as usize);
-        self.tiles[clamped_position] |= player;
+        self.tiles[clamped_position] |= player_flag;
     }
 }
 
