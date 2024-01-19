@@ -18,7 +18,6 @@ Bevor der eigentliche Spielverlauf starten kann, muss das Spiel vorbereitet werd
     \label{fig:spielaufbau}
 \end{figure}
 
-
 Jetzt kann das Spiel beginnen. Gegensätzlich zu klassischen Spielen sind bei Patchwork die beiden Spieler nicht unbedingt immer abwechselnd an der Reihe. Es ist immer derjenige Spieler an der Reihe, dessen Zeitstein hinter oder auf dem Zeitstein des anderen Spielers steht. Das heißt, wenn der Zug eines Spielers auf dem Feld endet, auf welchem der Zeitstein des anderen Spielers steht, ist der Spieler, welcher soeben gezogen hat, noch einmal an der Reihe. \cite{2014.PatchworkSpielanleitung}
 
 Wenn ein Spieler an der Reihe ist, hat er die Auswahl zwischen zwei verschiedenen Aktionen :
@@ -33,14 +32,40 @@ Die Aktion \textbf{Flicken nehmen und einfügen} besteht aus fünf Schritten, we
 \begin{enumerate}
 \item \textbf{Flicken auswählen}: Der Spieler hat die Auswahl zwischen den nächsten drei Flicken im Uhrzeigersinn nach der Spielfigur. \cite{2014.PatchworkSpielanleitung}
 \item \textbf{Spielfigur setzen}: Der Spieler setzt die Spielfigur neben den ausgewählten Flicken. \cite{2014.PatchworkSpielanleitung}
-\item \textbf{Flicken bezahlen und nehmen}: Der Spieler bezahlt die auf dem Etikett des Flickens angegebene Knopfzahl an den Vorrat und legt den Flicken zu seinem Ablageplan. \cite{2014.PatchworkSpielanleitung}
+\item \textbf{Flicken bezahlen und nehmen}: Der Spieler bezahlt die auf dem Etikett des Flickens angegebene Knopfzahl (in Abbildung \ref{fig:patch-explanation} zu sehen) an den Vorrat und legt den Flicken zu seinem Ablageplan. \cite{2014.PatchworkSpielanleitung}
 \item \textbf{Flicken platzieren}: Der Spieler platziert den Flicken auf seinen Ablageplan mit beliebiger Rotation und Spiegelung. Jedoch dürfen nur freie Felder belegt werden und der Flicken muss vollständig auf dem Ablageplan liegen, sie dürfen also nicht über den Rand des Plans hinausragen. \cite{2014.PatchworkSpielanleitung}
-\item \textbf{Zeitstein ziehen}: Der Spieler zieht seinen Zeitstein so viele Felder nach vorne, wie auf dem Etikett des eben abgelegten Flickens zu sehen ist. Ist das letzte Feld des Zuges jenes Feld, auf welchem schon der andere Spieler steht, wird der Zeitstein auf den des anderen Spielers gestellt. \cite{2014.PatchworkSpielanleitung}
+\item \textbf{Zeitstein ziehen}: Der Spieler zieht seinen Zeitstein so viele Felder nach vorne (in Abbildung \ref{fig:patch-explanation} zu sehen), wie auf dem Etikett des eben abgelegten Flickens abgebildet sind. Ist das letzte Feld des Zuges jenes Feld, auf welchem schon der andere Spieler steht, wird der Zeitstein auf den des anderen Spielers gestellt. \cite{2014.PatchworkSpielanleitung}
 \end{enumerate}
 
-Während des Spielverlaufs rücken die Zeitstein der beiden Spieler immer weiter auf der Zeitleiste auf dem Zeitplan vor. Dort sind zwei Markierungen denen Beachtung geschenkt werden muss. Zum einen sind dort die Spezialflicken zu finden, welche der Spieler, der zuerst seinen Zeitstein über einen Spezialflicken zieht, für seinen Ablageplan verwenden und dort ablegen muss. Zum anderen sind Knöpfe auf der Zeitleiste zu erkennen. Wenn ein Zeitstein über ein solchen Knopf gezogen wird, bekommt derjenige Spieler ein Knopfeinkommen vom Vorrat in Höhe der Summe der Knöpfe, welche auf den Flicken auf seinem Ablageplan zu sehen sind. \cite{2014.PatchworkSpielanleitung}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{res/pictures/annotated_patch.png}
+    \caption{Flicken mit erklärender Beschriftung}
+    \label{fig:patch-explanation}
+\end{figure}
 
-Bei dem Vorrat liegt das Sonderplättchen $7\times7$, welches der Spieler bekommt, der zuerst ein vollständig ausgefülltes $7\times7$-Quadrat aus Feldern auf seinem Ablageplan hat. Bei der Wertung am Ende des Spiels bringt dieses Sonderplättchen 7 Punkte. \cite{2014.PatchworkSpielanleitung}
+Während des Spielverlaufs rücken die Zeitstein der beiden Spieler immer weiter auf der Zeitleiste auf dem Zeitplan vor. Dort sind zwei Markierungen denen Beachtung geschenkt werden muss. Zum einen sind dort die Spezialflicken zu finden, welche der Spieler, der zuerst seinen Zeitstein über einen Spezialflicken zieht, für seinen Ablageplan verwenden und dort ablegen muss. Zum anderen sind Knöpfe auf der Zeitleiste zu erkennen. Wenn ein Zeitstein über ein solchen Knopf gezogen wird, bekommt derjenige Spieler ein Knopfeinkommen vom Vorrat in Höhe der Summe der Knöpfe, welche auf den Flicken auf seinem Ablageplan zu sehen sind. Ein Spieler, der nur den in Abbildung \ref{fig:patch-explanation} zu sehenden Flicken auf seinem Ablageplan liegen hat, würde somit ein Einkommen von 2 Knöpfen erhalten. \cite{2014.PatchworkSpielanleitung}
+
+\pagebreak
+
+\begin{wrapfigure}{r}{0.20\textwidth}
+    \centering
+    \includegraphics[width=0.18\textwidth]{res/pictures/assets/special_tile_with_shadow.png}
+    % \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \caption[Sonderplättchen $7\times7$]{\unskip}
+    Sonderplättchen $7\times7$
+    \label{fig:special-tile}
+\end{wrapfigure}
+
+\phantom{ }
+
+Bei dem Vorrat liegt das Sonderplättchen $7\times7$, in Abbildung \ref{fig:special-tile} zu sehen, welches der Spieler bekommt, der zuerst ein vollständig ausgefülltes $7\times7$-Quadrat aus Feldern auf seinem Ablageplan hat. Bei der Wertung am Ende des Spiels bringt dieses Sonderplättchen 7 Punkte. \cite{2014.PatchworkSpielanleitung}
+
+\phantom{ }
 
 Das Spiel endet, wenn die Zeitsteine der beiden Spieler das Zielfeld der Zeitleiste erreicht haben. Dabei verfallen überzählige Schritte und werden bei der Aktion \textbf{Vorrücken und Knöpfe erhalten} nicht ausgezahlt. \cite{2014.PatchworkSpielanleitung}
 
@@ -48,9 +73,9 @@ Zur Bestimmung des Gewinners müssen beide Spieler ihrer Knopfguthaben zählen, 
 
 \subsection*{Ungenauigkeiten der Spielregeln}
 
-In der Spielanleitung ist nicht genau beschrieben, was geschehen soll, wenn ein Spieler eine Spezialflicken legen muss, er jedoch auf seinem Ablageplan kein Feld mehr frei hat. Wir erweitern deshalb das Spiel um die Regel, dass falls dieser Fall eintrifft, der Spieler den Spezialflicken aus dem Spiel nimmt und neben sein Ablageplan legt. Auf die Wertung hat dies keinen Einfluss.
+In der Spielanleitung ist nicht genau beschrieben, was geschehen soll, wenn ein Spieler eine Spezialflicken legen muss, er jedoch auf seinem Ablageplan kein Feld mehr frei hat. Die Regel wird im Konsens so erweitert, dass falls dieser Fall eintrifft, der Spieler den Spezialflicken aus dem Spiel nimmt und neben sein Ablageplan legt. Auf die Wertung hat dies keinen Einfluss. \cite{2014.DiscussionSpecialPatch}
 
-Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enquote{zuerst ein Quadrat von mindestens $7\times7$ Feldern auf seinem Ablageplan vollständig belegt hat} \cite{2014.PatchworkSpielanleitung}, das Sonderplättchen bekommt. Hier wird nicht ganz deutlich, wie genau diese Regel auszulegen ist. Daher lesen wir die Regel so: Es muss kein vollständiges Quadrat ($8\times8$, $9\times9$) das $7\times7$-Quadrat umschließen, es reicht aus, wenn $7\times7$-Felder vollständig von Flicken bedeckt sind.
+Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enquote{zuerst ein Quadrat von mindestens $7\times7$ Feldern auf seinem Ablageplan vollständig belegt hat} \cite{2014.PatchworkSpielanleitung}, das Sonderplättchen bekommt. Hier wird nicht ganz deutlich, wie genau diese Regel auszulegen ist. Die Regel wird im Konsens wie folgt interpretiert: Es muss kein vollständiges Quadrat ($8\times8$, $9\times9$) das $7\times7$-Quadrat umschließen, es reicht aus, wenn $7\times7$-Felder vollständig von Flicken bedeckt sind, somit ist erlaubt das neben dem $7\times7$-Quadrat weitere Felder ausgefüllt sind und die gesamte Form auf dem Ablageplan kein Quadrat sein muss. \cite{2014.Discussion7x7}
 
 \section{Spieltheoretische Analyse}
 

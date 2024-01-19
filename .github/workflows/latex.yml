@@ -8,8 +8,8 @@
 name: Build Studienarbeit LaTeX document
 on:
     push:
-        branches:
-            - main
+        # branches:
+        #     - main
         # paths:
         #     # run when something in ./T3_3101/ folder changes
         #     - 'T3_3101/**'
