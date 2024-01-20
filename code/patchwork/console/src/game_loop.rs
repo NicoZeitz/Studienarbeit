@@ -337,7 +337,7 @@ impl GameLoop {
         let avg_player_1_time = sum_time_player_1 / n_time_player_1;
         let avg_player_2_time = sum_time_player_2 / n_time_player_2;
 
-        print!("\x1b[5A\r");
+        print!("\x1b[4A\r");
         println!("Iteration {: >7} / {}", iteration, iterations);
         println!(
             "Player 1: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {:?}]                       ",

@@ -388,7 +388,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-code/patchwork/patchwork_core/src/game/tests/history/force_swap.1000000.game.bin
-code/patchwork/patchwork_core/src/game/tests/history/normal.1000000.game.bin
+
+games/normal/*.bin
+games/force_swap/*.bin
 
 **/Praxisbericht.pdf

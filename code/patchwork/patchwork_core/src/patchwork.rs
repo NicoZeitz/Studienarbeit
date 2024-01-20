@@ -51,9 +51,10 @@ pub(crate) mod status_enum {
 }
 
 /// Represents the full state of the patchwork board game.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Deserialize, serde::Serialize)]
 pub struct Patchwork {
     /// The patches that are available to be purchased.
+    #[serde(serialize_with = "serialize_patches", deserialize_with = "deserialize_patches")]
     pub patches: Vec<&'static Patch>,
     /// The time board, which is a 9x9 grid of tiles.
     pub time_board: TimeBoard,
@@ -443,164 +444,18 @@ impl Display for Patchwork {
     }
 }
 
-impl Serialize for Patchwork {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let patches = self.patches.iter().map(|patch| patch.id).collect::<Vec<_>>();
-
-        let mut state = serializer.serialize_struct("Patchwork", 6)?;
-        state.serialize_field("patches", &patches)?;
-        state.serialize_field("time_board", &self.time_board)?;
-        state.serialize_field("player_1", &self.player_1)?;
-        state.serialize_field("player_2", &self.player_2)?;
-        state.serialize_field("turn_type", &self.turn_type)?;
-        state.serialize_field("status_flags", &self.status_flags)?;
-        state.end()
-    }
+fn serialize_patches<S>(patches: &[&'static Patch], serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let patches = patches.iter().map(|patch| patch.id).collect::<Vec<_>>();
+    serde_bytes::serialize(&patches, serializer)
 }
 
-impl<'de> Deserialize<'de> for Patchwork {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        #[derive(Deserialize)]
-        #[serde(field_identifier, rename_all = "snake_case")]
-        enum Field {
-            Patches,
-            TimeBoard,
-            Player1,
-            Player2,
-            TurnType,
-            StatusFlags,
-        }
-
-        struct PatchworkVisitor;
-
-        impl<'de> Visitor<'de> for PatchworkVisitor {
-            type Value = Patchwork;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str("struct Patchwork")
-            }
-
-            fn visit_seq<V>(self, mut seq: V) -> Result<Patchwork, V::Error>
-            where
-                V: SeqAccess<'de>,
-            {
-                let patches: Vec<u8> = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(0, &self))?;
-                let time_board = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(1, &self))?;
-                let player_1 = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(2, &self))?;
-                let player_2 = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(3, &self))?;
-                let turn_type = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(4, &self))?;
-                let status_flags = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(5, &self))?;
-
-                let patches = patches.into_iter().map(PatchManager::get_patch).collect::<Vec<_>>();
-
-                Ok(Patchwork {
-                    patches,
-                    time_board,
-                    player_1,
-                    player_2,
-                    turn_type,
-                    status_flags,
-                })
-            }
-
-            fn visit_map<V>(self, mut map: V) -> Result<Patchwork, V::Error>
-            where
-                V: MapAccess<'de>,
-            {
-                let mut patches: Option<Vec<u8>> = None;
-                let mut time_board = None;
-                let mut player_1 = None;
-                let mut player_2 = None;
-                let mut turn_type = None;
-                let mut status_flags = None;
-
-                while let Some(key) = map.next_key()? {
-                    match key {
-                        Field::Patches => {
-                            if patches.is_some() {
-                                return Err(serde::de::Error::duplicate_field("patches"));
-                            }
-                            patches = Some(map.next_value()?);
-                        }
-                        Field::TimeBoard => {
-                            if time_board.is_some() {
-                                return Err(serde::de::Error::duplicate_field("time_board"));
-                            }
-                            time_board = Some(map.next_value()?);
-                        }
-                        Field::Player1 => {
-                            if player_1.is_some() {
-                                return Err(serde::de::Error::duplicate_field("player_1"));
-                            }
-                            player_1 = Some(map.next_value()?);
-                        }
-                        Field::Player2 => {
-                            if player_2.is_some() {
-                                return Err(serde::de::Error::duplicate_field("player_2"));
-                            }
-                            player_2 = Some(map.next_value()?);
-                        }
-                        Field::TurnType => {
-                            if turn_type.is_some() {
-                                return Err(serde::de::Error::duplicate_field("turn_type"));
-                            }
-                            turn_type = Some(map.next_value()?);
-                        }
-                        Field::StatusFlags => {
-                            if status_flags.is_some() {
-                                return Err(serde::de::Error::duplicate_field("status_flags"));
-                            }
-                            status_flags = Some(map.next_value()?);
-                        }
-                    }
-                }
-
-                let patches = patches.ok_or_else(|| serde::de::Error::missing_field("patches"))?;
-                let patches = patches.into_iter().map(PatchManager::get_patch).collect::<Vec<_>>();
-
-                let time_board = time_board.ok_or_else(|| serde::de::Error::missing_field("time_board"))?;
-                let player_1 = player_1.ok_or_else(|| serde::de::Error::missing_field("player_1"))?;
-                let player_2 = player_2.ok_or_else(|| serde::de::Error::missing_field("player_2"))?;
-                let turn_type = turn_type.ok_or_else(|| serde::de::Error::missing_field("turn_type"))?;
-                let status_flags = status_flags.ok_or_else(|| serde::de::Error::missing_field("status_flags"))?;
-
-                Ok(Patchwork {
-                    patches,
-                    time_board,
-                    player_1,
-                    player_2,
-                    turn_type,
-                    status_flags,
-                })
-            }
-        }
-
-        const FIELDS: &[&str] = &[
-            "patches",
-            "time_board",
-            "player_1",
-            "player_2",
-            "turn_type",
-            "status_flags",
-        ];
-        deserializer.deserialize_struct("Patchwork", FIELDS, PatchworkVisitor)
-    }
+fn deserialize_patches<'de, D>(deserializer: D) -> Result<Vec<&'static Patch>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let patches: Vec<u8> = serde_bytes::deserialize(deserializer)?;
+    Ok(patches.into_iter().map(PatchManager::get_patch).collect::<Vec<_>>())
 }
