@@ -1,11 +1,5 @@
 use std::{cmp::Ordering, fmt::Display};
 
-use serde::{
-    de::{MapAccess, SeqAccess, Visitor},
-    ser::SerializeStruct,
-    Deserialize, Serialize, Serializer,
-};
-
 pub use crate::game::*;
 use crate::{Patch, PatchManager, PlayerState, QuiltBoard, Termination, TerminationType, TimeBoard};
 
@@ -446,7 +440,7 @@ impl Display for Patchwork {
 
 fn serialize_patches<S>(patches: &[&'static Patch], serializer: S) -> Result<S::Ok, S::Error>
 where
-    S: Serializer,
+    S: serde::Serializer,
 {
     let patches = patches.iter().map(|patch| patch.id).collect::<Vec<_>>();
     serde_bytes::serialize(&patches, serializer)
