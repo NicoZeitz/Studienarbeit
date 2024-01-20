@@ -2,7 +2,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use patchwork_core::{ActionId, GameOptions, Notation, Patchwork};
 
 fn get_initial_state(c: &mut Criterion) {
-    c.bench_function("get_valid_actions", |b| {
+    c.bench_function("get_initial_state", |b| {
         b.iter_with_setup(
             || {
                 let seed = rand::random::<u64>();
