@@ -1,115 +1,29 @@
-﻿
-% ========================== OTHER ==========================
+﻿% ========================================== Einleitung  ===========================================
 
-%misc{,
-%  Abstract     = {},
-%  Author       = {o.V.},
-%  Publisher    = {},
-%  Editor       = {{SAP SE}},
-%  Year         = {o.J.},
-%  Month        = {},
-%  Editon       = {},
-%  Volume       = {},
-%  Title        = {},
-%  Howpublished = {\url{}},
-%  Address      = {o.O.},
-%  Language     = {de},
-%  Urldate      = {YYYY-MM-DD}
-%}
+% ========================================== Grundlagen  ===========================================
 
-%book{,
-%  Abstract     = {},
-%  Author       = {Nachname, Vorname},
-%  Publisher    = {},
-%  Year         = {},
-%  Month        = {}
-%  Edition      = {2},
-%  Volume       = {2. Auflage},
-%  Title        = {},
-%  ISBN         = {},
-%  URL          = {},
-%  Address      = {Wiesbaden, Deutschland},
-%  Language     = {de}
-%}
+% =========================================== Analyse  =============================================
+% ========================================= Spielregeln  ===========================================
 
-@book{2014.GameTheoryThroughExamples,
-  isbn       = {9781614441151},
-  doi        = {10.5948/9781614441151},
-  title      = {Game Theory Through Examples},
-  author     = {Prisner, Erich},
-  publisher  = {Mathematical Association of America},
-  month      = 10,
-  year       = 2014,
-  address    = {Providence, Rhode Island},
-  series     = {Classroom Resource Materials},
-  collection = {Classroom Resource Materials}
-}
-
-@book{2018.ReinforcementLearning,
-  isbn      = {978-0262039246},
-  title     = {Reinforcement Learning},
-  author    = {Sutton, Richard S and Barto, Andrew G},
-  publisher = {Bradford Books},
-  series    = {Adaptive Computation and Machine Learning series},
-  edition   = 2,
-  month     = 09,
-  year      = 2018,
-  address   = {Cambridge, MA}
-}
-
-% https://people.csail.mit.edu/brooks/idocs/Samuel.pdf
-@misc{1959.GameTheoryStudiesCheckers,
-  title     = {Some Studies in Machine Learning Using the Game of Checkers},
-  volume    = {3},
-  url       = {http://dx.doi.org/10.1147/rd.33.0210},
-  doi       = {10.1147/rd.33.0210},
-  number    = {3},
-  journal   = {IBM Journal of Research and Development},
-  publisher = {IBM},
-  author    = {Samuel, A. L.},
-  year      = {1959},
-  month     = {07},
-  pages     = {210–229}
-}
-
+% German: https://lookout-spiele.de/upload/de_patchwork.html_Regeln_Patchwork_DE.pdf (original)
+% English: https://lookout-spiele.de/wp-content/uploads/Patchwork_Rules_US.pdf
 @misc{2014.PatchworkSpielanleitung,
-  abstract     = {},
-  author       = {Rosenberg, Uwe},
-  publisher    = {{Lookout GmbH}},
-  year         = {2014},
-  month        = {},
-  editon       = {},
-  volume       = {},
   title        = {Patchwork (Spielanleitung)},
-  howpublished = {\url{https://lookout-spiele.de/upload/de_patchwork.html_Regeln_Patchwork_DE.pdf}},
+  author       = {Rosenberg, Uwe},
+  year         = 2014,
+  publisher    = {Lookout GmbH},
   address      = {Hiddigwarder Straße 37, 27804 Berne, Deutschland},
-  language     = {de},
-  urldate      = {2024-01-16}
-}
-
-@book{2015.AbstractAlgebra,
-  isbn      = {978-1305657960},
-  title     = {Contemporary Abstract Algebra},
-  author    = {Gallian, Joseph A},
-  publisher = {CENGAGE Learning Custom Publishing},
-  edition   = 9,
-  month     = {09},
-  year      = 2015,
-  address   = {Mason, OH}
+  urldate      = {2024-01-16},
+  howpublished = {\url{https://lookout-spiele.de/upload/de_patchwork.html_Regeln_Patchwork_DE.pdf}},
+  language     = {de}
 }
 
 @misc{2014.Discussion7x7,
   title        = {7x7 tile... | BoardGameGeek},
   author       = {Kobiela, Grzegorz and Koh, Kareem and Poplawski, Michael and others},
   year         = 2014,
-  month        = {},
-  publisher    = {},
   address      = {o.O.},
-  volume       = {},
   urldate      = {2024-01-19},
-  abstract     = {},
-  editor       = {{}},
-  editon       = {},
   howpublished = {\url{https://boardgamegeek.com/thread/1267859/7x7-tile}},
   language     = {en}
 }
@@ -118,14 +32,62 @@
   title        = {Can't put 1x1 patch? What happens | BoardGameGeek},
   author       = {Kobiela, Grzegorz and Liu, Jack and others},
   year         = 2016,
-  month        = {},
-  publisher    = {},
   address      = {o.O.},
-  volume       = {},
   urldate      = {2024-01-19},
-  abstract     = {},
-  editor       = {{}},
-  editon       = {},
   howpublished = {\url{https://boardgamegeek.com/thread/1538861/article/23157792}},
   language     = {en}
 }
+
+% ========================================= Spielanalyse ===========================================
+@book{2014.GameTheoryThroughExamples,
+  title      = {Game Theory Through Examples},
+  doi        = {10.5948/9781614441151},
+  isbn       = 9781614441151,
+  author     = {Prisner, Erich},
+  year       = 2014,
+  month      = 10,
+  publisher  = {Mathematical Association of America},
+  address    = {Providence, Rhode Island},
+  series     = {Classroom Resource Materials},
+  collection = {Classroom Resource Materials}
+}
+
+@book{2018.ReinforcementLearning,
+  title     = {Reinforcement Learning},
+  isbn      = {978-0262039246},
+  author    = {Sutton, Richard S and Barto, Andrew G},
+  year      = 2018,
+  month     = 9,
+  publisher = {Bradford Books},
+  address   = {Cambridge, MA},
+  series    = {Adaptive Computation and Machine Learning series},
+  edition   = 2
+}
+
+% https://people.csail.mit.edu/brooks/idocs/Samuel.pdf
+@misc{1959.GameTheoryStudiesCheckers,
+  title     = {Some Studies in Machine Learning Using the Game of Checkers},
+  doi       = {10.1147/rd.33.0210},
+  author    = {Samuel, A. L.},
+  year      = 1959,
+  month     = 7,
+  journal   = {IBM Journal of Research and Development},
+  publisher = {Ibm},
+  volume    = 3,
+  number    = 3,
+  pages     = {210–229},
+  url       = {http://dx.doi.org/10.1147/rd.33.0210}
+}
+
+@book{2015.AbstractAlgebra,
+  title     = {Contemporary Abstract Algebra},
+  isbn      = {978-1305657960},
+  author    = {Gallian, Joseph A},
+  year      = 2015,
+  month     = 9,
+  publisher = {CENGAGE Learning Custom Publishing},
+  address   = {Mason, OH},
+  edition   = 9
+}
+
+% ========================================= Modellierung  ==========================================
