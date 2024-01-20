@@ -13,7 +13,7 @@ Bevor der eigentliche Spielverlauf starten kann, muss das Spiel vorbereitet werd
 \begin{figure}[!ht]
     \centering
     \begin{tikzpicture}
-        \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.8\textwidth]{res/pictures/assets/spielaufbau.jpg}};
+        \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.8\textwidth]{res/pictures/game-structure.jpg}};
         \drawshadow{image}
     \end{tikzpicture}
     \caption{Spielaufbau mit reduzierter Flickenanzahl}
@@ -43,7 +43,7 @@ Die Aktion \textbf{Flicken nehmen und einfügen} besteht aus fünf Schritten, we
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.3\textwidth]{res/pictures/annotated_patch.png}
+    \includegraphics[width=0.3\textwidth]{res/pictures/annotated-patch.png}
     \caption{Flicken mit erklärender Beschriftung}
     \label{fig:patch-explanation}
 \end{figure}
@@ -54,7 +54,7 @@ Während des Spielverlaufs rücken die Zeitstein der beiden Spieler immer weiter
 
 \begin{wrapfigure}{r}{0.20\textwidth}
     \centering
-    \includegraphics[width=0.18\textwidth]{res/pictures/assets/special_tile_with_shadow.png}
+    \includegraphics[width=0.18\textwidth]{res/pictures/assets/special-tile.png}
     % \vspace{-10pt}
     % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
@@ -79,7 +79,7 @@ Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enq
 
 \section{Spieltheoretische Analyse}
 
-Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettspiel. Sequentielle Spiele sind rundenbasierte Spiele, bei denen die Spieler nacheinander ziehen \cite[S. 53]{2014.GameTheoryThroughExamples}. Außerdem ist Patchwork ein Spiel mit \emph{perfekter Information}, \dash dass beide Spieler zu jeder Zeit genau wissen, was der andere Spieler getan hat und wie der jetzige Zustand des Spiels ist. Des Weiteren ist Patchwork ein \emph{Strategiespiel}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \emph{Nullsummenspiel}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen, Verlieren oder Unentschieden des gesamten Spiels.
+Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettspiel. Sequentielle Spiele sind rundenbasierte Spiele, bei denen die Spieler nacheinander ziehen \cite[S. 53]{2014.GameTheoryThroughExamples}. Außerdem ist Patchwork ein Spiel mit \emph{perfekter Information}, \dash dass beide Spieler zu jeder Zeit genau wissen, was der andere Spieler getan hat und wie der jetzige Zustand des Spiels ist. Des Weiteren ist Patchwork ein \emph{Strategiespiel}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \emph{Nullsummenspiel}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels.
 
 \subsection*{Anzahl der möglichen Startpositionen}
 
@@ -93,15 +93,15 @@ Wie bereits in »\nameref{section:spielregeln}« erläutert, existieren zwei ver
     \centering
     \begin{tabular}[t]{cc}
         \adjustbox{center, width=0.35\textwidth, valign=m, margin=0 1ex 0 0}{\begin{tikzpicture}
-                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game_board_side_1.png}};
+                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game-board-side-1.png}};
                                                                                      \drawshadow{image}
                                                                                  \end{tikzpicture}} &
         \adjustbox{center, width=0.35\textwidth, valign=m, margin=0 1ex 0 0}{\begin{tikzpicture}
-                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game_board_side_2.png}};
+                                                                                     \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\textwidth]{res/pictures/assets/game-board-side-2.png}};
                                                                                      \drawshadow{image}
                                                                                  \end{tikzpicture}} \\
         \multicolumn{2}{c}{\adjustbox{valign=m, margin=0 2ex 0 2ex}{Zugrundeliegende Struktur des Zeitplans:}}                                                                          \\
-        \multicolumn{2}{c}{\adjustbox{width=0.97\textwidth}{\includegraphics{res/pictures/ZeitplanStruktur.pdf}}}                                                                       \\
+        \multicolumn{2}{c}{\adjustbox{width=0.97\textwidth}{\includegraphics{res/pictures/time-board-structure.pdf}}}                                                                   \\
     \end{tabular}
     \vspace{5pt}
     \caption{Die Zeitpläne zusammen mit der zugrundeliegenden Struktur}
@@ -144,10 +144,10 @@ Um die Länge des Spiels zu maximieren, sollte jeder Spieler so wenige Felder wi
     \centering
     \resizebox{\textwidth}{!}{
         \begin{tabular}[t]{c|c|c|c}
-            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/00_front.png}} &
-            \adjustbox{valign=t, raise=0ex}{\includegraphics[width=0.3\textwidth]{res/pictures/assets/06_front.png}}      &
-            \adjustbox{valign=t, raise=-9.05ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/21_front.png}}  &
-            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.5\textwidth]{res/pictures/assets/27_front.png}}   \\
+            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/00-front.png}} &
+            \adjustbox{valign=t, raise=0ex}{\includegraphics[width=0.3\textwidth]{res/pictures/assets/06-front.png}}      &
+            \adjustbox{valign=t, raise=-9.05ex}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/21-front.png}}  &
+            \adjustbox{valign=t, raise=-16.25ex}{\includegraphics[width=0.5\textwidth]{res/pictures/assets/27-front.png}}   \\
         \end{tabular}
     }
     \vspace{5pt}
@@ -184,7 +184,7 @@ Um die maximale Anzahl an Platzierungsmöglichkeiten festzulegen, muss zuerst be
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.995\textwidth]{res/pictures/diedergruppe.pdf}
+    \includegraphics[width=0.995\textwidth]{res/pictures/dihedral-group.pdf}
     \vspace*{-0.5cm}
     \caption{Flicken mit 8 verschiedenen Transformationen}
     \label{fig:diedergruppe}
@@ -206,11 +206,11 @@ Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dar
     \centering
     \begin{tabular}[t]{c|c}
         Flicken                                                                                                                        & Platzierungsmöglichkeiten \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/00_front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/00-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
         $\left( 9 - 1 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 2 = 144$ \hspace*{0.5cm}                                                                    \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/09_front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/09-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
         $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 1 = 64$ \hspace*{0.5cm}                                                                     \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/21_front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/21-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
         $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 4 = 256$ \hspace*{0.5cm}                                                                    \\
     \end{tabular}
     \vspace{5pt}
@@ -220,11 +220,11 @@ Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dar
 
 \begin{wrapfigure}{r}{0.25\textwidth}
     \centering
-    \includegraphics[width=0.12\textwidth]{res/pictures/assets/08_front.png}
+    \includegraphics[width=0.12\textwidth]{res/pictures/assets/08-front.png}
 
-    \includegraphics[width=0.12\textwidth]{res/pictures/assets/14_front.png}
+    \includegraphics[width=0.12\textwidth]{res/pictures/assets/14-front.png}
 
-    \includegraphics[width=0.18\textwidth]{res/pictures/assets/19_front.png}
+    \includegraphics[width=0.18\textwidth]{res/pictures/assets/19-front.png}
     % \vspace{-10pt}
     % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
