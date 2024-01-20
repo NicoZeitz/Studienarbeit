@@ -1,7 +1,10 @@
 use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 
-use crate::{ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, TimeBoard, TurnType};
+use crate::{
+    status_enum, ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, TimeBoard,
+    TurnType,
+};
 
 /// The game logic for Patchwork.
 impl Patchwork {
@@ -28,7 +31,7 @@ impl Patchwork {
         // 3. Place your time tokens on the starting space of the
         //    time board. The player who last used a needle begins
         let time_board = TimeBoard::default();
-        let current_player_flag = Patchwork::get_player_1_flag();
+        let status_flags = Patchwork::get_player_1_flag();
 
         // 4. Place the (regular) patches in a circle or oval around the time
         //     board.
@@ -48,7 +51,7 @@ impl Patchwork {
             time_board,
             player_1,
             player_2,
-            status_flags: current_player_flag,
+            status_flags,
             turn_type: TurnType::Normal,
         }
     }
@@ -238,7 +241,7 @@ impl Patchwork {
 
                 let current_player = self.current_player_mut();
                 current_player.quilt_board.do_action(action);
-                if current_player.quilt_board.is_special_tile_continition_reached()
+                if current_player.quilt_board.is_special_tile_condition_reached()
                     && !self.is_special_tile_condition_reached()
                 {
                     self.set_special_tile_condition(self.get_current_player());
@@ -259,7 +262,11 @@ impl Patchwork {
             };
         }
 
-        debug_assert!(matches!(self.turn_type, TurnType::Normal));
+        debug_assert!(
+            matches!(self.turn_type, TurnType::Normal),
+            "[Patchwork::do_action] Expected normal turn but got {:?}",
+            self.turn_type
+        );
 
         let now_other_player_position = self.other_player().position;
         let now_current_player_position = self.current_player().position;
@@ -315,7 +322,7 @@ impl Patchwork {
             current_player.button_balance -= patch.button_cost as i32;
 
             current_player.quilt_board.do_action(action);
-            if current_player.quilt_board.is_special_tile_continition_reached()
+            if current_player.quilt_board.is_special_tile_condition_reached()
                 && !self.is_special_tile_condition_reached()
             {
                 self.set_special_tile_condition(self.get_current_player());
@@ -336,7 +343,7 @@ impl Patchwork {
             self.set_goal_reached(self.get_current_player());
         }
         self.time_board.move_player_position(
-            self.status_flags,
+            self.status_flags & status_enum::BOTH_PLAYERS,
             now_current_player_position,
             next_current_player_position,
         );
@@ -448,16 +455,17 @@ impl Patchwork {
                 });
             }
 
-            if self.current_player().position >= TimeBoard::MAX_POSITION {
-                self.unset_goal_reached(self.get_current_player());
-            }
-
             if (self.current_player().position < TimeBoard::MAX_POSITION
                 && !matches!(self.turn_type, TurnType::SpecialPatchPlacement))
                 || force_player_switch
             {
                 self.switch_player();
             }
+
+            if self.current_player().position >= TimeBoard::MAX_POSITION {
+                self.unset_goal_reached(self.get_current_player());
+            }
+
             self.turn_type = TurnType::Normal;
 
             let previous_other_player_position = self.other_player().position.min(TimeBoard::MAX_POSITION) as usize;
@@ -486,8 +494,11 @@ impl Patchwork {
                 current_player.button_balance -= button_income_trigger * button_income;
             }
 
-            self.time_board
-                .move_player_position(self.status_flags, now_current_player_position, starting_index);
+            self.time_board.move_player_position(
+                self.status_flags & status_enum::BOTH_PLAYERS,
+                now_current_player_position,
+                starting_index,
+            );
 
             return Ok(());
         }
@@ -512,13 +523,13 @@ impl Patchwork {
                 self.switch_player();
             }
 
-            let previous_current_player_position = self.current_player().position - patch.time_cost;
-            if previous_current_player_position >= TimeBoard::MAX_POSITION {
+            if self.current_player().position >= TimeBoard::MAX_POSITION {
                 self.unset_goal_reached(self.get_current_player());
             }
 
+            let previous_current_player_position = self.current_player().position - patch.time_cost;
             let previous_special_tile_condition_reached =
-                self.current_player().quilt_board.is_special_tile_continition_reached();
+                self.current_player().quilt_board.is_special_tile_condition_reached();
 
             let now_current_player_position;
             {
@@ -539,13 +550,13 @@ impl Patchwork {
             self.current_player_mut().quilt_board.undo_action(action);
 
             let now_special_tile_condition_reached =
-                self.current_player().quilt_board.is_special_tile_continition_reached();
+                self.current_player().quilt_board.is_special_tile_condition_reached();
             if previous_special_tile_condition_reached && !now_special_tile_condition_reached {
                 self.unset_special_tile_condition(self.get_current_player());
             }
 
             self.time_board.move_player_position(
-                self.status_flags,
+                self.status_flags & status_enum::BOTH_PLAYERS,
                 now_current_player_position,
                 previous_current_player_position,
             );
@@ -570,12 +581,11 @@ impl Patchwork {
         self.time_board.set_special_patch(special_patch_index);
 
         let previous_special_tile_condition_reached =
-            self.current_player().quilt_board.is_special_tile_continition_reached();
+            self.current_player().quilt_board.is_special_tile_condition_reached();
 
         self.current_player_mut().quilt_board.undo_action(action);
 
-        let now_special_tile_condition_reached =
-            self.current_player().quilt_board.is_special_tile_continition_reached();
+        let now_special_tile_condition_reached = self.current_player().quilt_board.is_special_tile_condition_reached();
         if previous_special_tile_condition_reached && !now_special_tile_condition_reached {
             self.unset_special_tile_condition(self.get_current_player());
         }
@@ -593,14 +603,14 @@ impl Patchwork {
     ///
     /// # Returns
     ///
-    /// The current player. '1' for player 1 and '-1' for player 2.
+    /// The current player.
     ///
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
     #[inline(always)]
     pub const fn get_current_player(&self) -> u8 {
-        self.status_flags
+        self.status_flags & status_enum::BOTH_PLAYERS
     }
 
     /// Gets whether the given state is terminated. This is true if both players are at the end of the time board.
@@ -686,7 +696,7 @@ impl Patchwork {
 mod tests {
     use std::collections::VecDeque;
 
-    use crate::Notation;
+    use crate::{status_enum, Action, Notation};
     use pretty_assertions::assert_eq;
     use rand::{Rng, SeedableRng};
     use rand_xoshiro::Xoshiro256PlusPlus;
@@ -694,6 +704,19 @@ mod tests {
     use super::*;
 
     const ITERATIONS: usize = 10_000;
+
+    #[test]
+    fn test_max_valid_actions() {
+        let state = Patchwork::load_from_notation("000000000000000000000B5I0P0 000000000000000000000B5I0P0 0 N 8/14/19/4/5/6/7/1/9/10/11/12/13/2/15/16/17/18/3/20/21/22/23/24/25/26/27/28/29/30/31/32/0").unwrap();
+        let valid_actions = state.get_valid_actions();
+
+        assert_eq!(
+            valid_actions.len(),
+            1345,
+            "Expected 1345 valid actions but got: {:?}",
+            valid_actions.len()
+        );
+    }
 
     #[test]
     fn test_walking_action_at_start() {
@@ -726,6 +749,43 @@ mod tests {
             "Other player position changed in undo action"
         );
         assert_eq!(old_state, state, "Old State != Restored State");
+    }
+
+    #[test]
+    fn test_special_7x7_tile() {
+        let old_state = Patchwork::load_from_notation(
+            "1F1DDB9CDCF67F5DCA271B18I15P52 11EFF3FCFEFE7FBF9FFF0B26I6P50 2 N 14/24/6/29/3/13/11/12/15/16/17",
+        )
+        .unwrap();
+        let action = Action::load_from_notation("P14I0═3‖7↻0↔0P0")
+            .unwrap()
+            .to_surrogate_action_id();
+
+        let mut new_forced_state = old_state.clone();
+        let mut new_normal_state = old_state.clone();
+
+        new_forced_state.do_action(action, true).unwrap();
+        new_normal_state.do_action(action, false).unwrap();
+
+        assert_ne!(
+            old_state.status_flags, new_forced_state.status_flags,
+            "Flags old_state == new_state even through there should have been a 7x7 special tile given to player 2"
+        );
+        assert_ne!(
+            old_state.status_flags, new_normal_state.status_flags,
+            "Flags old_state == new_state even through there should have been a 7x7 special tile given to player 2"
+        );
+
+        assert!(
+            (new_forced_state.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0,
+            "Player 2 should have the special tile but flags were {:b}",
+            new_forced_state.status_flags
+        );
+        assert!(
+            (new_normal_state.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0,
+            "Player 2 should have the special tile but flags were {:b}",
+            new_normal_state.status_flags
+        );
     }
 
     #[test]
@@ -1016,190 +1076,6 @@ mod history_tests {
                     state.do_action(action, force_swap).unwrap();
                 }
             }
-        }
-    }
-}
-
-#[allow(clippy::redundant_closure_call)]
-#[allow(dead_code)]
-#[allow(unused_macros)]
-#[allow(unused_imports)]
-#[cfg(feature = "performance_tests")]
-mod performance_tests {
-
-    use std::time::{Duration, Instant};
-
-    use super::*;
-
-    const ITERATIONS: usize = 1000;
-
-    //             1 ns
-    //         1_000 ns = 1 µs
-    //     1_000_000 ns = 1 ms
-    // 1_000_000_000 ns = 1 s
-
-    const GET_INITIAL_STATE_THRESHOLD: u128 = 500_000;
-    const GET_VALID_ACTIONS_THRESHOLD: u128 = 200_000;
-    const GET_RANDOM_ACTION_THRESHOLD: u128 = 200_000;
-    const DO_ACTION_THRESHOLD: u128 = 25_000;
-    const UNDO_ACTION_THRESHOLD: u128 = 25_000;
-    const CLONE_THRESHOLD: u128 = 25_000;
-
-    macro_rules! function {
-        () => {{
-            fn f() {}
-            fn type_name_of<T>(_: T) -> &'static str {
-                std::any::type_name::<T>()
-            }
-            let name = type_name_of(f);
-
-            // Find and cut the rest of the path
-            match &name[..name.len() - 3].rfind(':') {
-                Some(pos) => &name[pos + 1..name.len() - 3],
-                None => &name[..name.len() - 3],
-            }
-        }};
-    }
-
-    macro_rules! run_function(
-        ($iterations:expr, $threshold:expr, $setup:expr, $function:expr) => {
-            let mut max = Duration::new(0, 0);
-            let mut min = Duration::new(u64::MAX, 1_000_000_000 - 1);
-            let mut sum = Duration::new(0, 0);
-
-            for i in 0..$iterations {
-                let setup = $setup(i);
-
-                let start = Instant::now();
-
-                $function(setup);
-
-                let duration = start.elapsed();
-                if duration.as_nanos() > $threshold {
-                    panic!("PERFORMANCE REGRESSION: {} took: {:?}", function!(), duration);
-                }
-
-                if duration > max {
-                    max = duration;
-                }
-                if duration < min {
-                    min = duration;
-                }
-                sum += duration;
-            }
-
-            let avg = sum / ITERATIONS as u32;
-            println!(
-                "\n{:<40} ─ {:>9?} (max), {:>9?} (avg), {:>9?} (min) ─ that would be [{:>8}, {:>8}, {:>8}] calls per second",
-                function!(),
-                max,
-                avg,
-                min,
-                (1.0 / max.as_secs_f64()).round() as i64,
-                (1.0 / avg.as_secs_f64()).round() as i64,
-                (1.0 / min.as_secs_f64()).round() as i64,
-            );
-        };
-    );
-
-    #[test]
-    fn get_initial_state() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            GET_INITIAL_STATE_THRESHOLD,
-            |i: usize| { Some(GameOptions { seed: i as u64 }) },
-            |args| { Patchwork::get_initial_state(args) }
-        );
-    }
-
-    #[test]
-    fn get_valid_actions() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            GET_VALID_ACTIONS_THRESHOLD,
-            |i| { Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 })) },
-            |patchwork: Patchwork| { patchwork.get_valid_actions() }
-        );
-    }
-
-    #[test]
-    fn get_random_action() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            GET_RANDOM_ACTION_THRESHOLD,
-            |i| { Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 })) },
-            |patchwork: Patchwork| { patchwork.get_random_action() }
-        );
-    }
-
-    #[test]
-    #[allow(unused)]
-    fn do_action() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            DO_ACTION_THRESHOLD,
-            |i| {
-                let mut patchwork = Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 }));
-                for _ in 0..(i % 20) {
-                    patchwork.do_action(patchwork.get_random_action(), false);
-                }
-                let action = patchwork.get_random_action();
-                (patchwork, action)
-            },
-            |(patchwork, action): (Patchwork, ActionId)| {
-                let mut patchwork = patchwork;
-                patchwork.do_action(action, false)
-            }
-        );
-    }
-
-    #[test]
-    #[allow(unused)]
-    fn undo_action() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            UNDO_ACTION_THRESHOLD,
-            |i| {
-                let mut patchwork = Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 }));
-                for _ in 0..(i % 20) {
-                    patchwork.do_action(patchwork.get_random_action(), false);
-                }
-                let action = patchwork.get_random_action();
-                patchwork.do_action(action, false);
-                (patchwork, action)
-            },
-            |(patchwork, action): (Patchwork, ActionId)| {
-                let mut patchwork = patchwork;
-                patchwork.undo_action(action, false)
-            }
-        );
-    }
-
-    #[test]
-    fn clone() {
-        verify_performance_args();
-
-        run_function!(
-            ITERATIONS,
-            CLONE_THRESHOLD,
-            |i| { Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 })) },
-            |patchwork: Patchwork| { patchwork.clone() }
-        );
-    }
-
-    fn verify_performance_args() {
-        if cfg!(debug_assertions) {
-            panic!("Performance tests should be run with --release");
         }
     }
 }

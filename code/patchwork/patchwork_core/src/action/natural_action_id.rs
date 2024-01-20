@@ -253,7 +253,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn from_bits(bits: u64) -> Self {
-        debug_assert!(Self::is_valid_natural_action_id(bits));
+        debug_assert!(
+            Self::is_valid_natural_action_id(bits),
+            "[NaturalActionId::from_bits] The given bits do not represent a valid natural action id."
+        );
         Self(bits)
     }
 
@@ -302,7 +305,10 @@ impl NaturalActionId {
     ///
     /// `𝒪(𝟣)`
     pub fn from_surrogate_action_id(action_id: ActionId) -> NaturalActionId {
-        debug_assert!(ActionId::is_valid_action_id(action_id.as_bits()));
+        debug_assert!(
+            ActionId::is_valid_action_id(action_id.as_bits()),
+            "[NaturalActionId::from_action_id] The given action id is not a valid action id."
+        );
 
         let masked_surrogate_action_id = action_id.as_bits();
         Self(match masked_surrogate_action_id {
@@ -504,7 +510,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn is_first_patch_taken(&self) -> bool {
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::is_first_patch_taken] The natural action id does not contain hidden information."
+        );
         self.is_patch_placement() && self.get_patch_index() == 0
     }
 
@@ -524,7 +533,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn is_second_patch_taken(&self) -> bool {
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::is_second_patch_taken] The natural action id does not contain hidden information."
+        );
         self.is_patch_placement() && self.get_patch_index() == 1
     }
     /// Whether this action took the third patch.
@@ -543,7 +555,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn is_third_patch_taken(&self) -> bool {
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::is_third_patch_taken] The natural action id does not contain hidden information."
+        );
         self.is_patch_placement() && self.get_patch_index() == 2
     }
 
@@ -564,8 +579,14 @@ impl NaturalActionId {
     /// information. This will panic in debug mode.
     #[inline(always)]
     pub const fn get_starting_index(&self) -> u8 {
-        debug_assert!(self.is_walking());
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.is_walking(),
+            "[NaturalActionId::get_starting_index] The action is not a walking action."
+        );
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::get_starting_index] The natural action id does not contain hidden information."
+        );
 
         (self.0 >> 56) as u8
     }
@@ -587,8 +608,14 @@ impl NaturalActionId {
     /// information. This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_id(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_patch_id] The action is not a patch placement action."
+        );
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::get_patch_id] The natural action id does not contain hidden information."
+        );
 
         (self.0 >> 56) as u8
     }
@@ -610,7 +637,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_index(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_patch_index] The action is not a patch placement action."
+        );
 
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
@@ -637,7 +667,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_quilt_board_index(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[NaturalActionId::get_quilt_board_index] The action is not a patch placement or special patch placement action."
+        );
 
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
@@ -672,7 +705,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline]
     pub const fn get_row(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[NaturalActionId::get_row] The action is not a patch placement or special patch placement action."
+        );
 
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
@@ -705,7 +741,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline]
     pub const fn get_column(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[NaturalActionId::get_column] The action is not a patch placement or special patch placement action."
+        );
 
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
         const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
@@ -737,7 +776,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_rotation(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_rotation] The action is not a patch placement action."
+        );
 
         const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
         const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
@@ -762,7 +804,10 @@ impl NaturalActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_orientation(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_orientation] The action is not a patch placement action."
+        );
 
         const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
 
@@ -786,8 +831,14 @@ impl NaturalActionId {
     /// information. This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_transformation_index(&self) -> u16 {
-        debug_assert!(self.is_patch_placement());
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_patch_transformation_index] The action is not a patch placement action."
+        );
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::get_patch_transformation_index] The natural action id does not contain hidden information."
+        );
 
         ((self.0 >> 40) & 0xFFFF) as u16
     }
@@ -809,8 +860,14 @@ impl NaturalActionId {
     /// information. This will panic in debug mode.
     #[inline(always)]
     pub const fn get_previous_player_was_1(&self) -> bool {
-        debug_assert!(self.is_patch_placement());
-        debug_assert!(self.contains_hidden_information());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_previous_player_was_1] The action is not a patch placement action."
+        );
+        debug_assert!(
+            self.contains_hidden_information(),
+            "[NaturalActionId::get_previous_player_was_1] The natural action id does not contain hidden information."
+        );
 
         ((self.0 >> 39) & 0x01) == 1
     }

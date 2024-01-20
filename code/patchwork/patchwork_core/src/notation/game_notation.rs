@@ -11,6 +11,7 @@ lazy_static! {
     ).unwrap();
 }
 
+// TODO: nicer display for the status flags
 impl Notation for Patchwork {
     /// Saves the state of the game as a string.
     /// The state can be loaded again with `load_state`.
@@ -238,9 +239,8 @@ impl Patchwork {
             .as_str(),
         );
 
-        // 3. The current player - '0' for player 1 and '1' for player 2
-        let flag = if self.is_player_1() { 0 } else { 1 };
-        state.push_str(format!("{:?} ", flag).as_str());
+        // 3. Different Flags for the game status (e.g. 0)
+        state.push_str(format!("{:?} ", self.status_flags).as_str());
 
         // 4. If the current move is a special patch placement move and the fitting index (one of '26', '32', '38', '44' or '50')
         //    or '-' if the special patch placement move is not active

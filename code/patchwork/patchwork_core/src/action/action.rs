@@ -45,7 +45,11 @@ impl Action {
     ///
     /// `𝒪(𝟣)`
     pub fn from_surrogate_action_id(surrogate_action_id: ActionId) -> Self {
-        debug_assert!(ActionId::is_valid_action_id(surrogate_action_id.as_bits()));
+        debug_assert!(
+            ActionId::is_valid_action_id(surrogate_action_id.as_bits()),
+            "[ActionId::from_surrogate_action_id] The given surrogate action id is invalid ({:064b})",
+            surrogate_action_id.as_bits()
+        );
 
         match surrogate_action_id.as_bits() {
             ActionId::PHANTOM_ACTION_ID => Action::Phantom,
@@ -90,7 +94,11 @@ impl Action {
     /// If the given natural action id is walking or patch placement and does
     /// not contain hidden information. This will panic in debug mode.
     pub fn from_natural_action_id(natural_action_id: NaturalActionId) -> Self {
-        debug_assert!(NaturalActionId::is_valid_natural_action_id(natural_action_id.as_bits()));
+        debug_assert!(
+            NaturalActionId::is_valid_natural_action_id(natural_action_id.as_bits()),
+            "[Action::from_natural_action_id] The given natural action id is invalid ({:064b})",
+            natural_action_id.as_bits()
+        );
 
         match natural_action_id.as_bits() {
             NaturalActionId::WALKING_ACTION_ID => {

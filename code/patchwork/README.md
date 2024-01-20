@@ -14,8 +14,10 @@
 -   Run with release optimizations: `cargo run --release`
 -   Run tests: `cargo test --workspace --all-targets`
 -   Run doctests: `cargo test --workspace --doc`
--   Run performance tests: `cargo test --no-default-features --features performance_tests --release --workspace --all-targets performance_tests -- --nocapture --test-threads=1`
-    -   Once stable: change performance tests to cargo bench
+-   Run performance tests: `cargo bench --bench performance`
+    -   Optimally with baseline: `cargo bench --bench performance -- --baseline baseline_name`
+    -   Save results: `cargo bench --bench performance -- --save-baseline baseline_name`
+    -   The baselines are saved in the `target/criterion` folder
 
 ## Dependency management
 
@@ -40,3 +42,22 @@
 4. Launch the program: `process launch`
 5. (Optional) Continue execution: `process continue`
 6. (Optional) See backtrace after stack overflow: `thread backtrace`
+
+# Utility function
+
+```rust
+fn print_board(board: u128) {
+    let mut result = String::new();
+
+    for row in 0..9{
+        for column in 0..9 {
+            let index = row * 9 + column;
+            let tile = if (board >> index) & 1 > 0 { "█" } else { "░" };
+            result.push_str(tile);
+        }
+        result.push('\n');
+    }
+
+    println!("{}", result);
+}
+```

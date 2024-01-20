@@ -69,6 +69,7 @@ impl TranspositionTable {
         debug_assert_eq!(
             self.entries.len() * std::mem::size_of::<Entry>(),
             self.diagnostics.capacity.load(std::sync::atomic::Ordering::SeqCst),
+            "[TranspositionTable::size] - capacity does not match entries length"
         );
         std::mem::size_of::<Entry>() * self.entries.len()
     }
@@ -558,7 +559,10 @@ fn get_action_to_store(
         ))
     } else {
         // special patch placement
-        debug_assert!(action.is_special_patch_placement());
+        debug_assert!(
+            action.is_special_patch_placement(),
+            "[TranspositionTable::get_action_to_store] Action is not a special patch placement"
+        );
 
         let row = action.get_row();
         let column = action.get_column();

@@ -1,7 +1,7 @@
 {
     // Rust
     "rust-analyzer.linkedProjects": ["code\\patchwork\\Cargo.toml"],
-    "rust-analyzer.cargo.features": ["performance_tests"],
+    // "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
         "editor.inlayHints.enabled": "on"
     },
@@ -113,6 +113,7 @@
         "iproduct",
         "itertools",
         "kibibytes",
+        "lldb",
         "mcts",
         "MCTS",
         "mebibytes",
@@ -125,8 +126,10 @@
         "Nico",
         "nocapture",
         "playout",
+        "POSIX",
         "powf",
         "Praxisbericht",
+        "println",
         "repr",
         "rfind",
         "rustc",
@@ -144,9 +147,12 @@
         "thiserror",
         "typenum",
         "typeshed",
+        "UCRT",
+        "udeps",
         "usize",
         "vectorize",
         "werkzeug",
+        "Winlibs",
         "xoring",
         "Xoshiro",
         "zobrist"

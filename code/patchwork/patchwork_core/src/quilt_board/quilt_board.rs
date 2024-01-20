@@ -97,19 +97,19 @@ impl QuiltBoard {
         self.tiles.count_ones() == QuiltBoard::TILES as u32
     }
 
-    /// Whether the board has a special tile continition.
+    /// Whether the board has a special tile condition.
     ///
-    /// A special tile continition is when at least a 7x7 square is filled with patches.
+    /// A special tile condition is when at least a 7x7 square is filled with patches.
     ///
     /// # Returns
     ///
-    /// Whether the board has a special tile continition.
+    /// Whether the board has a special tile condition.
     ///
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
     #[rustfmt::skip]
-    pub const fn is_special_tile_continition_reached(&self) -> bool {
+    pub const fn is_special_tile_condition_reached(&self) -> bool {
         const BOARD_1X1: u128 = 0b00001111111001111111001111111001111111001111111001111111001111111u128;
         const BOARD_1X2: u128 = 0b00011111110011111110011111110011111110011111110011111110011111110u128;
         const BOARD_1X3: u128 = 0b00111111100111111100111111100111111100111111100111111100111111100u128;
@@ -120,15 +120,15 @@ impl QuiltBoard {
         const BOARD_3X2: u128 = 0b00011111110011111110011111110011111110011111110011111110011111110000000000000000000u128;
         const BOARD_3X3: u128 = 0b00111111100111111100111111100111111100111111100111111100111111100000000000000000000u128;
 
-        self.tiles & BOARD_1X1 == BOARD_1X1 ||
-        self.tiles & BOARD_1X2 == BOARD_1X2 ||
-        self.tiles & BOARD_1X3 == BOARD_1X3 ||
-        self.tiles & BOARD_2X1 == BOARD_2X1 ||
-        self.tiles & BOARD_2X2 == BOARD_2X2 ||
-        self.tiles & BOARD_2X3 == BOARD_2X3 ||
-        self.tiles & BOARD_3X1 == BOARD_3X1 ||
-        self.tiles & BOARD_3X2 == BOARD_3X2 ||
-        self.tiles & BOARD_3X3 == BOARD_3X3
+        (self.tiles & BOARD_1X1) == BOARD_1X1 ||
+        (self.tiles & BOARD_1X2) == BOARD_1X2 ||
+        (self.tiles & BOARD_1X3) == BOARD_1X3 ||
+        (self.tiles & BOARD_2X1) == BOARD_2X1 ||
+        (self.tiles & BOARD_2X2) == BOARD_2X2 ||
+        (self.tiles & BOARD_2X3) == BOARD_2X3 ||
+        (self.tiles & BOARD_3X1) == BOARD_3X1 ||
+        (self.tiles & BOARD_3X2) == BOARD_3X2 ||
+        (self.tiles & BOARD_3X3) == BOARD_3X3
     }
 
     /// The amount of tiles that are filled.
@@ -300,7 +300,7 @@ impl QuiltBoard {
             if (self.tiles >> index) & 1 > 0 {
                 let (row, column) = Self::get_row_column(index);
                 panic!(
-                    "Invalid action! The tile at row {} and column {} is already filled!",
+                    "[QuiltBoard::do_action] Invalid action! The tile at row {} and column {} is already filled!",
                     row, column
                 );
             }
@@ -334,7 +334,7 @@ impl QuiltBoard {
             if (self.tiles >> index) & 1 == 0 {
                 let (row, column) = Self::get_row_column(index);
                 panic!(
-                    "Invalid action! The tile at row {} and column {} is not filled!",
+                    "[QuiltBoard::undo_action] Invalid action! The tile at row {} and column {} is not filled!",
                     row, column
                 );
             }

@@ -25,7 +25,8 @@ pub enum TurnType {
 }
 
 /// Different flags for the status of the game.
-mod status_enum {
+#[rustfmt::skip]
+pub(crate) mod status_enum {
     /// The first player.
     pub const PLAYER_1: u8 = 0b0000_0001; // 1
     /// The second player.
@@ -38,6 +39,15 @@ mod status_enum {
     pub const PLAYER_1_FIRST_AT_END: u8 = 0b0001_0000; // 16
     /// If the second player was first to reach the goal.
     pub const PLAYER_2_FIRST_AT_END: u8 = 0b0010_0000; // 32
+
+    /// The flags for both players combined.
+    pub const BOTH_PLAYERS: u8 = PLAYER_1 | PLAYER_2; // 3
+    /// The flags for both players having the special tile combined.
+    #[allow(dead_code)]
+    pub const BOTH_PLAYERS_HAVE_SPECIAL_TILE: u8 = PLAYER_1_HAS_SPECIAL_TILE | PLAYER_2_HAS_SPECIAL_TILE; // 12
+    /// The flags for both players being first to reach the goal combined.
+    #[allow(dead_code)]
+    pub const BOTH_PLAYERS_FIRST_AT_END: u8 = PLAYER_1_FIRST_AT_END | PLAYER_2_FIRST_AT_END; // 48
 }
 
 /// Represents the full state of the patchwork board game.
@@ -63,7 +73,6 @@ pub struct Patchwork {
     /// It is illegal to have both players be the current player.
     /// It is illegal to have both players have the special tile.
     /// It is illegal to have both players be first to reach the end.
-    /// TODO: LAST: Change everywhere
     pub(crate) status_flags: u8,
 }
 
@@ -207,7 +216,7 @@ impl Patchwork {
         }
     }
 
-    /// Unsets the special tile condition for the given player.
+    /// Unset the special tile condition for the given player.
     ///
     /// Does nothing if the special tile condition has not been reached.
     ///
@@ -243,7 +252,7 @@ impl Patchwork {
     ///
     /// # Undefined Behavior
     ///
-    /// If the goal has already beed reached by either player. This will panic
+    /// If the goal has already been reached by either player. This will panic
     /// in debug mode.
     ///
     /// # Complexity
@@ -262,7 +271,7 @@ impl Patchwork {
         }
     }
 
-    /// Unsets the goal reached for the given player.
+    /// Unset the goal reached for the given player.
     ///
     /// Does nothing if the goal has not been reached.
     ///
@@ -270,6 +279,8 @@ impl Patchwork {
     ///
     /// * `player_flag` - The player to unset the goal reached for.
     pub fn unset_goal_reached(&mut self, player_flag: u8) {
+        debug_assert!(player_flag >> 2 == 0, "[Patchwork::unset_goal_reached] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
+
         if Self::is_flag_player_1(player_flag) {
             self.status_flags &= !status_enum::PLAYER_1_FIRST_AT_END;
         } else {
@@ -445,7 +456,7 @@ impl Serialize for Patchwork {
         state.serialize_field("player_1", &self.player_1)?;
         state.serialize_field("player_2", &self.player_2)?;
         state.serialize_field("turn_type", &self.turn_type)?;
-        state.serialize_field("current_player_flag", &self.status_flags)?;
+        state.serialize_field("status_flags", &self.status_flags)?;
         state.end()
     }
 }
@@ -463,7 +474,7 @@ impl<'de> Deserialize<'de> for Patchwork {
             Player1,
             Player2,
             TurnType,
-            CurrentPlayerFlag,
+            StatusFlags,
         }
 
         struct PatchworkVisitor;
@@ -494,7 +505,7 @@ impl<'de> Deserialize<'de> for Patchwork {
                 let turn_type = seq
                     .next_element()?
                     .ok_or_else(|| serde::de::Error::invalid_length(4, &self))?;
-                let current_player_flag = seq
+                let status_flags = seq
                     .next_element()?
                     .ok_or_else(|| serde::de::Error::invalid_length(5, &self))?;
 
@@ -506,7 +517,7 @@ impl<'de> Deserialize<'de> for Patchwork {
                     player_1,
                     player_2,
                     turn_type,
-                    status_flags: current_player_flag,
+                    status_flags,
                 })
             }
 
@@ -519,7 +530,7 @@ impl<'de> Deserialize<'de> for Patchwork {
                 let mut player_1 = None;
                 let mut player_2 = None;
                 let mut turn_type = None;
-                let mut current_player_flag = None;
+                let mut status_flags = None;
 
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -553,11 +564,11 @@ impl<'de> Deserialize<'de> for Patchwork {
                             }
                             turn_type = Some(map.next_value()?);
                         }
-                        Field::CurrentPlayerFlag => {
-                            if current_player_flag.is_some() {
-                                return Err(serde::de::Error::duplicate_field("current_player_flag"));
+                        Field::StatusFlags => {
+                            if status_flags.is_some() {
+                                return Err(serde::de::Error::duplicate_field("status_flags"));
                             }
-                            current_player_flag = Some(map.next_value()?);
+                            status_flags = Some(map.next_value()?);
                         }
                     }
                 }
@@ -569,8 +580,7 @@ impl<'de> Deserialize<'de> for Patchwork {
                 let player_1 = player_1.ok_or_else(|| serde::de::Error::missing_field("player_1"))?;
                 let player_2 = player_2.ok_or_else(|| serde::de::Error::missing_field("player_2"))?;
                 let turn_type = turn_type.ok_or_else(|| serde::de::Error::missing_field("turn_type"))?;
-                let current_player_flag =
-                    current_player_flag.ok_or_else(|| serde::de::Error::missing_field("current_player_flag"))?;
+                let status_flags = status_flags.ok_or_else(|| serde::de::Error::missing_field("status_flags"))?;
 
                 Ok(Patchwork {
                     patches,
@@ -578,7 +588,7 @@ impl<'de> Deserialize<'de> for Patchwork {
                     player_1,
                     player_2,
                     turn_type,
-                    status_flags: current_player_flag,
+                    status_flags,
                 })
             }
         }
@@ -589,7 +599,7 @@ impl<'de> Deserialize<'de> for Patchwork {
             "player_1",
             "player_2",
             "turn_type",
-            "current_player_flag",
+            "status_flags",
         ];
         deserializer.deserialize_struct("Patchwork", FIELDS, PatchworkVisitor)
     }

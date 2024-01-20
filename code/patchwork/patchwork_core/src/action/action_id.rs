@@ -197,7 +197,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn from_bits(bits: u32) -> Self {
-        debug_assert!(Self::is_valid_action_id(bits));
+        debug_assert!(
+            Self::is_valid_action_id(bits),
+            "[ActionId::from_bits] The given bits do not represent a valid action id."
+        );
         Self(bits)
     }
 
@@ -256,7 +259,10 @@ impl ActionId {
     /// action and does not contain hidden information.
     /// This will panic in debug mode.
     pub fn from_natural_action_id(natural_action_id: NaturalActionId) -> Self {
-        debug_assert!(NaturalActionId::is_valid_natural_action_id(natural_action_id.as_bits()));
+        debug_assert!(
+            NaturalActionId::is_valid_natural_action_id(natural_action_id.as_bits()),
+            "[ActionId::from_natural_action_id] The given natural action id is not a valid natural action id."
+        );
 
         let masked_natural_action_id = natural_action_id.as_bits();
         Self(match masked_natural_action_id {
@@ -456,7 +462,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_starting_index(&self) -> u8 {
-        debug_assert!(self.is_walking());
+        debug_assert!(
+            self.is_walking(),
+            "[ActionId::get_starting_index] Action id is not a walking action."
+        );
         (self.0 - Self::WALKING_ACTION_ID_START) as u8
     }
 
@@ -477,7 +486,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_id(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_patch_id] Action id is not a patch placement action."
+        );
         ((self.0 - Self::PATCH_PLACEMENT_ID_START) / PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
             % PatchManager::AMOUNT_OF_NORMAL_PATCHES as u32) as u8
     }
@@ -499,7 +511,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_index(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_patch_index] Action id is not a patch placement action."
+        );
         ((self.0 - Self::PATCH_PLACEMENT_ID_START)
             / PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
             / (PatchManager::AMOUNT_OF_NORMAL_PATCHES as u32)
@@ -523,7 +538,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub fn get_quilt_board_index(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[ActionId::get_quilt_board_index] Action id is not a patch placement or special patch placement action."
+        );
 
         if self.is_special_patch_placement() {
             return (self.0 - Self::SPECIAL_PATCH_PLACEMENT_ID_START) as u8;
@@ -554,7 +572,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline]
     pub fn get_row(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[ActionId::get_row] Action id is not a patch placement or special patch placement action."
+        );
 
         if self.is_special_patch_placement() {
             let (row, _) = QuiltBoard::get_row_column((self.0 - Self::SPECIAL_PATCH_PLACEMENT_ID_START) as u8);
@@ -585,7 +606,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline]
     pub fn get_column(&self) -> u8 {
-        debug_assert!(self.is_patch_placement() || self.is_special_patch_placement());
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[ActionId::get_column] Action id is not a patch placement or special patch placement action."
+        );
 
         if self.is_special_patch_placement() {
             let (_, column) = QuiltBoard::get_row_column((self.0 - Self::SPECIAL_PATCH_PLACEMENT_ID_START) as u8);
@@ -616,7 +640,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub fn get_rotation(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_rotation] Action id is not a patch placement action."
+        );
 
         let patch_id = self.get_patch_id();
         let patch_transformation_index = self.get_patch_transformation_index();
@@ -642,7 +669,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub fn get_orientation(&self) -> u8 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_orientation] Action id is not a patch placement action."
+        );
 
         let patch_id = self.get_patch_id();
         let patch_transformation_index = self.get_patch_transformation_index();
@@ -668,7 +698,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_patch_transformation_index(&self) -> u16 {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_patch_transformation_index] Action id is not a patch placement action."
+        );
         ((self.0 - Self::PATCH_PLACEMENT_ID_START) % PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS) as u16
     }
 
@@ -689,7 +722,10 @@ impl ActionId {
     /// This will panic in debug mode.
     #[inline(always)]
     pub const fn get_previous_player_was_1(&self) -> bool {
-        debug_assert!(self.is_patch_placement());
+        debug_assert!(
+            self.is_patch_placement(),
+            "[ActionId::get_previous_player_was_1] Action id is not a patch placement action."
+        );
         (self.0 - Self::PATCH_PLACEMENT_ID_START)
             / PatchManager::MAX_AMOUNT_OF_CHOOSABLE_TILES
             / PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS

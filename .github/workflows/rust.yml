@@ -33,9 +33,9 @@ jobs:
             - name: Cargo Doc Test
               working-directory: ./code/patchwork
               run: cargo test --workspace --doc
-            - name: Cargo Performance Tests
-              working-directory: ./code/patchwork
-              run: cargo test --no-default-features --features performance_tests --release --workspace --all-targets performance_tests -- --nocapture --test-threads=1
+            - name: Cargo Bench
+              working-directory: ./code/patchwork/patchwork_core
+              run: cargo bench --bench performance
     fmt:
         name: cargo fmt
         runs-on: ubuntu-latest

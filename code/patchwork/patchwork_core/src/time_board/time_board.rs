@@ -485,6 +485,7 @@ impl TimeBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
     pub fn get_player_position(&self, player_flag: u8) -> u8 {
+        debug_assert!(player_flag >> 2 == 0, "[TimeBoard::get_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
         self.tiles
             .iter()
             .position(|&tile| tile & player_flag > 0)
@@ -502,6 +503,7 @@ impl TimeBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
     pub fn set_player_position(&mut self, player_flag: u8, position: usize) {
+        debug_assert!(player_flag >> 2 == 0, "[TimeBoard::set_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
         let clamped_position = position.min(TimeBoard::MAX_POSITION as usize);
         self.tiles.iter_mut().for_each(|tile| *tile &= !player_flag);
         self.tiles[clamped_position] |= player_flag;
@@ -527,10 +529,13 @@ impl TimeBoard {
     pub fn move_player_position(&mut self, player_flag: u8, old_position: u8, new_position: u8) {
         let old_position = old_position.min(TimeBoard::MAX_POSITION);
 
+        debug_assert!(player_flag >> 2 == 0, "[TimeBoard::move_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
         debug_assert_eq!(
             self.get_player_position(player_flag),
             old_position,
-            "The given old position is not valid."
+            "[TimeBoard::move_player_position] time_board.get_player_position({:?}) != {:?} (old_position): The given old position is not valid.",
+            player_flag,
+            old_position
         );
 
         // reset old position
