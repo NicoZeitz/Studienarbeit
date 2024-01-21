@@ -1,0 +1,14 @@
+[package]
+name = "empirical_measurement"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork_core = { path = "../../patchwork_core" }
+bincode = "1.3.3"
+clap = { version = "4.4.8", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }

@@ -9,6 +9,7 @@ package.license = "MIT"
 members = [
     "action_orderer",
     "alphazero_player",
+    "analysis/empirical_measurement",
     "console",
     "evaluator",
     "greedy_player",
@@ -19,8 +20,10 @@ members = [
     "patchwork_macros",
     "patchwork",
     "principal_variation_search_player",
+    "pv_table",
     "random_player",
-    "tree_policy", "pv_table", "transposition_table",
+    "transposition_table",
+    "tree_policy",
 ]
 resolver = "2"
 
