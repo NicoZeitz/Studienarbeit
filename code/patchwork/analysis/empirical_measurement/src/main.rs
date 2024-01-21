@@ -5,6 +5,16 @@ use patchwork_core::TurnType;
 use crate::deserialization::GameLoader;
 
 fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gather: Gather) {
+    if !gather.available_actions && !gather.game {
+        println!("Nothing to gather");
+        return;
+    }
+
+    // Create output directory if it does not exist
+    if !output.exists() {
+        std::fs::create_dir_all(output).unwrap();
+    }
+
     let mut game_length_writer = if gather.game {
         Some(
             csv::WriterBuilder::new()
@@ -111,16 +121,16 @@ fn main() {
             clap::Arg::new("game")
                 .long("game")
                 .alias("game")
-                .default_value("false")
-                .value_parser(clap::value_parser!(bool))
+                .required(false)
+                .num_args(0)
                 .help("Gathers statistics about the length of games"),
         )
         .arg(
             clap::Arg::new("available-actions")
                 .long("available-actions")
                 .alias("available-actions")
-                .default_value("false")
-                .value_parser(clap::value_parser!(bool))
+                .required(false)
+                .num_args(0)
                 .help("Gathers statistics about the number of available actions per turn"),
         );
 
@@ -129,8 +139,8 @@ fn main() {
         matches.get_one::<std::path::PathBuf>("in").unwrap(),
         matches.get_one::<std::path::PathBuf>("out").unwrap(),
         Gather {
-            game: *matches.get_one::<bool>("game").unwrap_or(&false),
-            available_actions: *matches.get_one::<bool>("available-actions").unwrap_or(&false),
+            game: matches.get_flag("game"),
+            available_actions: matches.get_flag("available-actions"),
         },
     );
 }

@@ -391,5 +391,6 @@ dist-ssr
 
 games/normal/*.bin
 games/force_swap/*.bin
+**/datasets/**
 
 **/Praxisbericht.pdf
