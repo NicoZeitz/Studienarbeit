@@ -111,6 +111,7 @@ Wie bereits in »\nameref{section:spielregeln}« erläutert, existieren zwei ver
 Aus diesem Grund kann Patchwork nachfolgend als ein Spiel betrachtet werden, da die Auswahl eines konkreten Zeitplans keinen Unterschied für die Betrachtung ausmacht.
 
 \subsection*{Länge des Spiels}
+\label{subsection:analyse-laenge-des-spiels}
 
 In der Spieltheorie ist der Begriff eines Spielzuges nicht eindeutig. Ein Spielzug könnte eine einzelne Aktion eines Spielers sein, \zB das Auswählen und Legen eines Flickens in Patchwork von einem Spieler. Jedoch kann ein Spielzug auch so verstanden werden, dass beide Spieler eine Aktion machen müssen. So wird beispielsweise in rundenbasierten Spielen wie Schach ein Spielzug oft so angesehen, dass einmal die weiße und einmal die schwarze Seite gezogen haben müssen. Aufgrund dieser Zweideutigkeit wird ein Spielzug in der Spieltheorie mit einem \hyperref[text:ply]{\emph{Ply}} genauer definiert.
 
@@ -380,3 +381,112 @@ min score
 -81*2 + 0 = -162
 
 nicht realistisch, da man immer durch laufen mindestens 1 punkte bekommt. einzige möglichkeit punkte loszuwerden ist das quilt board zu füllen
+
+\subsection*{Betrachtung der Spiel-Komplexität}
+
+TODO:
+
+Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
+
+Eine Schätzung für die Spielbaumkomplexität wird im nachfolgenden Abschnitt vorgenommen.
+
+\section{Auswertung empirischer Daten}
+
+Um die vorangegangenen Komplexitätsbetrachtungen genauer einordnen zu können und um gleichzeitig eine realistischere Betrachtung von Patchwork zu erhalten, werden 10 Millionen Spiele von Patchwork aufgenommen und ausgewertet. Dabei treten 2 Computer gegeneinander an, welche für ihren Zug immer eine zufällige Aktion aus allen möglichen Aktionen auswählen (siehe Kapitel \ref{section:erstellung-ansatz-a}). So sollten die 10 Millionen Spiele eine möglichst unverzerrte Datenverteilung enthalten, bei der keine bestimmte Spielkonfiguration bevorzugt wird.
+
+% MEAN: 42.8176
+% MEDIAN: 43.0
+% MIN: 34 (Count: 4000)
+% MAX: 54 (Count: 2000)
+% VAR: 8.031931043193113
+% STDEV: 2.834066167751401
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{res/pictures/plots/game_lengths.pdf}
+    % \vspace*{-0.5cm}
+    \caption{Spiellänge der 10 Millionen Spiele in \hyperref[text:ply]{\emph{Plys}}}
+    \label{fig:plot-game-length-10-million}
+\end{figure}
+
+Die durchschnittliche Spiellänge, gemessen in \hyperref[text:ply]{\emph{Plys}}, beträgt ${\approx}42{,}8176$. Die kürzesten Spiele der Messung sind nach 34 \hyperref[text:ply]{\emph{Plys}} beendet. Das bedeutet nicht, dass es keine Spiele geben kann, welche kürzer gehen, sondern dass diese in der Messung nicht vorhanden sind. Zu sehen ist das an der maximalen Länge. Hier wurden nur Spiele bis zu einer Länge von 54 \hyperref[text:ply]{\emph{Plys}} erreicht, während wie in »\nameref{subsection:analyse-laenge-des-spiels}« gezeigt auch ein Spielverlauf mit bis zu 63 \hyperref[text:ply]{\emph{Plys}} möglich ist. Die gesamte Verteilung der Spiellänge der empirischen Messung ist in Diagramm \ref{fig:plot-game-length-10-million} zu sehen.
+
+% MEAN: 83.65933586478253
+% MEDIAN: 11.0
+% MIN: 1 (Count: 130760000)
+% MAX: 1345 (Count: 2000)
+% VAR: 22351.213723901034
+% STDEV: 149.50322312211543
+\begin{wrapfigure}{r}{0.55\textwidth}
+    \vspace*{-0.75cm}
+    \centering
+    \includegraphics[width=0.549\textwidth]{res/pictures/plots/available_actions.pdf}
+    % \vspace{-10pt}
+    \caption[Verteilung der verfügbare Aktionen]{\unskip}
+    Verteilung der verfügbare Aktionen
+    \label{fig:plot-available-actions-10-million}
+    \vspace*{-0.75cm}
+\end{wrapfigure}
+
+Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief.
+
+TODO:
+
+% sum k=1 to n of P(n, k) = n! / (n-k)! = 36! / (36-k)! = 36! / (36-36)! = 36! / 0! = 36!
+
+
+\begin{equation}
+    \frac{n!}{(n-k)!}
+\end{equation}
+
+binom = (n! * k!) / (k!*(n-k)!)
+
+% import math
+% result = 0
+% for k in range(1, n+1):
+%     result += math.factorial(36) // math.factorial(36 - k)
+% print(result)
+
+% P(3) = 15
+% P(2) = 6
+% P(1) = 3
+
+% 1*6+3*2+3*1=15
+
+
+% (1,2,3) * 3!
+% (1,2) * 2!
+% (1,3) * 2!
+% (2,3) * 2!
+% (1) * 1!
+% (2) * 1!
+% (3) * 1!
+% ()  * 0!
+
+% TODO: hyperreferencen für Komplexitätsparameter (e.g. Spielbaumkomplexität) einfügen
+
+\subsection*{Schätzung der Spielbaumkomplexität $(GTC)$}
+
+Mit den empirischen Daten lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
+
+\vspace*{-1cm}
+\begin{align}
+    \label{eqn:gtc-patchwork-branch-estimation}
+    \text{GTC}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
+    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                  \\
+    \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
+\end{align}
+
+Die in \ref{eqn:gtc-patchwork-branch-estimation} resultierende Schätzung von $2{,}08 \cdot 10^{82}$ ist dabei jedoch wahrscheinlich zu groß. Der Median der verfügbaren Aktionen beträgt im Gegensatz zum Durchschnitt nur $11$. Durch einzelne Zustände mit sehr vielen verfügbaren Aktionen wird der Durschnitt angehoben, obwohl in den meisten Zuständen nur eine oder wenige Aktionen möglich sind.
+
+Eine weitere genauere Schätzung für die Komplexität des Spielbaums kann nach A. und D. Yong gefunden werden. Dazu wird ein Spiel mit $N$ \hyperref[text:ply]{\emph{Plys}} gespielt, wobei die einzelnen Aktionen mittels einer Gleichverteilung ausgewählt werden. In jedem \hyperref[text:ply]{\emph{Ply}} $i$ werden dabei die Anzahl der möglichen Aktionen $c_i(g)$ gespeichert. Aus der Multiplikation all dieser Verzweigungen ergibt sich die Zufallsvariable $X(g)$ als Schätzung für die Komplexität des Spielbaums. Um nun eine möglichst akkurate Schätzung zu erhalten, wird dieser Prozess in vielen unabhängigen Durchläufen wiederholt und der Mittelwert wie in Formel \ref{eqn:gtc-patchwork-avg-estimation} gebildet. Mit $n \to \infty$ nähert sich diese Schätzung immer mehr der tatsächlichen Komplexität des Spielbaums an. \cite{2019.GameTreeComplexityEstimation}
+
+\begin{equation}
+    \label{eqn:gtc-patchwork-avg-estimation}
+    \begin{aligned}
+        X(g)                  & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
+        \text{GTC}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
+                              & \approx 1{,}68 \cdot 10^{38}
+    \end{aligned}
+\end{equation}
+
+Als unabhängige Stichproben der Zufallsvariable $X$ können die aufgenommenen 10 Millionen Spiele eingesetzt werden. Somit ergibt sich eine Schätzung der Spielbaumkomplexität von $1{,}68 \cdot 10^{38}$.
