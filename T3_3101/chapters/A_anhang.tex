@@ -5,11 +5,65 @@ TODO:
 
 Tabelle/Text mit Patchwork Terminologie
 
-TODO: Tabelle aller Flicken sortiert nach Button income
+\pagebreak
+
+\chapter{Patchwork}
+
+% \section{Patchwork \textemdash Terminologie}
+
+% TODO:
+
+\section{Zeitpläne}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\linewidth]{res/pictures/assets/game-board-side-1.png}};
+            \drawshadow{image}
+        \end{tikzpicture}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\linewidth]{res/pictures/assets/game-board-side-2.png}};
+            \drawshadow{image}
+        \end{tikzpicture}
+    \end{minipage}
+    \vspace*{-0.05cm}
+    \caption{Die zwei Seiten des Zeitplans}
+    \label{fig:patchwork-time-board}
+\end{figure}
+
+\section{Ablagepläne}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\linewidth]{res/pictures/assets/board-player-1.png}};
+            \drawshadow{image}
+        \end{tikzpicture}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.75\linewidth]{res/pictures/assets/board-player-2.png}};
+            \drawshadow{image}
+        \end{tikzpicture}
+    \end{minipage}
+    \vspace*{-0.05cm}
+    \caption{Ablagepläne (Decken) der Spieler}
+    \label{fig:patchwork-player-quilt-board}
+\end{figure}
 
 \pagebreak
 
-\chapter{Tabellen}
+\section{Flicken}
 
 \begin{longtable}[t]{|c|c|c|c|c|c|}
     \hline
@@ -23,7 +77,7 @@ TODO: Tabelle aller Flicken sortiert nach Button income
     \hline \multicolumn{6}{r}{\textit{Fortsetzung auf der nächsten Seite}}                                                                                                                                                                                                           \\
     \endfoot
     \hline
-    \caption{Alle Flicken in Patchwork}
+    \caption{Alle 33 Flicken in Patchwork}
     \label{tabelle:all-patches}
     \endlastfoot
     \adjustbox{valign=m, max width=0.2\textwidth, max height=0.1\textheight}{\includegraphics[width=0.2\textwidth]{res/pictures/assets/00-front.png}} & $0$  & $2$         & $1$        & $0$            & $0$                                                                       \\ \hline
