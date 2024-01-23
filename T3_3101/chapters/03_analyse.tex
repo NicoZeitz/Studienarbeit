@@ -38,7 +38,7 @@ Die Aktion \textbf{Flicken nehmen und einfügen} besteht aus fünf Schritten, we
     \item \textbf{Spielfigur setzen}: Der Spieler setzt die Spielfigur neben den ausgewählten Flicken. \cite{2014.PatchworkSpielanleitung}
     \item \textbf{Flicken bezahlen und nehmen}: Der Spieler bezahlt die auf dem Etikett des Flickens angegebene Knopfzahl (in Abbildung \ref{fig:patch-explanation} zu sehen) an den Vorrat und legt den Flicken zu seinem Ablageplan. \cite{2014.PatchworkSpielanleitung}
     \item \textbf{Flicken platzieren}: Der Spieler platziert den Flicken auf seinen Ablageplan mit beliebiger Rotation und Spiegelung. Jedoch dürfen nur freie Felder belegt werden und der Flicken muss vollständig auf dem Ablageplan liegen, sie dürfen also nicht über den Rand des Plans hinausragen. \cite{2014.PatchworkSpielanleitung}
-    \item \textbf{Zeitstein ziehen}: Der Spieler zieht seinen Zeitstein so viele Felder nach vorne (in Abbildung \ref{fig:patch-explanation} zu sehen), wie auf dem Etikett des eben abgelegten Flickens abgebildet sind. Ist das letzte Feld des Zuges jenes Feld, auf welchem schon der andere Spieler steht, wird der Zeitstein auf den des anderen Spielers gestellt. \cite{2014.PatchworkSpielanleitung}
+    \item \textbf{Zeitstein ziehen}: Der Spieler zieht seinen Zeitstein so viele Felder nach vorne, wie auf dem Etikett des eben abgelegten Flickens abgebildet sind (in Abbildung \ref{fig:patch-explanation} zu sehen). Ist das letzte Feld des Zuges jenes Feld, auf welchem schon der andere Spieler steht, wird der Zeitstein auf den des anderen Spielers gestellt. \cite{2014.PatchworkSpielanleitung}
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -83,7 +83,7 @@ Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettsp
 
 \subsection*{Anzahl der möglichen Startpositionen}
 
-Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000 \approx 2,6 \cdot 10^{35}$ Möglichkeiten. Somit gibt es $2,6 \cdot 10^{35}$ mögliche Startpositionen.
+Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000$ Möglichkeiten. Somit gibt es $\approx 2{,}6 \cdot 10^{35}$ mögliche Startpositionen.
 
 \subsection*{Isomorphie der Zeitpläne}
 
@@ -133,13 +133,13 @@ Immer wenn ein Spieler an der Reihe ist, kann er zwischen dem Vorrücken und dem
 
 Patchwork endet, sobald beide Zeitsteine der Spieler das Zielfeld auf der Zeitleiste erreicht haben. Um ein möglichst langes Spiel zu spielen, muss also die Anzahl der Felder, die ein Spieler mit seinem Zeitstein pro \hyperref[text:ply]{\emph{Ply}} vorzieht, minimiert werden.
 
-Für die Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} ist die Anzahl der Felder immer durch den ausgewählten Flicken vorgegeben und beträgt mindestens 1 und maximal 6.
+Für die Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} ist die Anzahl der Felder immer durch den ausgewählten Flicken vorgegeben und beträgt mindestens 1 und maximal 6 (vgl. Zeitkosten in Anhang \ref{anhang:section-patchwork-patches}).
 
 \pagebreak
 
-Die Anzahl der Felder bei der Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} ist abhängig von der relativen Position der einzelnen Zeitsteine zueinander. Die maximale Anzahl an Feldern, die ein Zeitstein in einem Zug vorrücken kann, beträgt 7. Da immer ein Spielerwechsel stattfindet, sobald der Zeitstein des derzeitigen Spielers weiter vorrangeschritten ist als der Zeitstein des Gegners, muss für eine maximale Anzahl die Distanz zwischen den Zeitsteinen möglichst groß sein. Ein Zeitstein kann sich von dem anderem Zeitstein nur um maximal 6 Felder entfernen. Das ist der Fall, wenn der Flicken mit Zeitkosten 6 ausgewählt wird, während sich beide Zeitsteine auf demselben Feld befinden. Nach dieser Aktion ist der andere Spieler an der Reihe, welche sein Zeitstein um 7 Felder fortbewegen kann (Distanz von 6 Feldern $+$ 1 Feld, um weiter vorrangeschritten zu sein als der andere Zeitstein). Die minimale Anzahl an Felder bei der Vorrücken-Aktion beträgt 1 und kann bei drei Spielzuständen auftreten. Zuerst ist es möglich, dass beide Zeitsteine auf demselben Feld sind, sodass der Spieler, welcher an der Reihe ist, seinen Zeitstein nur 1 Feld vorrückt. Weiterhin ist es möglich, dass ein Zeitstein auf dem Feld vor dem Ziel ist, während der andere Spieler bereits im Ziel ist. In dieser Situation darf der Zeitstein auch nur um ein Feld vorgerückt werden. Zuletzt existiert noch die Situation am Spielanfang. Da hier auch beide Zeitsteine auf demselben Feld \textemdash{} dem Startfeld des Zeitplans \textemdash{} sind, darf der Startspieler den Zeitstein auch nur um ein Feld vorrücken.
+Die Anzahl der Felder bei der Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} ist abhängig von der relativen Position der einzelnen Zeitsteine zueinander. Die maximale Anzahl an Feldern, die ein Zeitstein in einem Zug vorrücken kann, beträgt 7. Da immer ein Spielerwechsel stattfindet, sobald der Zeitstein des derzeitigen Spielers weiter vorrangeschritten ist als der Zeitstein des Gegners, muss für eine maximale Anzahl die Distanz zwischen den Zeitsteinen möglichst groß sein. Ein Zeitstein kann sich von dem anderem Zeitstein nur um maximal 6 Felder entfernen. Das ist der Fall, wenn ein Flicken mit Zeitkosten 6 ausgewählt wird, während sich beide Zeitsteine auf demselben Feld befinden. Nach dieser Aktion ist der andere Spieler an der Reihe, welche sein Zeitstein um 7 Felder fortbewegen kann (Distanz von 6 Feldern $+$ 1 Feld, um weiter vorrangeschritten zu sein als der andere Zeitstein). Die minimale Anzahl an Felder bei der Vorrücken-Aktion beträgt 1 und kann bei drei Spielzuständen auftreten. Zuerst ist es möglich, dass beide Zeitsteine auf demselben Feld sind, sodass der Spieler, welcher an der Reihe ist, seinen Zeitstein nur 1 Feld vorrückt. Weiterhin ist es möglich, dass ein Zeitstein auf dem Feld vor dem Ziel ist, während der andere Spieler bereits im Ziel ist. In dieser Situation darf der Zeitstein auch nur um ein Feld vorgerückt werden. Zuletzt existiert noch die Situation am Spielanfang. Da hier auch beide Zeitsteine auf demselben Feld \textemdash{} dem Startfeld des Zeitplans \textemdash{} sind, darf der Startspieler den Zeitstein auch nur um ein Feld vorrücken.
 
-Um die Länge des Spiels zu maximieren, sollte jeder Spieler so wenige Felder wie möglich vorrücken. Nutzt jeder Spieler immer die \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion, so gibt es insgesamt 54 \hyperref[text:ply]{\emph{Plys}}, da auf dem Zeitplan insgesamt 53 Felder sowie ein Start- und ein Zielfeld existieren. Während beim ersten und letzen \hyperref[text:ply]{\emph{Ply}} der Erste bzw. Zweite Spieler seinen Zeitstein nur um 1 Feld vorrückt, muss der Zeitstein während des Spiels immer 2 Felder vorgerückt werden, da die vorherige Aktion \textemdash{} auch eine \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion \textemdash{} impliziert, dass der Zeitstein des Gegners genau 1 Feld vor dem eigenen Zeitstein liegt.
+Um die Länge des Spiels zu maximieren, sollte jeder Spieler so wenige Felder wie möglich vorrücken. Nutzt jeder Spieler immer die \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion, so gibt es insgesamt 54 \hyperref[text:ply]{\emph{Plys}}, da auf dem Zeitplan insgesamt 53 Felder sowie ein Start- und ein Zielfeld existieren. Während beim ersten und letzen \hyperref[text:ply]{\emph{Ply}} der Erste bzw. Zweite Spieler seinen Zeitstein nur um 1 Feld vorrückt, muss der Zeitstein während des Spiels immer 2 Felder vorgerückt werden, da die vorherige Aktion \textemdash{} auch eine \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} Aktion \textemdash{} impliziert, dass der Zeitstein des Gegners genau 1 Feld vor dem eigenen Zeitstein liegt. Die Zeitkosten bei der Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} sind immer fest, wobei es insgesamt neun Flicken gibt, bei denen die Zeitkosten auch 2 betragen. So können optimal 9 Vorrücken-Aktionen durch die Auswahl dieser Flicken ersetzt werden. Weiterhin gibt es aber auch noch die vier in \ref{tabelle:flicken-mit-zeitkosten-1} dargestellten Flicken, welche nur Zeitkosten von 1 besitzen. Wird nun ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit 2 Zeitkosten durch eine Kombination aus Flicken mit Zeitkosten 1 auswählen und auf der Decke Platzieren und anschließend ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten 1 ersetzt, ist das Spiel um 4 weitere \hyperref[text:ply]{\emph{Plys}} verlängert.
 
 \begin{table}[!ht]
     \centering
@@ -156,7 +156,7 @@ Um die Länge des Spiels zu maximieren, sollte jeder Spieler so wenige Felder wi
     \label{tabelle:flicken-mit-zeitkosten-1}
 \end{table}
 
-Die Zeitkosten bei der Aktion \enquote{Einen Flicken nehmen und auf der Decke platzieren} sind immer fest, wobei es insgesamt neun Flicken gibt, bei denen die Zeitkosten auch 2 betragen. So können optimal 9 Vorrücken-Aktionen durch die Auswahl dieser Flicken ersetzt werden. Weiterhin gibt es aber auch noch die vier in \ref{tabelle:flicken-mit-zeitkosten-1} dargestellten Flicken, welche nur Zeitkosten von 1 besitzen. Wird nun ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit 2 Zeitkosten durch eine Kombination aus Flicken mit Zeitkosten 1 auswählen und auf der Decke Platzieren und anschließend ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten 1 ersetzt, ist das Spiel um 4 weitere \hyperref[text:ply]{\emph{Plys}} verlängert. Das ist möglich, da davon wie oben beschrieben der Zeitstein des derzeitigen Spielers immer direkt hinter dem Zeitstein des Gegners ist. Wird nun ein Flicken mit Zeitkosten 1 ausgewählt, befindet sich der Zeitstein des derzeitigen Spielers auf dem Zeitstein des Gegners. So kann ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten von 1 anstatt 2 ausgeführt werden. Da alle anderen Flicken höhere Zeitkosten verlangen, ist keine weitere Optimierung des Spiels hinsichtlich der der maximalen Länge mehr möglich.
+Das ist möglich, da wie oben beschrieben der Zeitstein des derzeitigen Spielers immer direkt hinter dem Zeitstein des Gegners ist. Wird nun ein Flicken mit Zeitkosten 1 ausgewählt, befindet sich der Zeitstein des derzeitigen Spielers auf dem Zeitstein des Gegners. So kann ein Vorrücken-\hyperref[text:ply]{\emph{Ply}} mit Zeitkosten von 1 anstatt 2 ausgeführt werden. Da alle anderen Flicken höhere Zeitkosten verlangen, ist keine weitere Optimierung des Spiels hinsichtlich der der maximalen Länge mehr möglich.
 
 Die maximale Länge des Brettspiels ergibt sich somit aus der Kombination der 54 Vorrücken-\hyperref[text:ply]{\emph{Plys}} zusammen mit den 4 zusätzlich gewonnenen \hyperref[text:ply]{\emph{Plys}} durch das Legen von Flicken mit Zeitkosten 1. Weiterhin kommen noch die fünf \hyperref[text:ply]{\emph{Plys}} für das Legen von Spezialflicken hinzu. Somit beträgt die maximale Länge von Patchwork \textbf{63} \hyperref[text:ply]{\emph{Plys}}.
 
@@ -164,7 +164,7 @@ Die maximale Länge des Brettspiels ergibt sich somit aus der Kombination der 54
 
 Um die Komplexität von Patchwork zu untersuchen, ist es auch interessant zu betrachten, wie viele Auswahlmöglichkeiten einem Spieler bei seinem Zug zur Verfügung stehen.
 
-Ist ein Spieler am Zug, kann er immer die Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} auswählen. Somit beträgt die minimale Anzahl an Aktionen mindestens 1. Dabei handelt es sich auch um das Minimum, da der derzeitige Spieler weniger Knöpfe im Vorrat haben kann, als die ersten 3 Flicken nach der Spielfigur an Knöpfen kostet. Somit kann der Spieler sich keinen der Flicken leisten und muss automatisch seinen Zeitstein vorrücken.
+Ist ein Spieler am Zug, kann er immer die Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} auswählen. Somit beträgt die minimale Anzahl an Aktionen mindestens 1. Dabei handelt es sich auch um das Minimum, da der derzeitige Spieler weniger Knöpfe in seinem Vorrat haben kann, als jede der ersten 3 Flicken nach der Spielfigur an Knöpfen kostet. Somit kann der Spieler sich keinen der Flicken leisten und muss automatisch seinen Zeitstein vorrücken.
 
 Eine obere Schranke für die maximal mögliche Anzahl an Aktionen ergibt sich als:
 
@@ -178,22 +178,24 @@ Eine obere Schranke für die maximal mögliche Anzahl an Aktionen ergibt sich al
     \max\limits_{\mathclap{\substack{\phantom{\text{\tiny m}} \\ f\, \in\, \text{Flicken}}}} \:\,
     \left\lvert\, \text{Platziermöglichkeiten}\left( f \right)\, \right\rvert
 \end{equation}
+\vspace*{-0.15cm}
 
 Dabei ist eine $+1$ für die Aktion \enquote{Vorrücken des Zeitsteins und Knöpfe erhalten} vorhanden. Weiterhin gibt es für einen Spieler die Möglichkeit aus maximal 3 Flicken einen Flicken auszuwählen. Diese Anzahl wird multipliziert mit der maximalen Anzahl an Möglichkeiten, mit dem ein Flicken auf dem Ablageplatz platziert werden kann.
 
 Um die maximale Anzahl an Platzierungsmöglichkeiten festzulegen, muss zuerst betrachtet werden, auf wie viele Arten ein Flicken auf die Ablagedecke gelegt werden kann. Die Operationen, welche vor dem Platzieren auf einen Flicken angewendet werden können, sind Drehungen und Spiegelungen, wodurch die Flicken identisch zur Diedergruppe $D_4$ sind. Die Gruppe besteht aus 8 Elementen \cite[S. 33]{2015.AbstractAlgebra}, was somit gleichzeigt die maximale Anzahl an Transformationen für ein Flicken ist. Jedoch muss beachtet werden, dass die Flicken die maximale Anzahl nicht erreichen müssen. Zum Beispiel existiert ein $2\times2$ Flicken, welcher im Sinne der Diedergruppe 8 Ausprägungen besitzt, jedoch auf der Ablagedecke mit allen Drehungen und Spiegelungen immer genau dieselben Felder bedeckt. Für die maximale Platzierungsanzahl ist aber nur relevant, dass ein Flicken existiert, welcher bei allen 8 Transformationen eine andere Anordnung aufweist. Dieser Flicken existiert und ist in Abbildung \ref{fig:diedergruppe} dargestellt.
 
+\vspace*{-0.325cm}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.995\textwidth]{res/pictures/dihedral-group.pdf}
-    \vspace*{-0.5cm}
+    \includegraphics[width=0.885\textwidth]{res/pictures/dihedral-group.png}
+    \vspace*{-0.225cm}
     \caption{Flicken mit 8 verschiedenen Transformationen}
     \label{fig:diedergruppe}
 \end{figure}
 
 Weiterhin gibt es verschiedene Möglichkeiten den transformierten Flicken auf den $9\times9$ Felder großen Ablageplan zu legen. Die Möglichkeiten lassen sich dabei einfach wie in Term \ref{eqn:ablagefeld-platzierungen} in Abhängigkeit von der Breite und Höhe des Flickens sowie der Anzahl der unterschiedlichen Transformationen berechnen.
 
-\vspace*{-0.45cm}
+\vspace*{-0.4cm}
 \begin{equation}
     \label{eqn:ablagefeld-platzierungen}
     \left( 9 - \text{Höhe}  + 1 \right) \cdot
@@ -203,21 +205,24 @@ Weiterhin gibt es verschiedene Möglichkeiten den transformierten Flicken auf de
 
 Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dargestellten $3\times 2$ großen Flicken beträgt somit $\left( 9 - 3 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 8 = 448$. Jedoch muss für die Platzierungsmöglichkeiten beachtet werden, dass sich die Anzahl reduziert, je größer ein Flicken ist. Somit muss für alle Flicken, dessen Höhe $\le 3$ und Breite $\le 2$ ist \textemdash{} wobei mindestens eine der beiden Ungleichungen strikt (also $<$) sein muss \textemdash{} überprüft werden, ob mehr Platzierungsmöglichkeiten bestehen als bei dem Flicken von \ref{fig:diedergruppe}. Es existieren nur 3 Flicken dieser Art, welche in Tabelle \ref{tabelle:kleine-flicken} dargestellt sind. Jeder dieser Flicken weißt dabei durch die geringere Anzahl an verschiedenen Transformationsmöglichkeiten insgesamt weniger Platzierungsmöglichkeiten auf als der Flicken in \ref{fig:diedergruppe}.
 
+\vspace*{0.5cm}
 \begin{table}[!ht]
     \centering
     \begin{tabular}[t]{c|c}
-        Flicken                                                                                                                        & Platzierungsmöglichkeiten \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/00-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
-        $\left( 9 - 1 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 2 = 144$ \hspace*{0.5cm}                                                                    \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/09-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
-        $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 1 = 64$ \hspace*{0.5cm}                                                                     \\ \hline
-        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.15\textwidth]{res/pictures/assets/21-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
-        $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 4 = 256$ \hspace*{0.5cm}                                                                    \\
+        \raisebox{0pt}[0.5ex][0.5ex]{Flicken}                                                                                                                         & Platzierungsmöglichkeiten \\ \hline
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.175\textwidth]{res/pictures/assets/00-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        $\left( 9 - 1 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 2 = 144$ \hspace*{0.5cm}                                                                     \\ \hline
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.175\textwidth]{res/pictures/assets/09-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 1 = 64$ \hspace*{0.5cm}                                                                      \\ \hline
+        \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.175\textwidth]{res/pictures/assets/21-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
+        $\left( 9 - 2 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 4 = 256$ \hspace*{0.5cm}                                                                     \\
     \end{tabular}
     \vspace{5pt}
     \caption{Platzierungsmöglichkeiten der kleineren Flicken}
     \label{tabelle:kleine-flicken}
 \end{table}
+
+\pagebreak
 
 \begin{wrapfigure}{r}{0.25\textwidth}
     \vspace*{-0.1cm}
@@ -240,7 +245,7 @@ Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dar
 
 Um sicherzustellen, dass die maximale Platzierungsmöglichkeit auf dem Ablageplan auch tatsächlich für die drei zur Verfügung stehenden Flicken auftreten kann, müssen mindestens drei unterschiedliche Flicken mit einer Größe von $3 \times 2$ bzw. $2 \times 3$ existieren, welche 448 Möglichkeiten zur Platzierung auf dem Ablageplan besitzen. Das ist der Fall, wie die Flicken in Abbildung \ref{fig:flicken-mit-448} zeigen.
 
-Um die maximale Anzahl an möglichen Aktionen festzustellen muss zuletzt noch das Platzieren von Spezialflicken als Sonderfall betrachtet werden. Da alle Spezialflicken eine Größe von $1 \times 1$ besitzen, unterscheiden sich die Transformationen nicht hinsichtlich der Platzierung auf dem Ablageplan. Somit gibt es $9 \cdot 9 \cdot 1 = 81$ mögliche Aktionen einen Spezialflicken auf dem Ablageplan zu platzieren.
+Um die maximale Anzahl an möglichen Aktionen festzustellen, muss zuletzt noch das Platzieren von Spezialflicken als Sonderfall betrachtet werden. Da alle Spezialflicken eine Größe von $1 \times 1$ besitzen, unterscheiden sich die Transformationen nicht hinsichtlich der Platzierung auf dem Ablageplan. Somit gibt es $9 \cdot 9 \cdot 1 = 81$ mögliche Aktionen einen Spezialflicken auf dem Ablageplan zu platzieren.
 
 Das tatsächliche Maximum für die mögliche Anzahl an Aktionen ergibt sich dann als das Maximum der normalen Aktionen und der Aktion \enquote{Legen eines Spezialflicken} wie in \ref{eqn:max-aktionen} dargestellt ist:
 
@@ -258,7 +263,7 @@ In dieser Sektion wird eine obere und eine untere Schranke für die Wertung eine
 
 Ein Spieler hat 2 Möglichkeiten bei der Wertung möglichst viele positive Punkte zu sammeln. Erstens kann der Spieler das $7 \times 7$ Sonderplättchen erhalten, was die Wertung um 7 Punkte erhöht. Weiterhin zählt jeder Knopf im Vorrat einen Punkt. Zu Beginn erhält jeder Spieler 5 Knöpfe. Der Knopfvorrat kann nur durch die 9 Knopf-Wertungen auf der Zeitleiste erhöht werden. Dabei ist die Erhöhung des Knopfvorrates abhängig von den Flicken auf dem Ablageplan. Da der Ablageplan eine feste Größe besitzt, existiert somit auch eine Obergrenze für das zusätzliche Knopfeinkommen und die Anzahl der positiven Punkte für die Wertung ist von oben begrenzt. Die einfache Obergrenze für den positiven Anteil bei der Endbewertung ist daher $5+7+81\cdot 9=741$.
 
-Diese Obergrenze würde aber erfordern, dass alle Flicken auf dem Ablageplan mindestens die gleiche Anzahl an Knopfeinkommen haben, wie die Anzahl der Felder, die sie bedecken. Diese Annahme gilt für keinen der Flicken in Patchwork. Für eine realistischere Obergrenze werden alle Flicken nach dem prozentualen Anteil des Knöpfeinkommens im Verhältnis zur Anzahl der Felder, die sie bedecken, sortiert (Siehe Anhang \ref{TODO:}). Werden nun alle Flicken ausgewählt, bis die Grenze von 81 kombinierten Feldern erreicht ist, ergibt sich eine neue Obergrenze für das maximale Knopfeinkommen durch den Ablageplan von 32. Eine beispielhafte Anordnung dieser Flicken ist in Abbildung \ref{fig:quilt-board-max-button-income} zu sehen. Dabei bleiben 2 Felder auf dem Ablageplan frei. Jedoch können alle Flicken mit 2 oder weniger Feldern kein Knopfeinkommen generieren, wodurch dies kein Problem darstellt.
+Diese Obergrenze würde aber erfordern, dass alle Flicken auf dem Ablageplan mindestens die gleiche Anzahl an Knopfeinkommen haben, wie die Anzahl der Felder, die sie bedecken. Diese Annahme gilt für keinen der Flicken in Patchwork. Für eine realistischere Obergrenze werden alle Flicken nach dem prozentualen Anteil des Knöpfeinkommens im Verhältnis zur Anzahl der Felder, die sie bedecken, sortiert (Siehe Anhang \ref{anhang:section-patchwork-patches}). Werden nun alle Flicken ausgewählt, bis die Grenze von 81 kombinierten Feldern erreicht ist, ergibt sich eine neue Obergrenze für das maximale Knopfeinkommen durch den Ablageplan von 32. Eine beispielhafte Anordnung dieser Flicken ist in Abbildung \ref{fig:quilt-board-max-button-income} zu sehen. Dabei bleiben 2 Felder auf dem Ablageplan frei. Jedoch können alle Flicken mit 2 oder weniger Feldern kein Knopfeinkommen generieren, wodurch dies kein Problem darstellt.
 
 % /// index:  4, tiles: 4, buttons: 3, percentage: 0.75
 % /// index:  1, tiles: 5, buttons: 3, percentage: 0.6
