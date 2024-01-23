@@ -65,6 +65,8 @@ Artificial Intelligence to your game (English Edition). Packt Publishing, 2017
 -   Synonyme: https://synonyme.woxikon.de/
 -   Bibtex Formatter: https://flamingtempura.github.io/bibtex-tidy/index.html
 -   ISBN to Bibtex: https://www.bibtex.com/c/isbn-to-bibtex-converter/
+-   Question about latex math mode numbers: https://tex.stackexchange.com/questions/368353/using-equation-split-how-can-i-ensure-that-only-the-last-equation-is-numbered
+-   Question about different asmath enviroments: https://tex.stackexchange.com/questions/239252/what-is-the-difference-between-split-multline-align-breqn-for-breaking-an-equ
 
 ## Commands
 
