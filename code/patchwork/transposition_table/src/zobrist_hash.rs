@@ -62,19 +62,19 @@ impl ZobristHash {
     ///
     /// * A player has `5` buttons at the start of the game.
     /// * There are only `9` button income triggers that can yield a maximum amount
-    ///   of `32` buttons each (see `MAX_BUTTON_INCOME` estimate below).
+    ///   of `30` buttons each (see `MAX_BUTTON_INCOME` estimate below).
     /// * The player can get `1` button income for every tile he walks on the
     ///   time track with the walking action. There are `54` tiles on the time track.
     /// * The only other income source are the `7` buttons from a full quilt board.
     ///
     /// Because of this the maximum button balance a player can have is bounded
-    /// by `5 + 9 · 32 + 7 + 53 · 1 = 353`. This is a upper bound and not the
+    /// by `5 + 9 · 30 + 7 + 53 · 1 = 335`. This is a upper bound and not the
     /// actual maximum because of the same reason as the `MAX_BUTTON_INCOME`
     /// estimate below. Furthermore the player can only choose between the
     /// walking action and the action to place a tile. Therefore he cannot get
     /// both at the same time. It would probably be possible to lower the bound
-    /// to `5 + 9 · 32 + 7 + 54 · 1 = 300` (remove the walking actions) and
-    /// still be correct. But to be safe the bound is kept at `353`.
+    /// to `5 + 9 · 30 + 7 = 282` (remove the walking actions) and
+    /// still be correct. But to be safe the bound is kept at `335`.
     pub const MAX_BUTTON_BALANCE: usize = PlayerState::STARTING_BUTTON_BALANCE as usize
         + TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS * Self::MAX_BUTTON_INCOME
         + QuiltBoard::FULL_BOARD_BUTTON_INCOME as usize
@@ -98,41 +98,42 @@ impl ZobristHash {
     /// Here is the list of all patches and the patches that were chosen ordered
     /// by the percentage of button income in relation to the amount of tiles:
     ///
+    /// Table sorted after percentage
     /// ```txt
-    /// index:  4, tiles: 4, buttons: 3, percentage: 0.75
-    /// index:  1, tiles: 5, buttons: 3, percentage: 0.6
-    /// index:  3, tiles: 6, buttons: 3, percentage: 0.5
-    /// index:  9, tiles: 4, buttons: 2, percentage: 0.5
-    /// index: 12, tiles: 6, buttons: 3, percentage: 0.5
-    /// index: 14, tiles: 4, buttons: 2, percentage: 0.5
-    /// index: 17, tiles: 5, buttons: 2, percentage: 0.4
-    /// index: 18, tiles: 5, buttons: 2, percentage: 0.4
-    /// index: 29, tiles: 5, buttons: 2, percentage: 0.4
-    /// index: 13, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-    /// index: 15, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-    /// index: 30, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-    /// index: 19, tiles: 4, buttons: 1, percentage: 0.25
-    /// index: 26, tiles: 4, buttons: 1, percentage: 0.25
-    /// index: 28, tiles: 4, buttons: 1, percentage: 0.25
-    /// index: 10, tiles: 5, buttons: 1, percentage: 0.2
-    /// index: 27, tiles: 5, buttons: 1, percentage: 0.2
+    /// index:  4, tiles: 4, buttons: 3, percentage: 3/4, time_cost: 6, adjusted: 1/8  = 0.125
+    /// index:  1, tiles: 5, buttons: 3, percentage: 3/5, time_cost: 4, adjusted: 3/20 = 0.15
+    /// index:  3, tiles: 6, buttons: 3, percentage: 1/2, time_cost: 6, adjusted: 1/12 = 0.08‾3
+    /// index:  9, tiles: 4, buttons: 2, percentage: 1/2, time_cost: 5, adjusted: 1/10 = 0.1
+    /// index: 12, tiles: 6, buttons: 3, percentage: 1/2, time_cost: 5, adjusted: 1/10 = 0.1
+    /// index: 14, tiles: 4, buttons: 2, percentage: 1/2, time_cost: 6, adjusted: 1/12 = 0.08‾3
+    /// index: 17, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 4, adjusted: 1/10 = 0.1
+    /// index: 18, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 3, adjusted: 2/15 = 0.1‾3
+    /// index: 29, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 5, adjusted: 2/25 = 0.08
+    /// index: 13, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 2, adjusted: 1/6  = 0.1‾6
+    /// index: 15, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 4, adjusted: 1/12 = 0.08‾3
+    /// index: 30, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 6, adjusted: 1/18 = 0.0‾5
+    /// index: 19, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 2, adjusted: 1/8  = 0.125
+    /// index: 26, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 2, adjusted: 1/8  = 0.125
+    /// index: 28, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 3, adjusted: 1/12 = 0.08‾3
+    /// index: 10, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 3, adjusted: 1/15 = 0.0‾6
+    /// index: 27, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 1, adjusted: 1/5  = 0.2
     /// --------------- CUTOFF AFTER 84 >= 81 TILES COVERED ---------------
-    /// index: 31, tiles: 5, buttons: 1, percentage: 0.2
-    /// index: 16, tiles: 6, buttons: 1, percentage: 0.16666666666666666
-    /// index: 32, tiles: 6, buttons: 1, percentage: 0.16666666666666666
-    /// index: 20, tiles: 7, buttons: 1, percentage: 0.14285714285714285
-    /// index:  2, tiles: 8, buttons: 1, percentage: 0.125
-    /// index:  0, tiles: 2, buttons: 0, percentage: 0
-    /// index:  5, tiles: 6, buttons: 0, percentage: 0
-    /// index:  6, tiles: 6, buttons: 0, percentage: 0
-    /// index:  7, tiles: 7, buttons: 0, percentage: 0
-    /// index:  8, tiles: 5, buttons: 0, percentage: 0
-    /// index: 11, tiles: 6, buttons: 0, percentage: 0
-    /// index: 21, tiles: 3, buttons: 0, percentage: 0
-    /// index: 22, tiles: 5, buttons: 0, percentage: 0
-    /// index: 23, tiles: 3, buttons: 0, percentage: 0
-    /// index: 24, tiles: 4, buttons: 0, percentage: 0
-    /// index: 25, tiles: 3, buttons: 0, percentage: 0
+    /// index: 31, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 4, adjusted: 1/20 = 0.05
+    /// index: 16, tiles: 6, buttons: 1, percentage: 1/6, time_cost: 5, adjusted: 1/30 = 0.0‾3
+    /// index: 32, tiles: 6, buttons: 1, percentage: 1/6, time_cost: 3, adjusted: 1/18 = 0.0‾5
+    /// index: 20, tiles: 7, buttons: 1, percentage: 1/7, time_cost: 4, adjusted: 1/28 = 0.03571...
+    /// index:  2, tiles: 8, buttons: 1, percentage: 1/8, time_cost: 3, adjusted: 1/24 = 0.041‾6
+    /// index:  0, tiles: 2, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index:  5, tiles: 6, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index:  6, tiles: 6, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index:  7, tiles: 7, buttons: 0, percentage:   0, time_cost: 3, adjusted: 0
+    /// index:  8, tiles: 5, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 11, tiles: 6, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 21, tiles: 3, buttons: 0, percentage:   0, time_cost: 3, adjusted: 0
+    /// index: 22, tiles: 5, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 23, tiles: 3, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index: 24, tiles: 4, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 25, tiles: 3, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
     /// ```
     ///
     /// But this is not the least upper bound (supremum) as the tiles covered
@@ -167,9 +168,48 @@ impl ZobristHash {
     /// not achievable in the game as the time cost of 66 is greater than the
     /// allowed time cost of 54.
     ///
-    /// TODO: improve the bound even more by only allowing patches that fall
-    /// within the time cost limit of 54.
-    pub const MAX_BUTTON_INCOME: usize = 32;
+    /// Time adjustment: percentage / time_cost = buttons / (tiles * time_cost)
+    ///
+    /// Table sorted after time adjusted percentage
+    /// ```txt
+    /// index: 27, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 1, adjusted: 1/5  = 0.2
+    /// index: 13, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 2, adjusted: 1/6  = 0.1‾6
+    /// index:  1, tiles: 5, buttons: 3, percentage: 3/5, time_cost: 4, adjusted: 3/20 = 0.15
+    /// index: 18, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 3, adjusted: 2/15 = 0.1‾3
+    /// index:  4, tiles: 4, buttons: 3, percentage: 3/4, time_cost: 6, adjusted: 1/8  = 0.125
+    /// index: 19, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 2, adjusted: 1/8  = 0.125
+    /// index: 26, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 2, adjusted: 1/8  = 0.125
+    /// index:  9, tiles: 4, buttons: 2, percentage: 1/2, time_cost: 5, adjusted: 1/10 = 0.1
+    /// index: 12, tiles: 6, buttons: 3, percentage: 1/2, time_cost: 5, adjusted: 1/10 = 0.1
+    /// index: 17, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 4, adjusted: 1/10 = 0.1
+    /// index:  3, tiles: 6, buttons: 3, percentage: 1/2, time_cost: 6, adjusted: 1/12 = 0.08‾3
+    /// index: 14, tiles: 4, buttons: 2, percentage: 1/2, time_cost: 6, adjusted: 1/12 = 0.08‾3
+    /// index: 15, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 4, adjusted: 1/12 = 0.08‾3
+    /// index: 28, tiles: 4, buttons: 1, percentage: 1/4, time_cost: 3, adjusted: 1/12 = 0.08‾3
+    /// index: 29, tiles: 5, buttons: 2, percentage: 2/5, time_cost: 5, adjusted: 2/25 = 0.08
+    /// --------------- CUTOFF AFTER 73 <= 81 TILES AND 53 <= 58-6=52 (+1) TIME (MAX_TIME: 6) => 30 BUTTONS ---------------
+    /// index: 10, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 3, adjusted: 1/15 = 0.0‾6
+    /// index: 30, tiles: 6, buttons: 2, percentage: 1/3, time_cost: 6, adjusted: 1/18 = 0.0‾5
+    /// index: 32, tiles: 6, buttons: 1, percentage: 1/6, time_cost: 3, adjusted: 1/18 = 0.0‾5
+    /// index: 31, tiles: 5, buttons: 1, percentage: 1/5, time_cost: 4, adjusted: 1/20 = 0.05
+    /// index:  2, tiles: 8, buttons: 1, percentage: 1/8, time_cost: 3, adjusted: 1/24 = 0.041‾6
+    /// index: 20, tiles: 7, buttons: 1, percentage: 1/7, time_cost: 4, adjusted: 1/28 = 0.03571...
+    /// index: 16, tiles: 6, buttons: 1, percentage: 1/6, time_cost: 5, adjusted: 1/30 = 0.0‾3
+    /// index:  0, tiles: 2, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index:  5, tiles: 6, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index:  6, tiles: 6, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index:  7, tiles: 7, buttons: 0, percentage:   0, time_cost: 3, adjusted: 0
+    /// index:  8, tiles: 5, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 11, tiles: 6, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 21, tiles: 3, buttons: 0, percentage:   0, time_cost: 3, adjusted: 0
+    /// index: 22, tiles: 5, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 23, tiles: 3, buttons: 0, percentage:   0, time_cost: 1, adjusted: 0
+    /// index: 24, tiles: 4, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// index: 25, tiles: 3, buttons: 0, percentage:   0, time_cost: 2, adjusted: 0
+    /// ```
+    ///
+    /// Therefore the max button income is 30.
+    pub const MAX_BUTTON_INCOME: usize = 30;
 
     /// Creates a new Zobrist hash.
     ///
