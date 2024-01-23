@@ -27,6 +27,7 @@
         "javascriptreact": "html"
     },
     // Other
+    "editor.formatOnSave": true,
     "explorer.fileNesting.patterns": {
         "Cargo.toml": "clippy.toml, rust-toolchain.toml, rustfmt.toml, Cargo.lock",
         "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.spec.ts",
