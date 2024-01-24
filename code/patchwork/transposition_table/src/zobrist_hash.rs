@@ -28,6 +28,7 @@ pub struct ZobristHash {
     zobrist_special_patches_table: [u64; PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize],
     /// A random number if it is player 2's turn.
     zobrist_player_2_to_move: u64,
+    // BUG:TODO: zobrist has needs to take the new flags into account
     /// A table of random numbers for each tile on the board for player 1.
     zobrist_player_1_quilt_board_table: [u64; QuiltBoard::TILES as usize],
     /// A table of random numbers for each position on the time board for player 1.

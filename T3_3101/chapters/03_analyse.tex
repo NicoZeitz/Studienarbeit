@@ -209,7 +209,7 @@ Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dar
 \begin{table}[!ht]
     \centering
     \begin{tabular}[t]{c|c}
-        \raisebox{0pt}[0.5ex][0.5ex]{Flicken}                                                                                                                         & Platzierungsmöglichkeiten \\ \hline
+        \raisebox{0pt}[0.5ex][0.5ex]{Flicken}                                                                                           & Platzierungsmöglichkeiten \\ \hline
         \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.175\textwidth]{res/pictures/assets/00-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
         $\left( 9 - 1 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 2 = 144$ \hspace*{0.5cm}                                                                     \\ \hline
         \hspace*{0.5cm} \adjustbox{valign=m}{\includegraphics[width=0.175\textwidth]{res/pictures/assets/09-front.png}} \hspace*{0.5cm} & \hspace*{0.5cm}
@@ -261,106 +261,79 @@ Dabei ist anzumerken, dass die maximale Anzahl an Platzierungsmöglichkeiten fü
 
 In dieser Sektion wird eine obere und eine untere Schranke für die Wertung eines Spielers am Ende des Spiels festgesetzt. Da sich die Wertung aus dem am Ende vorhandenen Vorrat an Knopf-Plättchen und der Anzahl der Lücken im eigenen Spielbrett zusammensetzt, werden zunächst die maximal möglichen Werte für diese beiden Komponenten bestimmt. Anschließend werden die Schranken für die Wertung eines Spielers am Ende des Spiels festgesetzt.
 
-Ein Spieler hat 2 Möglichkeiten bei der Wertung möglichst viele positive Punkte zu sammeln. Erstens kann der Spieler das $7 \times 7$ Sonderplättchen erhalten, was die Wertung um 7 Punkte erhöht. Weiterhin zählt jeder Knopf im Vorrat einen Punkt. Zu Beginn erhält jeder Spieler 5 Knöpfe. Der Knopfvorrat kann nur durch die 9 Knopf-Wertungen auf der Zeitleiste erhöht werden. Dabei ist die Erhöhung des Knopfvorrates abhängig von den Flicken auf dem Ablageplan. Da der Ablageplan eine feste Größe besitzt, existiert somit auch eine Obergrenze für das zusätzliche Knopfeinkommen und die Anzahl der positiven Punkte für die Wertung ist von oben begrenzt. Die einfache Obergrenze für den positiven Anteil bei der Endbewertung ist daher $5+7+81\cdot 9=741$.
+% Reference for this paragraph: /code/patchwork/transposition_table/src/zobrist_hash.rs
+
+Ein Spieler hat 2 Möglichkeiten bei der Wertung möglichst viele positive Punkte zu sammeln. Erstens kann der Spieler das $7 \times 7$ Sonderplättchen erhalten, was die Wertung um 7 Punkte erhöht. Weiterhin zählt jeder Knopf in seinem Vorrat einen Punkt. Zu Beginn erhält jeder Spieler 5 Knöpfe. Der Knopfvorrat kann nur durch die 9 Knopf-Wertungen auf der Zeitleiste erhöht werden. Dabei ist die Erhöhung des Knopfvorrates abhängig von den Flicken auf dem Ablageplan. Da der Ablageplan eine feste Größe besitzt, existiert somit auch eine Obergrenze für das zusätzliche Knopfeinkommen und die Anzahl der positiven Punkte für die Wertung ist von oben begrenzt. Die einfache Obergrenze für den positiven Anteil bei der Endbewertung ist daher $5+7+81\cdot 9=741$.
 
 Diese Obergrenze würde aber erfordern, dass alle Flicken auf dem Ablageplan mindestens die gleiche Anzahl an Knopfeinkommen haben, wie die Anzahl der Felder, die sie bedecken. Diese Annahme gilt für keinen der Flicken in Patchwork. Für eine realistischere Obergrenze werden alle Flicken nach dem prozentualen Anteil des Knöpfeinkommens im Verhältnis zur Anzahl der Felder, die sie bedecken, sortiert (Siehe Anhang \ref{anhang:section-patchwork-patches}). Werden nun alle Flicken ausgewählt, bis die Grenze von 81 kombinierten Feldern erreicht ist, ergibt sich eine neue Obergrenze für das maximale Knopfeinkommen durch den Ablageplan von 32. Eine beispielhafte Anordnung dieser Flicken ist in Abbildung \ref{fig:quilt-board-max-button-income} zu sehen. Dabei bleiben 2 Felder auf dem Ablageplan frei. Jedoch können alle Flicken mit 2 oder weniger Feldern kein Knopfeinkommen generieren, wodurch dies kein Problem darstellt.
 
-% /// index:  4, tiles: 4, buttons: 3, percentage: 0.75
-% /// index:  1, tiles: 5, buttons: 3, percentage: 0.6
-% /// index:  3, tiles: 6, buttons: 3, percentage: 0.5
-% /// index:  9, tiles: 4, buttons: 2, percentage: 0.5
-% /// index: 12, tiles: 6, buttons: 3, percentage: 0.5
-% /// index: 14, tiles: 4, buttons: 2, percentage: 0.5
-% /// index: 17, tiles: 5, buttons: 2, percentage: 0.4
-% /// index: 18, tiles: 5, buttons: 2, percentage: 0.4
-% /// index: 29, tiles: 5, buttons: 2, percentage: 0.4
-% /// index: 13, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-% /// index: 15, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-% /// index: 30, tiles: 6, buttons: 2, percentage: 0.3333333333333333
-% /// index: 19, tiles: 4, buttons: 1, percentage: 0.25
-% /// index: 26, tiles: 4, buttons: 1, percentage: 0.25
-% /// index: 28, tiles: 4, buttons: 1, percentage: 0.25
-% /// index: 10, tiles: 5, buttons: 1, percentage: 0.2
-% /// index: 27, tiles: 5, buttons: 1, percentage: 0.2
-% /// --------------- CUTOFF AFTER 84 >= 81 TILES COVERED ---------------
-% /// index: 31, tiles: 5, buttons: 1, percentage: 0.2
-% /// index: 16, tiles: 6, buttons: 1, percentage: 0.16666666666666666
-% /// index: 32, tiles: 6, buttons: 1, percentage: 0.16666666666666666
-% /// index: 20, tiles: 7, buttons: 1, percentage: 0.14285714285714285
-% /// index:  2, tiles: 8, buttons: 1, percentage: 0.125
-% /// index:  0, tiles: 2, buttons: 0, percentage: 0
-% /// index:  5, tiles: 6, buttons: 0, percentage: 0
-% /// index:  6, tiles: 6, buttons: 0, percentage: 0
-% /// index:  7, tiles: 7, buttons: 0, percentage: 0
-% /// index:  8, tiles: 5, buttons: 0, percentage: 0
-% /// index: 11, tiles: 6, buttons: 0, percentage: 0
-% /// index: 21, tiles: 3, buttons: 0, percentage: 0
-% /// index: 22, tiles: 5, buttons: 0, percentage: 0
-% /// index: 23, tiles: 3, buttons: 0, percentage: 0
-% /// index: 24, tiles: 4, buttons: 0, percentage: 0
-% /// index: 25, tiles: 3, buttons: 0, percentage: 0
 \begin{figure}[!ht]
     \centering
-    % TODO:FABIAN: dieses Bild vielleicht mal in echt Aufnehmen?
-    \begin{tikzpicture}
-        \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.45\textwidth]{res/pictures/max-button-income.png}};
-        \drawshadow{image}
-    \end{tikzpicture}
-    % \vspace*{-0.5cm}
-    \caption{Anordnung von Flicken mit einem Knopfeinkommen von 32}
-    \label{fig:quilt-board-max-button-income}
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.765\linewidth]{res/pictures/max-button-income.jpg}};
+            \drawshadow{image}
+        \end{tikzpicture}
+        \captionsetup{format=plain, singlelinecheck=false}
+        \setcapindent{0pt}
+        \caption{Anordnung von Flicken mit einem Knopfeinkommen von 32 \\ \phantom{und Zeitkosten von 66}}
+        \label{fig:quilt-board-max-button-income}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node [inner sep=0pt,,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.765\linewidth]{res/pictures/real-max-button-income.jpg}};
+            \drawshadow{image}
+        \end{tikzpicture}
+        \captionsetup{format=plain, singlelinecheck=false}
+        \setcapindent{0pt}
+        \caption{Anordnung von Flicken mit einem Knopfeinkommen von 30 \\ und Zeitkosten von 58}
+        \label{fig:quilt-board-real-max-button-income}
+    \end{minipage}
 \end{figure}
 
-TODO: Time Cost is 66
-TODO: Bound from Patches ordered by percentage of button income in relation to time cost
-TODO: 30
+Jedoch betragen die benötigten Zeitkosten bei dieser Anordnung $66$, wodurch diese Anordnung im tatsächlichen Spiel nicht auftreten kann. Aus diesem Grund muss für die Bewertung eines Flickens noch die benötigte Zeit wie in Term \ref{eqn:patch-value-for-max-button-income} einfließen.
 
-% /// This quilt board has a button income of 32, has a time cost of 66 and
-% /// covers at least 79 tiles but can be filled up with two special patches
-% /// to cover the full quilt board. While this is a maximum that can be
-% /// created on the quilt board, it is not achievable in the game as the
-% /// time cost of 66 is greater than the allowed time cost of 54.
-% ///
-% /// TODO: improve the bound even more
-% ///
+\begin{equation}
+    \label{eqn:patch-value-for-max-button-income}
+    \frac{\text{Knopfeinkommen}}{\text{Felder}\, \cdot\, \text{Zeitkosten}}
+\end{equation}
 
+Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei 30 Knöpfe und die benötigte Zeit beträgt 58. Auf dem Zeitplan selbst, existieren nur 54 Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar.
 
-% Bounds for lowest possible score, highest possible score, max button income, max button balance
-
-% Max button balance
-% TODO: take update from zobrist hash in rust implementation
-% /// The maximum button balance a player can have is bounded by the game.
-% ///
-% /// * A player has `5` buttons at the start of the game.
-% /// * There are only `9` button income triggers that can yield a maximum amount
-% ///   of `33` buttons each (see `MAX_BUTTON_INCOME` estimate below).
-% /// * The player can get `1` button income for every tile he walks on the
-% ///   time track with the walking action. There are `54` tiles on the time track.
-% /// * The only other income source are the `7` buttons from a full quilt board.
-% ///
-% /// Because of this the maximum button balance a player can have is bounded
-% /// by `5 + 9 · 33 + 7 + 54 · 1 = 363`. This is a upper bound and not the
-% /// actual maximum because of the same reason as the `MAX_BUTTON_INCOME`
-% /// estimate below. Furthermore the player can only choose between the
-% /// walking action and the action to place a tile. Therefore he cannot get
-% /// both at the same time. It would probably be possible to lower the bound
-% /// to `5 + 9 · 33 + 7 + 54 · 1 = 309` (remove the walking actions) and
-% /// still be correct. But to be safe the bound is kept at `363`.
-
-
-% MAX possible score
-% 363 = same as max button balance
-
-% min score
-% 0 als bound für income + -81*2 als Punkte am Ende
-
-% -81*2 + 0 = -162
-
-% nicht realistisch, da man immer durch laufen mindestens 1 punkte bekommt. einzige möglichkeit punkte loszuwerden ist das quilt board zu füllen
+TODO:
 
 \subsection*{Betrachtung der Spiel-Komplexität}
 
 TODO:
+
+% sum k=1 to n of P(n, k) = n! / (n-k)! = 36! / (36-k)! = 36! / (36-36)! = 36! / 0! = 36!
+
+
+% import math
+% result = 0
+% for k in range(1, n+1):
+%     result += math.factorial(36) // math.factorial(36 - k)
+% print(result)
+
+% P(3) = 15
+% P(2) = 6
+% P(1) = 3
+
+% 1*6+3*2+3*1=15
+
+% (1,2,3) * 3!
+% (1,2) * 2!
+% (1,3) * 2!
+% (2,3) * 2!
+% (1) * 1!
+% (2) * 1!
+% (3) * 1!
+% ()  * 0!
+
+% TODO: hyperreferencen für Komplexitätsparameter (e.g. Spielbaumkomplexität) in Formelsammlung einfügen
 
 Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
 
@@ -407,42 +380,15 @@ Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfüg
 
 TODO:
 
-% sum k=1 to n of P(n, k) = n! / (n-k)! = 36! / (36-k)! = 36! / (36-36)! = 36! / 0! = 36!
-
-
-% import math
-% result = 0
-% for k in range(1, n+1):
-%     result += math.factorial(36) // math.factorial(36 - k)
-% print(result)
-
-% P(3) = 15
-% P(2) = 6
-% P(1) = 3
-
-% 1*6+3*2+3*1=15
-
-
-% (1,2,3) * 3!
-% (1,2) * 2!
-% (1,3) * 2!
-% (2,3) * 2!
-% (1) * 1!
-% (2) * 1!
-% (3) * 1!
-% ()  * 0!
-
-% TODO: hyperreferencen für Komplexitätsparameter (e.g. Spielbaumkomplexität) einfügen
-
-\subsection*{Schätzung der Spielbaumkomplexität $(GTC)$}
+\subsection*{Schätzung der Spielbaumkomplexität}
 
 Mit den empirischen Daten lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
 
 \vspace*{-1cm}
 \begin{align}
     \label{eqn:gtc-patchwork-branch-estimation}
-    \text{GTC}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
-    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                  \\
+    \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
+    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                         \\
     \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
 \end{align}
 
@@ -453,9 +399,9 @@ Eine weitere genauere Schätzung für die Komplexität des Spielbaums kann nach 
 \begin{equation}
     \label{eqn:gtc-patchwork-avg-estimation}
     \begin{aligned}
-        X(g)                  & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
-        \text{GTC}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
-                              & \approx 1{,}68 \cdot 10^{38}
+        X(g)                         & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
+        \text{\acsp{GTC}}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
+                                     & \approx 1{,}68 \cdot 10^{38}
     \end{aligned}
 \end{equation}
 

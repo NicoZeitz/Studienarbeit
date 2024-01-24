@@ -11,12 +11,16 @@
 \def\acrospace{\acroextra{\makebox[14.375mm][l]{}}}
 
 % \begin{acronym}[dmin] % längstes Kürzel wird verw. für den Abstand zw. Kürzel u. Text
+
 \begin{acronym}[WYSISWG] % längstes Kürzel wird verw. für den Abstand zw. Kürzel u. Text
 
     % Alphabetisch selbst sortieren - nicht verwendete Formeln rausnehmen!
     % Allgemein: \acro{KÜRZEL}[ABKÜRZUNG]{\acrounit{SI-EINHEIT}BESCHREIBUNG}
     %\acro{KiB}[\phantom{KiB}]{\acrounit{KiB}Kibibyte ($2^{10}$ Byte)}
     % \acro{MiB}[\phantom{MiB}]{\acrounit{MiB}Mebibyte ($2^{20}$ Byte)}
+
+    \acro{GTC}[\ensuremath{\text{GTC}(\mathcal{G})}]{Spielbaumkomplexität von Spiel $\mathcal{G}$}
+
 
     % \vspace{1.2cm}
 
@@ -45,6 +49,7 @@
     % \acro{mOptimiertesJSPIAvg}[\ensuremath{\overline{m}_{Opt.\ JSPI}}]{\acrounit{B}Durchschnittlicher Speicherverbrauch von optimiertem JSPI}
 
     % % alternative Darstellungen für den Text
+    \acroplural{GTC}[\ensuremath{\text{GTC}}]{GTC im Text ohne Aufruf}
     % \acroplural{KiB}[KiB]{KiB im Text}
     % \acroplural{MiB}[MiB]{MiB im Text}
     % \acroplural{n}[\ensuremath{\scriptstyle{}n}]{n als Zählerindex}
