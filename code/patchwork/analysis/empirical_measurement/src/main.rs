@@ -5,7 +5,7 @@ use patchwork_core::TurnType;
 use crate::deserialization::GameLoader;
 
 fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gather: Gather) {
-    if !gather.available_actions && !gather.game {
+    if !gather.available_actions && !gather.game && !gather.available_special_actions {
         println!("Nothing to gather");
         return;
     }
@@ -36,6 +36,17 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
         None
     };
 
+    let mut available_special_actions_writer = if gather.available_special_actions {
+        Some(
+            csv::WriterBuilder::new()
+                .has_headers(false)
+                .from_path(output.join("available_special_actions.csv"))
+                .unwrap(),
+        )
+    } else {
+        None
+    };
+
     println!("Getting game statistics from {:?}", input);
     let mut games = 0;
     for game in GameLoader::new(input, None) {
@@ -51,9 +62,11 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
             let available_actions = game
                 .turns
                 .iter()
-                .map(|turn| turn.state.clone())
-                .filter(|state| !matches!(state.turn_type, TurnType::SpecialPatchPlacement) && !state.is_terminated())
-                .map(|state| state.get_valid_actions())
+                .filter(|turn| {
+                    matches!(turn.state.turn_type, TurnType::Normal | TurnType::NormalPhantom)
+                        && !turn.state.is_terminated()
+                })
+                .map(|turn| turn.state.get_valid_actions())
                 .filter(|actions| {
                     if actions.is_empty() {
                         return false;
@@ -75,6 +88,40 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
             }
         }
 
+        // Available special actions writer
+        // This slows down the process a lot (but way less than available actions) as we need to calculate the available actions for each state
+        if gather.available_special_actions {
+            let available_special_actions = game
+                .turns
+                .iter()
+                .filter(|turn| {
+                    matches!(
+                        turn.state.turn_type,
+                        TurnType::SpecialPatchPlacement | TurnType::SpecialPhantom
+                    ) && !turn.state.is_terminated()
+                })
+                .map(|turn| turn.state.get_valid_actions())
+                .filter(|actions| {
+                    if actions.is_empty() {
+                        return false;
+                    }
+
+                    if !actions[0].is_special_patch_placement() {
+                        return false;
+                    }
+
+                    true
+                })
+                .map(|actions| actions.len());
+            for available_special_action in available_special_actions {
+                available_special_actions_writer
+                    .as_mut()
+                    .unwrap()
+                    .serialize((available_special_action,))
+                    .unwrap();
+            }
+        }
+
         // game.turns
         //     .iter()
         //     .map(|turn| turn.action)
@@ -92,6 +139,7 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
 struct Gather {
     game: bool,
     available_actions: bool,
+    available_special_actions: bool,
 }
 
 fn main() {
@@ -128,10 +176,16 @@ fn main() {
         .arg(
             clap::Arg::new("available-actions")
                 .long("available-actions")
-                .alias("available-actions")
                 .required(false)
                 .num_args(0)
                 .help("Gathers statistics about the number of available actions per turn"),
+        )
+        .arg(
+            clap::Arg::new("available-special-actions")
+                .long("available-special-actions")
+                .required(false)
+                .num_args(0)
+                .help("Gathers statistics about the number of available special actions per turn"),
         );
 
     let matches = cmd.get_matches();
@@ -141,6 +195,7 @@ fn main() {
         Gather {
             game: matches.get_flag("game"),
             available_actions: matches.get_flag("available-actions"),
+            available_special_actions: matches.get_flag("available-special-actions"),
         },
     );
 }
