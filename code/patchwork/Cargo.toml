@@ -37,3 +37,14 @@ missing_docs = "warn"
 all = "warn"
 pedantic = "warn"
 nursery = "warn"
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles
+# https://deterministic.space/high-performance-rust.html
+# cargo build --profile fast-release
+[profile.fast-release]
+inherits = "release"
+lto = "fat"          # Link Time Optimization
+opt-level = 3        # Optimization level
+panic = "abort"      # Abort on panic
+codegen-units = 1    # Number of threads to use for codegen
+strip = "symbols"    # Strip debug symbols
