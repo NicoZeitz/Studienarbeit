@@ -301,9 +301,13 @@ Jedoch betragen die benötigten Zeitkosten bei dieser Anordnung $66$, wodurch di
     \frac{\text{Knopfeinkommen}}{\text{Felder}\, \cdot\, \text{Zeitkosten}}
 \end{equation}
 
-Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei 30 Knöpfe und die benötigte Zeit beträgt 58. Auf dem Zeitplan selbst, existieren nur 54 Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar.
+Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei $30$ Knöpfe und die benötigte Zeit beträgt $58$. Auf dem Zeitplan selbst, existieren nur $54$ Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar.
 
 TODO:
+
+
+
+54
 
 \subsection*{Betrachtung der Spiel-Komplexität}
 
@@ -373,12 +377,10 @@ Die durchschnittliche Spiellänge, gemessen in \hyperref[text:ply]{\emph{Plys}},
     \caption[Verteilung der verfügbare Aktionen]{\unskip}
     Verteilung der verfügbare Aktionen
     \label{fig:plot-available-actions-10-million}
-    \vspace*{-0.75cm}
+    \vspace*{-0.85cm}
 \end{wrapfigure}
 
-Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief.
-
-TODO:
+Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief. Im Diagramm sind dabei keine Aktionen für das Platzieren von Spezialflicken aufgenommen und die Aktionen sind in einer logarithmischen Skala dargestellt. Es existieren deutlich mehr Aktionen mit weniger Möglichkeiten und die durchschnittliche Anzahl an verfügbaren Aktionen liegt bei ${\approx}83{,}66$. Diese rechtsschiefe lässt sich auch leicht erklären: Sobald ein Flicken zu viele Knöpfe kostet oder auf dem Ablageplan keinen Platz findet, fallen auf einen Schlag ungefähr $\sfrac{1}{3}$ der Aktionen weg. Weiterhin fallen immer mehr Platzierungsmöglichkeiten weg, je voller der Ablageplan eines Spielers ist.
 
 \subsection*{Schätzung der Spielbaumkomplexität}
 
