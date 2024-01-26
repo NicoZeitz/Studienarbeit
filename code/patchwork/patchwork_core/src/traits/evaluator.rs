@@ -80,8 +80,6 @@ pub trait Evaluator: Sync + Send {
             panic!("The score is not in the allowed range.");
         }
 
-        println!("Score: {}", score);
-
         score
     }
 }
