@@ -55,11 +55,11 @@ impl GameLoop {
             }
             "pvs" => Box::new(PVSPlayer::new(format!("PVS Player {player_position}"), None)),
             _ if player.starts_with("pvs") => {
-                let regex = Regex::new(r"pvs\((?<time>\d+)\)").unwrap();
+                let regex = Regex::new(r"pvs\((?<time>\d+(?:\.\d+)?)\)").unwrap();
                 let captures = regex.captures(player).unwrap();
                 let time = captures.name("time").unwrap().as_str().parse().unwrap();
                 let mut options = PVSOptions::default();
-                options.time_limit = std::time::Duration::from_secs(time);
+                options.time_limit = std::time::Duration::from_secs_f64(time);
 
                 Box::new(PVSPlayer::new(
                     format!("PVS Player {player_position} ({})", time),
@@ -357,17 +357,27 @@ impl GameLoop {
             min_player_2_score,
             std::time::Duration::from_nanos(avg_player_2_time.round() as u64)
         );
-        let progress_bar_length: i32 = 120;
-        let progress_player_1 = (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
-        let progress_player_2 = (progress_bar_length - progress_player_1 as i32).max(0) as usize;
+        let progress_bar_length = 120;
 
-        println!(
-            "{} \x1b[0;32m{}\x1b[0;31m{}\x1b[0m {}  ",
-            player_1_name,
-            "█".repeat(progress_player_1),
-            "█".repeat(progress_player_2),
-            player_2_name,
-        );
+        if iteration == 0 {
+            println!(
+                "{} {} {}  ",
+                player_1_name,
+                "█".repeat(progress_bar_length),
+                player_2_name,
+            );
+        } else {
+            let progress_player_1 =
+                (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
+            let progress_player_2 = (progress_bar_length as i32 - progress_player_1 as i32).max(0) as usize;
+            println!(
+                "{} \x1b[0;32m{}\x1b[0;31m{}\x1b[0m {}  ",
+                player_1_name,
+                "█".repeat(progress_player_1),
+                "█".repeat(progress_player_2),
+                player_2_name
+            );
+        }
     }
 }
 

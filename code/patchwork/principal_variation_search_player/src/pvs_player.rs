@@ -161,7 +161,7 @@ impl PVSPlayer {
 
     /// The amount of actions that are for sure not pruned by LMP. After these
     /// amount of actions the LMP is applied.
-    pub const LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 7;
+    pub const LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 5;
     /// The maximum depth at which LMP will be applied.
     pub const LMP_DEPTH_LIMIT: usize = 2;
     /// The maximum amount of search extensions that can be applied.
@@ -354,6 +354,11 @@ impl PVSPlayer {
 
         let mut scores = vec![0.0; actions.len()];
         let mut action_list = ActionList::new(&mut actions, &mut scores);
+        let mut lmp_flags = if self.options.features.late_move_pruning {
+            LMPFlags::initialize_from(&action_list)
+        } else {
+            LMPFlags::fake()
+        };
 
         self.options
             .action_orderer
@@ -364,31 +369,33 @@ impl PVSPlayer {
         let mut alpha = alpha;
         let mut evaluation_bound = EvaluationType::UpperBound;
 
-        // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
         for i in 0..action_list.len() {
-            // Move Ordering
-            // [How move ordering works](https://rustic-chess.org/search/ordering/how.html)
-            // > Sidenote: Why do we assign sort scores to the moves, and then use pick_move() to swap one move to the
-            // > current index of the move list while alpha/beta iterates over it? Couldn't we just physically sort the
-            // > list before the move loop starts, and be done with it?
-            // > It's possible, but we don't do that because of how alpha/beta works. If alpha/beta encounters a move
-            // > that is so good that searching further down the move list is no longer required, then it will exit and
-            // > return the evaluation score of that move. (This is a so-called beta-cutoff.) If you physically sorted
-            // > all the moves before the move loop starts, you may have sorted lots of moves that may never be examined
-            // > by alpha/beta. This costs time, and thus it makes the engine slower.
-            // > You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
-            // > ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
-            // > The result is the same, but move ordering is the faster approach, as described above.
-            let action = self.options.action_orderer.pick_action(&mut action_list, i);
+            let action = if i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS && self.options.features.late_move_pruning {
+                // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
+                // Remove late moves in move ordering, only prune after trying at least one move for each possible patch
+                let Some(action) = lmp_flags.get_next_missing() else {
+                    self.diagnostics.increment_late_move_pruning();
+                    break;
+                };
+                action
+            } else {
+                // Move Ordering
+                // [How move ordering works](https://rustic-chess.org/search/ordering/how.html)
+                // > Sidenote: Why do we assign sort scores to the moves, and then use pick_move() to swap one move to the
+                // > current index of the move list while alpha/beta iterates over it? Couldn't we just physically sort the
+                // > list before the move loop starts, and be done with it?
+                // > It's possible, but we don't do that because of how alpha/beta works. If alpha/beta encounters a move
+                // > that is so good that searching further down the move list is no longer required, then it will exit and
+                // > return the evaluation score of that move. (This is a so-called beta-cutoff.) If you physically sorted
+                // > all the moves before the move loop starts, you may have sorted lots of moves that may never be examined
+                // > by alpha/beta. This costs time, and thus it makes the engine slower.
+                // > You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
+                // > ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
+                // > The result is the same, but move ordering is the faster approach, as described above.
+                self.options.action_orderer.pick_action(&mut action_list, i)
+            };
 
-            // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
-            // Remove late moves in move ordering
-            if i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS && self.options.features.late_move_pruning {
-                self.diagnostics.increment_late_move_pruning();
-                // TODO: check some things here to allow
-                // -> make it more like futility pruning with margin
-                continue;
-            }
+            lmp_flags.set_action_type_done(action);
 
             // Save previous state characteristics that are needed later
             let previous_special_tile_condition_reached = game.is_special_tile_condition_reached();
@@ -852,5 +859,145 @@ impl PVSPlayer {
         writeln!(writer, "─────────────────────────────────────────────────────────────")?;
 
         Ok(())
+    }
+}
+
+/// Different Flags and Actions for Late Move Pruning that are used to ensure
+/// that every action type is tried at least once before pruning all other
+/// actions.
+struct LMPFlags {
+    walking: Option<ActionId>,
+    patch1: Option<ActionId>,
+    patch2: Option<ActionId>,
+    patch3: Option<ActionId>,
+}
+
+impl LMPFlags {
+    /// Creates a fake LMP flags struct in constant time.
+    ///
+    /// # Returns
+    ///
+    /// The fake LMP flags struct.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(1)`
+    #[inline(always)]
+    pub const fn fake() -> Self {
+        LMPFlags {
+            walking: None,
+            patch1: None,
+            patch2: None,
+            patch3: None,
+        }
+    }
+
+    /// Initializes the LMP flags from the given action list.
+    ///
+    /// # Arguments
+    ///
+    /// * `action_list` - The action list to initialize the flags from.
+    ///
+    /// # Returns
+    ///
+    /// The initialized LMP flags.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝑛)` where `𝑛` is the length of the action list.
+    #[allow(clippy::collapsible_if)]
+    #[inline(always)]
+    pub fn initialize_from(action_list: &ActionList<'_>) -> Self {
+        let mut flags = LMPFlags {
+            walking: None,
+            patch1: None,
+            patch2: None,
+            patch3: None,
+        };
+        let mut highest_patch_1_score = f64::NEG_INFINITY;
+        let mut highest_patch_2_score = f64::NEG_INFINITY;
+        let mut highest_patch_3_score = f64::NEG_INFINITY;
+
+        for i in 0..action_list.len() {
+            let action = action_list.get_action(i);
+            let score = action_list.get_score(i);
+
+            if action.is_walking() {
+                flags.walking = Some(action);
+            }
+
+            if action.is_first_patch_taken() || action.is_special_patch_placement() {
+                if score > highest_patch_1_score {
+                    highest_patch_1_score = score;
+                    flags.patch1 = Some(action);
+                }
+            } else if action.is_second_patch_taken() {
+                if score > highest_patch_2_score {
+                    highest_patch_2_score = score;
+                    flags.patch2 = Some(action);
+                }
+            } else if action.is_third_patch_taken() {
+                if score > highest_patch_3_score {
+                    highest_patch_3_score = score;
+                    flags.patch3 = Some(action);
+                }
+            }
+        }
+
+        flags
+    }
+
+    /// Gets an action as parameter and sets the flag for that action type to
+    /// `None` so that the action type is done and does not prevent lmp.
+    ///
+    /// # Arguments
+    ///
+    /// * `action` - The action to set the flag for.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(1)`
+    #[inline(always)]
+    pub fn set_action_type_done(&mut self, action: ActionId) {
+        if action.is_walking() {
+            self.walking = None;
+        } else if action.is_first_patch_taken() || action.is_special_patch_placement() {
+            self.patch1 = None;
+        } else if action.is_second_patch_taken() {
+            self.patch2 = None;
+        } else if action.is_third_patch_taken() {
+            self.patch3 = None;
+        }
+    }
+
+    /// Gets the next action for the action type that is not done yet.
+    ///
+    /// # Returns
+    ///
+    /// The next action for the action type that is not done yet or `None` if
+    /// all action types are done.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(1)`
+    #[inline(always)]
+    pub fn get_next_missing(&mut self) -> Option<ActionId> {
+        if let Some(action) = self.walking.take() {
+            return Some(action);
+        }
+
+        if let Some(action) = self.patch1.take() {
+            return Some(action);
+        }
+
+        if let Some(action) = self.patch2.take() {
+            return Some(action);
+        }
+
+        if let Some(action) = self.patch3.take() {
+            return Some(action);
+        }
+
+        None
     }
 }
