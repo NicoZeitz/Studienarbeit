@@ -3,21 +3,21 @@ use patchwork_core::{PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard
 /// A Zobrist hash implementation for Patchwork.
 /// This is used to hash the game state.
 ///
-/// The Zobrist hash needs at least ≈16.68 kiB of memory to store the random numbers.
+/// The Zobrist hash needs at least ≈16.71 kiB of memory to store the random numbers.
 /// This is calculated as follows:
 ///
 /// ```math
 /// 33 * 33 + // a hash for every of the 33 patches at each possible position
 /// 5       + // a hash for every of the 5 special patches
-/// 1         // the hash if it is player 2's turn
+/// 5         // the hashes for the status flags
 /// 81  * 2 + // every piece on the quilt board for both players
 /// 54  * 2 + // every position on the time board for both players
 /// 353 * 2 + // every button balance for both players
 /// 32  * 2   // every button income for both players
-/// = 2135 u64s
+/// = 2139 u64s
 ///
-/// 2135 * 8 = 17080 bytes // each u64 is 8 bytes
-/// 17080 bytes / 1024 = 16.6796875 kiB
+/// 2139 * 8 = 17112 bytes // each u64 is 8 bytes
+/// 17112 bytes / 1024 = 16.7109375 kiB
 /// ```
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct ZobristHash {
