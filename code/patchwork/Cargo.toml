@@ -21,7 +21,6 @@ members = [
     "patchwork_macros",
     "patchwork",
     "principal_variation_search_player",
-    "pv_table",
     "random_player",
     "transposition_table",
     "tree_policy",

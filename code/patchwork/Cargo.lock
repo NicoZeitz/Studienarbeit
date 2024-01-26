@@ -1009,13 +1009,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pv_table"
-version = "1.0.0"
-dependencies = [
- "patchwork_core",
-]
-
-[[package]]
 name = "quote"
 version = "1.0.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"

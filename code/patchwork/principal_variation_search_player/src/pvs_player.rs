@@ -23,6 +23,7 @@ use crate::{
 /// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
+///     - With PV-Action via Transposition Table
 ///
 /// # Other Features that could still be implemented:
 /// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
@@ -44,6 +45,10 @@ pub struct PVSPlayer {
     /// The transposition table.
     transposition_table: Option<TranspositionTable>,
     /// The best action found so far.
+    ///
+    /// The best action for the root is kept in a separate variable so that
+    /// it can be returned even if the transposition table is disabled or the
+    /// pv action is overwritten by the transposition table.
     best_action: Option<ActionId>,
     /// The best evaluation found so far.
     best_evaluation: Option<i32>,
@@ -672,21 +677,62 @@ impl PVSPlayer {
     /// The principal variation action for the given game state or `None` if no
     /// principal variation action could be found.
     fn get_pv_action(&self, game: &mut Patchwork, ply_from_root: usize) -> Option<ActionId> {
-        // FEATURE:PV_TABLE: use pv table here
         if ply_from_root == 0 {
             if let Some(pv_action) = self.best_action {
                 return Some(pv_action);
             }
         }
 
-        // TODO: remove pv table package entirely as transposition table is more than enough
-        // FEATURE:PV_TABLE: use pv table here
-
+        // Uses Transposition Table for PV-Action, for more information see
+        // [TT-move ordering: Sidenote](https://rustic-chess.org/search/ordering/tt_move.html)
         if let Some(ref transposition_table) = self.transposition_table {
             return transposition_table.probe_pv_move(game);
         }
 
         None
+    }
+
+    /// Gets the principal variation actions for the given game state.
+    ///
+    /// # Arguments
+    ///
+    /// * `game` - The game to get the principal variation actions for.
+    /// * `depth` - The depth to get the principal variation actions for.
+    ///
+    /// # Returns
+    ///
+    /// The principal variation actions for the given game state or an empty
+    /// vector if no principal variation actions could be found.
+    ///
+    /// # Notes
+    ///
+    /// If the depth is 0 the method assumes that the game is in the root node.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝑛)` where `𝑛` is the depth of the PV line.
+    fn get_pv_action_line(&self, game: &Patchwork, depth: usize) -> String {
+        if let Some(ref transposition_table) = self.transposition_table {
+            return transposition_table
+                .get_pv_line(game, depth)
+                .iter()
+                .map(|action| match action.save_to_notation() {
+                    Ok(notation) => notation,
+                    Err(_) => "######".to_string(),
+                })
+                .join(" → ");
+        }
+
+        if depth == 0 {
+            if let Some(pv_action) = self.best_action {
+                return match pv_action.save_to_notation() {
+                    Ok(notation) => format!("{} → ...", notation),
+                    Err(_) => "###### → ...".to_string(),
+                };
+            }
+        }
+
+        "NONE".to_string()
     }
 
     /// Writes a single diagnostic to the diagnostics writer.
@@ -726,34 +772,18 @@ impl PVSPlayer {
         depth: usize,
     ) -> Result<(), std::io::Error> {
         let is_verbose = matches!(self.options.features.diagnostics, crate::DiagnosticsFeature::Verbose { .. });
-        let writer = match self.options.features.diagnostics {
-            DiagnosticsFeature::Disabled => return Ok(()),
-            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
-            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
-        };
-
-        // FEATURE:PV_TABLE: use pv table here
-        let pv_actions = if let Some(ref mut transposition_table) = self.transposition_table {
-           transposition_table.get_pv_line(game, depth).iter()
-           .map(|action| match action.save_to_notation() {
-               Ok(notation) => notation,
-               Err(_) => "######".to_string(),
-           })
-           .join(" → ")
-        } else if let Some(pv_action) = self.best_action {
-            match pv_action.save_to_notation() {
-                Ok(notation) => format!("{} → ...", notation),
-                Err(_) => "###### → ...".to_string(),
-            }
-        } else {
-            "NONE".to_string()
-        };
-
+        let pv_actions = self.get_pv_action_line(game, depth);
         let best_evaluation = self.best_evaluation.map(|eval| format!("{}", eval)).unwrap_or("NONE".to_string());
         let best_action = self.best_action.as_ref().map(|action| match action.save_to_notation() {
             Ok(notation) => notation,
             Err(_) => "######".to_string(),
         }).unwrap_or("NONE".to_string());
+
+        let writer = match self.options.features.diagnostics {
+            DiagnosticsFeature::Disabled => return Ok(()),
+            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
+            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
+        };
 
         let mut features = vec![];
         if self.options.features.aspiration_window {
@@ -785,7 +815,7 @@ impl PVSPlayer {
         writeln!(writer, "Depth:               {:?}", depth)?;
         writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.diagnostics.start_time))?;
         writeln!(writer, "Nodes searched:      {:?}", self.diagnostics.nodes_searched)?;
-        writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / MEAN {:.2}", average_branching_factor, effective_branching_factor, mean_branching_factor)?;
+        writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / {:.2} MEAN", average_branching_factor, effective_branching_factor, mean_branching_factor)?;
         writeln!(writer, "Best Action:         {} ({} pts)", best_action, best_evaluation)?;
         writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.diagnostics.fail_high_first as f64) / (self.diagnostics.fail_high as f64), self.diagnostics.fail_high_first, self.diagnostics.fail_high)?;
         writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.diagnostics.aspiration_window_fail_low, self.diagnostics.aspiration_window_fail_high)?;
