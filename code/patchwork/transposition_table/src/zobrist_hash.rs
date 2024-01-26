@@ -26,9 +26,16 @@ pub struct ZobristHash {
         [u64; (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize)],
     /// A table of random number for each special patch.
     zobrist_special_patches_table: [u64; PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize],
-    /// A random number if it is player 2's turn.
+    // A random number if it is player 2's turn.
     zobrist_player_2_to_move: u64,
-    // BUG:TODO: zobrist has needs to take the new flags into account
+    // A random number if player 1 has the special tile (7x7)
+    zobrist_player_1_has_special_tile: u64,
+    // A random number if player 2 has the special tile (7x7)
+    zobrist_player_2_has_special_tile: u64,
+    // A random number if player 1 was first to reach the goal
+    zobrist_player_1_was_first_to_reach_goal: u64,
+    // A random number if player 2 was first to reach the goal
+    zobrist_player_2_was_first_to_reach_goal: u64,
     /// A table of random numbers for each tile on the board for player 1.
     zobrist_player_1_quilt_board_table: [u64; QuiltBoard::TILES as usize],
     /// A table of random numbers for each position on the time board for player 1.
@@ -274,6 +281,10 @@ impl ZobristHash {
 
         Self {
             zobrist_player_2_to_move: rand::random(),
+            zobrist_player_1_has_special_tile: rand::random(),
+            zobrist_player_2_has_special_tile: rand::random(),
+            zobrist_player_1_was_first_to_reach_goal: rand::random(),
+            zobrist_player_2_was_first_to_reach_goal: rand::random(),
             zobrist_patches_table,
             zobrist_special_patches_table,
             zobrist_player_1_quilt_board_table,
@@ -318,9 +329,28 @@ impl ZobristHash {
             }
         }
 
-        // Hash the player turn
+        // Hash the different status flags
+
+        // Only need to hash if it is players 2's turn as in the other case it is always player 1's
+        // turn
         if game.is_player_2() {
             hash ^= self.zobrist_player_2_to_move;
+        }
+
+        if game.is_special_tile_condition_reached_by_player_1() {
+            hash ^= self.zobrist_player_1_has_special_tile;
+        }
+
+        if game.is_special_tile_condition_reached_by_player_2() {
+            hash ^= self.zobrist_player_2_has_special_tile;
+        }
+
+        if game.player_1_was_first_to_reach_goal() {
+            hash ^= self.zobrist_player_1_was_first_to_reach_goal;
+        }
+
+        if game.player_2_was_first_to_reach_goal() {
+            hash ^= self.zobrist_player_2_was_first_to_reach_goal;
         }
 
         // Hash player quilt boards

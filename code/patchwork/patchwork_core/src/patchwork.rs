@@ -184,6 +184,32 @@ impl Patchwork {
         self.status_flags & (status_enum::PLAYER_1_HAS_SPECIAL_TILE | status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0
     }
 
+    /// Returns if the special tile condition has already been reached by player 1.
+    ///
+    /// # Returns
+    ///
+    /// If the special tile condition has already been reached by player 1.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub const fn is_special_tile_condition_reached_by_player_1(&self) -> bool {
+        self.status_flags & status_enum::PLAYER_1_HAS_SPECIAL_TILE > 0
+    }
+
+    /// Returns if the special tile condition has already been reached by player 2.
+    ///
+    /// # Returns
+    ///
+    /// If the special tile condition has already been reached by player 2.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub const fn is_special_tile_condition_reached_by_player_2(&self) -> bool {
+        self.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE > 0
+    }
+
     /// Sets the special tile condition for the given player.
     ///
     /// # Arguments
@@ -237,6 +263,32 @@ impl Patchwork {
     /// `𝒪(𝟣)`
     pub const fn is_goal_reached(&self) -> bool {
         self.status_flags & (status_enum::PLAYER_1_FIRST_AT_END | status_enum::PLAYER_2_FIRST_AT_END) > 0
+    }
+
+    /// Returns if the goal has already been reached by player 1.
+    ///
+    /// # Returns
+    ///
+    /// If the goal has already been reached by player 1.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub const fn player_1_was_first_to_reach_goal(&self) -> bool {
+        self.status_flags & status_enum::PLAYER_1_FIRST_AT_END > 0
+    }
+
+    /// Returns if the goal has already been reached by player 2.
+    ///
+    /// # Returns
+    ///
+    /// If the goal has already been reached by player 2.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub const fn player_2_was_first_to_reach_goal(&self) -> bool {
+        self.status_flags & status_enum::PLAYER_2_FIRST_AT_END > 0
     }
 
     /// Sets the goal reached for the given player.
