@@ -45,6 +45,7 @@ use crate::{
 /// - The evaluation for the best action is sometimes very negative??
 /// - Walking actions are take as best too often? (Or maybe only because they are the only available)
 /// - Branching factor (EFF, MEAN) and Move Ordering often none in diagnostics
+/// - The check with aspiration windows fails even when they are turned off (possible fixed now through right player flag)
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,
@@ -464,7 +465,7 @@ impl PVSPlayer {
                 return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
                     evaluation // Fail-soft beta-cutoff
                 } else {
-                    beta // Fail-hard beta-cutoff BUG: in combination with aspiration windows turned off (maybe also in zws)
+                    beta // Fail-hard beta-cutoff
                 });
             }
 
@@ -480,10 +481,11 @@ impl PVSPlayer {
         // or iff aspiration windows are used can also be an upper bound
         debug_assert!(
             ply_from_root != 0 || evaluation_bound == EvaluationType::Exact || self.options.features.aspiration_window,
-            "[PVSPlayer::principal_variation_search] Assert about ply_from_root: {}, evaluation_bound: {:?}, aspiration_windows: {}",
+            "[PVSPlayer::principal_variation_search] Assert about ply_from_root: {}, evaluation_bound: {:?}, aspiration_windows: {}, alpha: {:?}.",
             ply_from_root,
             evaluation_bound,
-            self.options.features.aspiration_window
+            self.options.features.aspiration_window,
+            alpha
         );
 
         // In case of a UpperBound we store a null action, as the true best
@@ -594,6 +596,8 @@ impl PVSPlayer {
         self.diagnostics.increment_nodes_searched();
         self.diagnostics.increment_leaf_nodes_searched();
 
+        let color = if game.is_player_1() { 1 } else { -1 };
+
         // Force a turn for phantom moves
         let mut needs_undo_action = false;
         if matches!(game.turn_type, TurnType::NormalPhantom | TurnType::SpecialPhantom) {
@@ -615,7 +619,6 @@ impl PVSPlayer {
         //     }
         // }
 
-        let color = game.get_current_player() as i32;
         let evaluation = color * self.options.evaluator.evaluate_node(game);
 
         // self.store_transposition_table(game, 0, evaluation, EvaluationType::Exact, ActionId::null());
@@ -625,6 +628,14 @@ impl PVSPlayer {
             game.undo_action(ActionId::phantom(), true)?;
             // self.store_transposition_table(game, 0, evaluation, EvaluationType::Exact, ActionId::null());
         }
+
+        debug_assert!(
+            (evaluator_constants::NEGATIVE_INFINITY..=evaluator_constants::POSITIVE_INFINITY).contains(&evaluation),
+            "[PVSPlayer::evaluation] Assert evaluation({}) is not in range of [{}, {}].",
+            evaluation,
+            evaluator_constants::NEGATIVE_INFINITY,
+            evaluator_constants::POSITIVE_INFINITY
+        );
 
         Ok(evaluation)
     }
