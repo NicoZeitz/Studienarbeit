@@ -5,7 +5,7 @@ pub struct ActionList<'a> {
     /// The actions.
     pub(crate) actions: &'a mut [ActionId],
     /// The scores for the actions.
-    pub(crate) scores: &'a mut [isize],
+    pub(crate) scores: &'a mut [f64],
 }
 
 impl<'a> ActionList<'a> {
@@ -19,7 +19,7 @@ impl<'a> ActionList<'a> {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn new(actions: &'a mut [ActionId], scores: &'a mut [isize]) -> Self {
+    pub fn new(actions: &'a mut [ActionId], scores: &'a mut [f64]) -> Self {
         Self { actions, scores }
     }
 
@@ -80,7 +80,7 @@ impl<'a> ActionList<'a> {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn get_score(&self, index: usize) -> isize {
+    pub fn get_score(&self, index: usize) -> f64 {
         self.scores[index]
     }
 

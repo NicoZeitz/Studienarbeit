@@ -135,65 +135,75 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
             );
 
             let result = end_state.get_termination_result();
+            game.turns
+                .iter()
+                .enumerate()
+                .filter(|(_, turn)| turn.action.is_some())
+                .for_each(|(ply, turn)| {
+                    let action = turn.action.unwrap();
+                    let is_player_1 = turn.state.is_player_1();
 
-            game.turns.iter().filter(|turn| turn.action.is_some()).for_each(|turn| {
-                let action = turn.action.unwrap();
-                let is_player_1 = turn.state.is_player_1();
-
-                let score = match result.termination {
-                    TerminationType::Player1Won => {
-                        if is_player_1 {
-                            1
-                        } else {
-                            -1
+                    let score = match result.termination {
+                        TerminationType::Player1Won => {
+                            if is_player_1 {
+                                1
+                            } else {
+                                -1
+                            }
                         }
-                    }
-                    TerminationType::Player2Won => {
-                        if is_player_1 {
-                            -1
-                        } else {
-                            1
+                        TerminationType::Player2Won => {
+                            if is_player_1 {
+                                -1
+                            } else {
+                                1
+                            }
                         }
-                    }
-                };
+                    };
 
-                // TODO: look at with ply offset
-                // TODO: look at actual_score vs only score
+                    let actual_score = score * ((result.player_1_score - result.player_2_score).abs() + 1);
+                    let key = if action.is_walking() {
+                        0
+                    } else if action.is_special_patch_placement() {
+                        action.get_quilt_board_index() as u32 + 1
+                    } else if action.is_patch_placement() {
+                        action.get_patch_id() as u32 * PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
+                            + action.get_patch_transformation_index() as u32
+                            + 82
+                    } else {
+                        unreachable!(
+                            "[get_game_statistics(action_scores)] Other actions types should not be in the dataset"
+                        )
+                    };
+                    let description = if action.is_walking() {
+                        "walking".to_string()
+                    } else if action.is_special_patch_placement() {
+                        format!("special_patch_placement({:02})", action.get_quilt_board_index())
+                    } else if action.is_patch_placement() {
+                        format!(
+                            "patch_placement({:02}, {:03})",
+                            action.get_patch_id(),
+                            action.get_patch_transformation_index()
+                        )
+                    } else {
+                        unreachable!(
+                            "[get_game_statistics(action_scores)] Other actions types should not be in the dataset"
+                        )
+                    };
 
-                let actual_score = score * ((result.player_1_score - result.player_2_score).abs() + 1);
-                let key = if action.is_walking() {
-                    0
-                } else if action.is_special_patch_placement() {
-                    action.get_quilt_board_index() as u32 + 1
-                } else if action.is_patch_placement() {
-                    action.get_patch_id() as u32 * PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
-                        + action.get_patch_transformation_index() as u32
-                        + 82
-                } else {
-                    unreachable!(
-                        "[get_game_statistics(action_scores)] Other actions types should not be in the dataset"
-                    )
-                };
-                let description = if action.is_walking() {
-                    "walking".to_string()
-                } else if action.is_special_patch_placement() {
-                    format!("special_patch_placement({})", action.get_quilt_board_index())
-                } else if action.is_patch_placement() {
-                    format!(
-                        "patch_placement({}, {})",
-                        action.get_patch_id(),
-                        action.get_patch_transformation_index()
-                    )
-                } else {
-                    unreachable!(
-                        "[get_game_statistics(action_scores)] Other actions types should not be in the dataset"
-                    )
-                };
+                    let percentage = ply as f64 / game.turns.len() as f64;
 
-                let entry = action_scores_map.entry(key).or_insert((description, 0, 0));
-                entry.1 += actual_score;
-                entry.2 += score;
-            });
+                    let entry = action_scores_map.entry((key, F64Key(percentage))).or_insert((
+                        description,
+                        percentage,
+                        0,
+                        0,
+                        0,
+                    ));
+
+                    entry.2 += actual_score;
+                    entry.3 += score;
+                    entry.4 += 1; // count
+                });
         }
 
         games += 1;
@@ -201,6 +211,8 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
             print!("\r================= Game {} =================", games);
         }
     }
+
+    println!();
 
     if no_games {
         println!("No games found");
@@ -213,23 +225,51 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
             .from_path(output.join("action_scores.csv"))
             .unwrap();
 
-        let mut action_scores_win_loss_writer = csv::WriterBuilder::new()
-            .has_headers(false)
-            .from_path(output.join("action_scores_win_loss.csv"))
-            .unwrap();
-
         let mut data_vector = action_scores_map.values().collect::<Vec<_>>();
-        data_vector.sort_by_key(|(desc, _, _)| desc);
+        data_vector.sort_by_key(|(desc, percentage, _, _, _)| {
+            if desc == "walking" {
+                (0, desc, F64Key(*percentage))
+            } else if desc.starts_with("special_patch_placement") {
+                (1, desc, F64Key(*percentage))
+            } else if desc.starts_with("patch_placement") {
+                (2, desc, F64Key(*percentage))
+            } else {
+                unreachable!("[get_game_statistics(action_scores)] Other actions types should not be in the dataset")
+            }
+        });
 
-        for (description, score, win_loss) in data_vector {
-            action_scores_writer.serialize((description, score)).unwrap();
-            action_scores_win_loss_writer
-                .serialize((description, win_loss))
+        for (description, percentage, score, win_loss, count) in data_vector {
+            action_scores_writer
+                .serialize((description, percentage, score, win_loss, count))
                 .unwrap();
         }
     }
 
-    println!("\r================= FINISHED GATHERING STATISTICS =================");
+    println!("================= FINISHED GATHERING STATISTICS =================");
+}
+
+struct F64Key(pub f64);
+
+impl std::cmp::PartialEq for F64Key {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
+impl std::cmp::Eq for F64Key {}
+impl std::cmp::PartialOrd for F64Key {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl std::cmp::Ord for F64Key {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.0.partial_cmp(&other.0).unwrap()
+    }
+}
+impl std::hash::Hash for F64Key {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.0.to_bits().hash(state);
+    }
 }
 
 struct Gather {

@@ -350,10 +350,12 @@ impl PVSPlayer {
 
         let pv_action = self.get_pv_action(game, ply_from_root);
 
-        let mut scores = vec![0; actions.len()];
+        let mut scores = vec![0.0; actions.len()];
         let mut action_list = ActionList::new(&mut actions, &mut scores);
 
-        self.options.action_orderer.score_actions(&mut action_list, pv_action);
+        self.options
+            .action_orderer
+            .score_actions(&mut action_list, pv_action, ply_from_root);
 
         let mut is_pv_node = true;
         let mut best_action = ActionId::null();

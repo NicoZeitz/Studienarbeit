@@ -31,9 +31,9 @@ pub trait ActionSorter {
     ///
     /// `𝒪(𝑚 · 𝑛)` where `n` is the amount of actions and `𝒪(𝑚)` is the complexity of the `score_action` function
     /// which is usually `𝒪(𝟣)`.
-    fn score_actions(&self, actions: &mut ActionList, pv_action: Option<ActionId>) {
+    fn score_actions(&self, actions: &mut ActionList, pv_action: Option<ActionId>, current_ply: usize) {
         for i in 0..actions.len() {
-            actions.scores[i] = self.score_action(actions.get_action(i), pv_action);
+            actions.scores[i] = self.score_action(actions.get_action(i), pv_action, current_ply);
         }
     }
 
@@ -56,7 +56,7 @@ pub trait ActionSorter {
     /// # Complexity
     ///
     /// Should be implemented in `𝒪(𝟣)`.
-    fn score_action(&self, action: ActionId, pv_action: Option<ActionId>) -> isize;
+    fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64;
 
     /// Picks the best action from the given actions. The given actions are ordered in place.
     ///
