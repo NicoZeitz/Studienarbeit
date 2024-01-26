@@ -23,32 +23,17 @@ use crate::{
 /// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
-///     - PV Actions sorted first
 ///
-/// TODO:
-/// - https://www.chessprogramming.org/Legal_Move#Legality_Test for transposition table entries from key collisions
-/// # Features that still need to be implemented
-/// - Move Ordering
-///     - Something like MMV-LVA but for patchwork (e.g. ending score)
-///     - Actions that are inside the transposition table
-///     - Killer Moves (TODO)
-///     - Thread escape move check
-///     - History Heuristic
-///     - Move Ordering via Machine Learning (something like [Neural MoveMap Heuristic](https://www.chessprogramming.org/Neural_MoveMap_Heuristic))
-///  Remove late moves in move ordering
-/// - (Reverse) Futility Pruning
-/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#:~:text=Late%20Move%20Pruning%20%E2%80%8B,by%20the%20move%20ordering%20algorithm.) Remove late moves in move ordering
-/// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
-/// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
+/// # Other Features that could still be implemented:
 /// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
 /// - [Automated Tuning](https://www.chessprogramming.org/Automated_Tuning) via regression, reinforcement learning or supervised learning for evaluation
 ///   - [Texel's Tuning Method](https://www.chessprogramming.org/Texel%27s_Tuning_Method)
 /// - [ƎUИИ Efficiently Updatable Neural Networks](https://www.chessprogramming.org/NNUE) implementation in Rust [Carp Engine](https://github.com/dede1751/carp/tree/main/chess/src/nnue)
-///
-/// # Features that could maybe be implemented (look into it what it is)
-///    -   (Reverse) Futility Pruning --> pretty sure
-///    -   Delta Pruning
-///    -   https://www.chessprogramming.org/PV_Extensions
+/// - [(Reverse) Futility Pruning]
+/// - [PV_Extensions](https://www.chessprogramming.org/PV_Extensions)
+/// - [Legality Test](https://www.chessprogramming.org/Legal_Move#Legality_Test) for transposition table entries from key collisions
+/// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
+/// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,
@@ -394,19 +379,22 @@ impl PVSPlayer {
                 debug_assert_eq!(action, pv_action, "Chosen Action != PV-Action");
             }
 
-            // TODO: late move pruning (LMP) (remove last actions in list while some conditions are not met, e.g. in check, depth, ...)
             // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
+            // Remove late moves in move ordering
             if i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS && self.options.features.late_move_pruning {
                 self.diagnostics.increment_late_move_pruning();
                 // TODO: check some things here to allow
-                // -> make it more like futility pruning
+                // -> make it more like futility pruning with margin
                 continue;
             }
+
+            // Save previous state characteristics that are needed later
+            let previous_special_tile_condition_reached = game.is_special_tile_condition_reached();
 
             game.do_action(action, true)?;
 
             // Extend the depth of the search in certain interesting cases (special patch placement)
-            let extension = self.get_search_extension(game, num_extensions);
+            let extension = self.get_search_extension(game, num_extensions, previous_special_tile_condition_reached);
 
             let mut evaluation = 0;
             if is_pv_node {
@@ -563,7 +551,12 @@ impl PVSPlayer {
     /// # Returns
     ///
     /// The number of search extensions (depth) to apply.
-    fn get_search_extension(&mut self, game: &Patchwork, num_extensions: usize) -> usize {
+    fn get_search_extension(
+        &mut self,
+        game: &Patchwork,
+        num_extensions: usize,
+        previous_special_tile_condition_reached: bool,
+    ) -> usize {
         if !self.options.features.search_extensions {
             return 0;
         }
@@ -575,15 +568,15 @@ impl PVSPlayer {
         let mut extension = 0;
 
         // Extend the depth of search for special patch placements
-        if matches!(
-            game.turn_type,
-            TurnType::SpecialPatchPlacement | TurnType::SpecialPhantom
-        ) {
+        if matches!(game.turn_type, TurnType::SpecialPhantom) {
             self.diagnostics.increment_special_patch_extensions();
-            // TODO: this will double extend with special phantom then special patch placement
-            // we could not extend special phantom but that would be wrong as we could have a special phantom and already have depth 0
-            // maybe change evaluation to go further
-            extension = 1;
+            extension += 1;
+        }
+
+        // Extend the depth of search if the 7x7 special tile was given
+        if !previous_special_tile_condition_reached && game.is_special_tile_condition_reached() {
+            self.diagnostics.increment_special_tile_extensions();
+            extension += 1;
         }
 
         extension
@@ -686,6 +679,7 @@ impl PVSPlayer {
             }
         }
 
+        // TODO: remove pv table package entirely as transposition table is more than enough
         // FEATURE:PV_TABLE: use pv table here
 
         if let Some(ref transposition_table) = self.transposition_table {
@@ -796,7 +790,7 @@ impl PVSPlayer {
         writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.diagnostics.fail_high_first as f64) / (self.diagnostics.fail_high as f64), self.diagnostics.fail_high_first, self.diagnostics.fail_high)?;
         writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.diagnostics.aspiration_window_fail_low, self.diagnostics.aspiration_window_fail_high)?;
         writeln!(writer, "Zero window search:  {:?} fails ({:.2}%)", self.diagnostics.zero_window_search_fail, self.diagnostics.zero_window_search_fail_rate() * 100.0)?;
-        writeln!(writer, "Special patch ext.:  {:?} ({})", self.diagnostics.special_patch_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
+        writeln!(writer, "Search Extensions:   {:?} SP, {:?} ST ({})", self.diagnostics.special_patch_extensions, self.diagnostics.special_tile_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
         writeln!(writer, "LMR / LMP:           {:?} / {:?}", self.diagnostics.late_move_reductions, self.diagnostics.late_move_pruning)?;
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {

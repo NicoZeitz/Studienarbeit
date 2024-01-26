@@ -6,8 +6,10 @@ version = 3
 name = "action_orderer"
 version = "1.0.0"
 dependencies = [
+ "criterion",
  "lazy_static",
  "patchwork_core",
+ "rand",
 ]
 
 [[package]]

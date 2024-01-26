@@ -6,4 +6,4 @@ mod table_action_orderer;
 pub use action_list::ActionList;
 pub use action_orderer::ActionSorter;
 pub use patch_square_table::*;
-pub use table_action_orderer::TableActionSorter;
+pub use table_action_orderer::TableActionOrderer;

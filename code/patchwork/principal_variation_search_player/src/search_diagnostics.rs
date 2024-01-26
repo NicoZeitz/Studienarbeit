@@ -23,6 +23,8 @@ pub struct SearchDiagnostics {
     pub zero_window_search_fail: usize,
     /// The number of times a special patch extension was made.
     pub special_patch_extensions: usize,
+    /// The number of times a special tile (7x7) extension was made.
+    pub special_tile_extensions: usize,
     /// The number of times late move reductions were performed.
     pub late_move_reductions: usize,
     /// The number of times late move pruning was performed.
@@ -44,6 +46,7 @@ impl Default for SearchDiagnostics {
             zero_window_search: 0,
             zero_window_search_fail: 0,
             special_patch_extensions: 0,
+            special_tile_extensions: 0,
             late_move_reductions: 0,
             late_move_pruning: 0,
         }
@@ -64,6 +67,7 @@ impl SearchDiagnostics {
         self.zero_window_search = 0;
         self.zero_window_search_fail = 0;
         self.special_patch_extensions = 0;
+        self.special_tile_extensions = 0;
         self.late_move_reductions = 0;
         self.late_move_pruning = 0;
     }
@@ -99,6 +103,7 @@ impl SearchDiagnostics {
         self.zero_window_search = 0;
         self.zero_window_search_fail = 0;
         self.special_patch_extensions = 0;
+        self.special_tile_extensions = 0;
         self.late_move_reductions = 0;
         self.late_move_pruning = 0;
     }
@@ -155,6 +160,12 @@ impl SearchDiagnostics {
     #[inline(always)]
     pub fn increment_special_patch_extensions(&mut self) {
         self.special_patch_extensions += 1;
+    }
+
+    /// Increments the number of times a special tile extension was made.
+    #[inline(always)]
+    pub fn increment_special_tile_extensions(&mut self) {
+        self.special_tile_extensions += 1;
     }
 
     /// Increments the number of times late move reductions were performed.

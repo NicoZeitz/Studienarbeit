@@ -1,4 +1,4 @@
-use action_orderer::{ActionSorter, TableActionSorter};
+use action_orderer::{ActionSorter, TableActionOrderer};
 use evaluator::StaticEvaluator;
 use patchwork_core::StableEvaluator;
 use transposition_table::Size;
@@ -37,7 +37,7 @@ impl Default for PVSOptions {
         Self {
             time_limit: std::time::Duration::from_secs(20), // TODO: real time limit
             evaluator: Box::<StaticEvaluator>::default(),
-            action_orderer: Box::<TableActionSorter>::default(),
+            action_orderer: Box::<TableActionOrderer>::default(),
             features: Default::default(),
         }
     }

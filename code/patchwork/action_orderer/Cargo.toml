@@ -10,3 +10,11 @@ license.workspace = true
 [dependencies]
 lazy_static = "1.4.0"
 patchwork_core = { path = "../patchwork_core" }
+
+[dev-dependencies]
+criterion = { version = "0.4" }
+rand = "0.8.5"
+
+[[bench]]
+name = "performance"
+harness = false

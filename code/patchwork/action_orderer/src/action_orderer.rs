@@ -2,30 +2,19 @@ use patchwork_core::ActionId;
 
 use crate::ActionList;
 
-// TODO: write a real sorter
-
-// 1. PV-Action -> MAX-Score
-// 2. TT / Hash Moves (if nothing available internal iterative deepening
-// 3. Handcrafted Action Ordering
-//    * Heavily penalize moving actions (especially starting at later starting indices or with much money)
-// Train parameters with texels tuning
-// Look into: Killer Heuristic, History Heuristic
-
-// A typical move ordering consists as follows:
-// * PV-move of the principal variation from the previous iteration of an iterative deepening framework for the leftmost path, often implicitly done by 2.
-// * Hash move from hash tables
-// * Winning captures/promotions
-// * Equal captures/promotions
-// * Killer moves (non capture), often with mate killers first
-// * Non-captures sorted by history heuristic and that like
-// * Losing captures (* but see below
-
+/// The base trait to order Actions.
+///
+/// # FEATURE: Other Optimal ActionSorter Implementations
+/// - Handcrafted Action Ordering in Tables
+/// - Move Ordering via Machine Learning (something like [Neural MoveMap Heuristic](https://www.chessprogramming.org/Neural_MoveMap_Heuristic))
 pub trait ActionSorter {
     /// Scores the given actions. The given actions are scored in place.
     ///
     /// # Arguments
     ///
     /// * `actions` - The actions to score.
+    /// * `pv_action` - The principal variation action.
+    /// * `current_ply` - The current ply.
     ///
     /// # Complexity
     ///
@@ -48,6 +37,8 @@ pub trait ActionSorter {
     /// # Arguments
     ///
     /// * `action` - The action to score.
+    /// * `pv_action` - The principal variation action.
+    /// * `current_ply` - The current ply.
     ///
     /// # Returns
     ///
