@@ -52,7 +52,7 @@ impl Player for MinimaxPlayer {
             return Ok(valid_actions[0]);
         }
 
-        let maximizing_player = Patchwork::is_flag_player_1(game.get_current_player());
+        let maximizing_player = game.is_player_1();
 
         let mut chosen_action = valid_actions[0];
         let mut chosen_evaluation = if maximizing_player { i32::MIN } else { i32::MAX };
@@ -113,7 +113,7 @@ impl MinimaxPlayer {
         let mut alpha = alpha;
         let mut beta = beta;
 
-        let maximizing_player = Patchwork::is_flag_player_1(game.get_current_player());
+        let maximizing_player = game.is_player_1();
         let valid_actions = game.get_valid_actions();
 
         if maximizing_player {
