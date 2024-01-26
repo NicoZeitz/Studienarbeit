@@ -24,6 +24,38 @@ pub trait ActionSorter {
         for i in 0..actions.len() {
             actions.scores[i] = self.score_action(actions.get_action(i), pv_action, current_ply);
         }
+
+        #[cfg(debug_assertions)]
+        if let Some(pv_action) = pv_action {
+            let (highest_score_index, highest_score) =
+                actions
+                    .scores
+                    .iter()
+                    .enumerate()
+                    .fold((0, f64::NEG_INFINITY), |accumulator, (index, score)| {
+                        if *score > accumulator.1 {
+                            (index, *score)
+                        } else {
+                            accumulator
+                        }
+                    });
+
+            let highest_action = actions.get_action(highest_score_index);
+            let Some(pv_action_index) = actions.actions.iter().position(|action| *action == pv_action) else {
+                // PV-Action wrong as it is not in the list of actions.
+                return;
+            };
+
+            let pv_action_score = actions.scores[pv_action_index];
+
+            if highest_action != pv_action {
+                println!("PV-Node action is not sorted first!");
+                println!("PV-Action: {:?} with score {}", pv_action, pv_action_score);
+                println!("BEST_ACTION: {:?} with score {}", highest_action, highest_score);
+
+                debug_assert_eq!(highest_action, pv_action, "Highest Action != PV-Action");
+            }
+        }
     }
 
     /// Scores the given action. The score is used to order the actions.

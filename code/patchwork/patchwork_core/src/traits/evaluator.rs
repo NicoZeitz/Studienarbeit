@@ -66,11 +66,23 @@ pub trait Evaluator: Sync + Send {
     ///
     /// The evaluation of the given state.
     fn evaluate_node(&self, game: &Patchwork) -> i32 {
-        if game.is_terminated() {
+        let score = if game.is_terminated() {
             self.evaluate_terminal_node(game)
         } else {
             self.evaluate_intermediate_node(game)
+        };
+
+        #[cfg(debug_assertions)]
+        if !(evaluator_constants::NEGATIVE_INFINITY..=evaluator_constants::POSITIVE_INFINITY).contains(&score) {
+            println!("Game: {}", game);
+            println!("Score: {}", score);
+
+            panic!("The score is not in the allowed range.");
         }
+
+        println!("Score: {}", score);
+
+        score
     }
 }
 

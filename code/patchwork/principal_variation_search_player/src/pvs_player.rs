@@ -35,6 +35,16 @@ use crate::{
 /// - [Legality Test](https://www.chessprogramming.org/Legal_Move#Legality_Test) for transposition table entries from key collisions
 /// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
 /// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
+///
+/// # BUG:
+///
+/// - Sometimes the nodes searched are 0 but it still continues to the next depth (how can this happen?)
+/// - Sometimes the best action is always NONE
+/// - Sometimes the game crashes with do_action (expected non-null action)
+/// - The performance vs. greedy still seems too bad.
+/// - The evaluation for the best action is sometimes very negative??
+/// - Walking actions are take as best too often? (Or maybe only because they are the only available)
+/// - Branching factor (EFF, MEAN) and Move Ordering often none in diagnostics
 pub struct PVSPlayer {
     /// The name of the player.
     pub name: String,
@@ -153,8 +163,8 @@ impl PVSPlayer {
     pub const LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 7;
     /// The maximum depth at which LMP will be applied.
     pub const LMP_DEPTH_LIMIT: usize = 2;
-
-    pub const MAX_SEARCH_EXTENSIONS: usize = 16; // can never be reached as we only have a search extension for special patches that cannot activate another special patch placement
+    /// The maximum amount of search extensions that can be applied.
+    pub const MAX_SEARCH_EXTENSIONS: usize = 16; // Can probably never be reached
 
     /// The maximum depth to search.
     /// This is an upper bound that can never be reached as no game can go on
@@ -254,6 +264,7 @@ impl PVSPlayer {
 
             if let Some(evaluator_constants::POSITIVE_INFINITY) = self.best_evaluation {
                 // We found a winning game, so we can stop searching
+                // TODO: it would be possible here to get the plys to win by offset
                 break;
             }
 
@@ -356,33 +367,18 @@ impl PVSPlayer {
         for i in 0..action_list.len() {
             // Move Ordering
             // [How move ordering works](https://rustic-chess.org/search/ordering/how.html)
-            // Sidenote: Why do we assign sort scores to the moves, and then use pick_move() to swap one move to the
-            // current index of the move list while alpha/beta iterates over it? Couldn't we just physically sort the
-            // list before the move loop starts, and be done with it?
-            // It's possible, but we don't do that because of how alpha/beta works. If alpha/beta encounters a move that
-            // is so good that searching further down the move list is no longer required, then it will exit and return
-            // the evaluation score of that move. (This is a so-called beta-cutoff.) If you physically sorted all the
-            // moves before the move loop starts, you may have sorted lots of moves that may never be examined by
-            // alpha/beta. This costs time, and thus it makes the engine slower.
-            // You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
-            // ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
-            // The result is the same, but move ordering is the faster approach, as described above.
+            // > Sidenote: Why do we assign sort scores to the moves, and then use pick_move() to swap one move to the
+            // > current index of the move list while alpha/beta iterates over it? Couldn't we just physically sort the
+            // > list before the move loop starts, and be done with it?
+            // > It's possible, but we don't do that because of how alpha/beta works. If alpha/beta encounters a move
+            // > that is so good that searching further down the move list is no longer required, then it will exit and
+            // > return the evaluation score of that move. (This is a so-called beta-cutoff.) If you physically sorted
+            // > all the moves before the move loop starts, you may have sorted lots of moves that may never be examined
+            // > by alpha/beta. This costs time, and thus it makes the engine slower.
+            // > You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
+            // > ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
+            // > The result is the same, but move ordering is the faster approach, as described above.
             let action = self.options.action_orderer.pick_action(&mut action_list, i);
-
-            #[cfg(debug_assertions)]
-            if i == 0 && pv_action.is_some() {
-                let pv_action = pv_action.unwrap();
-                if action != pv_action {
-                    println!("PV-Node action is not sorted first!");
-                    println!("PLY_FROM_ROOT {:?}", ply_from_root);
-                    println!("BEST_ACTION: {:?}", self.best_action);
-                    println!(
-                        "PROBE PV: {:?}",
-                        self.transposition_table.as_ref().map(|t| t.probe_pv_move(game))
-                    );
-                }
-                debug_assert_eq!(action, pv_action, "Chosen Action != PV-Action");
-            }
 
             // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
             // Remove late moves in move ordering
@@ -468,7 +464,7 @@ impl PVSPlayer {
                 return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
                     evaluation // Fail-soft beta-cutoff
                 } else {
-                    beta // Fail-hard beta-cutoff
+                    beta // Fail-hard beta-cutoff BUG: in combination with aspiration windows turned off (maybe also in zws)
                 });
             }
 
@@ -685,6 +681,17 @@ impl PVSPlayer {
 
         // Uses Transposition Table for PV-Action, for more information see
         // [TT-move ordering: Sidenote](https://rustic-chess.org/search/ordering/tt_move.html)
+        // > Sidenote: what about ordering on the PV-move? There is a technique called PV-move ordering, which orders
+        // > the best move from the previous iteration in the first spot. Ordering the move works the same was is with
+        // > the TT-move; the only difference is that you pass the PV-move to the score_move() function instead of the
+        // > TT-move. This is easier to implement, because you don't need a TT for it. As the TT stores the PV-moves
+        // > (and the cut-moves), PV-move ordering is inherently built into TT-move ordering. If you have a TT, PV-move
+        // > ordering becomes superfluous.
+        // >
+        // > There is a chance your the TT-entry holding the PV-move for the position you are in was overwritten with a
+        // > different entry so you have no PV-move to order on. As far as I know, many engines take this risk for
+        // > granted and don't implement PV-move ordering is a fallback. It's probably not worth it with regard to Elo
+        // > gain. Rustic does not implement PV-move ordering.
         if let Some(ref transposition_table) = self.transposition_table {
             return transposition_table.probe_pv_move(game);
         }
@@ -809,10 +816,12 @@ impl PVSPlayer {
         let average_branching_factor = (self.diagnostics.leaf_nodes_searched as f64).powf(1.0 / depth as f64);
         let effective_branching_factor = self.diagnostics.nodes_searched as f64 / self.diagnostics.nodes_searched_previous_iteration as f64;
         let mean_branching_factor = self.diagnostics.nodes_searched as f64 / (self.diagnostics.nodes_searched - self.diagnostics.leaf_nodes_searched) as f64;
+        let player_1_pos = game.player_1.get_position();
+        let player_2_pos = game.player_2.get_position();
 
         writeln!(writer, "───────────── Principal Variation Search Player ─────────────")?;
         writeln!(writer, "Features:            [{}]", features)?;
-        writeln!(writer, "Depth:               {:?}", depth)?;
+        writeln!(writer, "Depth:               {:?} started from (1: {}, 2: {}, type: {:?})", depth, player_1_pos, player_2_pos, game.turn_type)?;
         writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.diagnostics.start_time))?;
         writeln!(writer, "Nodes searched:      {:?}", self.diagnostics.nodes_searched)?;
         writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / {:.2} MEAN", average_branching_factor, effective_branching_factor, mean_branching_factor)?;

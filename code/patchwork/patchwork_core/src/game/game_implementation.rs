@@ -192,7 +192,11 @@ impl Patchwork {
     /// This will panic in debug mode
     #[allow(unused_variables)]
     pub fn do_action(&mut self, action: ActionId, force_player_switch: bool) -> Result<(), PatchworkError> {
-        debug_assert!(!action.is_null(), "[Patchwork::do_action] Expected non-null action");
+        #[cfg(debug_assertions)]
+        if action.is_null() {
+            println!("{}", self);
+            debug_assert!(!action.is_null(), "[Patchwork::do_action] Expected non-null action");
+        }
 
         // IF phantom action
         if action.is_phantom() {
@@ -409,7 +413,11 @@ impl Patchwork {
     /// This function has undefined if the game is in initial state or when a null action is given.
     /// This will panic in debug mode
     pub fn undo_action(&mut self, action: ActionId, force_player_switch: bool) -> Result<(), PatchworkError> {
-        debug_assert!(!action.is_null(), "[Patchwork::undo_action] Expected non-null action");
+        #[cfg(debug_assertions)]
+        if action.is_null() {
+            println!("{}", self);
+            debug_assert!(!action.is_null(), "[Patchwork::undo_action] Expected non-null action");
+        }
 
         #[cfg(debug_assertions)]
         if self.current_player().position == 0 && self.other_player().position == 0 {

@@ -373,7 +373,10 @@ impl GameLoop {
 
 #[cfg(test)]
 mod tests {
-    use patchwork::GameOptions;
+    use patchwork::{
+        player::{DiagnosticsFeature, PVSFeatures},
+        GameOptions,
+    };
 
     use super::*;
 
@@ -389,15 +392,21 @@ mod tests {
         test_player(player);
     }
 
-    // TODO: uncomment when pvs is fixed
-    // #[test]
-    // fn pvs_player() {
-    //     let player = Box::new(PVSPlayer::new(
-    //         "PVS Player",
-    //         None
-    //     ));
-    //     test_player(player);
-    // }
+    #[test]
+    fn pvs_player() {
+        let player = Box::new(PVSPlayer::new(
+            "PVS Player",
+            Some(PVSOptions {
+                time_limit: std::time::Duration::from_millis(750),
+                features: PVSFeatures {
+                    diagnostics: DiagnosticsFeature::Disabled,
+                    ..Default::default()
+                },
+                ..Default::default()
+            }),
+        ));
+        test_player(player);
+    }
 
     // TODO: test other players
 

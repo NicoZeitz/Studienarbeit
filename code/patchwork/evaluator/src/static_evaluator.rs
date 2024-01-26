@@ -1,8 +1,6 @@
 use std::f64::consts::E;
 
-use patchwork_core::{
-    evaluator_constants, Evaluator, Patchwork, QuiltBoard, StableEvaluator, TerminationType, TimeBoard,
-};
+use patchwork_core::{Evaluator, Patchwork, QuiltBoard, StableEvaluator, TimeBoard};
 
 // Copilot continuous zeros / ones
 // The provided solution is already quite efficient, as it operates in O(1) time complexity, which is the best possible time complexity you can achieve
@@ -52,15 +50,7 @@ impl Evaluator for StaticEvaluator {
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
         let player_1_score = self.evaluate_state_for_player(game, Patchwork::get_player_1_flag());
         let player_2_score = self.evaluate_state_for_player(game, Patchwork::get_player_2_flag());
-
         (player_1_score - player_2_score) as i32 // TODO: better implementation
-    }
-
-    fn evaluate_terminal_node(&self, game: &Patchwork) -> i32 {
-        match game.get_termination_result().termination {
-            TerminationType::Player1Won => evaluator_constants::POSITIVE_INFINITY,
-            TerminationType::Player2Won => evaluator_constants::NEGATIVE_INFINITY,
-        }
     }
 }
 

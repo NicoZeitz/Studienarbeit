@@ -183,6 +183,10 @@ impl SearchDiagnostics {
     /// Returns the rate of failing zero window searches in relation to the number of zero window searches.
     #[inline(always)]
     pub fn zero_window_search_fail_rate(&self) -> f64 {
+        if self.zero_window_search == 0 {
+            return 0.0;
+        }
+
         self.zero_window_search_fail as f64 / self.zero_window_search as f64
     }
 }

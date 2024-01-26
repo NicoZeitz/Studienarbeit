@@ -1,3 +1,5 @@
+use std::num::NonZeroUsize;
+
 use action_orderer::{ActionSorter, TableActionOrderer};
 use evaluator::StaticEvaluator;
 use patchwork_core::StableEvaluator;
@@ -23,6 +25,16 @@ impl PVSOptions {
         action_orderer: Box<dyn ActionSorter>,
         features: PVSFeatures,
     ) -> Self {
+        if matches!(features.lazy_smp, LazySMPFeature::Yes(_)) {
+            unimplemented!("The lazy SMP feature is not implemented jet.") // UNIMPLEMENTED: implement
+        }
+
+        if matches!(features.lazy_smp, LazySMPFeature::Yes(_))
+            && matches!(features.transposition_table, TranspositionTableFeature::Disabled)
+        {
+            panic!("The lazy SMP feature can only be enabled if the transposition table feature is enabled.");
+        }
+
         Self {
             time_limit,
             evaluator,
@@ -35,7 +47,7 @@ impl PVSOptions {
 impl Default for PVSOptions {
     fn default() -> Self {
         Self {
-            time_limit: std::time::Duration::from_secs(20), // TODO: real time limit
+            time_limit: std::time::Duration::from_secs(20),
             evaluator: Box::<StaticEvaluator>::default(),
             action_orderer: Box::<TableActionOrderer>::default(),
             features: Default::default(),
@@ -49,21 +61,20 @@ pub struct PVSFeatures {
     pub failing_strategy: FailingStrategy,
     /// If [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows) should be used.
     pub aspiration_window: bool,
-    // If a [Transposition Table](https://www.chessprogramming.org/Transposition_Table) should be used.
-    pub transposition_table: TranspositionTableFeature,
     /// If [Late Move Reductions](https://www.chessprogramming.org/Late_Move_Reductions) should be used.
     pub late_move_reductions: bool,
-    /// If [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning) should be used.
+    /// If [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
+    /// should be used.
     pub late_move_pruning: bool,
     /// If [Extensions](https://www.chessprogramming.org/Extensions) should be used for special patches.
     pub search_extensions: bool,
+    // If a [Transposition Table](https://www.chessprogramming.org/Transposition_Table) should be used.
+    pub transposition_table: TranspositionTableFeature,
+    /// If [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) should be used. Requires the transposition table
+    /// feature to be enabled.
+    pub lazy_smp: LazySMPFeature,
     /// If diagnostics should be printed.
     pub diagnostics: DiagnosticsFeature,
-    // TODO: Other Features
-    // late_move_pruning: bool,
-    // null_move_pruning: bool,
-    // internal_iterative_deepening: bool,
-    // lazy_smp: Enum { No, Yes(parallelism) }
 }
 
 impl Default for PVSFeatures {
@@ -75,7 +86,31 @@ impl Default for PVSFeatures {
             late_move_reductions: true,
             late_move_pruning: true,
             search_extensions: true,
+            lazy_smp: LazySMPFeature::No,
             diagnostics: Default::default(),
+        }
+    }
+}
+
+/// Different options for the lazy Symmetric multiprocessing (Lazy SMP) feature.
+///
+/// The lazy SMP feature is used to parallelize the search by sharing a
+/// transposition table between multiple threads. Because of this the lazy SMP
+/// feature can only be enabled if the transposition table feature is enabled.
+#[allow(dead_code)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum LazySMPFeature {
+    /// The lazy SMP feature is disabled.
+    No,
+    /// The lazy SMP feature is enabled with the given parallelism.
+    Yes(NonZeroUsize),
+}
+
+impl Default for LazySMPFeature {
+    fn default() -> Self {
+        match std::thread::available_parallelism().map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) }) {
+            Ok(amount) => Self::Yes(amount),
+            Err(_) => Self::No,
         }
     }
 }

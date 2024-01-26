@@ -38,7 +38,7 @@ fn interpolate(ply: usize, opening_value: f64, endgame_value: f64) -> f64 {
 impl ActionSorter for TableActionOrderer {
     fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64 {
         if pv_action.is_some() && action == pv_action.unwrap() {
-            return 10000.0;
+            return 100000.0;
         }
 
         if action.is_walking() {
@@ -63,6 +63,10 @@ impl ActionSorter for TableActionOrderer {
                 PATCH_PLACEMENT_OPENING_TABLE[id][transformation],
                 PATCH_PLACEMENT_ENDGAME_TABLE[id][transformation],
             );
+        }
+
+        if action.is_phantom() {
+            return 0.0;
         }
 
         unreachable!("[TableActionSorter::score_action] Unknown action type");
