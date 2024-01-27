@@ -11,6 +11,7 @@ members = [
     "alphazero_player",
     "analysis/empirical_measurement",
     "analysis/max_button_income",
+    "application",
     "console",
     "evaluator",
     "greedy_player",
@@ -22,6 +23,7 @@ members = [
     "patchwork",
     "principal_variation_search_player",
     "random_player",
+    "server",
     "transposition_table",
     "tree_policy",
 ]
