@@ -35,6 +35,16 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
     } else {
         None
     };
+    let mut game_tree_complexity_writer = if gather.game_tree_complexity {
+        Some(
+            csv::WriterBuilder::new()
+                .has_headers(false)
+                .from_path(output.join("game_tree_complexity.csv"))
+                .unwrap(),
+        )
+    } else {
+        None
+    };
 
     let mut available_special_actions_writer = if gather.available_special_actions {
         Some(
@@ -206,6 +216,27 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
                 });
         }
 
+        // Gather statistics for the approximation of the game tree complexity
+        // after https://arxiv.org/pdf/1901.11161.pdf
+        // \prod_{j=1}^{N} (c_j(g)) per game
+        if gather.game_tree_complexity {
+            let single_run_product: u128 = game
+                .turns
+                .iter()
+                .filter(|turn| !turn.state.is_terminated())
+                .map(|turn| turn.state.clone())
+                .map(|state| state.get_valid_actions())
+                .filter(|actions| !actions.is_empty())
+                .map(|actions| actions.len() as u128)
+                .product();
+
+            game_tree_complexity_writer
+                .as_mut()
+                .unwrap()
+                .serialize((single_run_product,))
+                .unwrap();
+        }
+
         games += 1;
         if games % 10000 == 0 {
             print!("\r================= Game {} =================", games);
@@ -277,6 +308,7 @@ struct Gather {
     available_actions: bool,
     available_special_actions: bool,
     action_scores: bool,
+    game_tree_complexity: bool,
 }
 
 impl Gather {
@@ -307,8 +339,8 @@ fn main() {
                 .required(true)
                 .value_parser(clap::value_parser!(std::path::PathBuf)),
         )
+        // List all things to gather e.g. --game --available-actions
         .arg(
-            // List all things to gather e.g. --game --available-actions
             clap::Arg::new("game")
                 .long("game")
                 .alias("game")
@@ -336,6 +368,14 @@ fn main() {
                 .required(false)
                 .num_args(0)
                 .help("Gathers statistics about the scores of actions"),
+        )
+        .arg(
+            clap::Arg::new("game-tree-complexity")
+                .long("game-tree-complexity")
+                .alias("game-tree-complexity")
+                .required(false)
+                .num_args(0)
+                .help("Gathers statistics about the game tree complexity"),
         );
 
     let matches = cmd.get_matches();
@@ -347,6 +387,7 @@ fn main() {
             available_actions: matches.get_flag("available-actions"),
             available_special_actions: matches.get_flag("available-special-actions"),
             action_scores: matches.get_flag("action-scores"),
+            game_tree_complexity: matches.get_flag("game-tree-complexity"),
         },
     );
 }
