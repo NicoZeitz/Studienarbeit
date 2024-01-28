@@ -69,7 +69,7 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>) {
             Err(_) => handle_exit(),
         }
     };
-    let available_parallelism: usize = std::thread::available_parallelism().map_or(1, |p| p.into() - 1);
+    let available_parallelism: usize = std::thread::available_parallelism().map_or(1, |p| p.get() - 1);
     let parallelization = loop {
         match rl.readline_with_initial("Parallelization: ", (format!("{}", available_parallelism).as_str(), "")) {
             Ok(parallelization) => {
