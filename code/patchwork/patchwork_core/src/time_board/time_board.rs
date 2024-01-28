@@ -16,7 +16,7 @@ pub mod entities_enum {
 pub struct TimeBoard {
     /// The tiles of the time board.
     #[serde(with = "serde_bytes")]
-    tiles: [u8; 54],
+    pub tiles: [u8; 54],
 }
 
 impl Default for TimeBoard {

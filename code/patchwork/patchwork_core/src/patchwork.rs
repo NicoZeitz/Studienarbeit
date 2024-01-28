@@ -20,7 +20,7 @@ pub enum TurnType {
 
 /// Different flags for the status of the game.
 #[rustfmt::skip]
-pub(crate) mod status_enum {
+pub mod status_enum {
     /// The first player.
     pub const PLAYER_1: u8 = 0b0000_0001; // 1
     /// The second player.

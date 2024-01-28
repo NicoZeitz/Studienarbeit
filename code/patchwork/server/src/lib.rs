@@ -9,6 +9,7 @@ use crate::{
 };
 
 mod api;
+mod serialization;
 mod web;
 
 pub fn start_server(port: Option<u16>, public: bool) -> tokio::io::Result<()> {

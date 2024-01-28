@@ -1,8 +1,8 @@
 pub use action_orderer::*;
 pub use evaluator::*;
 pub use patchwork_core::{
-    Action, ActionId, GameOptions, NaturalActionId, Patch, PatchTransformation, Patchwork, PlayerState, QuiltBoard,
-    Termination, TerminationType, TimeBoard,
+    entities_enum, status_enum, Action, ActionId, GameOptions, NaturalActionId, Patch, PatchManager,
+    PatchTransformation, Patchwork, PlayerState, QuiltBoard, Termination, TerminationType, TimeBoard,
 };
 
 pub mod player {
