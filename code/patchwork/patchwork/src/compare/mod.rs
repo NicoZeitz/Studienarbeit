@@ -27,7 +27,7 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>) {
         }
     };
     let player_2 = loop {
-        match rl.readline("Player 1: ") {
+        match rl.readline("Player 2: ") {
             Ok(player) => {
                 if get_player_from_str(&player.to_ascii_lowercase(), 1).is_some() {
                     break player;
@@ -69,7 +69,7 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>) {
             Err(_) => handle_exit(),
         }
     };
-    let available_parallelism: usize = std::thread::available_parallelism().map_or(1, |p| p.into());
+    let available_parallelism: usize = std::thread::available_parallelism().map_or(1, |p| p.into() - 1);
     let parallelization = loop {
         match rl.readline_with_initial("Parallelization: ", (format!("{}", available_parallelism).as_str(), "")) {
             Ok(parallelization) => {
