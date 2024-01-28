@@ -2,6 +2,7 @@ mod compare;
 mod console;
 mod exit;
 mod help;
+mod player;
 mod server;
 mod upi;
 
@@ -77,7 +78,10 @@ fn handle_args() -> anyhow::Result<()> {
             let mut new_editor = Editor::<(), FileHistory>::new()?;
             handle_console(&mut new_editor);
         }
-        "compare" => handle_compare(),
+        "compare" => {
+            let mut new_editor = Editor::<(), FileHistory>::new()?;
+            handle_compare(&mut new_editor);
+        }
         "server" => start_server_from_cmd(args)?,
         _ => {
             print_cmd_help();
@@ -118,7 +122,7 @@ fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()
         Some("compare") => {
             println!("Starting a comparison of two patchwork games...");
             rl.clear_screen()?;
-            handle_compare();
+            handle_compare(rl);
         }
         Some("server") => start_server_from_repl(args.collect::<Vec<_>>(), rl)?,
         _ => {

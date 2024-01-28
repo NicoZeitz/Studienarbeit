@@ -4,6 +4,7 @@ use patchwork_lib::player::{
 };
 use regex::Regex;
 
+#[allow(clippy::field_reassign_with_default)]
 pub fn get_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
     match name.to_ascii_lowercase().as_str() {
         // HUMAN

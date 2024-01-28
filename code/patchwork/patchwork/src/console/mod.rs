@@ -5,18 +5,17 @@ use rustyline::{history::FileHistory, Editor};
 use crate::exit::handle_exit;
 use patchwork_lib::{Patchwork, TerminationType};
 
-mod game_loop;
-mod player;
+use crate::player as player_mod;
 
 pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
     let mut player_1 = loop {
         match rl.readline_with_initial("Player 1: ", ("Human", "")) {
             Ok(player) => {
-                if let Some(player) = player::get_player(&player.to_ascii_lowercase(), 1) {
+                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 1) {
                     break player;
                 } else {
                     println!("Could not find player {}. Available players: ", player);
-                    for player in player::get_available_players() {
+                    for player in player_mod::get_available_players() {
                         println!("  {}", player);
                     }
                     std::io::stdout().flush().unwrap();
@@ -28,11 +27,11 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
     let mut player_2 = loop {
         match rl.readline("Player 2: ") {
             Ok(player) => {
-                if let Some(player) = player::get_player(&player.to_ascii_lowercase(), 2) {
+                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 2) {
                     break player;
                 } else {
                     println!("Could not find player {}. Available players: ", player);
-                    for player in player::get_available_players() {
+                    for player in player_mod::get_available_players() {
                         println!("  {}", player);
                     }
                     std::io::stdout().flush().unwrap();
