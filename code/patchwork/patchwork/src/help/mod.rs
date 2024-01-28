@@ -24,8 +24,9 @@ pub fn print_repl_help() {
     println!("    echo      - Print the arguments");
     #[cfg(debug_assertions)]
     println!("    debug     - Print different debug information useful for debugging. Only works in debug builds.");
-    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
     println!("    console   - Start an interactive console game of patchwork");
+    println!("    compare   - Compare different patchwork ai's against each other");
+    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
     println!("    server    - Start the patchwork game server");
     println!("                port <number>  - the port the server should start on. Default 3000");
     println!("                public         - if present listens on 0.0.0.0 else on 127.0.0.1");
@@ -42,8 +43,9 @@ pub fn print_cmd_help() {
     println!("    echo      - Print the arguments");
     #[cfg(debug_assertions)]
     println!("    debug     - Print different debug information useful for debugging. Only works in debug builds.");
-    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
     println!("    console   - Start an interactive console game of patchwork");
+    println!("    compare   - Compare different patchwork ai's against each other");
+    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
     println!("    server    - Start the patchwork game server");
     println!("                --port <number>  - the port the server should start on. Default 3000");
     println!("                --public         - if present listens on 0.0.0.0 else on 127.0.0.1");

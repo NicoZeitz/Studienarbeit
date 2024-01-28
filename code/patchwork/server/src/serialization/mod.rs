@@ -148,19 +148,19 @@ impl serde::Serialize for TimeBoardSerialization<'_> {
         serialized_time_board.serialize_field(
             "special_patches",
             &TimeBoardSpecialPatches {
-                time_board: &self.time_board,
+                time_board: self.time_board,
             },
         )?;
         serialized_time_board.serialize_field(
             "button_income_triggers",
             &TimeBoardButtonIncomeTriggers {
-                time_board: &self.time_board,
+                time_board: self.time_board,
             },
         )?;
         serialized_time_board.serialize_field(
             "board",
             &TimeBoardBoardSerialization {
-                time_board: &self.time_board,
+                time_board: self.time_board,
             },
         )?;
         serialized_time_board.end()

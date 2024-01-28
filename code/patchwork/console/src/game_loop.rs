@@ -41,10 +41,10 @@ impl GameLoop {
                 Default::default(),
             )),
             _ if player.starts_with("minimax") => {
-                let regex = Regex::new(r"minimax\((?<depth>\d+),\s*(?<pieces>\d+)\)").unwrap();
+                let regex = Regex::new(r"minimax\((?<depth>\d+),\s*(?<patches>\d+)\)").unwrap();
                 let captures = regex.captures(player).unwrap();
                 let depth = captures.name("depth").unwrap().as_str().parse().unwrap();
-                let amount_actions_per_piece = captures.name("pieces").unwrap().as_str().parse().unwrap();
+                let amount_actions_per_piece = captures.name("patches").unwrap().as_str().parse().unwrap();
                 Box::new(MinimaxPlayer::new(
                     format!(
                         "Minimax Player {player_position} ({}, {})",

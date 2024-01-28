@@ -9,9 +9,7 @@ use crate::{
     CTRL_C_MESSAGE, CTRL_D_MESSAGE,
 };
 
-pub fn handle_upi(starting_cmd: impl Into<String>, rl: Option<&mut Editor<(), FileHistory>>) -> anyhow::Result<()> {
-    let mut new_editor = Editor::new()?;
-    let rl = rl.unwrap_or(&mut new_editor);
+pub fn handle_upi(starting_cmd: impl Into<String>, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()> {
     let (sender, upi_receiver) = channel();
     let (upi_sender, receiver) = channel();
 

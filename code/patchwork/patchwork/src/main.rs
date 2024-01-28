@@ -5,10 +5,12 @@ mod help;
 mod server;
 mod upi;
 
+use compare::handle_compare;
 use rustyline::error::ReadlineError;
 use rustyline::history::FileHistory;
 use rustyline::{DefaultEditor, Editor};
 
+use crate::console::handle_console;
 use crate::exit::{handle_exit, handle_exit_with_error};
 use crate::help::{print_cmd_help, print_debug, print_repl_help, print_welcome};
 use crate::server::{start_server_from_cmd, start_server_from_repl};
@@ -68,14 +70,19 @@ fn handle_args() -> anyhow::Result<()> {
         "debug" => print_debug(),
         "upi" => {
             let starting_cmd = std::env::args().skip(1).collect::<Vec<_>>().join(" ");
-            handle_upi(starting_cmd, None)?
+            let mut new_editor = Editor::<(), FileHistory>::new()?;
+            handle_upi(starting_cmd, &mut new_editor)?
         }
         "console" => {
-            unimplemented!("TODO: Console mode is not yet implemented.");
+            let mut new_editor = Editor::<(), FileHistory>::new()?;
+            handle_console(&mut new_editor);
         }
-        // TODO: compare
+        "compare" => handle_compare(),
         "server" => start_server_from_cmd(args)?,
-        _ => print_cmd_help(),
+        _ => {
+            print_cmd_help();
+            std::process::exit(1);
+        }
     }
 
     Ok(())
@@ -101,12 +108,17 @@ fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()
         Some("upi") => {
             println!("Starting Universal Patchwork Interface (UPI) in console mode...");
             rl.clear_screen()?;
-            handle_upi(line, Some(rl))?;
+            handle_upi(line, rl)?;
         }
         Some("console") => {
             println!("Starting an interactive console game of patchwork...");
             rl.clear_screen()?;
-            unimplemented!("TODO: Console mode is not yet implemented.");
+            handle_console(rl);
+        }
+        Some("compare") => {
+            println!("Starting a comparison of two patchwork games...");
+            rl.clear_screen()?;
+            handle_compare();
         }
         Some("server") => start_server_from_repl(args.collect::<Vec<_>>(), rl)?,
         _ => {
