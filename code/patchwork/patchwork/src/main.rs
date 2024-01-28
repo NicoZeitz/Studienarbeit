@@ -1,3 +1,4 @@
+mod compare;
 mod console;
 mod exit;
 mod help;
@@ -11,6 +12,7 @@ use rustyline::{DefaultEditor, Editor};
 use crate::exit::{handle_exit, handle_exit_with_error};
 use crate::help::{print_cmd_help, print_debug, print_repl_help, print_welcome};
 use crate::server::{start_server_from_cmd, start_server_from_repl};
+use crate::upi::handle_upi;
 
 const CTRL_C_MESSAGE: &str = "Received CTRL-C command. Exiting application...";
 const CTRL_D_MESSAGE: &str = "Received CTRL-D command. Exiting application...";
@@ -65,11 +67,13 @@ fn handle_args() -> anyhow::Result<()> {
         #[cfg(debug_assertions)]
         "debug" => print_debug(),
         "upi" => {
-            unimplemented!("TODO: UPI is not yet implemented.");
+            let starting_cmd = std::env::args().skip(1).collect::<Vec<_>>().join(" ");
+            handle_upi(starting_cmd, None)?
         }
         "console" => {
             unimplemented!("TODO: Console mode is not yet implemented.");
         }
+        // TODO: compare
         "server" => start_server_from_cmd(args)?,
         _ => print_cmd_help(),
     }
@@ -97,7 +101,7 @@ fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()
         Some("upi") => {
             println!("Starting Universal Patchwork Interface (UPI) in console mode...");
             rl.clear_screen()?;
-            unimplemented!("TODO: UPI is not yet implemented.");
+            handle_upi(line, Some(rl))?;
         }
         Some("console") => {
             println!("Starting an interactive console game of patchwork...");

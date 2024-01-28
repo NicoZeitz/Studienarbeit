@@ -1,9 +1,9 @@
 [package]
 name = "patchwork_core"
+description = "Core game logic library for Patchwork."
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

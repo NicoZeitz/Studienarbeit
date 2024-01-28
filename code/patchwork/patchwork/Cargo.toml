@@ -8,14 +8,10 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-action_orderer = { path = "../action_orderer" }
-patchwork_core = { path = "../patchwork_core" }
-evaluator = { path = "../evaluator" }
-patchwork_macros = { path = "../patchwork_macros" }
-alphazero_player = { path = "../alphazero_player" }
-human_player = { path = "../human_player" }
-random_player = { path = "../random_player" }
-greedy_player = { path = "../greedy_player" }
-mcts_player = { path = "../mcts_player" }
-minimax_player = { path = "../minimax_player" }
-principal_variation_search_player = { path = "../principal_variation_search_player" }
+anyhow = "1.0.79"
+clap = { version = "4.4.18", features = ["derive"] }
+ctrlc = "3.4.2"
+rustyline = "13.0.0"
+server = { path = "../server" }
+titlecase = "2.2.1"
+upi = { path = "../upi" }

@@ -1,9 +1,9 @@
 [package]
 name = "action_orderer"
+description = "A library for ordering actions in a patchwork game"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

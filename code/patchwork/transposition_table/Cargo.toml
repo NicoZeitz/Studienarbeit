@@ -1,9 +1,9 @@
 [package]
 name = "transposition_table"
+description = "A transposition table for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

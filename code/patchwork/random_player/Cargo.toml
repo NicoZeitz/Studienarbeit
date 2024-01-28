@@ -1,9 +1,9 @@
 [package]
 name = "random_player"
+description = "A random player for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

@@ -1,9 +1,9 @@
 [package]
 name = "empirical_measurement"
+description = "Empirical measurement of Patchwork statistics like available actions, game length and more"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

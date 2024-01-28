@@ -1,6 +1,6 @@
 use std::sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering};
 
-use patchwork::{
+use patchwork_lib::{
     player::{
         AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions, PVSPlayer,
         Player, RandomOptions, RandomPlayer,
@@ -383,7 +383,7 @@ impl GameLoop {
 
 #[cfg(test)]
 mod tests {
-    use patchwork::{
+    use patchwork_lib::{
         player::{DiagnosticsFeature, PVSFeatures},
         GameOptions,
     };

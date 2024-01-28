@@ -11,7 +11,6 @@ members = [
     "alphazero_player",
     "analysis/empirical_measurement",
     "analysis/max_button_income",
-    "application",
     "console",
     "evaluator",
     "greedy_player",
@@ -20,12 +19,14 @@ members = [
     "minimax_player",
     "patchwork_core",
     "patchwork_macros",
+    "patchwork_lib",
     "patchwork",
     "principal_variation_search_player",
     "random_player",
     "server",
     "transposition_table",
     "tree_policy",
+    "upi",
 ]
 resolver = "2"
 

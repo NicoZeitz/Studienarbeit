@@ -1,9 +1,9 @@
 [package]
 name = "max_button_income"
+description = "Analysis of the max button income in patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 

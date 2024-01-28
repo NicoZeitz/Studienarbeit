@@ -37,7 +37,7 @@ pub fn start_server(port: Option<u16>, public: bool) -> tokio::io::Result<()> {
         let listener = tokio::net::TcpListener::bind(addr.to_string()).await.unwrap();
 
         println!("Starting patchwork server on {}", addr);
-        axum::serve(listener, app)
+        axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
             .with_graceful_shutdown(shutdown_signal())
             .await
             .unwrap();

@@ -1,8 +1,13 @@
+use std::env;
+
+use titlecase::titlecase;
+
 pub fn print_welcome() {
     let authors = env!("CARGO_PKG_AUTHORS").split(':').collect::<Vec<_>>().join(" & ");
     let build_profile = if cfg!(debug_assertions) { "(Debug Build) " } else { "" };
     println!(
-        "Patchwork {} {}| {} ",
+        "{} {} {}| {} ",
+        titlecase(env!("CARGO_PKG_NAME")),
         env!("CARGO_PKG_VERSION"),
         build_profile,
         authors,

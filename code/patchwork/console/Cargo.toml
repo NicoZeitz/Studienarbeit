@@ -1,13 +1,15 @@
+# TODO: integrate into main application
+
 [package]
 name = "console"
+description = "A command line interface for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 
 [dependencies]
 clap = { version = "4.4.8", features = ["derive"] }
-patchwork = { path = "../patchwork" }
+patchwork_lib = { path = "../patchwork_lib" }
 regex = "1.10.2"

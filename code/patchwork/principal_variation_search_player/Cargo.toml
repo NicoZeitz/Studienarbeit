@@ -1,9 +1,9 @@
 [package]
 name = "principal_variation_search_player"
+description = "A principal variation search player for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
 repository.workspace = true
 license.workspace = true
 
