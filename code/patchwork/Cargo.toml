@@ -2,7 +2,7 @@
 
 [workspace]
 package.version = "1.0.0"
-package.authors = ["Nico Zeitz", "Fabian Wolf"]
+package.authors = ["Fabian Wolf", "Nico Zeitz"]
 package.description = "The board game Patchwork implemented in Rust with different AI players."
 package.repository = "https://github.com/NicoZeitz/Studienarbeit"
 package.license = "MIT"

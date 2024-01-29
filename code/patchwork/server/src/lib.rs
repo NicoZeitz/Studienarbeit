@@ -1,6 +1,10 @@
-use axum::{routing::get, Router};
+use axum::{http::Method, routing::get, Router};
 use std::{net::SocketAddr, time::Duration};
-use tower_http::{timeout::TimeoutLayer, trace::TraceLayer};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    timeout::TimeoutLayer,
+    trace::TraceLayer,
+};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
@@ -28,12 +32,20 @@ pub fn start_server(port: Option<u16>, public: bool) -> tokio::io::Result<()> {
             .with(tracing_subscriber::fmt::layer().without_time())
             .init();
 
-        let app = Router::new()
+        let mut app = Router::new()
             .route("/", get(index_handler))
             .route("/index.html", get(index_handler))
             .nest("/api", api_router())
             .fallback_service(get(web_handler))
             .layer((TraceLayer::new_for_http(), TimeoutLayer::new(Duration::from_secs(10))));
+
+        if cfg!(debug_assertions) {
+            let cors = CorsLayer::new()
+                .allow_origin(Any)
+                .allow_methods([Method::GET, Method::POST, Method::OPTIONS, Method::CONNECT])
+                .allow_headers(Any);
+            app = app.layer(cors);
+        }
 
         let listener = tokio::net::TcpListener::bind(addr.to_string()).await.unwrap();
 

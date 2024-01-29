@@ -13,7 +13,9 @@ use rustyline::{DefaultEditor, Editor};
 
 use crate::console::handle_console;
 use crate::exit::{handle_exit, handle_exit_with_error};
-use crate::help::{print_cmd_help, print_debug, print_repl_help, print_welcome};
+#[cfg(debug_assertions)]
+use crate::help::print_debug;
+use crate::help::{print_cmd_help, print_repl_help, print_welcome};
 use crate::server::{start_server_from_cmd, start_server_from_repl};
 use crate::upi::handle_upi;
 
