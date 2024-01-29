@@ -1,5 +1,5 @@
 mod alphazero_player;
-mod resblock;
-mod resnet;
+mod game_encoding;
+mod network;
 
 pub use alphazero_player::AlphaZeroPlayer;

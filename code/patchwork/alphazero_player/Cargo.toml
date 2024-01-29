@@ -8,6 +8,6 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-candle-core = { version = "0.3.2", features = ["mkl"] }
-candle-nn = { version = "0.3.2", features = ["mkl"] }
+candle-core = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
+candle-nn = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
 patchwork_core = { path = "../patchwork_core" }

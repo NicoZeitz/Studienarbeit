@@ -25,7 +25,7 @@ impl Player for AlphaZeroPlayer {
         &self.name
     }
 
-    fn get_action(&mut self, _game: &Patchwork) -> PlayerResult<ActionId> {
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         // TODO:
         todo!()
     }

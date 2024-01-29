@@ -9,8 +9,8 @@ license.workspace = true
 
 [dependencies]
 # candle-core = { version = "0.3.2", features = ["cuda", "cudnn"] }
-candle-core = { version = "0.3.2", features = [] }
+candle-core = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
 # candle-nn = { version = "0.3.2", features = ["cuda"] }
-candle-nn = { version = "0.3.2", features = [] }
+candle-nn = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
 linfa = "0.7.0"
 patchwork_core = { path = "../patchwork_core" }

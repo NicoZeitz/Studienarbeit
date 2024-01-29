@@ -11,6 +11,8 @@ pub struct PatchManager {
     pub patches: [Patch; Self::AMOUNT_OF_PATCHES as usize],
     /// The tiles of every patch.
     pub tiles: [Vec<Vec<u8>>; Self::AMOUNT_OF_PATCHES as usize],
+    /// The normalized tiles of every patch.
+    pub normalized_tiles: [[[u8; 5]; 3]; Self::AMOUNT_OF_PATCHES as usize],
     /// The different ways this patch can be placed on the board.
     pub transformations: [Vec<PatchTransformation>; Self::AMOUNT_OF_PATCHES as usize],
 }
@@ -212,7 +214,7 @@ impl PatchManager {
         }
     }
 
-    /// Gets the starting patch.
+    /// Gets the tiles of the patch with the given id.
     ///
     /// # Arguments
     ///
@@ -231,6 +233,27 @@ impl PatchManager {
             "[PatchManager::get_tiles] Invalid patch id"
         );
         &PatchManager::get_instance().tiles[patch_id as usize]
+    }
+
+    /// Gets the normalized tiles (fit into 5x3) of the patch with the given id.
+    ///
+    /// # Arguments
+    ///
+    /// * `patch_id` - The id of the patch
+    ///
+    /// # Returns
+    ///
+    /// * The normalized tiles of the patch
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub fn get_normalized_tiles(patch_id: u8) -> &'static [[u8; 5]; 3] {
+        debug_assert!(
+            patch_id < Self::AMOUNT_OF_PATCHES,
+            "[PatchManager::get_normalized_tiles] Invalid patch id"
+        );
+        &PatchManager::get_instance().normalized_tiles[patch_id as usize]
     }
 
     /// Returns the starting patch.
