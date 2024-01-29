@@ -1026,11 +1026,15 @@ mod record_tests {
     }
 
     const FORCE_SWAP: bool = false;
-    const FOLDER: &str = "G:/games/normal"; // force_swap
+    const FOLDER: &str = "X:/datasets/games/normal"; // force_swap
 
     #[test]
     #[ignore]
     fn record_all_games() {
+        if cfg!(debug_assertions) {
+            panic!("[record_tests::record_all_games] Recording the games should only be run in release mode");
+        }
+
         let mut workers = Vec::<thread::JoinHandle<()>>::new();
         let games_done = Arc::new(AtomicUsize::new(0));
 
@@ -1045,7 +1049,7 @@ mod record_tests {
                     return;
                 }
 
-                println!("────────────── Recording game {:03} ──────────────", value);
+                println!("────────────── Recording game {:04} ──────────────", value);
                 record_games(&format!("{:04}.game.bin", value), FORCE_SWAP, 10_000);
             });
 
