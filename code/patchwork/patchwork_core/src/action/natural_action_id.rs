@@ -69,8 +69,17 @@ impl NaturalActionId {
     /// This is the maximum amount of actions that can be taken in a single turn.
     ///
     /// The actually best it is 2025, phantom action have id 2026 and
-    /// null actions have id 2027
-    pub const AMOUNT_OF_NATURAL_ACTION_IDS: u64 = 2028;
+    /// null actions have id 2027. To use the normal amount of natural action ids
+    /// use [`AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS`].
+    pub const AMOUNT_OF_NATURAL_ACTION_IDS: usize = 2028;
+
+    /// The amount of available normal natural action ids for the game of patchwork.
+    ///
+    /// This only includes actually available actions.These are:
+    /// - Walking actions
+    /// - Patch placement actions
+    /// - Special patch placement actions
+    pub const AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS: usize = 2026;
 
     /// The mask to remove the top 25 bits of the natural action id.
     const TOP_BIT_MASK: u64 = 0x0000_007F_FFFF_FFFFu64;
