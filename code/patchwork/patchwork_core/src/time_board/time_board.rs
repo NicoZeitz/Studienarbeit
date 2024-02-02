@@ -10,6 +10,9 @@ pub mod entities_enum {
     pub const BUTTON_INCOME_TRIGGER: u8 = 0b0000_0100; // 4
     /// A special patch.
     pub const SPECIAL_PATCH: u8 = 0b0000_1000; // 8
+    /// The maximum value of a tile. Never reached as no tile has both a button income trigger and a
+    /// special patch.
+    pub const MAX_VALUE: u8 = PLAYER_1 | PLAYER_2 | BUTTON_INCOME_TRIGGER | SPECIAL_PATCH;
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
@@ -71,6 +74,19 @@ impl TimeBoard {
     }
 
     // ──────────────────────────────────────────────── SPECIAL PATCHES ────────────────────────────────────────────────
+
+    /// Gets the location of all special patches
+    ///
+    /// # Returns
+    ///
+    /// * `&[u8]` - The locations of all special patches
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub fn get_special_patches(&self) -> &[u8] {
+        &[26, 32, 38, 44, 50]
+    }
 
     /// Sets the special patch at the given index.
     ///
@@ -288,6 +304,19 @@ impl TimeBoard {
 
     // ──────────────────────────────────────────── BUTTON INCOME TRIGGERS ─────────────────────────────────────────────
 
+    /// Gets the location of all button income triggers
+    ///
+    /// # Returns
+    ///
+    /// * `&[u8]` - The locations of all button income triggers
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub fn get_button_income_triggers(&self) -> &[u8] {
+        &[5, 11, 17, 23, 29, 35, 41, 47, 53]
+    }
+
     /// Checks if there is a button income trigger at the given index.
     ///
     /// # Arguments
@@ -490,6 +519,32 @@ impl TimeBoard {
             .iter()
             .position(|&tile| tile & player_flag > 0)
             .expect("[TimeBoard::get_player_position] There is no player on the time board. This is a bug in the patchwork_core library.") as u8
+    }
+
+    /// Gets the positions of both players.
+    ///
+    /// # Returns
+    ///
+    /// * `(usize, usize)` - The positions of both players. The first entry for
+    ///   the first player and the second entry for the second player.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
+    pub fn get_player_positions(&self) -> (u8, u8) {
+        let mut player_1_position = 0;
+        let mut player_2_position = 0;
+
+        for (i, tile) in self.tiles.iter().enumerate() {
+            if tile & entities_enum::PLAYER_1 > 0 {
+                player_1_position = i as u8;
+            }
+            if tile & entities_enum::PLAYER_2 > 0 {
+                player_2_position = i as u8;
+            }
+        }
+
+        (player_1_position, player_2_position)
     }
 
     /// Sets the position of the given player.

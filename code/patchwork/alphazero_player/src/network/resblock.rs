@@ -1,7 +1,8 @@
-use candle_core::error::Result;
 use candle_core::Tensor;
+use candle_core::{error::Result, ModuleT};
 use candle_nn::{batch_norm, conv2d, BatchNorm, BatchNormConfig, Conv2d, Conv2dConfig, Module, VarBuilder};
 
+#[derive(Debug, Clone)]
 pub struct ResBlock {
     convolution_1: Conv2d,
     batch_norm_1: BatchNorm,
@@ -29,14 +30,14 @@ impl ResBlock {
     }
 }
 
-impl Module for ResBlock {
-    fn forward(&self, xs: &Tensor) -> Result<Tensor> {
+impl ModuleT for ResBlock {
+    fn forward_t(&self, xs: &Tensor, train: bool) -> Result<Tensor> {
         let residual = xs;
         let mut xs = self.convolution_1.forward(xs)?;
-        xs = self.batch_norm_1.forward(&xs)?;
+        xs = self.batch_norm_1.forward_t(&xs, train)?;
         xs = xs.relu()?;
-        xs = self.convolution_2.forward(&xs)?;
-        xs = self.batch_norm_2.forward(&xs)?;
+        xs = self.convolution_2.forward_t(&xs, train)?;
+        xs = self.batch_norm_2.forward_t(&xs, train)?;
         xs = (xs + residual)?;
         xs.relu()
     }

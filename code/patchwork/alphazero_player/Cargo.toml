@@ -6,8 +6,13 @@ version.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
+build = "build.rs"
 
 [dependencies]
 candle-core = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
 candle-nn = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
 patchwork_core = { path = "../patchwork_core" }
+
+[[bin]]
+name = "alphazero_player_verification"
+path = "src/verification.rs"
