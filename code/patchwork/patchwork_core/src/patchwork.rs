@@ -20,7 +20,7 @@ pub enum TurnType {
 
 /// Different flags for the status of the game.
 #[rustfmt::skip]
-pub mod status_enum {
+pub mod status_flags {
     /// The first player.
     pub const PLAYER_1: u8 = 0b0000_0001; // 1
     /// The second player.
@@ -76,7 +76,7 @@ impl Patchwork {
     /// Gets the player with the given flag.
     #[inline]
     pub const fn get_player(&self, player: u8) -> &PlayerState {
-        if (player & status_enum::PLAYER_1) > 0 {
+        if (player & status_flags::PLAYER_1) > 0 {
             &self.player_1
         } else {
             &self.player_2
@@ -86,37 +86,37 @@ impl Patchwork {
     // Returns if the current player is player 1.
     #[inline]
     pub const fn is_player_1(&self) -> bool {
-        (self.status_flags & status_enum::PLAYER_1) > 0
+        (self.status_flags & status_flags::PLAYER_1) > 0
     }
 
     // Returns if the given player is player 1.
     #[inline]
     pub const fn is_flag_player_1(player_flag: u8) -> bool {
-        player_flag == status_enum::PLAYER_1
+        player_flag == status_flags::PLAYER_1
     }
 
     // Returns if the current player is player 2.
     #[inline]
     pub const fn is_player_2(&self) -> bool {
-        (self.status_flags & status_enum::PLAYER_2) > 0
+        (self.status_flags & status_flags::PLAYER_2) > 0
     }
 
     // Returns if the given player is player 2.
     #[inline]
     pub const fn is_flag_player_2(player_flag: u8) -> bool {
-        player_flag == status_enum::PLAYER_2
+        player_flag == status_flags::PLAYER_2
     }
 
     /// Returns the flag for player 1.
     #[inline]
     pub const fn get_player_1_flag() -> u8 {
-        status_enum::PLAYER_1
+        status_flags::PLAYER_1
     }
 
     /// Returns the flag for player 2.
     #[inline]
     pub const fn get_player_2_flag() -> u8 {
-        status_enum::PLAYER_2
+        status_flags::PLAYER_2
     }
 
     /// Returns the current player.
@@ -163,11 +163,11 @@ impl Patchwork {
     #[inline]
     pub fn switch_player(&mut self) {
         if self.is_player_1() {
-            self.status_flags &= !status_enum::PLAYER_1;
-            self.status_flags |= status_enum::PLAYER_2;
+            self.status_flags &= !status_flags::PLAYER_1;
+            self.status_flags |= status_flags::PLAYER_2;
         } else {
-            self.status_flags &= !status_enum::PLAYER_2;
-            self.status_flags |= status_enum::PLAYER_1;
+            self.status_flags &= !status_flags::PLAYER_2;
+            self.status_flags |= status_flags::PLAYER_1;
         }
     }
 
@@ -181,7 +181,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn is_special_tile_condition_reached(&self) -> bool {
-        self.status_flags & (status_enum::PLAYER_1_HAS_SPECIAL_TILE | status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0
+        self.status_flags & (status_flags::PLAYER_1_HAS_SPECIAL_TILE | status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0
     }
 
     /// Returns if the special tile condition has already been reached by player 1.
@@ -194,7 +194,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn is_special_tile_condition_reached_by_player_1(&self) -> bool {
-        self.status_flags & status_enum::PLAYER_1_HAS_SPECIAL_TILE > 0
+        self.status_flags & status_flags::PLAYER_1_HAS_SPECIAL_TILE > 0
     }
 
     /// Returns if the special tile condition has already been reached by player 2.
@@ -207,7 +207,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn is_special_tile_condition_reached_by_player_2(&self) -> bool {
-        self.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE > 0
+        self.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE > 0
     }
 
     /// Sets the special tile condition for the given player.
@@ -231,9 +231,9 @@ impl Patchwork {
         );
 
         if Self::is_flag_player_1(player_flag) {
-            self.status_flags |= status_enum::PLAYER_1_HAS_SPECIAL_TILE;
+            self.status_flags |= status_flags::PLAYER_1_HAS_SPECIAL_TILE;
         } else {
-            self.status_flags |= status_enum::PLAYER_2_HAS_SPECIAL_TILE;
+            self.status_flags |= status_flags::PLAYER_2_HAS_SPECIAL_TILE;
         }
     }
 
@@ -246,9 +246,9 @@ impl Patchwork {
     /// * `player_flag` - The player to unset the special tile condition for.
     pub fn unset_special_tile_condition(&mut self, player_flag: u8) {
         if Self::is_flag_player_1(player_flag) {
-            self.status_flags &= !status_enum::PLAYER_1_HAS_SPECIAL_TILE;
+            self.status_flags &= !status_flags::PLAYER_1_HAS_SPECIAL_TILE;
         } else {
-            self.status_flags &= !status_enum::PLAYER_2_HAS_SPECIAL_TILE;
+            self.status_flags &= !status_flags::PLAYER_2_HAS_SPECIAL_TILE;
         }
     }
 
@@ -262,7 +262,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn is_goal_reached(&self) -> bool {
-        self.status_flags & (status_enum::PLAYER_1_FIRST_AT_END | status_enum::PLAYER_2_FIRST_AT_END) > 0
+        self.status_flags & (status_flags::PLAYER_1_FIRST_AT_END | status_flags::PLAYER_2_FIRST_AT_END) > 0
     }
 
     /// Returns if the goal has already been reached by player 1.
@@ -275,7 +275,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn player_1_was_first_to_reach_goal(&self) -> bool {
-        self.status_flags & status_enum::PLAYER_1_FIRST_AT_END > 0
+        self.status_flags & status_flags::PLAYER_1_FIRST_AT_END > 0
     }
 
     /// Returns if the goal has already been reached by player 2.
@@ -288,7 +288,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     pub const fn player_2_was_first_to_reach_goal(&self) -> bool {
-        self.status_flags & status_enum::PLAYER_2_FIRST_AT_END > 0
+        self.status_flags & status_flags::PLAYER_2_FIRST_AT_END > 0
     }
 
     /// Sets the goal reached for the given player.
@@ -312,9 +312,9 @@ impl Patchwork {
         );
 
         if Self::is_flag_player_1(player_flag) {
-            self.status_flags |= status_enum::PLAYER_1_FIRST_AT_END;
+            self.status_flags |= status_flags::PLAYER_1_FIRST_AT_END;
         } else {
-            self.status_flags |= status_enum::PLAYER_2_FIRST_AT_END;
+            self.status_flags |= status_flags::PLAYER_2_FIRST_AT_END;
         }
     }
 
@@ -329,9 +329,9 @@ impl Patchwork {
         debug_assert!(player_flag >> 2 == 0, "[Patchwork::unset_goal_reached] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
 
         if Self::is_flag_player_1(player_flag) {
-            self.status_flags &= !status_enum::PLAYER_1_FIRST_AT_END;
+            self.status_flags &= !status_flags::PLAYER_1_FIRST_AT_END;
         } else {
-            self.status_flags &= !status_enum::PLAYER_2_FIRST_AT_END;
+            self.status_flags &= !status_flags::PLAYER_2_FIRST_AT_END;
         }
     }
 
@@ -350,8 +350,9 @@ impl Patchwork {
 
         let mut score = player.quilt_board.score() + player.button_balance;
 
-        if (Self::is_flag_player_1(player_flag) && (self.status_flags & status_enum::PLAYER_1_HAS_SPECIAL_TILE) > 0)
-            || (Self::is_flag_player_2(player_flag) && (self.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0)
+        if (Self::is_flag_player_1(player_flag) && (self.status_flags & status_flags::PLAYER_1_HAS_SPECIAL_TILE) > 0)
+            || (Self::is_flag_player_2(player_flag)
+                && (self.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0)
         {
             score += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
         }
@@ -369,16 +370,16 @@ impl Patchwork {
     ///
     /// The termination result of the game associated with the given state.
     pub fn get_termination_result(&self) -> Termination {
-        let player_1_score = self.get_score(status_enum::PLAYER_1);
-        let player_2_score = self.get_score(status_enum::PLAYER_2);
+        let player_1_score = self.get_score(status_flags::PLAYER_1);
+        let player_2_score = self.get_score(status_flags::PLAYER_2);
 
         let termination = match player_1_score.cmp(&player_2_score) {
             Ordering::Less => TerminationType::Player2Won,
             Ordering::Greater => TerminationType::Player1Won,
             Ordering::Equal => {
-                if (self.status_flags & status_enum::PLAYER_1_FIRST_AT_END) > 0 {
+                if (self.status_flags & status_flags::PLAYER_1_FIRST_AT_END) > 0 {
                     TerminationType::Player1Won
-                } else if (self.status_flags & status_enum::PLAYER_2_FIRST_AT_END) > 0 {
+                } else if (self.status_flags & status_flags::PLAYER_2_FIRST_AT_END) > 0 {
                     TerminationType::Player2Won
                 } else {
                     panic!("[Patchwork::get_termination_result] Both players have the same score and neither was first to reach the end")

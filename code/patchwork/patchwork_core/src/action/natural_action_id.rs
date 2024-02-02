@@ -70,7 +70,7 @@ impl NaturalActionId {
     ///
     /// The actually best it is 2025, phantom action have id 2026 and
     /// null actions have id 2027. To use the normal amount of natural action ids
-    /// use [`AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS`].
+    /// use [`Self::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS`].
     pub const AMOUNT_OF_NATURAL_ACTION_IDS: usize = 2028;
 
     /// The amount of available normal natural action ids for the game of patchwork.
@@ -956,8 +956,6 @@ fn transform_patch_placement_to_natural_id(
     const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
 
     let transformation = PatchManager::get_transformation(patch_id, patch_transformation_index);
-
-    println!("Transformation Index: {:?}", patch_transformation_index);
 
     let patch_index = patch_index as u64;
     let row = transformation.row as u64;

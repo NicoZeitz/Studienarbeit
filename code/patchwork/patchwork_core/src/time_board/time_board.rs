@@ -1,7 +1,7 @@
 use std::{fmt::Display, ops::Range};
 
 /// The entities that can be on a tile of the time board.
-pub mod entities_enum {
+pub mod time_board_flags {
     /// The first player.
     pub const PLAYER_1: u8 = 0b0000_0001; // 1
     /// The second player.
@@ -52,23 +52,23 @@ impl TimeBoard {
     pub const fn new() -> TimeBoard {
         let mut tiles = [0; 54];
 
-        tiles[0] = entities_enum::PLAYER_1 | entities_enum::PLAYER_2;
+        tiles[0] = time_board_flags::PLAYER_1 | time_board_flags::PLAYER_2;
 
-        tiles[5] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[11] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[17] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[23] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[29] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[35] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[41] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[47] = entities_enum::BUTTON_INCOME_TRIGGER;
-        tiles[53] = entities_enum::BUTTON_INCOME_TRIGGER;
+        tiles[5] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[11] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[17] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[23] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[29] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[35] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[41] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[47] = time_board_flags::BUTTON_INCOME_TRIGGER;
+        tiles[53] = time_board_flags::BUTTON_INCOME_TRIGGER;
 
-        tiles[26] = entities_enum::SPECIAL_PATCH;
-        tiles[32] = entities_enum::SPECIAL_PATCH;
-        tiles[38] = entities_enum::SPECIAL_PATCH;
-        tiles[44] = entities_enum::SPECIAL_PATCH;
-        tiles[50] = entities_enum::SPECIAL_PATCH;
+        tiles[26] = time_board_flags::SPECIAL_PATCH;
+        tiles[32] = time_board_flags::SPECIAL_PATCH;
+        tiles[38] = time_board_flags::SPECIAL_PATCH;
+        tiles[44] = time_board_flags::SPECIAL_PATCH;
+        tiles[50] = time_board_flags::SPECIAL_PATCH;
 
         TimeBoard { tiles }
     }
@@ -100,7 +100,7 @@ impl TimeBoard {
     #[inline]
     pub fn set_special_patch(&mut self, index: u8) {
         let clamped_index: usize = (index as usize).min(TimeBoard::MAX_POSITION as usize);
-        self.tiles[clamped_index] |= entities_enum::SPECIAL_PATCH;
+        self.tiles[clamped_index] |= time_board_flags::SPECIAL_PATCH;
     }
 
     /// Unset the special patch at the given index.
@@ -115,7 +115,7 @@ impl TimeBoard {
     #[inline]
     pub fn unset_special_patch(&mut self, index: u8) {
         let clamped_index: usize = (index as usize).min(TimeBoard::MAX_POSITION as usize);
-        self.tiles[clamped_index] &= !entities_enum::SPECIAL_PATCH;
+        self.tiles[clamped_index] &= !time_board_flags::SPECIAL_PATCH;
     }
 
     /// Unset all special patches until the given index.
@@ -129,7 +129,7 @@ impl TimeBoard {
     /// `𝒪(𝑛)` where `n` is the given index.
     pub fn unset_special_patches_until(&mut self, index: u8) {
         for tile in self.tiles.iter_mut().take(index as usize) {
-            *tile &= !entities_enum::SPECIAL_PATCH;
+            *tile &= !time_board_flags::SPECIAL_PATCH;
         }
     }
 
@@ -149,7 +149,7 @@ impl TimeBoard {
     /// `𝒪(𝟣)`
     #[inline]
     pub const fn is_special_patch_at(&self, index: usize) -> bool {
-        self.tiles[index] & entities_enum::SPECIAL_PATCH > 0
+        self.tiles[index] & time_board_flags::SPECIAL_PATCH > 0
     }
 
     /// Checks if there is a special patch in the given range.
@@ -174,7 +174,7 @@ impl TimeBoard {
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
     pub fn is_special_patches_in_range(&self, range: Range<usize>) -> bool {
         for i in range {
-            if self.tiles[i] & entities_enum::SPECIAL_PATCH > 0 {
+            if self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0 {
                 return true;
             }
         }
@@ -202,7 +202,7 @@ impl TimeBoard {
     pub fn get_amount_special_patches_in_range(&self, range: Range<usize>) -> usize {
         let mut amount = 0;
         for i in range {
-            if self.tiles[i] & entities_enum::SPECIAL_PATCH > 0 {
+            if self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0 {
                 amount += 1;
             }
         }
@@ -228,7 +228,7 @@ impl TimeBoard {
     pub fn get_single_special_patch_in_range(&self, range: Range<usize>) -> Option<u8> {
         let mut range = range;
         range
-            .find(|&i| self.tiles[i] & entities_enum::SPECIAL_PATCH > 0)
+            .find(|&i| self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0)
             .map(|i| i as u8)
     }
 
@@ -249,7 +249,7 @@ impl TimeBoard {
     pub fn get_all_special_patches_in_range(&self, range: Range<usize>) -> Vec<u8> {
         let mut result = vec![];
         for i in range {
-            if self.tiles[i] & entities_enum::SPECIAL_PATCH > 0 {
+            if self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0 {
                 result.push(i as u8);
             }
         }
@@ -333,7 +333,7 @@ impl TimeBoard {
     /// `𝒪(𝟣)`
     #[inline]
     pub const fn is_button_income_trigger_at(&self, index: usize) -> bool {
-        self.tiles[index] & entities_enum::BUTTON_INCOME_TRIGGER > 0
+        self.tiles[index] & time_board_flags::BUTTON_INCOME_TRIGGER > 0
     }
 
     /// Checks if there is a button income trigger in the given range.
@@ -358,7 +358,7 @@ impl TimeBoard {
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
     pub fn is_button_income_trigger_in_range(&self, range: Range<usize>) -> bool {
         for i in range {
-            if self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+            if self.tiles[i] & time_board_flags::BUTTON_INCOME_TRIGGER > 0 {
                 return true;
             }
         }
@@ -386,7 +386,7 @@ impl TimeBoard {
     pub fn get_amount_button_income_trigger_in_range(&self, range: Range<usize>) -> usize {
         let mut amount = 0;
         for i in range {
-            if self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+            if self.tiles[i] & time_board_flags::BUTTON_INCOME_TRIGGER > 0 {
                 amount += 1;
             }
         }
@@ -412,7 +412,7 @@ impl TimeBoard {
     pub fn get_single_button_income_trigger_in_range(&self, range: Range<usize>) -> Option<u8> {
         let mut range = range;
         range
-            .find(|&i| self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0)
+            .find(|&i| self.tiles[i] & time_board_flags::BUTTON_INCOME_TRIGGER > 0)
             .map(|i| i as u8)
     }
 
@@ -433,7 +433,7 @@ impl TimeBoard {
     pub fn get_all_button_income_triggers_in_range(&self, range: Range<usize>) -> Vec<u8> {
         let mut result = vec![];
         for i in range {
-            if self.tiles[i] & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+            if self.tiles[i] & time_board_flags::BUTTON_INCOME_TRIGGER > 0 {
                 result.push(i as u8);
             }
         }
@@ -536,10 +536,10 @@ impl TimeBoard {
         let mut player_2_position = 0;
 
         for (i, tile) in self.tiles.iter().enumerate() {
-            if tile & entities_enum::PLAYER_1 > 0 {
+            if tile & time_board_flags::PLAYER_1 > 0 {
                 player_1_position = i as u8;
             }
-            if tile & entities_enum::PLAYER_2 > 0 {
+            if tile & time_board_flags::PLAYER_2 > 0 {
                 player_2_position = i as u8;
             }
         }
@@ -624,15 +624,15 @@ impl Display for TimeBoard {
 fn get_str_for_tile(tile: u8) -> String {
     let mut result_str = "".to_string();
 
-    if tile & entities_enum::PLAYER_1 > 0 {
+    if tile & time_board_flags::PLAYER_1 > 0 {
         result_str += "1";
     }
-    if tile & entities_enum::PLAYER_2 > 0 {
+    if tile & time_board_flags::PLAYER_2 > 0 {
         result_str += "2";
     }
-    if tile & entities_enum::BUTTON_INCOME_TRIGGER > 0 {
+    if tile & time_board_flags::BUTTON_INCOME_TRIGGER > 0 {
         result_str += "B";
-    } else if tile & entities_enum::SPECIAL_PATCH > 0 {
+    } else if tile & time_board_flags::SPECIAL_PATCH > 0 {
         result_str += "P";
     }
 

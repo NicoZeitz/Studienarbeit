@@ -1,6 +1,6 @@
 use candle_core::{DType, Device, Module, Result, Tensor};
 use candle_nn::{Embedding, LSTMConfig, Linear, VarBuilder, LSTM, RNN};
-use patchwork_core::{entities_enum, Patch, PatchManager, Patchwork, QuiltBoard, TimeBoard};
+use patchwork_core::{time_board_flags, Patch, PatchManager, Patchwork, QuiltBoard, TimeBoard};
 
 /// A game encoder encodes a game of patchwork into a tensor.
 ///
@@ -235,7 +235,7 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
             time_board
                 .tiles
                 .iter()
-                .map(|tile| *tile as f32 / entities_enum::MAX_VALUE as f32),
+                .map(|tile| *tile as f32 / time_board_flags::MAX_VALUE as f32),
         );
 
         debug_assert_eq!(

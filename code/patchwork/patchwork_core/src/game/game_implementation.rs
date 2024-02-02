@@ -2,7 +2,7 @@ use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 
 use crate::{
-    status_enum, ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, TimeBoard,
+    status_flags, ActionId, GameOptions, Patch, PatchManager, Patchwork, PatchworkError, PlayerState, TimeBoard,
     TurnType,
 };
 
@@ -347,7 +347,7 @@ impl Patchwork {
             self.set_goal_reached(self.get_current_player());
         }
         self.time_board.move_player_position(
-            self.status_flags & status_enum::BOTH_PLAYERS,
+            self.status_flags & status_flags::BOTH_PLAYERS,
             now_current_player_position,
             next_current_player_position,
         );
@@ -503,7 +503,7 @@ impl Patchwork {
             }
 
             self.time_board.move_player_position(
-                self.status_flags & status_enum::BOTH_PLAYERS,
+                self.status_flags & status_flags::BOTH_PLAYERS,
                 now_current_player_position,
                 starting_index,
             );
@@ -564,7 +564,7 @@ impl Patchwork {
             }
 
             self.time_board.move_player_position(
-                self.status_flags & status_enum::BOTH_PLAYERS,
+                self.status_flags & status_flags::BOTH_PLAYERS,
                 now_current_player_position,
                 previous_current_player_position,
             );
@@ -618,7 +618,7 @@ impl Patchwork {
     /// `𝒪(𝟣)`
     #[inline(always)]
     pub const fn get_current_player(&self) -> u8 {
-        self.status_flags & status_enum::BOTH_PLAYERS
+        self.status_flags & status_flags::BOTH_PLAYERS
     }
 
     /// Gets whether the given state is terminated. This is true if both players are at the end of the time board.
@@ -704,7 +704,7 @@ impl Patchwork {
 mod tests {
     use std::collections::VecDeque;
 
-    use crate::{status_enum, Action, Notation};
+    use crate::{status_flags, Action, Notation};
     use pretty_assertions::assert_eq;
     use rand::{Rng, SeedableRng};
     use rand_xoshiro::Xoshiro256PlusPlus;
@@ -785,12 +785,12 @@ mod tests {
         );
 
         assert!(
-            (new_forced_state.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0,
+            (new_forced_state.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0,
             "Player 2 should have the special tile but flags were {:b}",
             new_forced_state.status_flags
         );
         assert!(
-            (new_normal_state.status_flags & status_enum::PLAYER_2_HAS_SPECIAL_TILE) > 0,
+            (new_normal_state.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0,
             "Player 2 should have the special tile but flags were {:b}",
             new_normal_state.status_flags
         );

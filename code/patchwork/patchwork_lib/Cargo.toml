@@ -7,6 +7,11 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[features]
+default = []
+mkl = ["evaluator/mkl", "alphazero_player/mkl"]
+cuda = ["evaluator/cuda", "alphazero_player/cuda"]
+
 [dependencies]
 action_orderer = { path = "../action_orderer" }
 patchwork_core = { path = "../patchwork_core" }
@@ -18,4 +23,5 @@ random_player = { path = "../random_player" }
 greedy_player = { path = "../greedy_player" }
 mcts_player = { path = "../mcts_player" }
 minimax_player = { path = "../minimax_player" }
+tree_policy = { path = "../tree_policy" }
 principal_variation_search_player = { path = "../principal_variation_search_player" }

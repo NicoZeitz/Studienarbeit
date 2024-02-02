@@ -8,3 +8,4 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+patchwork_core = { path = "../patchwork_core" }

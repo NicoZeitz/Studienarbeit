@@ -7,10 +7,13 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[features]
+default = []
+mkl = ["candle-core/mkl", "candle-nn/mkl"]
+cuda = ["candle-core/cuda", "candle-core/cudnn", "candle-nn/cuda"]
+
 [dependencies]
-# candle-core = { version = "0.3.2", features = ["cuda", "cudnn"] }
-candle-core = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
-# candle-nn = { version = "0.3.2", features = ["cuda"] }
-candle-nn = { version = "0.3.3", features = ["mkl"], git = "https://github.com//huggingface/candle.git" }
+candle-core = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
+candle-nn = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
 linfa = "0.7.0"
 patchwork_core = { path = "../patchwork_core" }

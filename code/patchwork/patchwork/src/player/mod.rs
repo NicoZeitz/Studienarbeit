@@ -1,11 +1,15 @@
-use patchwork_lib::player::{
-    AlphaZeroPlayer, GreedyPlayer, HumanPlayer, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions, PVSPlayer,
-    Player, RandomOptions, RandomPlayer,
+use patchwork_lib::{
+    evaluator::StaticEvaluator,
+    player::{
+        AlphaZeroPlayer, Diagnostics, GreedyPlayer, HumanPlayer, MCTSOptions, MCTSPlayer, MinimaxOptions,
+        MinimaxPlayer, PVSOptions, PVSPlayer, Player, RandomOptions, RandomPlayer,
+    },
+    tree_policy::UCTPolicy,
 };
 use regex::Regex;
 
 #[allow(clippy::field_reassign_with_default)]
-pub fn get_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
+pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) -> Option<Box<dyn Player>> {
     match name.to_ascii_lowercase().as_str() {
         // HUMAN
         "human" => Some(Box::new(HumanPlayer::new(format!("Human Player {player_position}")))),
@@ -72,9 +76,12 @@ pub fn get_player(name: &str, player_position: usize) -> Option<Box<dyn Player>>
             )))
         }
         // MCTS ENGINES
-        "mcts" => Some(Box::new(MCTSPlayer::new(
+        "mcts" => Some(Box::new(MCTSPlayer::<UCTPolicy, StaticEvaluator>::new(
             format!("MCTS Player {player_position}"),
-            Default::default(),
+            Some(MCTSOptions {
+                diagnostics,
+                ..Default::default()
+            }),
         ))),
         "alphazero" => Some(Box::new(AlphaZeroPlayer::new(format!(
             "AlphaZero Player {player_position}"

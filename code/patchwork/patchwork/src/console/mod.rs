@@ -11,7 +11,7 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
     let mut player_1 = loop {
         match rl.readline_with_initial("Player 1: ", ("Human", "")) {
             Ok(player) => {
-                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 1) {
+                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 1, Default::default()) {
                     break player;
                 } else {
                     println!("Could not find player {}. Available players: ", player);
@@ -27,7 +27,7 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
     let mut player_2 = loop {
         match rl.readline("Player 2: ") {
             Ok(player) => {
-                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 2) {
+                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 2, Default::default()) {
                     break player;
                 } else {
                     println!("Could not find player {}. Available players: ", player);

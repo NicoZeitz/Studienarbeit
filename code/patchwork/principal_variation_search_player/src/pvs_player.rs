@@ -3,12 +3,10 @@ use std::sync::{atomic::AtomicBool, Arc};
 use action_orderer::ActionList;
 use itertools::Itertools;
 
-use patchwork_core::{evaluator_constants, ActionId, Notation, Patchwork, Player, PlayerResult, TurnType};
+use patchwork_core::{evaluator_constants, ActionId, Diagnostics, Notation, Patchwork, Player, PlayerResult, TurnType};
 use transposition_table::{EvaluationType, TranspositionTable};
 
-use crate::{
-    pvs_options::FailingStrategy, DiagnosticsFeature, PVSOptions, SearchDiagnostics, TranspositionTableFeature,
-};
+use crate::{pvs_options::FailingStrategy, PVSOptions, SearchDiagnostics, TranspositionTableFeature};
 
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
 ///
@@ -772,9 +770,14 @@ impl PVSPlayer {
     #[inline]
     fn write_single_diagnostic(&mut self, diagnostic: &str) -> Result<(), std::io::Error> {
         let writer = match self.options.features.diagnostics {
-            DiagnosticsFeature::Disabled => return Ok(()),
-            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
-            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
+            Diagnostics::Disabled => return Ok(()),
+            Diagnostics::Enabled {
+                progress_writer: ref mut writer,
+            }
+            | Diagnostics::Verbose {
+                progress_writer: ref mut writer,
+                ..
+            } => writer.as_mut(),
         };
 
         writeln!(writer, "{}", diagnostic)
@@ -796,7 +799,6 @@ impl PVSPlayer {
         game: &Patchwork,
         depth: usize,
     ) -> Result<(), std::io::Error> {
-        let is_verbose = matches!(self.options.features.diagnostics, crate::DiagnosticsFeature::Verbose { .. });
         let pv_actions = self.get_pv_action_line(game, depth);
         let best_evaluation = self.best_evaluation.map(|eval| format!("{}", eval)).unwrap_or("NONE".to_string());
         let best_action = self.best_action.as_ref().map(|action| match action.save_to_notation() {
@@ -804,10 +806,14 @@ impl PVSPlayer {
             Err(_) => "######".to_string(),
         }).unwrap_or("NONE".to_string());
 
+        let mut debug_writer = None;
         let writer = match self.options.features.diagnostics {
-            DiagnosticsFeature::Disabled => return Ok(()),
-            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
-            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
+            Diagnostics::Disabled => return Ok(()),
+            Diagnostics::Enabled { progress_writer: ref mut writer } => writer.as_mut(),
+            Diagnostics::Verbose { progress_writer: ref mut writer, debug_writer: ref mut d_writer } => {
+                debug_writer = Some(d_writer);
+                writer.as_mut()
+            },
         };
 
         let mut features = vec![];
@@ -852,8 +858,8 @@ impl PVSPlayer {
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {
             transposition_table.diagnostics.write_diagnostics(writer)?;
-            if is_verbose {
-                transposition_table.diagnostics.write_transposition_table(writer, transposition_table, Some(100))?;
+            if let Some(debug_writer) = debug_writer {
+                transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
             }
         }
         writeln!(writer, "─────────────────────────────────────────────────────────────")?;

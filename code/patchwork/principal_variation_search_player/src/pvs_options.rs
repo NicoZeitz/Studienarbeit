@@ -2,7 +2,7 @@ use std::num::NonZeroUsize;
 
 use action_orderer::{ActionSorter, TableActionOrderer};
 use evaluator::StaticEvaluator;
-use patchwork_core::StableEvaluator;
+use patchwork_core::{Diagnostics, StableEvaluator};
 use transposition_table::Size;
 
 /// Different options for the Principal Variation Search (PVS) algorithm.
@@ -74,7 +74,7 @@ pub struct PVSFeatures {
     /// feature to be enabled.
     pub lazy_smp: LazySMPFeature,
     /// If diagnostics should be printed.
-    pub diagnostics: DiagnosticsFeature,
+    pub diagnostics: Diagnostics,
 }
 
 impl Default for PVSFeatures {
@@ -150,29 +150,6 @@ impl Default for TranspositionTableFeature {
         Self::SymmetryEnabled {
             size: Size::MiB(10),
             strategy: FailingStrategy::FailHard,
-        }
-    }
-}
-
-/// Different options for the diagnostics feature.
-pub enum DiagnosticsFeature {
-    /// No diagnostics are printed.
-    Disabled,
-    /// Diagnostics are printed to the writer.
-    Enabled { writer: Box<dyn std::io::Write> },
-    /// Verbose diagnostics are printed to the writer.
-    /// This includes a printout of 100 entries in the transposition table if the transposition table feature is enabled.
-    Verbose { writer: Box<dyn std::io::Write> },
-}
-
-impl Default for DiagnosticsFeature {
-    fn default() -> Self {
-        if cfg!(debug_assertions) {
-            Self::Enabled {
-                writer: Box::new(std::io::stdout()),
-            }
-        } else {
-            Self::Disabled
         }
     }
 }
