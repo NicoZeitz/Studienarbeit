@@ -889,6 +889,7 @@ version = "1.0.0"
 dependencies = [
  "candle-core",
  "candle-nn",
+ "lazy_static",
  "linfa",
  "patchwork_core",
 ]

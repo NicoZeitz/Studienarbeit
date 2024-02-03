@@ -18,6 +18,41 @@ pub struct SearchTree<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> {
     depth: usize,
 }
 
+macro_rules! playout {
+    ($self:expr, $evaluate:expr, $simulate:expr, $backpropagate:expr) => {{
+        let mut node = Rc::clone(&$self.root);
+
+        // 1. Selection
+        let mut new_depth = 0;
+        while Node::is_fully_expanded(&node) && !Node::is_terminal(&node) {
+            node = Node::select(&node, $self.tree_policy);
+            new_depth += 1;
+        }
+        $self.depth = $self.depth.max(new_depth);
+
+        #[allow(clippy::redundant_closure_call)]
+        let value = if Node::is_terminal(&node) {
+            // 3. Leaf/Terminal Node → Direct Evaluation
+            let state = &RefCell::borrow(&node).state;
+
+            $evaluate(state)
+        } else {
+            // 2. Expansion
+            let new_node = Node::expand(&node)?;
+            node = new_node;
+
+            // 3. Simulation
+            $simulate(&node)
+        };
+
+        // 4. Backpropagation
+        #[allow(clippy::redundant_closure_call)]
+        $backpropagate(&node, value);
+
+        Ok(())
+    }};
+}
+
 impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifetime, Policy, Eval> {
     /// Creates a new [`SearchTree`] with the given game, policy, evaluator and options.
     ///
@@ -75,40 +110,34 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         }
     }
 
-    /// Plays out a single iteration of the MCTS algorithm.
+    /// Plays out a single iteration of the MCTS algorithm. The random playouts can be done in
+    /// parallel. This is controlled by the given `leaf_parallelization`.
+    ///
+    /// # Arguments
+    ///
+    /// * `leaf_parallelization` - The number of parallel playouts to run.
     ///
     /// # Returns
     ///
     /// `Ok(())` if the playout was successful, otherwise a `PatchworkError`.
+    #[rustfmt::skip]
     pub fn playout(&mut self, leaf_parallelization: NonZeroUsize) -> Result<(), PatchworkError> {
-        let mut node = Rc::clone(&self.root);
-
-        // 1. Selection
-        let mut new_depth = 0;
-        while Node::is_fully_expanded(&node) && !Node::is_terminal(&node) {
-            node = Node::select(&node, self.tree_policy);
-            new_depth += 1;
-        }
-        self.depth = self.depth.max(new_depth);
-
-        let value = if Node::is_terminal(&node) {
-            // 3. Leaf/Terminal Node → Direct Evaluation
-            let state = &RefCell::borrow(&node).state;
-
-            self.evaluator.evaluate_terminal_node(state)
+        if leaf_parallelization.get() == 1 {
+            playout!(
+                self,
+                |state| self.evaluator.evaluate_terminal_node(state),
+                |node| Node::simulate(node, self.evaluator),
+                Node::backpropagate
+            )
         } else {
-            // 2. Expansion
-            let new_node = Node::expand(&node)?;
-            node = new_node;
+            playout!(
+                self,
+                |state| vec![self.evaluator.evaluate_terminal_node(state)],
+                |node| Node::leaf_parallelized_simulate(node, self.evaluator, leaf_parallelization),
+                Node::leaf_parallelized_backpropagate
+            )
+        }
 
-            // 3. Simulation
-            Node::simulate(&node, self.evaluator, leaf_parallelization)
-        };
-
-        // 4. Backpropagation
-        Node::backpropagate(&node, value);
-
-        Ok(())
     }
 
     /// Picks the best action from the root node.
@@ -147,7 +176,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         best_action
     }
 
-    /// Gets the depth for how many plys all actions have been expanded.
+    /// Gets the depth of the principal variation as long as all actions are expanded.
     ///
     /// # Returns
     ///
@@ -172,6 +201,40 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         root_wins / root_visits
     }
 
+    /// Gets the minimum score of all games played from the root node from the perspective of the
+    /// current player at the root node.
+    ///
+    /// # Returns
+    ///
+    /// The minimum score of all games played from the root node from the perspective of the current
+    /// player.
+    pub fn get_min_score(&self) -> i32 {
+        let root = RefCell::borrow(&self.root);
+        let root_player = root.state.is_player_1();
+
+        root.minimum_score_for(root_player)
+    }
+
+    /// Gets the maximum score of all games played from the root node from the perspective of the
+    /// current player at the root node.
+    ///
+    /// # Returns
+    ///
+    /// The maximum score of all games played from the root node from the perspective of the current
+    /// player.
+    pub fn get_max_score(&self) -> i32 {
+        let root = RefCell::borrow(&self.root);
+        let root_player = root.state.is_player_1();
+
+        root.maximum_score_for(root_player)
+    }
+
+    /// Gets the action line of the principal variation (PV) [The child nodes with the most amount
+    /// of visits] from the root node.
+    ///
+    /// # Returns
+    ///
+    /// The action line of the principal variation.
     pub fn get_pv_action_line(&self) -> String {
         fn traverse(node: &Rc<RefCell<Node>>, pv_line: &mut Vec<ActionId>) {
             let node = RefCell::borrow(node);

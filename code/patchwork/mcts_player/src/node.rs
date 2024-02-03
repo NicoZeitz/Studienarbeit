@@ -9,6 +9,8 @@ use std::{
 use patchwork_core::{ActionId, Evaluator, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
 use rand::seq::SliceRandom;
 
+
+
 type Link = Rc<RefCell<Node>>;
 type WeakLink = Weak<RefCell<Node>>;
 
@@ -115,18 +117,18 @@ impl Node {
         #[rustfmt::skip]
         impl TreePolicyNode for LinkNode<'_> {
             type Player = bool;
-            fn visit_count(&self) -> i32 { RefCell::borrow(&self.0).visit_count() }
-            fn current_player(&self) -> Self::Player { RefCell::borrow(&self.0).current_player() }
-            fn wins_for(&self, player: Self::Player) -> i32 { RefCell::borrow(&self.0).wins_for(player) }
-            fn maximum_score_for(&self, player: Self::Player) -> i32 { RefCell::borrow(&self.0).maximum_score_for(player) }
-            fn minimum_score_for(&self, player: Self::Player) -> i32 { RefCell::borrow(&self.0).minimum_score_for(player) }
-            fn score_range(&self) -> i32 { RefCell::borrow(&self.0).score_range() }
-            fn score_sum_for(&self, player: Self::Player) -> i64 { RefCell::borrow(&self.0).score_sum_for(player) }
+            fn visit_count(&self) -> i32 { RefCell::borrow(self.0).visit_count() }
+            fn current_player(&self) -> Self::Player { RefCell::borrow(self.0).current_player() }
+            fn wins_for(&self, player: Self::Player) -> i32 { RefCell::borrow(self.0).wins_for(player) }
+            fn maximum_score_for(&self, player: Self::Player) -> i32 { RefCell::borrow(self.0).maximum_score_for(player) }
+            fn minimum_score_for(&self, player: Self::Player) -> i32 { RefCell::borrow(self.0).minimum_score_for(player) }
+            fn score_range(&self) -> i32 { RefCell::borrow(self.0).score_range() }
+            fn score_sum_for(&self, player: Self::Player) -> i64 { RefCell::borrow(self.0).score_sum_for(player) }
         }
 
         let parent = LinkNode(node_link);
         let children_vec = RefCell::borrow(node_link).children.clone();
-        let children = children_vec.iter().map(|link| LinkNode(link)).collect::<Vec<_>>();
+        let children = children_vec.iter().map(LinkNode).collect::<Vec<_>>();
 
         let selected_child = tree_policy.select_node(&parent, children.iter());
         Rc::clone(selected_child.0)
@@ -165,29 +167,48 @@ impl Node {
     ///
     /// * `node` - The node to simulate from.
     /// * `evaluator` - The evaluator to evaluate the game state.
-    /// * `leaf_parallelization` - The number of games that are played in parallel to get a more
-    ///   accurate score for the node.
     ///
     /// # Returns
     ///
     /// The score of the game from this node derived from the simulation with the evaluator.
-    pub fn simulate(node_link: &Link, evaluator: &impl Evaluator, leaf_parallelization: NonZeroUsize) -> i32 {
+    pub fn simulate(node_link: &Link, evaluator: &impl Evaluator) -> i32 {
+        let state = &RefCell::borrow(node_link).state;
+
+        evaluator.evaluate_node(state)
+    }
+
+    /// Simulates the game from this node in parallel.
+    ///
+    /// # Arguments
+    ///
+    /// * `node` - The node to simulate from.
+    /// * `evaluator` - The evaluator to evaluate the game state.
+    /// * `leaf_parallelization` - The number of games that are played in parallel to get a more
+    ///  accurate score for the node.
+    ///
+    /// # Returns
+    ///
+    /// The scores of the games from this node derived from the simulation with the evaluator.
+    pub fn leaf_parallelized_simulate(
+        node_link: &Link,
+        evaluator: &impl Evaluator,
+        leaf_parallelization: NonZeroUsize,
+    ) -> Vec<i32> {
         let state = &RefCell::borrow(node_link).state;
 
         if Node::is_terminal(node_link) {
-            return evaluator.evaluate_terminal_node(&state);
+            return vec![evaluator.evaluate_terminal_node(state)];
         }
 
         if leaf_parallelization.get() == 1 {
-            return evaluator.evaluate_intermediate_node(&state);
+            return vec![evaluator.evaluate_intermediate_node(state)];
         }
 
         thread::scope(|s| {
-            ((0..leaf_parallelization.get())
-                .map(|_| s.spawn(|| evaluator.evaluate_intermediate_node(&state)))
+            (0..leaf_parallelization.get())
+                .map(|_| s.spawn(|| evaluator.evaluate_intermediate_node(state)))
                 .map(|handle| handle.join().unwrap())
-                .sum::<i32>() as f64
-                / leaf_parallelization.get() as f64) as i32
+                .collect::<Vec<_>>()
         })
     }
 
@@ -207,6 +228,27 @@ impl Node {
 
         if let Some(ref parent) = node.parent.as_ref().and_then(|p| p.upgrade()) {
             Node::backpropagate(parent, value);
+        }
+    }
+
+    /// Backpropagates the scores of the games up until the parent node is reached.
+    ///
+    /// # Parameters
+    ///
+    /// * `node` - The node to backpropagate from.
+    /// * `values` - The values to backpropagate.
+    pub fn leaf_parallelized_backpropagate(node_link: &Link, values: Vec<i32>) {
+        let mut node = RefCell::borrow_mut(node_link);
+        for value in values.iter() {
+            node.neutral_max_score = node.neutral_max_score.max(*value);
+            node.neutral_min_score = node.neutral_min_score.min(*value);
+            node.neutral_score_sum += *value as i64;
+            node.neutral_wins += if *value > 0 { 1 } else { -1 };
+            node.visit_count += 1;
+        }
+
+        if let Some(ref parent) = node.parent.as_ref().and_then(|p| p.upgrade()) {
+            Node::leaf_parallelized_backpropagate(parent, values);
         }
     }
 }

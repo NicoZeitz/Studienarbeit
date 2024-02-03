@@ -1,5 +1,5 @@
 use patchwork_lib::{
-    evaluator::StaticEvaluator,
+    evaluator::WinLossEvaluator,
     player::{
         AlphaZeroPlayer, Diagnostics, GreedyPlayer, HumanPlayer, MCTSOptions, MCTSPlayer, MinimaxOptions,
         MinimaxPlayer, PVSOptions, PVSPlayer, Player, RandomOptions, RandomPlayer,
@@ -76,7 +76,7 @@ pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) 
             )))
         }
         // MCTS ENGINES
-        "mcts" => Some(Box::new(MCTSPlayer::<UCTPolicy, StaticEvaluator>::new(
+        "mcts" => Some(Box::new(MCTSPlayer::<UCTPolicy, WinLossEvaluator>::new(
             format!("MCTS Player {player_position}"),
             Some(MCTSOptions {
                 diagnostics,

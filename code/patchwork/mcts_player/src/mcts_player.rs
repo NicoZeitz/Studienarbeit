@@ -1,10 +1,18 @@
+use std::num::NonZeroUsize;
+
 use evaluator::ScoreEvaluator;
 use patchwork_core::{ActionId, Diagnostics, Evaluator, Patchwork, Player, PlayerResult, TreePolicy};
 use tree_policy::ScoredUCTPolicy;
 
-use crate::{mcts_options::NON_ZERO_USIZE_ONE, MCTSEndCondition, MCTSOptions, Node, SearchTree};
+pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
+pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
 
-// TODO: report progress to user (win rate, turns taken there, num iterations currently) [debug only]
+use crate::{MCTSEndCondition, MCTSOptions, Node, SearchTree};
+
+// TODO:
+// print tree to verbose
+// allow tree reuse
+// allow root parallelization
 
 /// A computer player that uses the Monte Carlo Tree Search (MCTS) algorithm to choose an action.
 pub struct MCTSPlayer<Policy: TreePolicy = ScoredUCTPolicy, Eval: Evaluator = ScoreEvaluator> {
@@ -24,6 +32,12 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
     /// Creates a new [`MCTSPlayer`] with the given name.
     pub fn new(name: impl Into<String>, options: Option<MCTSOptions>) -> Self {
         let options = options.unwrap_or_default();
+        let last_roots = if options.reuse_tree {
+            Vec::with_capacity(options.root_parallelization.get())
+        } else {
+            Vec::new()
+        };
+
         MCTSPlayer {
             name: format!(
                 "{} (R: {}, L: {})",
@@ -34,7 +48,7 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
             policy: Default::default(),
             evaluator: Default::default(),
             options,
-            last_roots: vec![],
+            last_roots,
         }
     }
 }
@@ -86,7 +100,7 @@ macro_rules! play_until_end {
                     time_passed = std::time::Instant::now().duration_since(start_time);
 
                     // Write diagnostics every 10 seconds
-                    if last_print.elapsed() >= std::time::Duration::from_secs(5) {
+                    if last_print.elapsed() >= std::time::Duration::from_secs(1) {
                         #[allow(clippy::redundant_closure_call)]
                         $diagnostics(iteration, time_passed)?;
 
@@ -184,8 +198,6 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
 
         write_verbose_diagnostics(&mut self.options.diagnostics)?;
 
-        // Ok(search_tree.search())
-        // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove
         Ok(best_action)
     }
 }
@@ -211,7 +223,8 @@ fn write_diagnostics<Policy: TreePolicy, Eval: Evaluator>(
             writeln!(writer, "Iterations:          {}", iteration)?;
             writeln!(writer, "Expanded Depth:      {}", search_tree.get_expanded_depth())?;
             writeln!(writer, "Win Percentage:      {:.2}%", search_tree.get_win_prediction() * 100.0)?;
-            writeln!(writer, "Principal Variation: {}", search_tree.get_pv_action_line())?; // TODO: The path along the tree which will be taken
+            writeln!(writer, "Principal Variation: {}", search_tree.get_pv_action_line())?;
+            writeln!(writer, "Min/Max Evaluation:  {}/{}", search_tree.get_min_score(), search_tree.get_max_score())?;
             writeln!(writer, "─────────────────────────────────────────────────────────────")?;
         }
     };
@@ -225,6 +238,7 @@ fn write_verbose_diagnostics(diagnostics: &mut Diagnostics) -> Result<(), std::i
     };
 
     write!(writer, "TODO: print tree")?;
+      // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove
 
     Ok(())
 }

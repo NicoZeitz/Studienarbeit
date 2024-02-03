@@ -2,6 +2,8 @@ use std::num::NonZeroUsize;
 
 use patchwork_core::Diagnostics;
 
+use crate::mcts_player::{NON_ZERO_USIZE_FOUR, NON_ZERO_USIZE_ONE};
+
 /// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum MCTSEndCondition {
@@ -46,9 +48,6 @@ impl MCTSOptions {
         }
     }
 }
-
-pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
-pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
 
 impl Default for MCTSOptions {
     fn default() -> Self {
