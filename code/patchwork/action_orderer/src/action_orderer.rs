@@ -7,7 +7,7 @@ use crate::ActionList;
 /// # FEATURE: Other Optimal ActionSorter Implementations
 /// - Handcrafted Action Ordering in Tables
 /// - Move Ordering via Machine Learning (something like [Neural MoveMap Heuristic](https://www.chessprogramming.org/Neural_MoveMap_Heuristic))
-pub trait ActionSorter {
+pub trait ActionOrderer {
     /// Scores the given actions. The given actions are scored in place.
     ///
     /// # Arguments

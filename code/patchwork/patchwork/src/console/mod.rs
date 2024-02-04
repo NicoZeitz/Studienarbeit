@@ -99,6 +99,4 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
 
         i += 1;
     }
-
-    handle_exit();
 }

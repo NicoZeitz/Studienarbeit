@@ -1,30 +1,21 @@
 use std::num::NonZeroUsize;
 
-use action_orderer::{ActionSorter, TableActionOrderer};
-use evaluator::StaticEvaluator;
-use patchwork_core::{Diagnostics, StableEvaluator};
+use patchwork_core::Diagnostics;
 use transposition_table::Size;
 
 /// Different options for the Principal Variation Search (PVS) algorithm.
 pub struct PVSOptions {
     /// The time limit for the search.
     pub time_limit: std::time::Duration,
-    /// The evaluator to evaluate the game state.
-    pub evaluator: Box<dyn StableEvaluator>,
-    /// The action sorter to sort the actions.
-    pub action_orderer: Box<dyn ActionSorter>,
     /// The features to enable or disable.
     pub features: PVSFeatures,
+    /// If diagnostics should be printed.
+    pub diagnostics: Diagnostics,
 }
 
 impl PVSOptions {
     /// Creates a new [`PVSOptions`].
-    pub fn new(
-        time_limit: std::time::Duration,
-        evaluator: Box<dyn StableEvaluator>,
-        action_orderer: Box<dyn ActionSorter>,
-        features: PVSFeatures,
-    ) -> Self {
+    pub fn new(time_limit: std::time::Duration, features: PVSFeatures, diagnostics: Diagnostics) -> Self {
         if matches!(features.lazy_smp, LazySMPFeature::Yes(_)) {
             unimplemented!("The lazy SMP feature is not implemented jet.") // UNIMPLEMENTED: implement
         }
@@ -37,9 +28,8 @@ impl PVSOptions {
 
         Self {
             time_limit,
-            evaluator,
-            action_orderer,
             features,
+            diagnostics,
         }
     }
 }
@@ -48,9 +38,8 @@ impl Default for PVSOptions {
     fn default() -> Self {
         Self {
             time_limit: std::time::Duration::from_secs(20),
-            evaluator: Box::<StaticEvaluator>::default(),
-            action_orderer: Box::<TableActionOrderer>::default(),
             features: Default::default(),
+            diagnostics: Default::default(),
         }
     }
 }
@@ -73,8 +62,6 @@ pub struct PVSFeatures {
     /// If [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) should be used. Requires the transposition table
     /// feature to be enabled.
     pub lazy_smp: LazySMPFeature,
-    /// If diagnostics should be printed.
-    pub diagnostics: Diagnostics,
 }
 
 impl Default for PVSFeatures {
@@ -87,7 +74,6 @@ impl Default for PVSFeatures {
             late_move_pruning: true,
             search_extensions: true,
             lazy_smp: LazySMPFeature::No,
-            diagnostics: Default::default(),
         }
     }
 }

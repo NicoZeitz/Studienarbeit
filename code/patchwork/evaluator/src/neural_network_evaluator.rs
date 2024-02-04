@@ -1,5 +1,5 @@
 use candle_core::{DType, Device, IndexOp, Module, Result, Tensor};
-use candle_nn::{Linear, VarBuilder};
+use candle_nn::{Linear, VarBuilder, VarMap};
 use patchwork_core::{evaluator_constants, Evaluator, Patchwork, PlayerState, QuiltBoard, StableEvaluator, TurnType};
 
 use lazy_static::lazy_static;
@@ -42,6 +42,15 @@ lazy_static! {
     static ref NEG_ONE_SCALAR: Tensor = Tensor::from_slice(&[-1f32], (1,), &Device::Cpu).unwrap();
     static ref INF_BOUND: Tensor =
         Tensor::from_slice(&[evaluator_constants::POSITIVE_INFINITY as f32], (1,), &Device::Cpu).unwrap();
+}
+
+impl Default for NeuralNetworkEvaluator {
+    fn default() -> Self {
+        // TODO: Correct Implementation with loading from safe tensors embedding into exe
+        let vm = VarMap::new();
+        let vb = VarBuilder::from_varmap(&vm, DType::F32, &Device::Cpu);
+        Self::new(vb).unwrap()
+    }
 }
 
 impl NeuralNetworkEvaluator {
