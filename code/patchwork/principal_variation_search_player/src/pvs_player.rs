@@ -772,7 +772,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     #[inline]
     fn write_single_diagnostic(&mut self, diagnostic: &str) -> Result<(), std::io::Error> {
         let writer = match self.options.diagnostics {
-            Diagnostics::Disabled => return Ok(()),
+            Diagnostics::Disabled | Diagnostics::VerboseOnly { .. } => return Ok(()),
             Diagnostics::Enabled {
                 progress_writer: ref mut writer,
             }
@@ -816,6 +816,12 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 debug_writer = Some(d_writer);
                 writer.as_mut()
             },
+            Diagnostics::VerboseOnly { ref mut debug_writer } =>{
+                if let Some(ref mut transposition_table) = self.transposition_table {
+                    transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
+                }
+                return Ok(())
+            }
         };
 
         let mut features = vec![];

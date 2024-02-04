@@ -1,4 +1,8 @@
-use std::{cell::RefCell, num::NonZeroUsize, rc::Rc};
+use std::{
+    cell::{Ref, RefCell},
+    num::NonZeroUsize,
+    rc::Rc,
+};
 
 use itertools::Itertools;
 
@@ -154,10 +158,6 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// Panics if the root node is not fully expanded.
     pub fn pick_best_action(&self) -> ActionId {
-        if !Node::is_fully_expanded(&self.root) {
-            panic!("[SearchTree::pick_best_action] The root node is not fully expanded.")
-        }
-
         let root = RefCell::borrow(&self.root);
         let root_player = root.state.is_player_1();
 
@@ -269,5 +269,40 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             .join(" → ");
 
         action_line
+    }
+
+    pub fn write_tree(&self, writer: &mut Box<dyn std::io::Write>) -> std::io::Result<()> {
+        fn tree_to_string(node: Ref<'_, Node>) -> Vec<String> {
+            let mut result = Vec::new();
+
+            result.push(format!("{:?}", node));
+
+            for (index, child) in node.children.iter().enumerate() {
+                let child = RefCell::borrow(child);
+
+                let branching_front = if index == node.children.len() - 1 {
+                    "└───"
+                } else {
+                    "├───"
+                };
+                let other_front = if index == node.children.len() - 1 {
+                    "    "
+                } else {
+                    "│   "
+                };
+
+                for (inner_index, line) in tree_to_string(child).iter().enumerate() {
+                    let front = if inner_index == 0 { branching_front } else { other_front };
+                    result.push(format!("{}{}", front, line));
+                }
+            }
+
+            result
+        }
+
+        let root = RefCell::borrow(&self.root);
+        let lines = tree_to_string(root);
+        writeln!(writer, "{}", lines.join("\n"))?;
+        Ok(())
     }
 }

@@ -1,4 +1,4 @@
-use std::num::NonZeroUsize;
+use std::{num::NonZeroUsize, ops::Sub};
 
 use evaluator::ScoreEvaluator;
 use patchwork_core::{ActionId, Diagnostics, Evaluator, Patchwork, Player, PlayerResult, TreePolicy};
@@ -88,9 +88,11 @@ macro_rules! play_until_end {
                 $diagnostics(iteration, time_passed)?;
             }
             MCTSEndCondition::Time(time_limit) => {
+                // add safety margin to time limit
+                let time_limit = time_limit.sub(std::time::Duration::from_millis(50));
                 let mut last_print = std::time::Instant::now();
                 loop {
-                    if time_passed >= *time_limit {
+                    if time_passed >= time_limit {
                         break;
                     }
 
@@ -127,7 +129,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
             return Ok(valid_action[0]);
         }
 
-        let (best_action, _search_tree) = match &mut self.options {
+        let (best_action, search_tree) = match &mut self.options {
             MCTSOptions {
                 root_parallelization: NON_ZERO_USIZE_ONE,
                 leaf_parallelization,
@@ -196,21 +198,21 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
         //     self.last_root = Some(search_tree.root.clone());
         // }
 
-        write_verbose_diagnostics(&mut self.options.diagnostics)?;
+        write_verbose_diagnostics(&mut self.options.diagnostics, &search_tree)?;
 
         Ok(best_action)
     }
 }
 
-fn write_diagnostics<Policy: TreePolicy, Eval: Evaluator>(
+fn write_diagnostics(
     diagnostics: &mut Diagnostics,
     iteration: usize,
     time_passed: std::time::Duration,
-    search_tree: &SearchTree<Policy, Eval>,
+    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
     match diagnostics {
-        Diagnostics::Disabled => {}
+        Diagnostics::Disabled | Diagnostics::VerboseOnly { .. } => {}
         Diagnostics::Enabled {
             progress_writer: writer,
         }
@@ -232,13 +234,18 @@ fn write_diagnostics<Policy: TreePolicy, Eval: Evaluator>(
 }
 
 #[rustfmt::skip]
-fn write_verbose_diagnostics(diagnostics: &mut Diagnostics) -> Result<(), std::io::Error> {
-    let Diagnostics::Verbose { debug_writer: writer, .. } = diagnostics else {
-        return Ok(());
-    };
+fn write_verbose_diagnostics(diagnostics: &mut Diagnostics, search_tree: &SearchTree<impl TreePolicy, impl Evaluator>) -> Result<(), std::io::Error> {
+    match diagnostics {
+        Diagnostics::Verbose { debug_writer: ref mut writer, .. } |
+        Diagnostics::VerboseOnly { debug_writer: ref mut writer } => {
+            if search_tree.get_expanded_depth() == 0 {
+                writeln!(writer, "[MCTS] Could not expand all actions at depth 0")?;
+            }
 
-    write!(writer, "TODO: print tree")?;
-      // fs::write("test.txt", search_tree.tree_to_string()).expect("ERROR WRITING FILE"); // TODO: remove
+            search_tree.write_tree(writer)?;
+        },
+        _ => {}
+    }
 
     Ok(())
 }

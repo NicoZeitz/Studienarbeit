@@ -1,3 +1,6 @@
+use std::io::Write;
+
+use anyhow::Error;
 use patchwork_lib::{
     evaluator::{Evaluator, NeuralNetworkEvaluator, ScoreEvaluator, StaticEvaluator, WinLossEvaluator},
     player::{
@@ -6,47 +9,130 @@ use patchwork_lib::{
         RandomPlayer, Size, TranspositionTableFeature,
     },
     tree_policy::{PartiallyScoredUCTPolicy, ScoredUCTPolicy, TreePolicy, UCTPolicy},
-    ActionOrderer, TableActionOrderer,
+    ActionId, ActionOrderer, Patchwork, TableActionOrderer,
 };
 use regex::Regex;
+use rustyline::{error::ReadlineError, history::FileHistory, Editor};
 
-#[allow(clippy::field_reassign_with_default)]
-pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) -> Option<Box<dyn Player>> {
+use super::{CTRL_C_MESSAGE, CTRL_D_MESSAGE};
+
+pub enum PlayerType {
+    BuildIn(Box<dyn Player>, String),
+    #[allow(dead_code)]
+    Upi(String), // TODO: implement extern UPI
+}
+
+impl PlayerType {
+    pub fn get_construct_name(&self) -> &str {
+        match self {
+            PlayerType::BuildIn(_, name) => name,
+            PlayerType::Upi(name) => name,
+        }
+    }
+}
+
+impl Player for PlayerType {
+    fn name(&self) -> &str {
+        match self {
+            PlayerType::BuildIn(player, _) => player.name(),
+            PlayerType::Upi(_) => unimplemented!("[PlayerType::name] UPI is not yet implemented."),
+        }
+    }
+
+    fn get_action(&mut self, game: &Patchwork) -> anyhow::Result<ActionId> {
+        match self {
+            PlayerType::BuildIn(player, _) => player.get_action(game),
+            PlayerType::Upi(_) => unimplemented!("[PlayerType::get_action] UPI is not yet implemented."),
+        }
+    }
+}
+
+pub fn interactive_get_player(
+    rl: &mut Editor<(), FileHistory>,
+    player_name: Option<String>,
+    player_position: usize,
+    diagnostics: Diagnostics,
+) -> anyhow::Result<PlayerType> {
+    if let Some(player_name) = player_name {
+        let Ok(player) = get_player(player_name.as_str(), 1, diagnostics) else {
+            println!("Could not find player {}. Available players: ", player_name);
+            for p in get_available_players() {
+                println!("  {}", p);
+            }
+            std::io::stdout().flush()?;
+            return Err(Error::msg(format!("Could not find player {}", player_position)));
+        };
+        Ok(player)
+    } else {
+        ask_for_player(rl, player_position, diagnostics)
+    }
+}
+
+fn ask_for_player(
+    rl: &mut Editor<(), FileHistory>,
+    player_position: usize,
+    mut diagnostics: Diagnostics,
+) -> anyhow::Result<PlayerType> {
+    loop {
+        // match rl.readline_with_initial("Player 1: ", ("Human", "")) {
+        match rl.readline(format!("Player {}: ", player_position).as_str()) {
+            Ok(player) => match get_player(&player, 1, diagnostics) {
+                Ok(player) => return Ok(player),
+                Err(d) => {
+                    diagnostics = d;
+                    println!("Could not find player {}. Available players: ", player);
+                    for player in get_available_players() {
+                        println!("  {}", player);
+                    }
+                    std::io::stdout().flush()?;
+                }
+            },
+            Err(ReadlineError::Interrupted) => return Err(Error::msg(CTRL_C_MESSAGE)),
+            Err(ReadlineError::Eof) => return Err(Error::msg(CTRL_D_MESSAGE)),
+            Err(err) => return Err(Error::from(err)),
+        }
+    }
+}
+
+pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) -> Result<PlayerType, Diagnostics> {
     let name = name.to_ascii_lowercase();
     let name = name.as_str();
 
+    if name.starts_with("extern") {
+        unimplemented!("[get_player_from_str] Extern upi players are not yet implemented.");
+    }
+
     if let Some(player) = parse_human_player(name, player_position) {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     if let Some(player) = parse_random_player(name, player_position) {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     if let Some(player) = parse_greedy_player(name, player_position) {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     if let Some(player) = parse_minimax_player(name, player_position) {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     let (player_option, diagnostics) = parse_pvs_player(name, player_position, diagnostics);
     if let Some(player) = player_option {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     let (player_option, diagnostics) = parse_mcts_player(name, player_position, diagnostics.unwrap());
     if let Some(player) = player_option {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
     if let Some(player) = parse_alphazero_player(name, player_position) {
-        return Some(player);
+        return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    drop(diagnostics);
-    None
+    Err(diagnostics.unwrap())
 }
 
 pub fn get_available_players() -> Vec<String> {
@@ -237,6 +323,7 @@ fn parse_pvs_player(
     let mut options = PVSOptions::default();
     let mut orderer = "table";
     let mut evaluator = "static";
+    options.diagnostics = diagnostics;
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
         .unwrap()
@@ -397,6 +484,7 @@ fn parse_mcts_player(
     let mut options = MCTSOptions::default();
     let mut policy = "uct";
     let mut evaluator = "static";
+    options.diagnostics = diagnostics;
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
         .unwrap()

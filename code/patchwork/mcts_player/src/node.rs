@@ -9,8 +9,6 @@ use std::{
 use patchwork_core::{ActionId, Evaluator, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
 use rand::seq::SliceRandom;
 
-
-
 type Link = Rc<RefCell<Node>>;
 type WeakLink = Weak<RefCell<Node>>;
 
@@ -308,11 +306,10 @@ impl fmt::Debug for Node {
         f.debug_struct("Node")
             .field("state", &self.state)
             .field("parent", &self.parent)
-            // .field("children", &self.children)
-            .field("max_score", &self.neutral_max_score)
-            .field("min_score", &self.neutral_min_score)
-            .field("score_sum", &self.neutral_score_sum)
-            .field("wins", &self.neutral_wins)
+            .field("neutral_max_score", &self.neutral_max_score)
+            .field("neutral_min_score", &self.neutral_min_score)
+            .field("neutral_score_sum", &self.neutral_score_sum)
+            .field("neutral_wins", &self.neutral_wins)
             .field("visit_count", &self.visit_count)
             .field("action_taken", &self.action_taken)
             .field("expandable_actions", &self.expandable_actions)

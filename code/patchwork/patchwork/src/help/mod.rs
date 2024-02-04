@@ -14,41 +14,36 @@ pub fn print_welcome() {
     );
 }
 
-pub fn print_repl_help() {
+pub fn print_help() {
     print_welcome();
-    println!("Commands:");
-    println!("    help, h   - Print this help message");
-    println!("    exit      - Exit the application");
-    println!("    clear     - Clear the screen");
-    #[cfg(debug_assertions)]
-    println!("    echo      - Print the arguments");
-    #[cfg(debug_assertions)]
-    println!("    debug     - Print different debug information useful for debugging. Only works in debug builds.");
-    println!("    console   - Start an interactive console game of patchwork");
-    println!("    compare   - Compare different patchwork ai's against each other");
-    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
-    println!("    server    - Start the patchwork game server");
-    println!("                port <number>  - the port the server should start on. Default 3000");
-    println!("                public         - if present listens on 0.0.0.0 else on 127.0.0.1");
-}
-
-pub fn print_cmd_help() {
-    print_welcome();
+    println!();
     println!("Usage: {} [Cmd] [Options]", env!("CARGO_BIN_NAME"));
+    println!();
     println!("Commands:");
-    println!("    help, h   - Print this help message");
-    println!("    exit      - Exit the application");
-    println!("    clear     - Clear the screen");
+    println!("    help, h   Print this help message");
+    println!("    exit      Exit the application");
+    println!("    clear     Clear the screen");
     #[cfg(debug_assertions)]
-    println!("    echo      - Print the arguments");
-    #[cfg(debug_assertions)]
-    println!("    debug     - Print different debug information useful for debugging. Only works in debug builds.");
-    println!("    console   - Start an interactive console game of patchwork");
-    println!("    compare   - Compare different patchwork ai's against each other");
-    println!("    upi       - Start Universal Patchwork Interface (UPI) in console mode");
-    println!("    server    - Start the patchwork game server");
-    println!("                --port <number>  - the port the server should start on. Default 3000");
-    println!("                --public         - if present listens on 0.0.0.0 else on 127.0.0.1");
+    println!("    debug     Print different debug information useful for debugging. Only works in debug builds.");
+    println!("    console   Start an interactive console game of patchwork");
+    println!("                -1,   --player-1      The name of the first player");
+    println!("                -2,   --player-2      The name of the second player");
+    println!("                --d1, --diagnostics-1 The diagnostic level of the first player (one of disabled, enabled, verbose, verbose-only)");
+    println!("                --d2, --diagnostics-2 The diagnostic level of the second player");
+    println!("                -s,   --seed          The seed for the initial state");
+    println!("    compare   Compare different patchwork ai's against each other");
+    println!("                -1,   --player-1      The name of the first player");
+    println!("                -2,   --player-2      The name of the second player");
+    println!("                --d1, --diagnostics-1 The diagnostic level of the first player");
+    println!("                --d2, --diagnostics-2 The diagnostic level of the second player");
+    println!("                -g,   --games         The number of games the players should be compared in");
+    println!("                -u,   --update        How often the comparison information should be updated (in ms)");
+    println!("                -p,   --parallel      How many games to play in parallel");
+    println!("    upi       Start Universal Patchwork Interface (UPI) in console mode");
+    println!("                -n,   --no-prompt     Do not print the prompt");
+    println!("    server    Start the patchwork game server");
+    println!("                -p,  --port           The port the server should start on. Default 3000");
+    println!("                --public             If present listens on 0.0.0.0 else on 127.0.0.1");
 }
 
 #[cfg(debug_assertions)]

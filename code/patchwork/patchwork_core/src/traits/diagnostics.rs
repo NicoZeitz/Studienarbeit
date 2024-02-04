@@ -10,12 +10,17 @@ pub enum Diagnostics {
     Disabled,
     /// The diagnostics are enabled. The progress is written to the given writer which is usually
     /// `std::io::stdout()` or a comparable console.
-    Enabled { progress_writer: Box<dyn std::io::Write> },
+    Enabled {
+        progress_writer: Box<dyn std::io::Write>,
+    },
     /// The verbose diagnostics are enabled. The progress is written to the given writer which is
     /// usually `std::io::stdout()` or a comparable console. Additionally, the debug information is
     /// written to the given writer which is usually a file.
     Verbose {
         progress_writer: Box<dyn std::io::Write>,
+        debug_writer: Box<dyn std::io::Write>,
+    },
+    VerboseOnly {
         debug_writer: Box<dyn std::io::Write>,
     },
 }
@@ -37,6 +42,7 @@ impl fmt::Debug for Diagnostics {
             Diagnostics::Disabled => write!(f, "Diagnostics::Disabled"),
             Diagnostics::Enabled { .. } => write!(f, "Diagnostics::Enabled"),
             Diagnostics::Verbose { .. } => write!(f, "Diagnostics::Verbose"),
+            Diagnostics::VerboseOnly { .. } => write!(f, "Diagnostics::VerboseOnly"),
         }
     }
 }

@@ -1,5 +1,5 @@
-pub fn handle_exit() -> ! {
-    std::process::exit(0);
+pub fn handle_exit(code: i32) -> ! {
+    std::process::exit(code);
 }
 
 pub fn handle_exit_with_error(error: anyhow::Error) -> ! {

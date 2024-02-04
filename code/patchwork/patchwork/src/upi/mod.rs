@@ -1,60 +1,87 @@
-use std::{io::Write, sync::mpsc::channel};
+use std::{
+    io::Write,
+    sync::{atomic::AtomicBool, mpsc::channel, Arc},
+};
 
-use anyhow::anyhow;
+use anyhow::Error;
+use clap::Parser;
 use rustyline::{error::ReadlineError, history::FileHistory, Editor};
 use upi::start_upi;
 
-use crate::{
-    exit::{handle_exit, handle_exit_with_error},
-    CTRL_C_MESSAGE, CTRL_D_MESSAGE,
-};
+use crate::{CTRL_C_MESSAGE, CTRL_D_MESSAGE};
 
-pub fn handle_upi(starting_cmd: impl Into<String>, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()> {
+#[derive(Debug, Parser, Default)]
+#[command(no_binary_name(true))]
+struct CmdArgs {
+    #[arg(long = "no-prompt", short = 'n', default_value = "false")]
+    no_prompt: bool,
+}
+
+pub fn handle_upi(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
+    let args = CmdArgs::parse_from(args);
+    let prompt = if args.no_prompt { "" } else { "upi> " };
+
     let (sender, upi_receiver) = channel();
     let (upi_sender, receiver) = channel();
 
-    let handle = std::thread::spawn(move || start_upi(upi_receiver, upi_sender));
+    std::thread::scope(|s| {
+        let close_flag = Arc::new(AtomicBool::new(false));
+        // upi thread
+        let close_flag_clone = close_flag.clone();
+        s.spawn(move || {
+            let _ = start_upi(upi_receiver, upi_sender);
+            close_flag_clone.store(true, std::sync::atomic::Ordering::SeqCst);
+        });
 
-    match sender.send(starting_cmd.into()).ok().and_then(|_| receiver.recv().ok()) {
-        None => {} // channel closed
-        Some(msg) => {
-            print!("{}", msg);
+        // upi incoming message thread
+        let close_flag_clone = close_flag.clone();
+        s.spawn(move || {
             loop {
-                let readline = rl.readline("upi> ");
-                match readline {
-                    Ok(line) => {
-                        match sender.send(line) {
-                            Ok(_) => {}
-                            Err(_) => break, // channel closed, exit loop
-                        };
-                        match receiver.recv() {
-                            Ok(msg) => {
-                                print!("{}", msg);
-                                std::io::stdout().flush().unwrap();
-                            }
-                            Err(_) => break, // channel closed, exit loop
+                if close_flag_clone.load(std::sync::atomic::Ordering::SeqCst) {
+                    break;
+                }
+
+                match receiver.recv() {
+                    Ok(msg) => {
+                        print!("{}", msg);
+                        std::io::stdout().flush().unwrap();
+                    }
+                    Err(_) => break, // channel closed, exit loop
+                }
+            }
+        });
+
+        loop {
+            if close_flag.load(std::sync::atomic::Ordering::SeqCst) {
+                return Ok(());
+            }
+
+            let readline = rl.readline(prompt);
+            match readline {
+                Ok(line) => {
+                    match sender.send(line) {
+                        Ok(_) => {}
+                        Err(_) => {
+                            // channel closed, exit loop
+                            close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                            return Ok(());
                         }
-                    }
-                    Err(ReadlineError::Interrupted) => {
-                        println!("{}", CTRL_C_MESSAGE);
-                        handle_exit();
-                    }
-                    Err(ReadlineError::Eof) => {
-                        println!("{}", CTRL_D_MESSAGE);
-                        handle_exit();
-                    }
-                    Err(err) => {
-                        handle_exit_with_error(err.into());
-                    }
+                    };
+                    std::thread::sleep(std::time::Duration::from_millis(250));
+                }
+                Err(ReadlineError::Interrupted) => {
+                    close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                    return Err(Error::msg(CTRL_C_MESSAGE));
+                }
+                Err(ReadlineError::Eof) => {
+                    close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                    return Err(Error::msg(CTRL_D_MESSAGE));
+                }
+                Err(err) => {
+                    close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                    return Err(Error::from(err));
                 }
             }
         }
-    }
-
-    match handle.join() {
-        Ok(_) => Ok(()),
-        Err(_) => Err(anyhow!(format!("[handle_upi] Error joining thread"))),
-    }?;
-
-    handle_exit();
+    })
 }
