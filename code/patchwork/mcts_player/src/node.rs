@@ -303,16 +303,29 @@ impl TreePolicyNode for Node {
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let wins_from_parent = if let Some(parent) = self.parent.as_ref().and_then(|p| p.upgrade()) {
+            let parent = RefCell::borrow(&parent);
+            if parent.state.is_player_1() {
+                self.neutral_wins
+            } else {
+                -self.neutral_wins
+            }
+        } else {
+            0
+        };
+
         f.debug_struct("Node")
-            .field("state", &self.state)
-            .field("parent", &self.parent)
+            // .field("state", &self.state)
+            .field("visit_count", &self.visit_count)
+            .field("wins_from_parent", &wins_from_parent)
+            .field("neutral_wins", &self.neutral_wins)
             .field("neutral_max_score", &self.neutral_max_score)
             .field("neutral_min_score", &self.neutral_min_score)
             .field("neutral_score_sum", &self.neutral_score_sum)
-            .field("neutral_wins", &self.neutral_wins)
-            .field("visit_count", &self.visit_count)
             .field("action_taken", &self.action_taken)
-            .field("expandable_actions", &self.expandable_actions)
+            .field("parent", &self.parent)
+            .field("children", &self.children.len())
+            .field("expandable_actions", &self.expandable_actions.len())
             .finish()
     }
 }

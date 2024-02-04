@@ -483,7 +483,7 @@ fn parse_mcts_player(
 
     let mut options = MCTSOptions::default();
     let mut policy = "uct";
-    let mut evaluator = "static";
+    let mut evaluator = "win";
     options.diagnostics = diagnostics;
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")

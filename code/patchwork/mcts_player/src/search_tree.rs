@@ -1,5 +1,6 @@
 use std::{
     cell::{Ref, RefCell},
+    cmp::Reverse,
     num::NonZeroUsize,
     rc::Rc,
 };
@@ -277,7 +278,12 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
             result.push(format!("{:?}", node));
 
-            for (index, child) in node.children.iter().enumerate() {
+            for (index, child) in node
+                .children
+                .iter()
+                .sorted_by_key(|child| Reverse(RefCell::borrow(child).visit_count))
+                .enumerate()
+            {
                 let child = RefCell::borrow(child);
 
                 let branching_front = if index == node.children.len() - 1 {

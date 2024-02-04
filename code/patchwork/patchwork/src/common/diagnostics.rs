@@ -51,7 +51,7 @@ pub fn parse_diagnostics(diagnostics: &str) -> Option<Diagnostics> {
                 .create(true)
                 .append(true)
                 .open(format!(
-                    "{}/diagnostics_{}.log",
+                    "{}/diagnostics_{}.txt",
                     std::env::current_dir().unwrap().to_str().unwrap(),
                     chrono::Local::now().format("%Y-%m-%d_%H-%M-%S")
                 ))
