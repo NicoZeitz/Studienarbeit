@@ -20,10 +20,6 @@ use crate::{
 ///
 /// The walking action is penalized in addition to the normal weight the later
 /// the game is.
-///
-/// # FEATURE: other features that could be implemented
-/// - Killer Moves
-/// - History Heuristic
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct TableActionOrderer;
 

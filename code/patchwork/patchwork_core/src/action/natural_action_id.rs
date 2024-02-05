@@ -388,8 +388,6 @@ impl NaturalActionId {
         }
     }
 
-    // TODO: method to convert while providing the necessary information (e.g. starting index, patch id, patch transformation index)
-
     /// Gets the surrogate action id from this natural action id
     ///
     /// # Returns

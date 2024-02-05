@@ -1,16 +1,21 @@
-use std::num::NonZeroUsize;
+use std::{
+    num::NonZeroUsize,
+    sync::{atomic::AtomicBool, Arc},
+};
 
 use patchwork_core::Diagnostics;
 
 use crate::mcts_player::{NON_ZERO_USIZE_FOUR, NON_ZERO_USIZE_ONE};
 
 /// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum MCTSEndCondition {
     /// The number of simulations to run.
     Iterations(usize),
-    /// The number of seconds to run simulations for.
+    /// The time to run simulations for.
     Time(std::time::Duration),
+    /// Run until the flag is set.
+    Flag(Arc<AtomicBool>),
 }
 
 /// Different options for the Monte Carlo Tree Search (MCTS) algorithm.
@@ -58,8 +63,8 @@ impl Default for MCTSOptions {
         Self {
             root_parallelization,
             leaf_parallelization: NON_ZERO_USIZE_ONE,
-            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(20)),
-            reuse_tree: false,
+            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(10)),
+            reuse_tree: true,
             diagnostics: Default::default(),
         }
     }

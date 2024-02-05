@@ -1,6 +1,6 @@
 pub use action_orderer::*;
 pub use patchwork_core::{
-    status_flags, time_board_flags, Action, ActionId, GameOptions, NaturalActionId, Patch, PatchManager,
+    status_flags, time_board_flags, Action, ActionId, GameOptions, NaturalActionId, Notation, Patch, PatchManager,
     PatchTransformation, Patchwork, PlayerState, QuiltBoard, Termination, TerminationType, TimeBoard,
 };
 

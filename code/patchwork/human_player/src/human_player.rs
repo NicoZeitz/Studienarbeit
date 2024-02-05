@@ -36,9 +36,9 @@ impl Player for HumanPlayer {
         let valid_actions = game.get_valid_actions();
 
         if valid_actions[0].is_special_patch_placement() {
-            Ok(self.handle_special_patch_action(valid_actions))
+            self.handle_special_patch_action(valid_actions)
         } else {
-            Ok(self.handle_normal_action(game, valid_actions))
+            self.handle_normal_action(game, valid_actions)
         }
     }
 }
@@ -54,7 +54,7 @@ impl HumanPlayer {
     // # Returns
     //
     // The action.
-    fn handle_special_patch_action(&mut self, valid_actions: Vec<ActionId>) -> ActionId {
+    fn handle_special_patch_action(&mut self, valid_actions: Vec<ActionId>) -> PlayerResult<ActionId> {
         let mut valid_actions = valid_actions;
         let initial_prompt = format!(
             "Player '{}' has to place the special patch. Please enter the row and column of the patch (row, column):",
@@ -63,11 +63,11 @@ impl HumanPlayer {
         let mut prompt = initial_prompt.clone();
 
         loop {
-            let human_input = self.get_human_input(&prompt);
+            let human_input = self.get_human_input(&prompt)?;
 
             if human_input == "skip" {
                 let index = rand::thread_rng().gen_range(0..valid_actions.len());
-                return valid_actions.remove(index);
+                return Ok(valid_actions.remove(index));
             }
 
             let human_inputs = Regex::new(r"[, ]+")
@@ -114,7 +114,7 @@ impl HumanPlayer {
                 let action_column = action.get_column();
 
                 if action_row == patch_position.0 && action_column == patch_position.1 {
-                    return *action;
+                    return Ok(*action);
                 }
             }
 
@@ -150,7 +150,7 @@ impl HumanPlayer {
     /// # Returns
     ///
     /// The action.
-    fn handle_normal_action(&mut self, state: &Patchwork, valid_actions: Vec<ActionId>) -> ActionId {
+    fn handle_normal_action(&mut self, state: &Patchwork, valid_actions: Vec<ActionId>) -> PlayerResult<ActionId> {
         let mut valid_actions = valid_actions;
         let mut actions: HashSet<&str, _> = HashSet::new();
         actions.insert("walk");
@@ -176,15 +176,15 @@ impl HumanPlayer {
         let mut prompt = initial_prompt.clone();
 
         loop {
-            let human_input = self.get_human_input(&prompt);
+            let human_input = self.get_human_input(&prompt)?;
 
             if human_input == "skip" {
                 let index = rand::thread_rng().gen_range(0..valid_actions.len());
-                return valid_actions.remove(index);
+                return Ok(valid_actions.remove(index));
             }
 
             if human_input == "walk" {
-                return valid_actions.remove(0);
+                return Ok(valid_actions.remove(0));
             }
 
             if human_input == "take 1" && actions.contains("take 1") {
@@ -229,12 +229,17 @@ impl HumanPlayer {
     ///
     /// * `state` - The current state.
     /// * `valid_actions` - The valid actions.
-    fn handle_place_patch(&mut self, state: &Patchwork, valid_actions: Vec<ActionId>, patch_index: u8) -> ActionId {
+    fn handle_place_patch(
+        &mut self,
+        state: &Patchwork,
+        valid_actions: Vec<ActionId>,
+        patch_index: u8,
+    ) -> PlayerResult<ActionId> {
         let initial_prompt = format!("You chose to place the following patch: \n{}\nPlease enter the  rotation (0, 90, 180, 270) and orientation (if flipped: y/n) of the patch:", state.patches[patch_index as usize]);
         let mut prompt = initial_prompt.clone();
 
         loop {
-            let human_input = self.get_human_input(&prompt);
+            let human_input = self.get_human_input(&prompt)?;
 
             let human_inputs = Regex::new(r"[, ]+")
                 .unwrap()
@@ -321,12 +326,12 @@ impl HumanPlayer {
     /// # Returns
     ///
     /// The action.
-    fn handle_place_patch_position(&mut self, valid_actions: Vec<ActionId>) -> ActionId {
+    fn handle_place_patch_position(&mut self, valid_actions: Vec<ActionId>) -> PlayerResult<ActionId> {
         let initial_prompt = "Please enter the row and column of the patch (row, column):";
         let mut prompt = initial_prompt.to_string();
 
         loop {
-            let human_input = self.get_human_input(&prompt);
+            let human_input = self.get_human_input(&prompt)?;
             let human_inputs = Regex::new(r"[, ]+")
                 .unwrap()
                 .split(&human_input)
@@ -372,7 +377,7 @@ impl HumanPlayer {
                     let action_column = action.get_column();
 
                     if action_row == patch_position.0 && action_column == patch_position.1 {
-                        return *action;
+                        return Ok(*action);
                     }
                 }
             }
@@ -399,16 +404,16 @@ impl HumanPlayer {
         }
     }
 
-    fn get_human_input(&mut self, prompt: &str) -> String {
+    fn get_human_input(&mut self, prompt: &str) -> PlayerResult<String> {
         let mut human_input = String::new();
         print!("{} ", prompt);
         io::stdout().lock().flush().unwrap();
-        io::stdin().read_line(&mut human_input).expect("Failed to read line"); // TODO: use anyhow and better error handling
+        io::stdin().read_line(&mut human_input)?;
 
         human_input = human_input.trim().to_lowercase();
         self.handle_exit_input(&human_input);
 
-        human_input
+        Ok(human_input)
     }
 
     /// Handles the exit input.

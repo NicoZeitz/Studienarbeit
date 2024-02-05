@@ -2,7 +2,7 @@ use clap::Parser;
 use rustyline::{history::FileHistory, Editor};
 
 use crate::common::{interactive_get_diagnostics, interactive_get_player, PlayerType};
-use patchwork_lib::{player::Player, GameOptions, Patchwork, TerminationType};
+use patchwork_lib::{player::Player, GameOptions, Notation, Patchwork, TerminationType};
 
 #[derive(Debug, Parser, Default)]
 #[command(no_binary_name(true))]
@@ -42,11 +42,13 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
         #[cfg(debug_assertions)]
         let old_state = state.clone();
 
+        let start_time = std::time::Instant::now();
         let action = if state.is_player_1() {
             player_1.get_action(&state)?
         } else {
             player_2.get_action(&state)?
         };
+        let end_time = std::time::Instant::now();
 
         #[cfg(debug_assertions)]
         if old_state != state {
@@ -59,13 +61,15 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
         }
 
         println!(
-            "Player '{}' chose action: {}",
+            "Player '{}' chose action: {} ({}) after {:?}",
             if state.is_player_1() {
                 player_1.name()
             } else {
                 player_2.name()
             },
-            action
+            action,
+            action.save_to_notation().unwrap_or("######".to_string()),
+            end_time - start_time
         );
 
         let mut next_state = state.clone();

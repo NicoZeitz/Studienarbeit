@@ -1,13 +1,16 @@
 use std::{
     cell::{Ref, RefCell},
     cmp::Reverse,
+    collections::VecDeque,
     num::NonZeroUsize,
     rc::Rc,
 };
 
 use itertools::Itertools;
 
-use patchwork_core::{ActionId, Evaluator, Notation, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
+use patchwork_core::{
+    ActionId, Evaluator, Notation, Patchwork, PatchworkError, PlayerResult, TreePolicy, TreePolicyNode,
+};
 
 use crate::Node;
 
@@ -21,6 +24,10 @@ pub struct SearchTree<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> {
     evaluator: &'tree_lifetime Eval,
     /// The depth of the current search tree.
     depth: usize,
+    /// Whether the search tree is reused.
+    reused: bool,
+    /// The amount of nodes in this search tree.
+    nodes: usize,
 }
 
 macro_rules! playout {
@@ -75,6 +82,8 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             tree_policy,
             evaluator,
             depth: 0,
+            reused: false,
+            nodes: 0,
         }
     }
 
@@ -98,21 +107,56 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         game: &Patchwork,
         tree_policy: &'tree_lifetime Policy,
         evaluator: &'tree_lifetime Eval,
-    ) -> Self {
-        if root.is_none() {
-            return Self::new(game, tree_policy, evaluator);
+        abort_search_after: Option<std::time::Duration>,
+    ) -> PlayerResult<Self> {
+        let Some(root) = root else {
+            return Ok(Self::new(game, tree_policy, evaluator));
+        };
+
+        let mut queue = VecDeque::new();
+        queue.push_back((0, root));
+
+        let start_time = std::time::Instant::now();
+
+        loop {
+            if queue.is_empty() || abort_search_after.map_or(false, |time| start_time.elapsed() > time) {
+                break;
+            }
+
+            let (depth, node_ref) = queue.pop_front().unwrap();
+            if depth >= 8 {
+                // After the ply by MCTS-Player the other player can only play a maximum of 7 consecutive actions before
+                // the MCTS-Player has to play again.
+                // As the depth is greater than this amount we can stop the search here.
+                break;
+            }
+
+            let mut node = RefCell::borrow_mut(&node_ref);
+
+            if node.state == *game {
+                // found the correct node
+                node.parent = None;
+                node.action_taken = None;
+                let nodes = calculate_nodes(&node);
+                drop(node);
+                return Ok(SearchTree {
+                    root: node_ref,
+                    tree_policy,
+                    evaluator,
+                    depth: 0,
+                    reused: true,
+                    nodes,
+                });
+            }
+
+            for child in &node.children {
+                queue.push_back((depth + 1, Rc::clone(child)));
+            }
         }
 
-        // TODO:LAST:
-
-        let root = Rc::new(RefCell::new(Node::new(game.clone(), None, None)));
-
-        SearchTree {
-            root,
-            tree_policy,
-            evaluator,
-            depth: 0,
-        }
+        // The root node was not found in the tree.
+        // This means that the tree is not reusable.
+        Ok(Self::new(game, tree_policy, evaluator))
     }
 
     /// Plays out a single iteration of the MCTS algorithm. The random playouts can be done in
@@ -131,14 +175,20 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             playout!(
                 self,
                 |state| self.evaluator.evaluate_terminal_node(state),
-                |node| Node::simulate(node, self.evaluator),
+                |node| {
+                    self.nodes += 1;
+                    Node::simulate(node, self.evaluator)
+                },
                 Node::backpropagate
             )
         } else {
             playout!(
                 self,
                 |state| vec![self.evaluator.evaluate_terminal_node(state)],
-                |node| Node::leaf_parallelized_simulate(node, self.evaluator, leaf_parallelization),
+                |node| {
+                    self.nodes += 1;
+                    Node::leaf_parallelized_simulate(node, self.evaluator, leaf_parallelization)
+                },
                 Node::leaf_parallelized_backpropagate
             )
         }
@@ -153,6 +203,26 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     #[inline(always)]
     pub const fn get_expanded_depth(&self) -> usize {
         self.depth
+    }
+
+    /// Whether the search tree is reused.
+    ///
+    /// # Returns
+    ///
+    /// Whether the search tree is reused.
+    #[inline(always)]
+    pub const fn is_reused(&self) -> bool {
+        self.reused
+    }
+
+    /// Gets the amount of nodes in this search tree.
+    ///
+    /// # Returns
+    ///
+    /// The amount of nodes in this search tree.
+    #[inline(always)]
+    pub const fn get_nodes(&self) -> usize {
+        self.nodes
     }
 
     /// Gets the win prediction for the root node.
@@ -212,7 +282,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                 pv_line.push(action);
             }
 
-            if node.state.is_terminated() || !node.expandable_actions.is_empty() {
+            if node.state.is_terminated() || node.children.is_empty() {
                 return;
             }
 
@@ -279,4 +349,14 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         writeln!(writer, "{}", lines.join("\n"))?;
         Ok(())
     }
+}
+
+fn calculate_nodes(node: &Node) -> usize {
+    let mut nodes = 1;
+
+    for child in &node.children {
+        nodes += calculate_nodes(&RefCell::borrow(child));
+    }
+
+    nodes
 }

@@ -1,16 +1,26 @@
-use std::{cell::RefCell, num::NonZeroUsize, ops::Sub, rc::Rc, thread};
+use std::{
+    cell::RefCell,
+    num::NonZeroUsize,
+    ops::Sub,
+    rc::Rc,
+    sync::{atomic::AtomicUsize, Arc},
+    thread,
+};
 
-use evaluator::ScoreEvaluator;
+use evaluator::WinLossEvaluator;
 use patchwork_core::{ActionId, Diagnostics, Evaluator, Patchwork, Player, PlayerResult, TreePolicy, TreePolicyNode};
-use tree_policy::ScoredUCTPolicy;
+use tree_policy::UCTPolicy;
 
 pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
 pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
 
 use crate::{MCTSEndCondition, MCTSOptions, Node, SearchTree};
 
+const REUSE_TREE_SEARCH_ABORT: Option<std::time::Duration> = Some(std::time::Duration::from_millis(2));
+const TIME_LIMIT_SAFETY_MARGIN: std::time::Duration = std::time::Duration::from_millis(75);
+
 /// A computer player that uses the Monte Carlo Tree Search (MCTS) algorithm to choose an action.
-pub struct MCTSPlayer<Policy: TreePolicy = ScoredUCTPolicy, Eval: Evaluator = ScoreEvaluator> {
+pub struct MCTSPlayer<Policy: TreePolicy = UCTPolicy, Eval: Evaluator = WinLossEvaluator> {
     /// The options for the MCTS algorithm.
     pub options: MCTSOptions,
     /// The name of the player.
@@ -52,10 +62,11 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
 
         MCTSPlayer {
             name: format!(
-                "{} (R: {}, L: {})",
+                "{} [R{}|L{}|T{}]",
                 name.into(),
                 options.root_parallelization,
-                options.leaf_parallelization
+                options.leaf_parallelization,
+                if options.reuse_tree { "R" } else { "N" }
             ),
             policy: Default::default(),
             evaluator: Default::default(),
@@ -72,7 +83,7 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> Default for MCTSPl
 }
 
 macro_rules! play_until_end_worker_thread {
-    ($end_condition:expr, $playout:expr) => {
+    ($start_time:ident, $end_condition:expr, $playout:expr) => {
         match $end_condition {
             MCTSEndCondition::Iterations(iterations) => {
                 let mut iteration = 0;
@@ -88,9 +99,8 @@ macro_rules! play_until_end_worker_thread {
             }
             MCTSEndCondition::Time(time_limit) => {
                 // add safety margin to time limit
-                let time_limit = time_limit.sub(std::time::Duration::from_millis(50));
-                let start_time = std::time::Instant::now();
-                let mut time_passed = std::time::Duration::from_secs(0);
+                let time_limit = time_limit.sub(TIME_LIMIT_SAFETY_MARGIN);
+                let mut time_passed = std::time::Instant::now().duration_since($start_time);
                 loop {
                     if time_passed >= time_limit {
                         break;
@@ -98,7 +108,12 @@ macro_rules! play_until_end_worker_thread {
 
                     $playout;
 
-                    time_passed = std::time::Instant::now().duration_since(start_time);
+                    time_passed = std::time::Instant::now().duration_since($start_time);
+                }
+            }
+            MCTSEndCondition::Flag(flag) => {
+                while !flag.load(std::sync::atomic::Ordering::Relaxed) {
+                    $playout;
                 }
             }
         }
@@ -106,10 +121,10 @@ macro_rules! play_until_end_worker_thread {
 }
 
 macro_rules! play_until_end {
-    ($end_condition:expr, $playout:expr, $diagnostics:expr) => {
+    ($start_time:ident, $end_condition:expr, $playout:expr, $diagnostics:expr, $diagnostics_enabled:expr) => {
         let mut iteration = 0;
-        let mut time_passed = std::time::Duration::from_secs(0);
-        let start_time = std::time::Instant::now();
+        let mut time_passed = std::time::Instant::now().duration_since($start_time);
+        let diagnostics_enabled = $diagnostics_enabled;
 
         match $end_condition {
             MCTSEndCondition::Iterations(iterations) => {
@@ -121,10 +136,10 @@ macro_rules! play_until_end {
                     $playout;
 
                     iteration += 1;
-                    time_passed = std::time::Instant::now().duration_since(start_time);
+                    time_passed = std::time::Instant::now().duration_since($start_time);
 
                     // Write diagnostics every 1000 iterations
-                    if iteration % 1000 == 0 {
+                    if diagnostics_enabled && iteration % 1000 == 0 {
                         #[allow(clippy::redundant_closure_call)]
                         $diagnostics(iteration, time_passed)?;
                     }
@@ -135,7 +150,7 @@ macro_rules! play_until_end {
             }
             MCTSEndCondition::Time(time_limit) => {
                 // add safety margin to time limit
-                let time_limit = time_limit.sub(std::time::Duration::from_millis(50));
+                let time_limit = time_limit.sub(TIME_LIMIT_SAFETY_MARGIN);
                 let mut last_print = std::time::Instant::now();
                 loop {
                     if time_passed >= time_limit {
@@ -145,10 +160,31 @@ macro_rules! play_until_end {
                     $playout;
 
                     iteration += 1;
-                    time_passed = std::time::Instant::now().duration_since(start_time);
+                    time_passed = std::time::Instant::now().duration_since($start_time);
 
-                    // Write diagnostics every 10 seconds
-                    if last_print.elapsed() >= std::time::Duration::from_secs(1) {
+                    // Write diagnostics every second
+                    if diagnostics_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
+                        #[allow(clippy::redundant_closure_call)]
+                        $diagnostics(iteration, time_passed)?;
+
+                        last_print = std::time::Instant::now();
+                    }
+                }
+
+                #[allow(clippy::redundant_closure_call)]
+                $diagnostics(iteration, time_passed)?;
+            }
+            MCTSEndCondition::Flag(flag) => {
+                let mut last_print = std::time::Instant::now();
+
+                while !flag.load(std::sync::atomic::Ordering::Relaxed) {
+                    $playout;
+
+                    iteration += 1;
+                    time_passed = std::time::Instant::now().duration_since($start_time);
+
+                    // Write diagnostics every second
+                    if diagnostics_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
                         #[allow(clippy::redundant_closure_call)]
                         $diagnostics(iteration, time_passed)?;
 
@@ -175,6 +211,8 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
             return Ok(valid_action[0]);
         }
 
+        let start_time = std::time::Instant::now();
+
         Ok(match &mut self.options {
             MCTSOptions {
                 root_parallelization: NON_ZERO_USIZE_ONE,
@@ -189,15 +227,31 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                     None
                 };
 
-                let mut search_tree =
-                    SearchTree::<Policy, Eval>::from_root(last_root, game, &self.policy, &self.evaluator);
+                let mut search_tree = SearchTree::<Policy, Eval>::from_root(
+                    last_root,
+                    game,
+                    &self.policy,
+                    &self.evaluator,
+                    REUSE_TREE_SEARCH_ABORT,
+                )?;
 
                 play_until_end!(
+                    start_time,
                     end_condition,
-                    {
-                        search_tree.playout(*leaf_parallelization)?;
+                    search_tree.playout(*leaf_parallelization)?,
+                    |iteration, time_passed| {
+                        write_diagnostics(
+                            diagnostics,
+                            iteration,
+                            iteration,
+                            time_passed,
+                            1,
+                            leaf_parallelization.get(),
+                            *reuse_tree,
+                            &search_tree,
+                        )
                     },
-                    |iteration, time_passed| { write_diagnostics(diagnostics, iteration, time_passed, &search_tree) }
+                    matches!(diagnostics, Diagnostics::Enabled { .. } | Diagnostics::Verbose { .. })
                 );
 
                 write_verbose_diagnostics(diagnostics, &search_tree)?;
@@ -219,6 +273,8 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 reuse_tree,
                 diagnostics,
             } => {
+                let other_iterations = Arc::new(AtomicUsize::new(0));
+
                 let roots = thread::scope::<'_, _, PlayerResult<Vec<Rc<RefCell<Node>>>>>(|s| {
                     let root_parallelization = (*root_parallelization).get();
                     let mut handles: Vec<thread::ScopedJoinHandle<'_, PlayerResult<NodeWrapper>>> =
@@ -237,17 +293,24 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         let policy = &self.policy;
                         let leaf_parallel = *leaf_parallelization;
                         let end_cond = end_condition.clone();
+                        let iterations = Arc::clone(&other_iterations);
 
                         // start worker search thread
                         handles.push(s.spawn(move || {
                             let wrapper = wrapper;
                             let last_root = wrapper.node;
 
-                            let mut search_tree =
-                                SearchTree::<Policy, Eval>::from_root(last_root, game, policy, evaluator);
+                            let mut search_tree = SearchTree::<Policy, Eval>::from_root(
+                                last_root,
+                                game,
+                                policy,
+                                evaluator,
+                                REUSE_TREE_SEARCH_ABORT,
+                            )?;
 
-                            play_until_end_worker_thread!(end_cond, {
+                            play_until_end_worker_thread!(start_time, end_cond, {
                                 search_tree.playout(leaf_parallel)?;
+                                iterations.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
                             });
 
                             let wrapper = NodeWrapper {
@@ -263,17 +326,29 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         None
                     };
 
-                    let mut search_tree =
-                        SearchTree::<Policy, Eval>::from_root(last_root, game, &self.policy, &self.evaluator);
+                    let mut search_tree = SearchTree::<Policy, Eval>::from_root(
+                        last_root,
+                        game,
+                        &self.policy,
+                        &self.evaluator,
+                        REUSE_TREE_SEARCH_ABORT,
+                    )?;
 
                     play_until_end!(
+                        start_time,
                         end_condition,
-                        {
-                            search_tree.playout(*leaf_parallelization)?;
-                        },
-                        |iteration, time_passed| {
-                            write_diagnostics(diagnostics, iteration, time_passed, &search_tree)
-                        }
+                        search_tree.playout(*leaf_parallelization)?,
+                        |iteration, time_passed| write_diagnostics(
+                            diagnostics,
+                            iteration + other_iterations.load(std::sync::atomic::Ordering::Relaxed),
+                            iteration,
+                            time_passed,
+                            root_parallelization,
+                            leaf_parallelization.get(),
+                            *reuse_tree,
+                            &search_tree
+                        ),
+                        matches!(diagnostics, Diagnostics::Enabled { .. } | Diagnostics::Verbose { .. })
                     );
 
                     let mut roots = vec![Rc::clone(&search_tree.root)];
@@ -444,10 +519,15 @@ fn get_tree_for_reuse(action: ActionId, root: Rc<RefCell<Node>>) -> Rc<RefCell<N
 /// # Returns
 ///
 /// The result of the write operation.
+#[allow(clippy::too_many_arguments)]
 fn write_diagnostics(
     diagnostics: &mut Diagnostics,
-    iteration: usize,
+    total_iterations: usize,
+    iterations: usize,
     time_passed: std::time::Duration,
+    root_parallelization: usize,
+    leaf_parallelization: usize,
+    reuse_tree: bool,
     search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
@@ -460,9 +540,29 @@ fn write_diagnostics(
             progress_writer: writer,
             ..
         } => {
+            let mut features = vec![];
+            if root_parallelization > 1 {
+                features.push(format!("RP({})", root_parallelization));
+            }
+            if leaf_parallelization > 1 {
+                features.push(format!("LP({})", leaf_parallelization));
+            }
+            if reuse_tree {
+                features.push("RT".to_string());
+            }
+
             writeln!(writer, "──────────────────────── MCTS Player ────────────────────────")?;
+            writeln!(writer, "Features:            [{}]", features.join(", "))?;
             writeln!(writer, "Duration:            {:.3?}", time_passed)?;
-            writeln!(writer, "Iterations:          {}", iteration)?;
+            if root_parallelization > 1 {
+                writeln!(writer, "Total Iterations:    {}", total_iterations)?;
+            }
+            writeln!(writer, "Iterations:          {}", iterations)?;
+            writeln!(writer, "Nodes:               {}", search_tree.get_nodes())?;
+            if reuse_tree {
+                writeln!(writer, "Reused Tree:         {}", search_tree.is_reused())?;
+            }
+            writeln!(writer, "Root actions:        {}", RefCell::borrow(&search_tree.root).children.len() + RefCell::borrow(&search_tree.root).expandable_actions.len())?;
             writeln!(writer, "Expanded Depth:      {}", search_tree.get_expanded_depth())?;
             writeln!(writer, "Win Percentage:      {:.2}%", search_tree.get_win_prediction() * 100.0)?;
             writeln!(writer, "Principal Variation: {}", search_tree.get_pv_action_line())?;
@@ -472,7 +572,6 @@ fn write_diagnostics(
     };
     Ok(())
 }
-
 /// Writes the error message to the diagnostics writer.
 ///
 /// # Arguments

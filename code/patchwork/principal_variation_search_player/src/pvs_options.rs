@@ -37,7 +37,7 @@ impl PVSOptions {
 impl Default for PVSOptions {
     fn default() -> Self {
         Self {
-            time_limit: std::time::Duration::from_secs(20),
+            time_limit: std::time::Duration::from_secs(10),
             features: Default::default(),
             diagnostics: Default::default(),
         }
