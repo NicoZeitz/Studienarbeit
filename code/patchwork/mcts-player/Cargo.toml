@@ -1,11 +1,15 @@
 [package]
-name = "mcts_player"
+name = "mcts-player"
 description = "Monte Carlo Tree Search (MCTS) player for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
+
+[features]
+default = []
+disable-logging = []
 
 [dependencies]
 patchwork_core = { path = "../patchwork_core" }

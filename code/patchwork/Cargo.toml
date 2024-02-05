@@ -14,7 +14,7 @@ members = [
     "evaluator",
     "greedy_player",
     "human_player",
-    "mcts_player",
+    "mcts-player",
     "minimax_player",
     "patchwork_core",
     "patchwork_macros",

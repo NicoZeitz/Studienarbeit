@@ -21,7 +21,7 @@ alphazero_player = { path = "../alphazero_player" }
 human_player = { path = "../human_player" }
 random_player = { path = "../random_player" }
 greedy_player = { path = "../greedy_player" }
-mcts_player = { path = "../mcts_player" }
+mcts-player = { path = "../mcts-player" }
 minimax_player = { path = "../minimax_player" }
 tree_policy = { path = "../tree_policy" }
 principal_variation_search_player = { path = "../principal_variation_search_player" }
