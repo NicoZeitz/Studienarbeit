@@ -233,7 +233,7 @@ fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
 
 fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
     fn create_player<Eval: Evaluator + Default + 'static>(player_position: usize) -> Box<dyn Player> {
-        Box::new(GreedyPlayer::<Eval>::new(format!("PVS Player {player_position}")))
+        Box::new(GreedyPlayer::<Eval>::new(format!("Greedy Player {player_position}")))
     }
 
     if name == "greedy" {
