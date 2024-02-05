@@ -1,6 +1,6 @@
-/// The diagnostics of a search.
+/// The statistics of a search.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct SearchDiagnostics {
+pub struct SearchStatistics {
     /// The number of nodes searched in the previous iteration.
     pub nodes_searched_previous_iteration: usize,
     /// The number of nodes searched.
@@ -31,7 +31,7 @@ pub struct SearchDiagnostics {
     pub late_move_pruning: usize,
 }
 
-impl Default for SearchDiagnostics {
+impl Default for SearchStatistics {
     fn default() -> Self {
         Self {
             nodes_searched_previous_iteration: 0,
@@ -52,7 +52,7 @@ impl Default for SearchDiagnostics {
     }
 }
 
-impl SearchDiagnostics {
+impl SearchStatistics {
     #[inline(always)]
     pub fn reset(&mut self) {
         self.nodes_searched_previous_iteration = 0;
@@ -71,7 +71,7 @@ impl SearchDiagnostics {
         self.late_move_pruning = 0;
     }
 
-    /// Resets some diagnostics after one iteration of iterative deepening.
+    /// Resets some statistics after one iteration of iterative deepening.
     ///
     /// Resets:
     /// * The number of nodes searched.

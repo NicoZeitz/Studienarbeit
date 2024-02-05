@@ -4,9 +4,9 @@ use patchwork_core::Notation;
 
 use crate::{Entry, TranspositionTable};
 
-/// Diagnostics for the transposition table.
+/// Statistics for the transposition table.
 #[derive(Debug)]
-pub struct TranspositionTableDiagnostics {
+pub struct TranspositionTableStatistics {
     // ─────────── general ───────────
     /// The capacity of the transposition table (in Entries).
     pub capacity: AtomicUsize,
@@ -22,11 +22,11 @@ pub struct TranspositionTableDiagnostics {
     pub overwrites: AtomicUsize,
 }
 
-impl TranspositionTableDiagnostics {
+impl TranspositionTableStatistics {
     pub const LOAD_ORDERING: std::sync::atomic::Ordering = std::sync::atomic::Ordering::SeqCst;
     pub const STORE_ORDERING: std::sync::atomic::Ordering = std::sync::atomic::Ordering::SeqCst;
 
-    /// Creates a new [`TranspositionTableDiagnostics`].
+    /// Creates a new [`TranspositionTableStatistics`].
     ///
     /// # Arguments
     ///
@@ -88,8 +88,8 @@ impl TranspositionTableDiagnostics {
         self.overwrites.fetch_add(1, Self::STORE_ORDERING);
     }
 
-    /// Resets the diagnostics of the transposition table.
-    pub fn reset_diagnostics(&mut self) {
+    /// Resets the statistics of the transposition table.
+    pub fn reset_statistics(&mut self) {
         self.entries.store(0, Self::STORE_ORDERING);
         self.accesses.store(0, Self::STORE_ORDERING);
         self.misses.store(0, Self::STORE_ORDERING);
@@ -98,18 +98,18 @@ impl TranspositionTableDiagnostics {
 
     // ───────────────────────────────────────────── OTHER ─────────────────────────────────────────────
 
-    /// Prints the diagnostics of the transposition table.
+    /// Prints the statistics of the transposition table.
     ///
     /// # Arguments
     ///
-    /// * `printer` - The printer to print the diagnostics to.
+    /// * `printer` - The printer to print the statistics to.
     ///
     /// # Returns
     ///
     /// * `Result<(), std::io::Error>` - The result of the printing.
     #[rustfmt::skip]
-    pub fn write_diagnostics(&self, writer: &mut dyn std::io::Write) -> Result<(), std::io::Error> {
-        writeln!(writer, "┌────────── Transposition Table Diagnostics ──────────┐")?;
+    pub fn write_statistics(&self, writer: &mut dyn std::io::Write) -> Result<(), std::io::Error> {
+        writeln!(writer, "┌────────── Transposition Table Statistics ──────────┐")?;
         writeln!(writer, "│Capacity:   {: >17}                        │", self.capacity.load(Self::LOAD_ORDERING))?;
         writeln!(writer, "│Entries:    {: >17} / {:6.2}% filled       │", self.entries.load(Self::LOAD_ORDERING), self.fill_ratio() * 100.0)?;
         writeln!(writer, "│Overwrites: {: >17}                        │", self.overwrites.load(Self::LOAD_ORDERING))?;

@@ -8,7 +8,7 @@ use std::{
 };
 
 use evaluator::WinLossEvaluator;
-use patchwork_core::{ActionId, Diagnostics, Evaluator, Patchwork, Player, PlayerResult, TreePolicy, TreePolicyNode};
+use patchwork_core::{ActionId, Evaluator, Logging, Patchwork, Player, PlayerResult, TreePolicy, TreePolicyNode};
 use tree_policy::UCTPolicy;
 
 pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
@@ -121,10 +121,10 @@ macro_rules! play_until_end_worker_thread {
 }
 
 macro_rules! play_until_end {
-    ($start_time:ident, $end_condition:expr, $playout:expr, $diagnostics:expr, $diagnostics_enabled:expr) => {
+    ($start_time:ident, $end_condition:expr, $playout:expr, $logger_expr:expr, $logging_enabled:expr) => {
         let mut iteration = 0;
         let mut time_passed = std::time::Instant::now().duration_since($start_time);
-        let diagnostics_enabled = $diagnostics_enabled;
+        let logging_enabled = $logging_enabled;
 
         match $end_condition {
             MCTSEndCondition::Iterations(iterations) => {
@@ -138,15 +138,15 @@ macro_rules! play_until_end {
                     iteration += 1;
                     time_passed = std::time::Instant::now().duration_since($start_time);
 
-                    // Write diagnostics every 1000 iterations
-                    if diagnostics_enabled && iteration % 1000 == 0 {
+                    // Write logging information every 1000 iterations
+                    if logging_enabled && iteration % 1000 == 0 {
                         #[allow(clippy::redundant_closure_call)]
-                        $diagnostics(iteration, time_passed)?;
+                        $logger_expr(iteration, time_passed)?;
                     }
                 }
 
                 #[allow(clippy::redundant_closure_call)]
-                $diagnostics(iteration, time_passed)?;
+                $logger_expr(iteration, time_passed)?;
             }
             MCTSEndCondition::Time(time_limit) => {
                 // add safety margin to time limit
@@ -162,17 +162,17 @@ macro_rules! play_until_end {
                     iteration += 1;
                     time_passed = std::time::Instant::now().duration_since($start_time);
 
-                    // Write diagnostics every second
-                    if diagnostics_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
+                    // Write logging information every second
+                    if logging_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
                         #[allow(clippy::redundant_closure_call)]
-                        $diagnostics(iteration, time_passed)?;
+                        $logger_expr(iteration, time_passed)?;
 
                         last_print = std::time::Instant::now();
                     }
                 }
 
                 #[allow(clippy::redundant_closure_call)]
-                $diagnostics(iteration, time_passed)?;
+                $logger_expr(iteration, time_passed)?;
             }
             MCTSEndCondition::Flag(flag) => {
                 let mut last_print = std::time::Instant::now();
@@ -183,17 +183,17 @@ macro_rules! play_until_end {
                     iteration += 1;
                     time_passed = std::time::Instant::now().duration_since($start_time);
 
-                    // Write diagnostics every second
-                    if diagnostics_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
+                    // Write logging information every second
+                    if logging_enabled && last_print.elapsed() >= std::time::Duration::from_secs(1) {
                         #[allow(clippy::redundant_closure_call)]
-                        $diagnostics(iteration, time_passed)?;
+                        $logger_expr(iteration, time_passed)?;
 
                         last_print = std::time::Instant::now();
                     }
                 }
 
                 #[allow(clippy::redundant_closure_call)]
-                $diagnostics(iteration, time_passed)?;
+                $logger_expr(iteration, time_passed)?;
             }
         }
     };
@@ -219,7 +219,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 leaf_parallelization,
                 end_condition,
                 reuse_tree,
-                diagnostics,
+                logging,
             } => {
                 let last_root = if !self.last_roots.is_empty() {
                     Some(self.last_roots.swap_remove(0))
@@ -240,8 +240,8 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                     end_condition,
                     search_tree.playout(*leaf_parallelization)?,
                     |iteration, time_passed| {
-                        write_diagnostics(
-                            diagnostics,
+                        write_statistics(
+                            logging,
                             iteration,
                             iteration,
                             time_passed,
@@ -251,10 +251,10 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                             &search_tree,
                         )
                     },
-                    matches!(diagnostics, Diagnostics::Enabled { .. } | Diagnostics::Verbose { .. })
+                    matches!(logging, Logging::Enabled { .. } | Logging::Verbose { .. })
                 );
 
-                write_verbose_diagnostics(diagnostics, &search_tree)?;
+                log_verbose_information(logging, &search_tree)?;
 
                 let action = pick_best_action(&search_tree);
 
@@ -271,7 +271,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 leaf_parallelization,
                 end_condition,
                 reuse_tree,
-                diagnostics,
+                logging,
             } => {
                 let other_iterations = Arc::new(AtomicUsize::new(0));
 
@@ -338,8 +338,8 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         start_time,
                         end_condition,
                         search_tree.playout(*leaf_parallelization)?,
-                        |iteration, time_passed| write_diagnostics(
-                            diagnostics,
+                        |iteration, time_passed| write_statistics(
+                            logging,
                             iteration + other_iterations.load(std::sync::atomic::Ordering::Relaxed),
                             iteration,
                             time_passed,
@@ -348,7 +348,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                             *reuse_tree,
                             &search_tree
                         ),
-                        matches!(diagnostics, Diagnostics::Enabled { .. } | Diagnostics::Verbose { .. })
+                        matches!(logging, Logging::Enabled { .. } | Logging::Verbose { .. })
                     );
 
                     let mut roots = vec![Rc::clone(&search_tree.root)];
@@ -358,22 +358,23 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                             // safe to unwrap as the thread always puts the root into the wrapper before exiting
                             Ok(Ok(wrapper)) => roots.push(wrapper.node.unwrap()),
                             Err(error) => {
-                                write_worker_error(
-                                    diagnostics,
-                                    format!("[MCTS] Error in worker thread: {:?}", error).as_str(),
+                                log_worker_error(
+                                    logging,
+                                    format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error).as_str(),
                                 )?;
                                 continue; // Work with data from other threads
                             }
                             Ok(Err(error)) => {
                                 if let Some(error) = error.downcast_ref::<String>() {
-                                    write_worker_error(
-                                        diagnostics,
-                                        format!("[MCTS] Error in worker thread: {}", error).as_str(),
+                                    log_worker_error(
+                                        logging,
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {}", error).as_str(),
                                     )?;
                                 } else {
-                                    write_worker_error(
-                                        diagnostics,
-                                        format!("[MCTS] Error in worker thread: {:?}", error).as_str(),
+                                    log_worker_error(
+                                        logging,
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error)
+                                            .as_str(),
                                     )?;
                                 }
                                 continue; // Work with data from other threads
@@ -381,7 +382,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         }
                     }
 
-                    write_verbose_diagnostics(diagnostics, &search_tree)?;
+                    log_verbose_information(logging, &search_tree)?;
                     Ok(roots)
                 })?;
 
@@ -500,8 +501,8 @@ fn get_tree_for_reuse(action: ActionId, root: Rc<RefCell<Node>>) -> Rc<RefCell<N
     new_root
 }
 
-/// Writes the diagnostics of the search tree to the given writer.
-/// The diagnostics include:
+/// Writes the logging information of the search tree to the given writer.
+/// The logs include:
 /// * The duration of the search
 /// * The number of iterations
 /// * The expanded depth of the search tree
@@ -511,17 +512,17 @@ fn get_tree_for_reuse(action: ActionId, root: Rc<RefCell<Node>>) -> Rc<RefCell<N
 ///
 /// # Arguments
 ///
-/// * `diagnostics` - The diagnostics with the write targets.
+/// * `logging` - The logging configuration with the write targets.
 /// * `iteration` - The current iteration of the search.
 /// * `time_passed` - The time passed since the start of the search.
-/// * `search_tree` - The search tree to write the diagnostics of.
+/// * `search_tree` - The search tree where to get the logging information from.
 ///
 /// # Returns
 ///
 /// The result of the write operation.
 #[allow(clippy::too_many_arguments)]
-fn write_diagnostics(
-    diagnostics: &mut Diagnostics,
+fn write_statistics(
+    logging: &mut Logging,
     total_iterations: usize,
     iterations: usize,
     time_passed: std::time::Duration,
@@ -531,12 +532,12 @@ fn write_diagnostics(
     search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
-    match diagnostics {
-        Diagnostics::Disabled | Diagnostics::VerboseOnly { .. } => {}
-        Diagnostics::Enabled {
+    match logging {
+        Logging::Disabled | Logging::VerboseOnly { .. } => {}
+        Logging::Enabled {
             progress_writer: writer,
         }
-        | Diagnostics::Verbose {
+        | Logging::Verbose {
             progress_writer: writer,
             ..
         } => {
@@ -572,55 +573,55 @@ fn write_diagnostics(
     };
     Ok(())
 }
-/// Writes the error message to the diagnostics writer.
+/// Writes the error message to the logging writer.
 ///
 /// # Arguments
 ///
-/// * `diagnostics` - The diagnostics with the write targets.
+/// * `logging` - The logging configuration with the write targets.
 /// * `message` - The message to write.
 ///
 /// # Returns
 ///
 /// The result of the write operation.
-fn write_worker_error(diagnostics: &mut Diagnostics, message: &str) -> Result<(), std::io::Error> {
-    match diagnostics {
-        Diagnostics::Disabled => {}
-        Diagnostics::Enabled { progress_writer } => {
+fn log_worker_error(logging: &mut Logging, message: &str) -> Result<(), std::io::Error> {
+    match logging {
+        Logging::Disabled => {}
+        Logging::Enabled { progress_writer } => {
             writeln!(progress_writer, "{}", message)?;
         }
-        Diagnostics::Verbose {
+        Logging::Verbose {
             progress_writer,
             debug_writer,
         } => {
             writeln!(progress_writer, "{}", message)?;
             writeln!(debug_writer, "{}", message)?;
         }
-        Diagnostics::VerboseOnly { debug_writer } => {
+        Logging::VerboseOnly { debug_writer } => {
             writeln!(debug_writer, "{}", message)?;
         }
     }
     Ok(())
 }
 
-/// Writes the verbose diagnostics of the search tree to the given writer.
-/// This is a full printout of the search tree to the debug writer.
+/// Writes the verbose logging information of the search tree to the given
+/// writer. This is a full printout of the search tree to the debug writer.
 ///
 /// # Arguments
 ///
-/// * `diagnostics` - The diagnostics with the write targets.
-/// * `search_tree` - The search tree to write the diagnostics of.
+/// * `logging` - The logging configuration with the write targets.
+/// * `search_tree` - The search tree where to get the logging information from.
 ///
 /// # Returns
 ///
 /// The result of the write operation.
-fn write_verbose_diagnostics(
-    diagnostics: &mut Diagnostics,
+fn log_verbose_information(
+    logging: &mut Logging,
     search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
-    match diagnostics {
-        Diagnostics::Verbose { debug_writer: ref mut writer, .. } |
-        Diagnostics::VerboseOnly { debug_writer: ref mut writer } => {
+    match logging {
+        Logging::Verbose { debug_writer: ref mut writer, .. } |
+        Logging::VerboseOnly { debug_writer: ref mut writer } => {
             if search_tree.get_expanded_depth() == 0 {
                 writeln!(writer, "[MCTS] Could not expand all actions at depth 0")?;
             }

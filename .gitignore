@@ -397,3 +397,4 @@ games/force_swap/*.bin
 /code/patchwork/server/webapp/*
 !/code/patchwork/server/webapp/favicon.ico
 diagnostics*.txt
+logging*.txt

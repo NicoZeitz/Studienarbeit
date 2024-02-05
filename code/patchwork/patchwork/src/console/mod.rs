@@ -1,7 +1,7 @@
 use clap::Parser;
 use rustyline::{history::FileHistory, Editor};
 
-use crate::common::{interactive_get_diagnostics, interactive_get_player, PlayerType};
+use crate::common::{interactive_get_logging, interactive_get_player, PlayerType};
 use patchwork_lib::{player::Player, GameOptions, Notation, Patchwork, TerminationType};
 
 #[derive(Debug, Parser, Default)]
@@ -11,10 +11,10 @@ struct CmdArgs {
     player_1: Option<String>,
     #[arg(long = "player-2", alias = "p2", short = '2')]
     player_2: Option<String>,
-    #[arg(long = "diagnostics-1", alias = "d1")]
-    diagnostics_player_1: Option<String>,
-    #[arg(long = "diagnostics-2", alias = "d2")]
-    diagnostics_player_2: Option<String>,
+    #[arg(long = "logging-1", alias = "l1")]
+    logging_player_1: Option<String>,
+    #[arg(long = "logging-2", alias = "l2")]
+    logging_player_2: Option<String>,
     #[arg(long = "seed", short = 's')]
     seed: Option<u64>,
 }
@@ -22,11 +22,11 @@ struct CmdArgs {
 pub fn handle_console(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
     let args = CmdArgs::parse_from(args);
 
-    let player_1_diagnostics = interactive_get_diagnostics(rl, 1, args.diagnostics_player_1)?;
-    let player_2_diagnostics = interactive_get_diagnostics(rl, 2, args.diagnostics_player_2)?;
+    let player_1_logging = interactive_get_logging(rl, 1, args.logging_player_1)?;
+    let player_2_logging = interactive_get_logging(rl, 2, args.logging_player_2)?;
 
-    let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_diagnostics)?;
-    let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_diagnostics)?;
+    let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_logging)?;
+    let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_logging)?;
 
     handle_console_repl(player_1, player_2, args.seed)
 }

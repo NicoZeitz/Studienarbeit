@@ -1,6 +1,6 @@
 use std::num::NonZeroUsize;
 
-use patchwork_core::Diagnostics;
+use patchwork_core::Logging;
 use transposition_table::Size;
 
 /// Different options for the Principal Variation Search (PVS) algorithm.
@@ -9,13 +9,13 @@ pub struct PVSOptions {
     pub time_limit: std::time::Duration,
     /// The features to enable or disable.
     pub features: PVSFeatures,
-    /// If diagnostics should be printed.
-    pub diagnostics: Diagnostics,
+    /// If logging configuration for what should be printed.
+    pub logging: Logging,
 }
 
 impl PVSOptions {
     /// Creates a new [`PVSOptions`].
-    pub fn new(time_limit: std::time::Duration, features: PVSFeatures, diagnostics: Diagnostics) -> Self {
+    pub fn new(time_limit: std::time::Duration, features: PVSFeatures, logging: Logging) -> Self {
         if matches!(features.lazy_smp, LazySMPFeature::Yes(_)) {
             unimplemented!("The lazy SMP feature is not implemented jet.") // UNIMPLEMENTED: implement
         }
@@ -29,7 +29,7 @@ impl PVSOptions {
         Self {
             time_limit,
             features,
-            diagnostics,
+            logging,
         }
     }
 }
@@ -39,7 +39,7 @@ impl Default for PVSOptions {
         Self {
             time_limit: std::time::Duration::from_secs(10),
             features: Default::default(),
-            diagnostics: Default::default(),
+            logging: Default::default(),
         }
     }
 }

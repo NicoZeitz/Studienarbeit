@@ -3,7 +3,7 @@ use std::{
     sync::{atomic::AtomicBool, Arc},
 };
 
-use patchwork_core::Diagnostics;
+use patchwork_core::Logging;
 
 use crate::mcts_player::{NON_ZERO_USIZE_FOUR, NON_ZERO_USIZE_ONE};
 
@@ -31,8 +31,8 @@ pub struct MCTSOptions {
     pub reuse_tree: bool,
     /// The end condition for the MCTS algorithm.
     pub end_condition: MCTSEndCondition,
-    /// The diagnostics to collect during the search.
-    pub diagnostics: Diagnostics,
+    /// Logging configuration on what to collect during the search.
+    pub logging: Logging,
 }
 
 impl MCTSOptions {
@@ -42,14 +42,14 @@ impl MCTSOptions {
         leaf_parallelization: NonZeroUsize,
         end_condition: MCTSEndCondition,
         reuse_tree: bool,
-        diagnostics: Diagnostics,
+        logging: Logging,
     ) -> Self {
         Self {
             root_parallelization,
             leaf_parallelization,
             end_condition,
             reuse_tree,
-            diagnostics,
+            logging,
         }
     }
 }
@@ -65,7 +65,7 @@ impl Default for MCTSOptions {
             leaf_parallelization: NON_ZERO_USIZE_ONE,
             end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(10)),
             reuse_tree: true,
-            diagnostics: Default::default(),
+            logging: Default::default(),
         }
     }
 }

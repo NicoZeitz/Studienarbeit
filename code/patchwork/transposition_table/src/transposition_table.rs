@@ -2,7 +2,7 @@ use std::sync::atomic::AtomicUsize;
 
 use patchwork_core::{ActionId, PatchManager, Patchwork, QuiltBoard};
 
-use crate::{Entry, EvaluationType, Size, TranspositionTableDiagnostics, ZobristHash};
+use crate::{Entry, EvaluationType, Size, TranspositionTableStatistics, ZobristHash};
 
 /// A transposition table for storing evaluations of positions.
 ///
@@ -16,7 +16,7 @@ pub struct TranspositionTable {
     pub entries: Vec<Entry>,
     pub zobrist_hash: ZobristHash,
     pub current_age: AtomicUsize,
-    pub diagnostics: TranspositionTableDiagnostics,
+    pub statistics: TranspositionTableStatistics,
     fail_soft: bool,
 }
 
@@ -51,7 +51,7 @@ impl TranspositionTable {
             entries: vec![Entry::default(); entries],
             zobrist_hash: ZobristHash::new(),
             current_age: AtomicUsize::new(0),
-            diagnostics: TranspositionTableDiagnostics::new(entries),
+            statistics: TranspositionTableStatistics::new(entries),
             fail_soft,
         }
     }
@@ -68,7 +68,7 @@ impl TranspositionTable {
     pub fn size(&self) -> usize {
         debug_assert_eq!(
             self.entries.len() * std::mem::size_of::<Entry>(),
-            self.diagnostics.capacity.load(std::sync::atomic::Ordering::SeqCst),
+            self.statistics.capacity.load(std::sync::atomic::Ordering::SeqCst),
             "[TranspositionTable::size] - capacity does not match entries length"
         );
         std::mem::size_of::<Entry>() * self.entries.len()
@@ -92,7 +92,7 @@ impl TranspositionTable {
     ///
     /// `𝒪(1)`
     pub fn probe_hash_entry(&self, game: &Patchwork, alpha: i32, beta: i32, depth: usize) -> Option<(ActionId, i32)> {
-        self.diagnostics.increment_accesses();
+        self.statistics.increment_accesses();
 
         let hash = self.zobrist_hash.hash(game);
         let index = (hash % self.entries.len() as u64) as usize;
@@ -104,7 +104,7 @@ impl TranspositionTable {
         // (key collisions / type-1 errors](https://www.chessprogramming.org/Transposition_Table#KeyCollisions)
         let test_key = hash ^ data;
         if self.entries[index].key != test_key {
-            self.diagnostics.increment_misses();
+            self.statistics.increment_misses();
             return None;
         }
 
@@ -113,7 +113,7 @@ impl TranspositionTable {
         // Only use stored evaluation if it has been searched to at least the
         // same depth as would be searched now
         if table_depth < depth {
-            self.diagnostics.increment_misses();
+            self.statistics.increment_misses();
             return None;
         }
 
@@ -130,7 +130,7 @@ impl TranspositionTable {
                     if table_evaluation <= alpha {
                         Some((table_action, table_evaluation))
                     } else {
-                        self.diagnostics.increment_misses();
+                        self.statistics.increment_misses();
                         None
                     }
                 }
@@ -139,7 +139,7 @@ impl TranspositionTable {
                     if table_evaluation >= beta {
                         Some((table_action, table_evaluation))
                     } else {
-                        self.diagnostics.increment_misses();
+                        self.statistics.increment_misses();
                         None
                     }
                 }
@@ -158,7 +158,7 @@ impl TranspositionTable {
                     if table_evaluation <= alpha {
                         Some((table_action, alpha))
                     } else {
-                        self.diagnostics.increment_misses();
+                        self.statistics.increment_misses();
                         None
                     }
                 }
@@ -167,7 +167,7 @@ impl TranspositionTable {
                     if table_evaluation >= beta {
                         Some((table_action, beta))
                     } else {
-                        self.diagnostics.increment_misses();
+                        self.statistics.increment_misses();
                         None
                     }
                 }
@@ -319,13 +319,13 @@ impl TranspositionTable {
     ) -> bool {
         if entry_key == 0 {
             // first entry in the key bucket
-            self.diagnostics.increment_entries();
+            self.statistics.increment_entries();
             return true;
         }
 
         if entry_age < current_age {
             // override older entries
-            self.diagnostics.increment_overwrites();
+            self.statistics.increment_overwrites();
             return true;
         }
 
@@ -333,7 +333,7 @@ impl TranspositionTable {
 
         if entry_depth <= new_depth {
             // override entries with lower depth
-            self.diagnostics.increment_overwrites();
+            self.statistics.increment_overwrites();
             return true;
         }
 
@@ -347,7 +347,7 @@ impl TranspositionTable {
 
             if is_same_age && is_same_depth && new_evaluation_type == EvaluationType::Exact {
                 // override entries that do not have an exact evaluation bound
-                self.diagnostics.increment_overwrites();
+                self.statistics.increment_overwrites();
                 return true;
             }
         }
@@ -455,25 +455,25 @@ impl TranspositionTable {
         self.entries = vec![Entry::default(); self.entries.len()];
         self.current_age.store(0, std::sync::atomic::Ordering::SeqCst);
 
-        self.diagnostics.reset_diagnostics();
+        self.statistics.reset_statistics();
     }
 
-    /// Resets the diagnostics of the transposition table for a new search.
+    /// Resets the statistics of the transposition table for a new search.
     ///
-    /// This is used to reset the diagnostics between searches.
+    /// This is used to reset the statistics between searches.
     ///
     /// # Complexity
     ///
     /// `𝒪(1)`
-    pub fn reset_diagnostics(&mut self) {
+    pub fn reset_statistics(&mut self) {
         let entries = self
-            .diagnostics
+            .statistics
             .entries
-            .load(TranspositionTableDiagnostics::LOAD_ORDERING);
-        self.diagnostics.reset_diagnostics();
-        self.diagnostics
+            .load(TranspositionTableStatistics::LOAD_ORDERING);
+        self.statistics.reset_statistics();
+        self.statistics
             .entries
-            .store(entries, TranspositionTableDiagnostics::STORE_ORDERING);
+            .store(entries, TranspositionTableStatistics::STORE_ORDERING);
     }
 }
 

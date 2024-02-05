@@ -15,7 +15,7 @@ pub mod player {
     pub use human_player::*;
     pub use mcts_player::*;
     pub use minimax_player::*;
-    pub use patchwork_core::{Diagnostics, Player};
+    pub use patchwork_core::{Logging, Player};
     pub use principal_variation_search_player::*;
     pub use random_player::*;
 }
@@ -72,7 +72,7 @@ mod tests {
         let player = Box::new(PVSPlayer::<TableActionOrderer, StaticEvaluator>::new(
             "PVS Player",
             Some(PVSOptions {
-                diagnostics: Diagnostics::Disabled,
+                logging: Logging::Disabled,
                 time_limit: std::time::Duration::from_secs(1),
                 features: PVSFeatures::default(),
             }),
@@ -89,7 +89,7 @@ mod tests {
                 reuse_tree: true,
                 leaf_parallelization: NonZeroUsize::new(1).unwrap(),
                 root_parallelization: NonZeroUsize::new(1).unwrap(),
-                diagnostics: Diagnostics::Disabled,
+                logging: Logging::Disabled,
             }),
         ));
         test_player(player);

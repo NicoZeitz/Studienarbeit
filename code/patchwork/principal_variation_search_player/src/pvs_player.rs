@@ -5,11 +5,11 @@ use evaluator::StaticEvaluator;
 use itertools::Itertools;
 
 use patchwork_core::{
-    evaluator_constants, ActionId, Diagnostics, Evaluator, Notation, Patchwork, Player, PlayerResult, TurnType,
+    evaluator_constants, ActionId, Evaluator, Logging, Notation, Patchwork, Player, PlayerResult, TurnType,
 };
 use transposition_table::{EvaluationType, TranspositionTable};
 
-use crate::{pvs_options::FailingStrategy, PVSOptions, SearchDiagnostics, TranspositionTableFeature};
+use crate::{pvs_options::FailingStrategy, PVSOptions, SearchStatistics, TranspositionTableFeature};
 
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
 ///
@@ -30,8 +30,8 @@ pub struct PVSPlayer<Orderer: ActionOrderer = TableActionOrderer, Eval: Evaluato
     pub name: String,
     /// The options for the Principal Variation Search (PVS) algorithm.
     pub options: PVSOptions,
-    /// search diagnostics
-    pub diagnostics: SearchDiagnostics,
+    /// search statistics
+    pub statistics: SearchStatistics,
     /// The evaluator to evaluate the game state.
     pub evaluator: Eval,
     /// The action sorter to sort the actions.
@@ -65,7 +65,7 @@ impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orde
         PVSPlayer {
             name: name.into(),
             options,
-            diagnostics: Default::default(),
+            statistics: Default::default(),
             evaluator: Default::default(),
             action_orderer: Default::default(),
             transposition_table,
@@ -103,10 +103,10 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> Player for PVSPlayer<Orderer, Eval
             self.best_evaluation = None;
             self.best_action = None;
 
-            // reset all diagnostics
-            self.diagnostics.reset();
+            // reset all statistics
+            self.statistics.reset();
             if let Some(ref mut transposition_table) = self.transposition_table {
-                transposition_table.reset_diagnostics();
+                transposition_table.reset_statistics();
                 transposition_table.increment_age();
             }
 
@@ -194,7 +194,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             beta = Self::STARTING_BETA;
         }
 
-        self.diagnostics.reset_iterative_deepening_iteration();
+        self.statistics.reset_iterative_deepening_iteration();
 
         // [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening) loop
         while depth < Self::MAX_DEPTH {
@@ -224,7 +224,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 beta = (alpha + beta) / 2; // adjust beta towards alpha
                 alpha = (evaluation - delta).min(Self::MIN_ALPHA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY); // use same exponential backoff as in [Stockfish](https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp#L429C17-L429C36)
-                self.diagnostics.increment_aspiration_window_fail_low();
+                self.statistics.increment_aspiration_window_fail_low();
                 continue;
             } else if evaluation >= beta {
                 // Evaluation is above aspiration window [Fail-High](https://www.chessprogramming.org/Fail-High#Root_with_Aspiration)
@@ -239,11 +239,11 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                 beta = (evaluation + delta).min(Self::MAX_BETA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY);
-                self.diagnostics.increment_aspiration_window_fail_high();
+                self.statistics.increment_aspiration_window_fail_high();
                 continue;
             }
 
-            let _ = self.write_diagnostics(game, depth); // ignore errors
+            let _ = self.write_statistics(game, depth); // ignore errors
 
             if let Some(evaluator_constants::POSITIVE_INFINITY) = self.best_evaluation {
                 // We found a winning game, so we can stop searching
@@ -261,16 +261,16 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             }
 
             depth += 1;
-            self.diagnostics.reset_iterative_deepening_iteration();
+            self.statistics.reset_iterative_deepening_iteration();
         }
 
         let best_action = self.best_action.take().unwrap_or_else(|| {
-            let _ = self.write_single_diagnostic("No best action found. Returning random valid action. This only happends when no full search iteration could be done."); // ignore errors
+            let _ = self.write_log("No best action found. Returning random valid action. This only happends when no full search iteration could be done."); // ignore errors
             game.get_random_action()
         });
 
-        let _ = self.write_single_diagnostic(format!("Best action: {:?}", best_action).as_str()); // ignore errors
-        let _ = self.write_diagnostics(game, depth); // ignore errors
+        let _ = self.write_log(format!("Best action: {:?}", best_action).as_str()); // ignore errors
+        let _ = self.write_statistics(game, depth); // ignore errors
 
         Ok(best_action)
     }
@@ -318,7 +318,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             return self.evaluation(game);
         }
 
-        self.diagnostics.increment_nodes_searched();
+        self.statistics.increment_nodes_searched();
 
         let mut actions = game.get_valid_actions();
 
@@ -355,7 +355,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
                 // Remove late moves in move ordering, only prune after trying at least one move for each possible patch
                 let Some(action) = lmp_flags.get_next_missing() else {
-                    self.diagnostics.increment_late_move_pruning();
+                    self.statistics.increment_late_move_pruning();
                     break;
                 };
                 action
@@ -398,14 +398,14 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     num_extensions + extension,
                 )?
             } else {
-                self.diagnostics.increment_zero_window_search();
+                self.statistics.increment_zero_window_search();
                 // Apply [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions) if we're not in the early moves (and this is not a PV node)
                 // Reduce the depth of the search for later actions as these are less likely to be good (assuming the action ordering is good)
                 // Code adapted from https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html
                 // Search Extensions are not applied to the reduced depth search
                 let mut needs_full_search = true;
                 if extension == 0 && i >= Self::LMR_AMOUNT_FULL_DEPTH_ACTIONS && depth >= Self::LMR_DEPTH_LIMIT {
-                    self.diagnostics.increment_late_move_reductions();
+                    self.statistics.increment_late_move_reductions();
 
                     let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
                     // Search this move with reduced depth
@@ -423,7 +423,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                     if evaluation > alpha && evaluation < beta {
                         // Re-search with full window
-                        self.diagnostics.increment_zero_window_search_fail();
+                        self.statistics.increment_zero_window_search_fail();
                         evaluation = -self.principal_variation_search(
                             game,
                             ply_from_root + 1,
@@ -443,7 +443,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             }
 
             if evaluation >= beta {
-                self.diagnostics.increment_fail_high(is_pv_node);
+                self.statistics.increment_fail_high(is_pv_node);
 
                 self.store_transposition_table(game, depth, beta, EvaluationType::LowerBound, action);
 
@@ -500,8 +500,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             return self.evaluation(game);
         }
 
-        // Collect diagnostics
-        self.diagnostics.increment_nodes_searched();
+        // Collect statistics
+        self.statistics.increment_nodes_searched();
 
         let actions = game.get_valid_actions();
         for action in actions {
@@ -556,13 +556,13 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
         // Extend the depth of search for special patch placements
         if matches!(game.turn_type, TurnType::SpecialPhantom) {
-            self.diagnostics.increment_special_patch_extensions();
+            self.statistics.increment_special_patch_extensions();
             extension += 1;
         }
 
         // Extend the depth of search if the 7x7 special tile was given
         if !previous_special_tile_condition_reached && game.is_special_tile_condition_reached() {
-            self.diagnostics.increment_special_tile_extensions();
+            self.statistics.increment_special_tile_extensions();
             extension += 1;
         }
 
@@ -577,8 +577,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// This would mitigate the horizon effect
     /// The question is if this is even needed in patchwork
     fn evaluation(&mut self, game: &mut Patchwork) -> PlayerResult<i32> {
-        self.diagnostics.increment_nodes_searched();
-        self.diagnostics.increment_leaf_nodes_searched();
+        self.statistics.increment_nodes_searched();
+        self.statistics.increment_leaf_nodes_searched();
 
         let color = if game.is_player_1() { 1 } else { -1 };
 
@@ -737,43 +737,43 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         "NONE".to_string()
     }
 
-    /// Writes a single diagnostic to the diagnostics writer.
+    /// Writes a single str to the logging writer.
     ///
     /// # Arguments
     ///
-    /// * `diagnostic` - The diagnostic to write.
+    /// * `logging` - The logging configuration.
     ///
     /// # Returns
     ///
     /// * `Result<(), std::io::Error>` - The result of the writing.
     #[inline]
-    fn write_single_diagnostic(&mut self, diagnostic: &str) -> Result<(), std::io::Error> {
-        let writer = match self.options.diagnostics {
-            Diagnostics::Disabled | Diagnostics::VerboseOnly { .. } => return Ok(()),
-            Diagnostics::Enabled {
+    fn write_log(&mut self, logging: &str) -> Result<(), std::io::Error> {
+        let writer = match self.options.logging {
+            Logging::Disabled | Logging::VerboseOnly { .. } => return Ok(()),
+            Logging::Enabled {
                 progress_writer: ref mut writer,
             }
-            | Diagnostics::Verbose {
+            | Logging::Verbose {
                 progress_writer: ref mut writer,
                 ..
             } => writer.as_mut(),
         };
 
-        writeln!(writer, "{}", diagnostic)
+        writeln!(writer, "{}", logging)
     }
 
-    /// Writes the diagnostics to the diagnostics writer.
+    /// Writes the statistics to the logging writer.
     ///
     /// # Arguments
     ///
-    /// * `full` - Whether to write the full diagnostics or only the most important ones.
+    /// * `full` - Whether to write the full statistics or only the most important ones.
     ///
     /// # Returns
     ///
     /// * `Result<(), std::io::Error>` - The result of the writing.
     #[inline]
     #[rustfmt::skip]
-    fn write_diagnostics(
+    fn write_statistics(
         &mut self,
         game: &Patchwork,
         depth: usize,
@@ -786,16 +786,16 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         }).unwrap_or("NONE".to_string());
 
         let mut debug_writer = None;
-        let writer = match self.options.diagnostics {
-            Diagnostics::Disabled => return Ok(()),
-            Diagnostics::Enabled { progress_writer: ref mut writer } => writer.as_mut(),
-            Diagnostics::Verbose { progress_writer: ref mut writer, debug_writer: ref mut d_writer } => {
+        let writer = match self.options.logging {
+            Logging::Disabled => return Ok(()),
+            Logging::Enabled { progress_writer: ref mut writer } => writer.as_mut(),
+            Logging::Verbose { progress_writer: ref mut writer, debug_writer: ref mut d_writer } => {
                 debug_writer = Some(d_writer);
                 writer.as_mut()
             },
-            Diagnostics::VerboseOnly { ref mut debug_writer } =>{
+            Logging::VerboseOnly { ref mut debug_writer } =>{
                 if let Some(ref mut transposition_table) = self.transposition_table {
-                    transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
+                    transposition_table.statistics.write_transposition_table(debug_writer, transposition_table, None)?;
                 }
                 return Ok(())
             }
@@ -822,29 +822,29 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         let features = features.join(", ");
 
         // [Branching Factor](https://www.chessprogramming.org/Branching_Factor)
-        let average_branching_factor = (self.diagnostics.leaf_nodes_searched as f64).powf(1.0 / depth as f64);
-        let effective_branching_factor = self.diagnostics.nodes_searched as f64 / self.diagnostics.nodes_searched_previous_iteration as f64;
-        let mean_branching_factor = self.diagnostics.nodes_searched as f64 / (self.diagnostics.nodes_searched - self.diagnostics.leaf_nodes_searched) as f64;
+        let average_branching_factor = (self.statistics.leaf_nodes_searched as f64).powf(1.0 / depth as f64);
+        let effective_branching_factor = self.statistics.nodes_searched as f64 / self.statistics.nodes_searched_previous_iteration as f64;
+        let mean_branching_factor = self.statistics.nodes_searched as f64 / (self.statistics.nodes_searched - self.statistics.leaf_nodes_searched) as f64;
         let player_1_pos = game.player_1.get_position();
         let player_2_pos = game.player_2.get_position();
 
         writeln!(writer, "───────────── Principal Variation Search Player ─────────────")?;
         writeln!(writer, "Features:            [{}]", features)?;
         writeln!(writer, "Depth:               {:?} started from (1: {}, 2: {}, type: {:?})", depth, player_1_pos, player_2_pos, game.turn_type)?;
-        writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.diagnostics.start_time))?;
-        writeln!(writer, "Nodes searched:      {:?}", self.diagnostics.nodes_searched)?;
+        writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.statistics.start_time))?;
+        writeln!(writer, "Nodes searched:      {:?}", self.statistics.nodes_searched)?;
         writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / {:.2} MEAN", average_branching_factor, effective_branching_factor, mean_branching_factor)?;
         writeln!(writer, "Best Action:         {} ({} pts)", best_action, best_evaluation)?;
-        writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.diagnostics.fail_high_first as f64) / (self.diagnostics.fail_high as f64), self.diagnostics.fail_high_first, self.diagnostics.fail_high)?;
-        writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.diagnostics.aspiration_window_fail_low, self.diagnostics.aspiration_window_fail_high)?;
-        writeln!(writer, "Zero window search:  {:?} fails ({:.2}%)", self.diagnostics.zero_window_search_fail, self.diagnostics.zero_window_search_fail_rate() * 100.0)?;
-        writeln!(writer, "Search Extensions:   {:?} SP, {:?} ST ({})", self.diagnostics.special_patch_extensions, self.diagnostics.special_tile_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
-        writeln!(writer, "LMR / LMP:           {:?} / {:?}", self.diagnostics.late_move_reductions, self.diagnostics.late_move_pruning)?;
+        writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.statistics.fail_high_first as f64) / (self.statistics.fail_high as f64), self.statistics.fail_high_first, self.statistics.fail_high)?;
+        writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.statistics.aspiration_window_fail_low, self.statistics.aspiration_window_fail_high)?;
+        writeln!(writer, "Zero window search:  {:?} fails ({:.2}%)", self.statistics.zero_window_search_fail, self.statistics.zero_window_search_fail_rate() * 100.0)?;
+        writeln!(writer, "Search Extensions:   {:?} SP, {:?} ST ({})", self.statistics.special_patch_extensions, self.statistics.special_tile_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
+        writeln!(writer, "LMR / LMP:           {:?} / {:?}", self.statistics.late_move_reductions, self.statistics.late_move_pruning)?;
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {
-            transposition_table.diagnostics.write_diagnostics(writer)?;
+            transposition_table.statistics.write_statistics(writer)?;
             if let Some(debug_writer) = debug_writer {
-                transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
+                transposition_table.statistics.write_transposition_table(debug_writer, transposition_table, None)?;
             }
         }
         writeln!(writer, "─────────────────────────────────────────────────────────────")?;

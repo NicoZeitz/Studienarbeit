@@ -4,7 +4,7 @@ use anyhow::Error;
 use patchwork_lib::{
     evaluator::{Evaluator, NeuralNetworkEvaluator, ScoreEvaluator, StaticEvaluator, WinLossEvaluator},
     player::{
-        AlphaZeroPlayer, Diagnostics, FailingStrategy, GreedyPlayer, HumanPlayer, LazySMPFeature, MCTSEndCondition,
+        AlphaZeroPlayer, FailingStrategy, GreedyPlayer, HumanPlayer, LazySMPFeature, Logging, MCTSEndCondition,
         MCTSOptions, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions, PVSPlayer, Player, RandomOptions,
         RandomPlayer, Size, TranspositionTableFeature,
     },
@@ -51,10 +51,10 @@ pub fn interactive_get_player(
     rl: &mut Editor<(), FileHistory>,
     player_name: Option<String>,
     player_position: usize,
-    diagnostics: Diagnostics,
+    logging: Logging,
 ) -> anyhow::Result<PlayerType> {
     if let Some(player_name) = player_name {
-        let Ok(player) = get_player(player_name.as_str(), 1, diagnostics) else {
+        let Ok(player) = get_player(player_name.as_str(), 1, logging) else {
             println!("Could not find player {}. Available players: ", player_name);
             for p in get_available_players() {
                 println!("  {}", p);
@@ -64,22 +64,22 @@ pub fn interactive_get_player(
         };
         Ok(player)
     } else {
-        ask_for_player(rl, player_position, diagnostics)
+        ask_for_player(rl, player_position, logging)
     }
 }
 
 fn ask_for_player(
     rl: &mut Editor<(), FileHistory>,
     player_position: usize,
-    mut diagnostics: Diagnostics,
+    mut logging: Logging,
 ) -> anyhow::Result<PlayerType> {
     loop {
         // match rl.readline_with_initial("Player 1: ", ("Human", "")) {
         match rl.readline(format!("Player {}: ", player_position).as_str()) {
-            Ok(player) => match get_player(&player, 1, diagnostics) {
+            Ok(player) => match get_player(&player, 1, logging) {
                 Ok(player) => return Ok(player),
                 Err(d) => {
-                    diagnostics = d;
+                    logging = d;
                     println!("Could not find player {}. Available players: ", player);
                     for player in get_available_players() {
                         println!("  {}", player);
@@ -94,7 +94,7 @@ fn ask_for_player(
     }
 }
 
-pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) -> Result<PlayerType, Diagnostics> {
+pub fn get_player(name: &str, player_position: usize, logging: Logging) -> Result<PlayerType, Logging> {
     let name = name.to_ascii_lowercase();
     let name = name.as_str();
 
@@ -118,12 +118,12 @@ pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) 
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    let (player_option, diagnostics) = parse_pvs_player(name, player_position, diagnostics);
+    let (player_option, logging) = parse_pvs_player(name, player_position, logging);
     if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    let (player_option, diagnostics) = parse_mcts_player(name, player_position, diagnostics.unwrap());
+    let (player_option, logging) = parse_mcts_player(name, player_position, logging.unwrap());
     if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
@@ -132,7 +132,7 @@ pub fn get_player(name: &str, player_position: usize, diagnostics: Diagnostics) 
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    Err(diagnostics.unwrap())
+    Err(logging.unwrap())
 }
 
 pub fn get_available_players() -> Vec<String> {
@@ -283,8 +283,8 @@ fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Pl
 fn parse_pvs_player(
     name: &str,
     player_position: usize,
-    diagnostics: Diagnostics,
-) -> (Option<Box<dyn Player>>, Option<Diagnostics>) {
+    logging: Logging,
+) -> (Option<Box<dyn Player>>, Option<Logging>) {
     fn create_player<Orderer: ActionOrderer + Default + 'static, Eval: Evaluator + Default + 'static>(
         player_position: usize,
         options: PVSOptions,
@@ -299,7 +299,7 @@ fn parse_pvs_player(
         let player: PVSPlayer = PVSPlayer::new(
             format!("PVS Player {player_position}"),
             Some(PVSOptions {
-                diagnostics,
+                logging,
                 ..Default::default()
             }),
         );
@@ -308,7 +308,7 @@ fn parse_pvs_player(
     }
 
     if !name.starts_with("pvs") {
-        return (None, Some(diagnostics));
+        return (None, Some(logging));
     }
 
     let Some(passed_options) = Regex::new(r"pvs\((?<options>.*)\)")
@@ -317,13 +317,13 @@ fn parse_pvs_player(
         .and_then(|o| o.name("options"))
         .map(|o| o.as_str())
     else {
-        return (None, Some(diagnostics));
+        return (None, Some(logging));
     };
 
     let mut options = PVSOptions::default();
     let mut orderer = "table";
     let mut evaluator = "static";
-    options.diagnostics = diagnostics;
+    options.logging = logging;
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
         .unwrap()
@@ -444,8 +444,8 @@ fn parse_pvs_player(
 fn parse_mcts_player(
     name: &str,
     player_position: usize,
-    diagnostics: Diagnostics,
-) -> (Option<Box<dyn Player>>, Option<Diagnostics>) {
+    logging: Logging,
+) -> (Option<Box<dyn Player>>, Option<Logging>) {
     fn create_player<Policy: TreePolicy + Default + 'static, Eval: Evaluator + Default + 'static>(
         player_position: usize,
         options: MCTSOptions,
@@ -460,7 +460,7 @@ fn parse_mcts_player(
         let player: MCTSPlayer = MCTSPlayer::new(
             format!("MCTS Player {player_position}"),
             Some(MCTSOptions {
-                diagnostics,
+                logging,
                 ..Default::default()
             }),
         );
@@ -469,7 +469,7 @@ fn parse_mcts_player(
     }
 
     if !name.starts_with("mcts") {
-        return (None, Some(diagnostics));
+        return (None, Some(logging));
     }
 
     let Some(passed_options) = Regex::new(r"mcts\((?<options>.*)\)")
@@ -478,13 +478,13 @@ fn parse_mcts_player(
         .and_then(|o| o.name("options"))
         .map(|o| o.as_str())
     else {
-        return (None, Some(diagnostics));
+        return (None, Some(logging));
     };
 
     let mut options = MCTSOptions::default();
     let mut policy = "uct";
     let mut evaluator = "win";
-    options.diagnostics = diagnostics;
+    options.logging = logging;
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
         .unwrap()
