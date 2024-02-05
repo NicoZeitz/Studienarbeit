@@ -14,7 +14,7 @@ use crate::Node;
 /// A Search Tree for the Monte Carlo Tree Search (MCTS) algorithm.
 pub struct SearchTree<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> {
     // The root node were to start searching for.
-    root: Rc<RefCell<Node>>,
+    pub(crate) root: Rc<RefCell<Node>>,
     /// The policy to select nodes during the selection phase.
     tree_policy: &'tree_lifetime Policy,
     /// The evaluator to evaluate the game state.
@@ -94,7 +94,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// The new [`SearchTree`].
     pub fn from_root(
-        root: Option<Node>,
+        root: Option<Rc<RefCell<Node>>>,
         game: &Patchwork,
         tree_policy: &'tree_lifetime Policy,
         evaluator: &'tree_lifetime Eval,
@@ -143,38 +143,6 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             )
         }
 
-    }
-
-    /// Picks the best action from the root node.
-    /// This is done by selecting the child node with the highest number of visits.
-    /// If there are multiple child nodes with the same number of visits, the action with the
-    /// greater amount of wins is chosen. If there are still multiple actions with the same amount
-    /// of wins, one of them is chosen randomly.
-    ///
-    /// # Returns
-    ///
-    /// The best action from the root node.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the root node is not fully expanded.
-    pub fn pick_best_action(&self) -> ActionId {
-        let root = RefCell::borrow(&self.root);
-        let root_player = root.state.is_player_1();
-
-        let best_action = root
-            .children
-            .iter()
-            .max_by_key(|child| {
-                let child = RefCell::borrow(child);
-                (child.visit_count, child.wins_for(root_player))
-            })
-            .unwrap()
-            .borrow()
-            .action_taken
-            .unwrap();
-
-        best_action
     }
 
     /// Gets the depth of the principal variation as long as all actions are expanded.

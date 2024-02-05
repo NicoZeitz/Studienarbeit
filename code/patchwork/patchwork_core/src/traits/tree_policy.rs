@@ -4,7 +4,7 @@ use crate::traits::TreePolicyNode;
 ///
 /// This trait is used to select nodes in a tree. It is used in the MCTS
 /// algorithm to select nodes when traversing the tree.
-pub trait TreePolicy {
+pub trait TreePolicy: Sync {
     /// Selects a node from the given children of the parent node.
     ///
     /// # Arguments
@@ -28,7 +28,7 @@ pub trait TreePolicy {
 
 /// A convenience trait for tree policies that score nodes and choose the node
 /// with the highest score.
-pub trait ScoredTreePolicy {
+pub trait ScoredTreePolicy: Sync {
     /// Gets the score of the given child node from the perspective of the given
     /// parent node.
     ///
