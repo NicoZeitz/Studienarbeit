@@ -40,6 +40,14 @@ impl Player for PlayerType {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> anyhow::Result<ActionId> {
+        // If there is only one action, return it immediately.
+        // This is obviously hurting the performance of some AI players like PVS (less entries in the transposition table)
+        // and MCTS (no tree to reuse) but is better for testing.
+        let actions = game.get_valid_actions();
+        if actions.len() == 1 {
+            return Ok(actions[0]);
+        }
+
         match self {
             PlayerType::BuildIn(player, _) => player.get_action(game),
             PlayerType::Upi(_) => unimplemented!("[PlayerType::get_action] UPI is not yet implemented."),
@@ -142,6 +150,7 @@ pub fn get_available_players() -> Vec<String> {
         "random",
         "random(seed: uint)",
         "greedy",
+        "greedy(eval: static|win|score|nn)",
         "minimax",
         "minimax(depth: uint, patches: uint)",
         "pvs",
@@ -223,11 +232,48 @@ fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
 }
 
 fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
-    if name == "greedy" {
-        return Some(Box::new(GreedyPlayer::new(format!("Greedy Player {player_position}"))));
+    fn create_player<Eval: Evaluator + Default + 'static>(player_position: usize) -> Box<dyn Player> {
+        Box::new(GreedyPlayer::<Eval>::new(format!("PVS Player {player_position}")))
     }
 
-    None
+    if name == "greedy" {
+        let player: GreedyPlayer = GreedyPlayer::new(format!("Greedy Player {player_position}"));
+        return Some(Box::new(player));
+    }
+
+    if !name.starts_with("greedy") {
+        return None;
+    }
+
+    let Some(passed_options) = Regex::new(r"greedy\((?<options>.*)\)")
+        .unwrap()
+        .captures(name)
+        .and_then(|o| o.name("options"))
+        .map(|o| o.as_str())
+    else {
+        return None;
+    };
+
+    let mut evaluator = "static";
+
+    if let Some(eval) = Regex::new(r"eval:\s*(?<eval>static|win|score|nn)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("eval"))
+        .map(|o| o.as_str())
+    {
+        evaluator = eval
+    }
+
+    let player: Box<dyn Player> = match evaluator {
+        "static" => create_player::<StaticEvaluator>(player_position),
+        "win" => create_player::<WinLossEvaluator>(player_position),
+        "score" => create_player::<ScoreEvaluator>(player_position),
+        "nn" => create_player::<NeuralNetworkEvaluator>(player_position),
+        _ => unreachable!(),
+    };
+
+    Some(player)
 }
 
 fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {

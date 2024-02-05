@@ -88,12 +88,6 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> Player for PVSPlayer<Orderer, Eval
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        // PERF: shortcut for only one available action
-        let valid_action = game.get_valid_actions();
-        if valid_action.len() == 1 {
-            return Ok(valid_action[0]);
-        }
-
         std::thread::scope(|s| {
             let search_canceled = Arc::clone(&self.search_canceled);
             let time_limit = self.options.time_limit;

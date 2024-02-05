@@ -205,12 +205,6 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        // PERF: shortcut for only one available action
-        let valid_action = game.get_valid_actions();
-        if valid_action.len() == 1 {
-            return Ok(valid_action[0]);
-        }
-
         let start_time = std::time::Instant::now();
 
         Ok(match &mut self.options {
