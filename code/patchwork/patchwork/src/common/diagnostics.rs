@@ -53,7 +53,7 @@ pub fn get_diagnostics(diagnostics: &str) -> anyhow::Result<Diagnostics> {
         diagnostics
     );
     std::io::stdout().flush()?;
-    return Err(Error::msg(format!("Invalid diagnostics argument: {}", diagnostics)));
+    Err(Error::msg(format!("Invalid diagnostics argument: {}", diagnostics)))
 }
 
 pub fn parse_diagnostics(diagnostics: &str) -> Option<Diagnostics> {

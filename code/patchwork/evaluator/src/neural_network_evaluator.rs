@@ -1,5 +1,5 @@
 use candle_core::{DType, Device, IndexOp, Module, Result, Tensor};
-use candle_nn::{Linear, VarBuilder, VarMap};
+use candle_nn::{Linear, VarBuilder};
 use patchwork_core::{evaluator_constants, Evaluator, Patchwork, PlayerState, QuiltBoard, StableEvaluator, TurnType};
 
 use lazy_static::lazy_static;
