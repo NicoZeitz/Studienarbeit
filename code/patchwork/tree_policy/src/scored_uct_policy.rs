@@ -1,13 +1,43 @@
-use crate::{TreePolicy, TreePolicyNode};
+use patchwork_core::{ScoredTreePolicy, TreePolicyNode};
 
-/// UCT (Upper Confidence Bound 1 applied to trees) tree policy taking into account the final score of the game."""
-#[derive(Debug, Clone, PartialEq)]
+/// An implementation of the UCT (Upper Confidence Bound 1 applied to trees)
+/// tree policy but taking into account the final score of the game.
+///
+/// The final score is taken into account by using the average score of the
+/// child node from the perspective of the parent node and scaling the
+/// exploration score by the difference between the maximum and minimum scores
+/// of the parent node.
+///
+/// # Formula
+///
+/// ```math
+/// ∑𝓈ᵢ / 𝑛 + 𝒸 · |maxᵢ 𝓈ᵢ - minᵢ 𝓈ᵢ| · √(㏑ 𝒩 / 𝑛)
+///
+/// with 𝓈ᵢ = The score of the 𝒾's visit
+///      𝑛 = The amount of visits of the child node
+///      𝒩 = The amount of visits of the parent node
+///      𝒸 = exploration constant (usually √2)
+/// ```
+///
+/// # See also
+///
+/// - [Wikipedia article on UCT](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation)
+/// - [MCTS UCT with a scoring system](https://stackoverflow.com/questions/36664993/mcts-uct-with-a-scoring-system)
 pub struct ScoredUCTPolicy {
-    /// The exploration parameter for the UCT policy."""
+    /// The exploration parameter for the UCT policy.
     exploration_constant: f64,
 }
 
 impl ScoredUCTPolicy {
+    /// Creates a new [`ScoredUCTPolicy`] with the given exploration constant.
+    ///
+    /// # Arguments
+    ///
+    /// * `exploration_constant` - The exploration constant for the UCT policy.
+    ///
+    /// # Returns
+    ///
+    /// The new [`ScoredUCTPolicy`].
     pub fn new(exploration_constant: f64) -> Self {
         Self { exploration_constant }
     }
@@ -19,30 +49,21 @@ impl Default for ScoredUCTPolicy {
     }
 }
 
-impl TreePolicy for ScoredUCTPolicy {
-    fn select_node<Node, NodeIterator>(&self, parent: Node, children: NodeIterator) -> Node
-    where
-        Node: TreePolicyNode,
-        NodeIterator: Iterator<Item = Node>,
-    {
-        let mut best_node: Option<Node> = None;
-        let mut best_score = f64::NEG_INFINITY;
+impl ScoredTreePolicy for ScoredUCTPolicy {
+    fn get_score<Player: Copy>(
+        &self,
+        parent: &impl TreePolicyNode<Player = Player>,
+        child: &impl TreePolicyNode<Player = Player>,
+    ) -> f64 {
+        let child_visit_count = child.visit_count() as f64;
+        let parent_visit_count = parent.visit_count() as f64;
+        let parent_player = parent.current_player();
 
-        for child in children {
-            let score_range = (parent.max_score() - parent.min_score()).abs();
-            let exploitation_score = child.score_sum() / child.visit_count() as f64;
-            let exploration_score = self.exploration_constant
-                * score_range
-                * ((parent.visit_count() as f64).ln() / child.visit_count() as f64).sqrt();
+        let exploitation_score = child.average_score_for(parent_player);
 
-            let score = exploitation_score + exploration_score;
+        let exploration = (parent_visit_count.ln() / child_visit_count).sqrt();
+        let exploration_score = self.exploration_constant * parent.score_range() as f64 * exploration;
 
-            if score > best_score {
-                best_node = Some(child);
-                best_score = score;
-            }
-        }
-
-        best_node.expect("[ScoredUCTPolicy::select_node] No children were given to select.")
+        exploitation_score + exploration_score
     }
 }

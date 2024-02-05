@@ -1,11 +1,11 @@
-use action_orderer::{ActionList, ActionSorter, TableActionOrderer};
+use action_orderer::{ActionList, ActionOrderer, TableActionOrderer};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use patchwork_core::{GameOptions, Patchwork};
 
 #[allow(clippy::unit_arg)]
 fn table_action_orderer<T>(c: &mut Criterion)
 where
-    T: ActionSorter + Default,
+    T: ActionOrderer + Default,
 {
     let typename_t = std::any::type_name::<T>().split("::").last().unwrap();
     let bench_name = format!("{}::score_action", typename_t);

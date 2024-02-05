@@ -1,35 +1,41 @@
+mod common;
 mod compare;
 mod console;
 mod exit;
 mod help;
-mod player;
 mod server;
 mod upi;
 
-use compare::handle_compare;
 use rustyline::error::ReadlineError;
 use rustyline::history::FileHistory;
 use rustyline::{DefaultEditor, Editor};
 
+use crate::common::{CTRL_C_MESSAGE, CTRL_D_MESSAGE};
+use crate::compare::handle_compare;
 use crate::console::handle_console;
 use crate::exit::{handle_exit, handle_exit_with_error};
 #[cfg(debug_assertions)]
 use crate::help::print_debug;
-use crate::help::{print_cmd_help, print_repl_help, print_welcome};
-use crate::server::{start_server_from_cmd, start_server_from_repl};
+use crate::help::{print_help, print_welcome};
+use crate::server::handle_server;
 use crate::upi::handle_upi;
 
-const CTRL_C_MESSAGE: &str = "Received CTRL-C command. Exiting application...";
-const CTRL_D_MESSAGE: &str = "Received CTRL-D command. Exiting application...";
-fn main() -> anyhow::Result<()> {
+fn main() {
     if std::env::args().len() > 1 {
-        return handle_args();
+        match handle_args() {
+            Ok(()) => handle_exit(0),
+            Err(err) => handle_exit_with_error(err),
+        }
     }
 
+    // enter REPL mode
     print_welcome();
     println!("{} Type \"help\" for more information.", env!("CARGO_PKG_DESCRIPTION"));
 
-    let mut rl = DefaultEditor::new()?;
+    let mut rl = match DefaultEditor::new() {
+        Ok(rl) => rl,
+        Err(err) => handle_exit_with_error(err.into()),
+    };
     loop {
         let readline = rl.readline("> ");
         match readline {
@@ -40,15 +46,13 @@ fn main() -> anyhow::Result<()> {
             }
             Err(ReadlineError::Interrupted) => {
                 println!("{}", CTRL_C_MESSAGE);
-                handle_exit();
+                handle_exit(0);
             }
             Err(ReadlineError::Eof) => {
                 println!("{}", CTRL_D_MESSAGE);
-                handle_exit();
+                handle_exit(0);
             }
-            Err(err) => {
-                handle_exit_with_error(err.into());
-            }
+            Err(err) => handle_exit_with_error(err.into()),
         }
     }
 }
@@ -57,79 +61,56 @@ fn handle_args() -> anyhow::Result<()> {
     let cmd = std::env::args().nth(1).unwrap();
     let args = std::env::args().skip(2).collect::<Vec<_>>();
 
+    let mut rl = Editor::<(), FileHistory>::new()?;
+
     match cmd.as_str() {
-        "help" | "h" => print_cmd_help(),
-        "exit" | "quit" | "q" => handle_exit(),
-        #[cfg(debug_assertions)]
-        "echo" => {
-            let mut output = String::new();
-            for arg in args.iter().skip(1) {
-                output.push_str(arg);
-                output.push(' ');
-            }
-            println!("{}", output);
-        }
+        "help" | "h" => print_help(),
+        "exit" | "quit" | "q" => handle_exit(0),
         #[cfg(debug_assertions)]
         "debug" => print_debug(),
-        "upi" => {
-            let starting_cmd = std::env::args().skip(1).collect::<Vec<_>>().join(" ");
-            let mut new_editor = Editor::<(), FileHistory>::new()?;
-            handle_upi(starting_cmd, &mut new_editor)?
-        }
-        "console" => {
-            let mut new_editor = Editor::<(), FileHistory>::new()?;
-            handle_console(&mut new_editor);
-        }
-        "compare" => {
-            let mut new_editor = Editor::<(), FileHistory>::new()?;
-            handle_compare(&mut new_editor);
-        }
-        "server" => start_server_from_cmd(args)?,
+        "upi" => handle_upi(&mut rl, args)?,
+        "console" => handle_console(&mut rl, args)?,
+        "compare" => handle_compare(&mut rl, args)?,
+        "server" => handle_server(&mut rl, args)?,
         _ => {
-            print_cmd_help();
-            std::process::exit(1);
+            print_help();
+            handle_exit(1);
         }
-    }
-
+    };
     Ok(())
 }
 
 fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()> {
-    let mut args = line.split_whitespace();
-    match args.next() {
-        Some("help" | "h") => print_repl_help(),
-        Some("exit" | "quit" | "q") => handle_exit(),
+    let mut input = line.split_whitespace();
+    let cmd = input.next();
+    let args = input.map(|s| s.to_string()).collect::<Vec<_>>();
+    match cmd {
+        Some("help" | "h") => print_help(),
+        Some("exit" | "quit" | "q") => handle_exit(0),
         Some("clear") => rl.clear_screen()?,
-        #[cfg(debug_assertions)]
-        Some("echo") => {
-            let mut output = String::new();
-            for arg in args {
-                output.push_str(arg);
-                output.push(' ');
-            }
-            println!("{}", output);
-        }
         #[cfg(debug_assertions)]
         Some("debug") => print_debug(),
         Some("upi") => {
-            println!("Starting Universal Patchwork Interface (UPI) in console mode...");
-            rl.clear_screen()?;
-            handle_upi(line, rl)?;
+            if let Err(err) = handle_upi(rl, args) {
+                println!("UPI exited with error: {}", err);
+            }
         }
         Some("console") => {
-            println!("Starting an interactive console game of patchwork...");
-            rl.clear_screen()?;
-            handle_console(rl);
+            if let Err(err) = handle_console(rl, args) {
+                println!("Console exited with error: {}", err);
+            }
         }
         Some("compare") => {
-            println!("Starting a comparison of two patchwork games...");
-            rl.clear_screen()?;
-            handle_compare(rl);
+            if let Err(err) = handle_compare(rl, args) {
+                println!("Compare exited with error: {}", err);
+            }
         }
-        Some("server") => start_server_from_repl(args.collect::<Vec<_>>(), rl)?,
-        _ => {
-            println!("Unknown command \"{}\". Type \"help\" for more information.", line);
+        Some("server") => {
+            if let Err(err) = handle_server(rl, args) {
+                println!("Server exited with error: {}", err);
+            }
         }
+        _ => println!("Unknown command \"{}\". Type \"help\" for more information.", line),
     }
 
     Ok(())

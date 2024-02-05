@@ -11,4 +11,6 @@ license.workspace = true
 patchwork_core = { path = "../patchwork_core" }
 tree_policy = { path = "../tree_policy" }
 evaluator = { path = "../evaluator" }
+itertools = "0.12.0"
 rand = "0.8.5"
+rayon = "1.8.1"

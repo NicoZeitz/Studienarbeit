@@ -451,7 +451,6 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(1)`
-    #[allow(dead_code)] // TODO: move transposition table to own package
     pub fn clear(&mut self) {
         self.entries = vec![Entry::default(); self.entries.len()];
         self.current_age.store(0, std::sync::atomic::Ordering::SeqCst);

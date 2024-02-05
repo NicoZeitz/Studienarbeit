@@ -29,7 +29,6 @@ pub struct SearchDiagnostics {
     pub late_move_reductions: usize,
     /// The number of times late move pruning was performed.
     pub late_move_pruning: usize,
-    // TODO: pv/zws hits, ...
 }
 
 impl Default for SearchDiagnostics {

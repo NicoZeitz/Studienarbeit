@@ -396,3 +396,4 @@ games/force_swap/*.bin
 **/Praxisbericht.pdf
 /code/patchwork/server/webapp/*
 !/code/patchwork/server/webapp/favicon.ico
+diagnostics*.txt

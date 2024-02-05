@@ -1,47 +1,38 @@
-use std::io::Write;
-
+use clap::Parser;
 use rustyline::{history::FileHistory, Editor};
 
-use crate::exit::handle_exit;
-use patchwork_lib::{Patchwork, TerminationType};
+use crate::common::{interactive_get_diagnostics, interactive_get_player, PlayerType};
+use patchwork_lib::{player::Player, GameOptions, Patchwork, TerminationType};
 
-use crate::player as player_mod;
+#[derive(Debug, Parser, Default)]
+#[command(no_binary_name(true))]
+struct CmdArgs {
+    #[arg(long = "player-1", alias = "p1", short = '1')]
+    player_1: Option<String>,
+    #[arg(long = "player-2", alias = "p2", short = '2')]
+    player_2: Option<String>,
+    #[arg(long = "diagnostics-1", alias = "d1")]
+    diagnostics_player_1: Option<String>,
+    #[arg(long = "diagnostics-2", alias = "d2")]
+    diagnostics_player_2: Option<String>,
+    #[arg(long = "seed", short = 's')]
+    seed: Option<u64>,
+}
 
-pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
-    let mut player_1 = loop {
-        match rl.readline_with_initial("Player 1: ", ("Human", "")) {
-            Ok(player) => {
-                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 1) {
-                    break player;
-                } else {
-                    println!("Could not find player {}. Available players: ", player);
-                    for player in player_mod::get_available_players() {
-                        println!("  {}", player);
-                    }
-                    std::io::stdout().flush().unwrap();
-                }
-            }
-            Err(_) => handle_exit(),
-        }
-    };
-    let mut player_2 = loop {
-        match rl.readline("Player 2: ") {
-            Ok(player) => {
-                if let Some(player) = player_mod::get_player(&player.to_ascii_lowercase(), 2) {
-                    break player;
-                } else {
-                    println!("Could not find player {}. Available players: ", player);
-                    for player in player_mod::get_available_players() {
-                        println!("  {}", player);
-                    }
-                    std::io::stdout().flush().unwrap();
-                }
-            }
-            Err(_) => handle_exit(),
-        }
-    };
+pub fn handle_console(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
+    let args = CmdArgs::parse_from(args);
 
-    let mut state = Patchwork::get_initial_state(None);
+    let player_1_diagnostics = interactive_get_diagnostics(rl, 1, args.diagnostics_player_1)?;
+    let player_2_diagnostics = interactive_get_diagnostics(rl, 2, args.diagnostics_player_2)?;
+
+    let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_diagnostics)?;
+    let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_diagnostics)?;
+
+    handle_console_repl(player_1, player_2, args.seed)
+}
+
+fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed: Option<u64>) -> anyhow::Result<()> {
+    let mut state = Patchwork::get_initial_state(seed.map(|seed| GameOptions { seed }));
 
     let mut i = 1;
     loop {
@@ -52,9 +43,9 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
         let old_state = state.clone();
 
         let action = if state.is_player_1() {
-            player_1.get_action(&state).unwrap()
+            player_1.get_action(&state)?
         } else {
-            player_2.get_action(&state).unwrap()
+            player_2.get_action(&state)?
         };
 
         #[cfg(debug_assertions)]
@@ -78,7 +69,7 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
         );
 
         let mut next_state = state.clone();
-        next_state.do_action(action, false).unwrap();
+        next_state.do_action(action, false)?;
         state = next_state;
 
         if state.is_terminated() {
@@ -100,5 +91,5 @@ pub fn handle_console(rl: &mut Editor<(), FileHistory>) {
         i += 1;
     }
 
-    handle_exit();
+    Ok(())
 }

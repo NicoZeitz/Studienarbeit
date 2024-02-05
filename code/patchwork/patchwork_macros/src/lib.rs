@@ -19,6 +19,7 @@ pub fn generate_patches(input: TokenStream) -> TokenStream {
     let Patches {
         patches,
         tiles,
+        normalized_tiles,
         transformations,
     } = parse_macro_input!(input as Patches);
 
@@ -29,6 +30,9 @@ pub fn generate_patches(input: TokenStream) -> TokenStream {
             ],
             tiles: [
                 #(#tiles),*
+            ],
+            normalized_tiles: [
+                #(#normalized_tiles),*
             ],
             transformations: [
                 #(#transformations),*
@@ -41,6 +45,7 @@ pub fn generate_patches(input: TokenStream) -> TokenStream {
 struct Patches {
     pub patches: Vec<Patch>,
     pub tiles: Vec<PatchTiling>,
+    pub normalized_tiles: Vec<PatchNormalizedTiling>,
     pub transformations: Vec<PatchTransformations>,
 }
 
@@ -53,6 +58,10 @@ struct Patch {
 
 struct PatchTiling {
     pub tiles: Vec<Vec<u8>>,
+}
+
+struct PatchNormalizedTiling {
+    pub normalized_tiles: [[u8; 5]; 3],
 }
 
 struct PatchTransformations {
@@ -71,6 +80,7 @@ impl Parse for Patches {
         let mut patches = Patches {
             patches: vec![],
             tiles: vec![],
+            normalized_tiles: vec![],
             transformations: vec![],
         };
 
@@ -79,6 +89,7 @@ impl Parse for Patches {
             .into_iter()
         {
             patches.patches.push(patch);
+            patches.normalized_tiles.push(normalize_tiling(&tiling.tiles));
             patches.tiles.push(tiling);
             patches.transformations.push(transformation);
         }
@@ -182,6 +193,25 @@ impl ToTokens for PatchTiling {
 
         tokens.extend(quote! {
             vec![
+                #(#quoted),*
+            ]
+        });
+    }
+}
+
+impl ToTokens for PatchNormalizedTiling {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let PatchNormalizedTiling { normalized_tiles } = self;
+        let quoted = normalized_tiles.iter().map(|tiling| {
+            quote! {
+                [
+                    #(#tiling),*
+                ]
+            }
+        });
+
+        tokens.extend(quote! {
+            [
                 #(#quoted),*
             ]
         });
@@ -339,4 +369,35 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
         }
         _ => tiles.clone(),
     }
+}
+
+fn normalize_tiling(tiles: &Vec<Vec<u8>>) -> PatchNormalizedTiling {
+    let mut tiles = tiles;
+    let mut normalized_tiles = [[0u8; 5]; 3];
+    let mut new_tiles = vec![vec![0; tiles.len()]; tiles[0].len()];
+
+    // if amount rows > 3 we need to rotate the tiling 90°
+    if tiles.len() > 3 {
+        for (i, tile_row) in tiles.iter().enumerate() {
+            for (j, tile) in tile_row.iter().enumerate() {
+                new_tiles[j][tiles.len() - i - 1] = *tile;
+            }
+        }
+        tiles = &new_tiles;
+    }
+
+    // if amount rows < 3 we need to skip filling the first n rows
+    // the same for columns < 5
+    let row_offset = 3 - tiles.len();
+    let col_offset = 5 - tiles[0].len();
+
+    for (i, tile_row) in tiles.iter().enumerate() {
+        for (j, tile) in tile_row.iter().enumerate() {
+            if *tile == 1 {
+                normalized_tiles[i + row_offset][j + col_offset] = 1;
+            }
+        }
+    }
+
+    PatchNormalizedTiling { normalized_tiles }
 }

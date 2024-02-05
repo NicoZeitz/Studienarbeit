@@ -236,7 +236,8 @@ impl ZobristHash {
     /// A new Zobrist hash struct.
     #[allow(clippy::needless_range_loop)]
     pub fn new() -> Self {
-        // TODO: maybe we can reduce the amount of memory required by using 2 rank 1 vectors and then using the dot product to create a matrix on the fly?
+        // TODO: maybe we can reduce the amount of memory required by using 2 rank 1 vectors and then using the dot
+        // product to create a matrix on the fly?
         let mut zobrist_patches_table =
             [0; (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize) * (PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize)];
         let mut zobrist_special_patches_table = [0; PatchManager::AMOUNT_OF_SPECIAL_PATCHES as usize];

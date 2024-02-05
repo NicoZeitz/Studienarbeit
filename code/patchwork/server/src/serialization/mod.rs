@@ -1,6 +1,6 @@
 use serde::ser::{SerializeSeq, SerializeStruct};
 
-use patchwork_lib::{entities_enum, Patch, PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard};
+use patchwork_lib::{time_board_flags, Patch, PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard};
 
 pub struct PatchworkState {
     pub state: Patchwork,
@@ -96,10 +96,10 @@ impl serde::Serialize for TimeBoardSerialization<'_> {
                 let mut serialized_board = serializer.serialize_seq(Some(self.time_board.tiles.len()))?;
                 for tile in &self.time_board.tiles {
                     serialized_board.serialize_element(&TimeBoardTileSerialization {
-                        player_1: tile & entities_enum::PLAYER_1 != 0,
-                        player_2: tile & entities_enum::PLAYER_2 != 0,
-                        special_patch: tile & entities_enum::SPECIAL_PATCH != 0,
-                        button_income_trigger: tile & entities_enum::BUTTON_INCOME_TRIGGER != 0,
+                        player_1: tile & time_board_flags::PLAYER_1 != 0,
+                        player_2: tile & time_board_flags::PLAYER_2 != 0,
+                        special_patch: tile & time_board_flags::SPECIAL_PATCH != 0,
+                        button_income_trigger: tile & time_board_flags::BUTTON_INCOME_TRIGGER != 0,
                     })?;
                 }
                 serialized_board.end()
@@ -113,7 +113,7 @@ impl serde::Serialize for TimeBoardSerialization<'_> {
             {
                 let mut serialized_special_patches = serializer.serialize_seq(None)?;
                 for tile in &self.time_board.tiles {
-                    if tile & entities_enum::SPECIAL_PATCH != 0 {
+                    if tile & time_board_flags::SPECIAL_PATCH != 0 {
                         serialized_special_patches.serialize_element(&tile)?;
                     }
                 }
@@ -128,7 +128,7 @@ impl serde::Serialize for TimeBoardSerialization<'_> {
             {
                 let mut serialized_button_income_triggers = serializer.serialize_seq(None)?;
                 for tile in &self.time_board.tiles {
-                    if tile & entities_enum::BUTTON_INCOME_TRIGGER != 0 {
+                    if tile & time_board_flags::BUTTON_INCOME_TRIGGER != 0 {
                         serialized_button_income_triggers.serialize_element(&tile)?;
                     }
                 }
@@ -139,11 +139,11 @@ impl serde::Serialize for TimeBoardSerialization<'_> {
         let mut serialized_time_board = serializer.serialize_struct("TimeBoard", 3)?;
         serialized_time_board.serialize_field(
             "player_1",
-            &self.time_board.get_player_position(entities_enum::PLAYER_1),
+            &self.time_board.get_player_position(time_board_flags::PLAYER_1),
         )?;
         serialized_time_board.serialize_field(
             "player_2",
-            &self.time_board.get_player_position(entities_enum::PLAYER_2),
+            &self.time_board.get_player_position(time_board_flags::PLAYER_2),
         )?;
         serialized_time_board.serialize_field(
             "special_patches",

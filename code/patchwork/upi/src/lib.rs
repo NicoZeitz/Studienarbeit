@@ -13,7 +13,7 @@ pub fn start_upi(message_receiver: Receiver<String>, message_sender: Sender<Stri
                 message_sender.send(message)?;
             }
             Some("isready") => {
-                message_sender.send("readyok".to_string())?;
+                message_sender.send("readyok\n".to_string())?;
             }
             // debug [on|off]
             // setoption name [value]
@@ -25,7 +25,7 @@ pub fn start_upi(message_receiver: Receiver<String>, message_sender: Sender<Stri
                 break;
             }
             _ => {
-                message_sender.send("unknown command".to_string())?;
+                message_sender.send("unknown command\n".to_string())?;
             }
         }
     }

@@ -1,5 +1,9 @@
 use std::num::NonZeroUsize;
 
+use patchwork_core::Diagnostics;
+
+use crate::mcts_player::{NON_ZERO_USIZE_FOUR, NON_ZERO_USIZE_ONE};
+
 /// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum MCTSEndCondition {
@@ -10,7 +14,7 @@ pub enum MCTSEndCondition {
 }
 
 /// Different options for the Monte Carlo Tree Search (MCTS) algorithm.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Debug)]
 pub struct MCTSOptions {
     /// Indicates if there should be multiple mcts searches running in parallel.
     /// 1 for no parallelization.
@@ -18,10 +22,12 @@ pub struct MCTSOptions {
     /// Indicates if the simulation phase is to be run in parallel.
     /// 1 for no parallelization.
     pub leaf_parallelization: NonZeroUsize,
+    /// Indicates if the tree should be reused between turns.
+    pub reuse_tree: bool,
     /// The end condition for the MCTS algorithm.
     pub end_condition: MCTSEndCondition,
-    /// Indicates if the tree should be reused between turns.
-    pub reuse_tree: bool, // TODO: implement
+    /// The diagnostics to collect during the search.
+    pub diagnostics: Diagnostics,
 }
 
 impl MCTSOptions {
@@ -31,39 +37,30 @@ impl MCTSOptions {
         leaf_parallelization: NonZeroUsize,
         end_condition: MCTSEndCondition,
         reuse_tree: bool,
+        diagnostics: Diagnostics,
     ) -> Self {
         Self {
             root_parallelization,
             leaf_parallelization,
             end_condition,
             reuse_tree,
+            diagnostics,
         }
     }
 }
 
-pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
-#[allow(dead_code)] // TODO: use this when it is stable
-pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
-
 impl Default for MCTSOptions {
     fn default() -> Self {
+        let root_parallelization = std::thread::available_parallelism()
+            .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
+            .unwrap_or(NON_ZERO_USIZE_FOUR);
+
         Self {
-            root_parallelization: NON_ZERO_USIZE_ONE,
+            root_parallelization,
             leaf_parallelization: NON_ZERO_USIZE_ONE,
-            end_condition: MCTSEndCondition::Iterations(10_000),
+            end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(20)),
             reuse_tree: false,
+            diagnostics: Default::default(),
         }
-
-        // let root_parallelization = std::thread::available_parallelism()
-        //     .map(|n| unsafe { NonZeroUsize::new_unchecked(Into::<usize>::into(n) / 2) })
-        //     .unwrap_or(NON_ZERO_USIZE_FOUR);
-
-        // // TODO: use this when it is stable
-        // Self::new(
-        //     root_parallelization,
-        //     NON_ZERO_USIZE_ONE,
-        //     MCTSEndCondition::Time(std::time::Duration::from_secs(10)),
-        //     true,
-        // )
     }
 }

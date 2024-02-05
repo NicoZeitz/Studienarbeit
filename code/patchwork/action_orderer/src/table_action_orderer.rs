@@ -1,7 +1,7 @@
 use patchwork_core::ActionId;
 
 use crate::{
-    ActionSorter, PATCH_PLACEMENT_ENDGAME_TABLE, PATCH_PLACEMENT_OPENING_TABLE, SPECIAL_PATCH_PLACEMENT_ENDGAME_TABLE,
+    ActionOrderer, PATCH_PLACEMENT_ENDGAME_TABLE, PATCH_PLACEMENT_OPENING_TABLE, SPECIAL_PATCH_PLACEMENT_ENDGAME_TABLE,
     SPECIAL_PATCH_PLACEMENT_OPENING_TABLE, WALKING_ENDGAME_TABLE, WALKING_OPENING_TABLE,
 };
 
@@ -35,7 +35,7 @@ fn interpolate(ply: usize, opening_value: f64, endgame_value: f64) -> f64 {
     opening_value * (1.0 - ratio) + endgame_value * ratio
 }
 
-impl ActionSorter for TableActionOrderer {
+impl ActionOrderer for TableActionOrderer {
     fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64 {
         if pv_action.is_some() && action == pv_action.unwrap() {
             return 100000.0;

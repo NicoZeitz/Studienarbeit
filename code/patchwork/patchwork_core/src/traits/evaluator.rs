@@ -24,7 +24,7 @@ pub mod evaluator_constants {
 ///   should be implemented.
 /// * The evaluation is in terms of 1/100 of the end result. So if the evaluation at the end of the game is 10 for player 1 and -10 for player 2,
 ///   the evaluator should return 1000 for player 1 and -1000 for player 2. (This is not required, but it is recommended)
-pub trait Evaluator: Sync + Send {
+pub trait Evaluator: Sync {
     /// Returns the evaluation of the given intermediate state.
     /// An intermediate state is a state that is not terminal.
     ///

@@ -1,14 +1,15 @@
 use std::sync::{atomic::AtomicBool, Arc};
 
-use action_orderer::ActionList;
+use action_orderer::{ActionList, ActionOrderer, TableActionOrderer};
+use evaluator::StaticEvaluator;
 use itertools::Itertools;
 
-use patchwork_core::{evaluator_constants, ActionId, Notation, Patchwork, Player, PlayerResult, TurnType};
+use patchwork_core::{
+    evaluator_constants, ActionId, Diagnostics, Evaluator, Notation, Patchwork, Player, PlayerResult, TurnType,
+};
 use transposition_table::{EvaluationType, TranspositionTable};
 
-use crate::{
-    pvs_options::FailingStrategy, DiagnosticsFeature, PVSOptions, SearchDiagnostics, TranspositionTableFeature,
-};
+use crate::{pvs_options::FailingStrategy, PVSOptions, SearchDiagnostics, TranspositionTableFeature};
 
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
 ///
@@ -24,35 +25,17 @@ use crate::{
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
 ///     - With PV-Action via Transposition Table
-///
-/// # Other Features that could still be implemented:
-/// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
-/// - [Automated Tuning](https://www.chessprogramming.org/Automated_Tuning) via regression, reinforcement learning or supervised learning for evaluation
-///   - [Texel's Tuning Method](https://www.chessprogramming.org/Texel%27s_Tuning_Method)
-/// - [ƎUИИ Efficiently Updatable Neural Networks](https://www.chessprogramming.org/NNUE) implementation in Rust [Carp Engine](https://github.com/dede1751/carp/tree/main/chess/src/nnue)
-/// - [(Reverse) Futility Pruning]
-/// - [PV_Extensions](https://www.chessprogramming.org/PV_Extensions)
-/// - [Legality Test](https://www.chessprogramming.org/Legal_Move#Legality_Test) for transposition table entries from key collisions
-/// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
-/// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
-///
-/// # BUG:
-///
-/// - Sometimes the nodes searched are 0 but it still continues to the next depth (how can this happen?)
-/// - Sometimes the best action is always NONE
-/// - Sometimes the game crashes with do_action (expected non-null action)
-/// - The performance vs. greedy still seems too bad.
-/// - The evaluation for the best action is sometimes very negative??
-/// - Walking actions are take as best too often? (Or maybe only because they are the only available)
-/// - Branching factor (EFF, MEAN) and Move Ordering often none in diagnostics
-/// - The check with aspiration windows fails even when they are turned off (possible fixed now through right player flag)
-pub struct PVSPlayer {
+pub struct PVSPlayer<Orderer: ActionOrderer = TableActionOrderer, Eval: Evaluator = StaticEvaluator> {
     /// The name of the player.
     pub name: String,
     /// The options for the Principal Variation Search (PVS) algorithm.
     pub options: PVSOptions,
     /// search diagnostics
     pub diagnostics: SearchDiagnostics,
+    /// The evaluator to evaluate the game state.
+    pub evaluator: Eval,
+    /// The action sorter to sort the actions.
+    pub action_orderer: Orderer,
     /// The transposition table.
     transposition_table: Option<TranspositionTable>,
     /// The best action found so far.
@@ -67,7 +50,7 @@ pub struct PVSPlayer {
     search_canceled: Arc<AtomicBool>,
 }
 
-impl PVSPlayer {
+impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orderer, Eval> {
     /// Creates a new [`PrincipalVariationSearchPlayer`] with the given name.
     pub fn new(name: impl Into<String>, options: Option<PVSOptions>) -> Self {
         let options = options.unwrap_or_default();
@@ -83,6 +66,8 @@ impl PVSPlayer {
             name: name.into(),
             options,
             diagnostics: Default::default(),
+            evaluator: Default::default(),
+            action_orderer: Default::default(),
             transposition_table,
             best_action: None,
             best_evaluation: None,
@@ -91,16 +76,13 @@ impl PVSPlayer {
     }
 }
 
-impl Default for PVSPlayer {
+impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> Default for PVSPlayer<Orderer, Eval> {
     fn default() -> Self {
-        Self::new(
-            "Principal Variation Search (PVS) Player".to_string(),
-            Default::default(),
-        )
+        Self::new("Principal Variation Search Player".to_string(), Default::default())
     }
 }
 
-impl Player for PVSPlayer {
+impl<Orderer: ActionOrderer, Eval: Evaluator> Player for PVSPlayer<Orderer, Eval> {
     fn name(&self) -> &str {
         &self.name
     }
@@ -152,7 +134,7 @@ impl Player for PVSPlayer {
     }
 }
 
-impl PVSPlayer {
+impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// The amount of actions where the following search is for sure not reduced
     /// by LMR. After these amount of actions the LMR is applied.
     pub const LMR_AMOUNT_FULL_DEPTH_ACTIONS: usize = 3;
@@ -360,8 +342,7 @@ impl PVSPlayer {
             LMPFlags::fake()
         };
 
-        self.options
-            .action_orderer
+        self.action_orderer
             .score_actions(&mut action_list, pv_action, ply_from_root);
 
         let mut is_pv_node = true;
@@ -392,7 +373,7 @@ impl PVSPlayer {
                 // > You can hear and read "move ordering" and "move sorting" interchangeably. The difference is that "move
                 // > ordering" does the "score and pick" approach, and "move sorting" physically sorts the entire move list.
                 // > The result is the same, but move ordering is the faster approach, as described above.
-                self.options.action_orderer.pick_action(&mut action_list, i)
+                self.action_orderer.pick_action(&mut action_list, i)
             };
 
             lmp_flags.set_action_type_done(action);
@@ -423,10 +404,7 @@ impl PVSPlayer {
                 // Code adapted from https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html
                 // Search Extensions are not applied to the reduced depth search
                 let mut needs_full_search = true;
-                if extension == 0
-                    && i >= PVSPlayer::LMR_AMOUNT_FULL_DEPTH_ACTIONS
-                    && depth >= PVSPlayer::LMR_DEPTH_LIMIT
-                {
+                if extension == 0 && i >= Self::LMR_AMOUNT_FULL_DEPTH_ACTIONS && depth >= Self::LMR_DEPTH_LIMIT {
                     self.diagnostics.increment_late_move_reductions();
 
                     let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
@@ -499,7 +477,6 @@ impl PVSPlayer {
         // action is unknown
         self.store_transposition_table(game, depth, alpha, evaluation_bound, best_action);
 
-        // TODO: remove these
         if ply_from_root == 0 {
             self.best_action = Some(best_action);
             self.best_evaluation = Some(alpha);
@@ -626,7 +603,7 @@ impl PVSPlayer {
         //     }
         // }
 
-        let evaluation = color * self.options.evaluator.evaluate_node(game);
+        let evaluation = color * self.evaluator.evaluate_node(game);
 
         // self.store_transposition_table(game, 0, evaluation, EvaluationType::Exact, ActionId::null());
 
@@ -771,10 +748,15 @@ impl PVSPlayer {
     /// * `Result<(), std::io::Error>` - The result of the writing.
     #[inline]
     fn write_single_diagnostic(&mut self, diagnostic: &str) -> Result<(), std::io::Error> {
-        let writer = match self.options.features.diagnostics {
-            DiagnosticsFeature::Disabled => return Ok(()),
-            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
-            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
+        let writer = match self.options.diagnostics {
+            Diagnostics::Disabled | Diagnostics::VerboseOnly { .. } => return Ok(()),
+            Diagnostics::Enabled {
+                progress_writer: ref mut writer,
+            }
+            | Diagnostics::Verbose {
+                progress_writer: ref mut writer,
+                ..
+            } => writer.as_mut(),
         };
 
         writeln!(writer, "{}", diagnostic)
@@ -796,7 +778,6 @@ impl PVSPlayer {
         game: &Patchwork,
         depth: usize,
     ) -> Result<(), std::io::Error> {
-        let is_verbose = matches!(self.options.features.diagnostics, crate::DiagnosticsFeature::Verbose { .. });
         let pv_actions = self.get_pv_action_line(game, depth);
         let best_evaluation = self.best_evaluation.map(|eval| format!("{}", eval)).unwrap_or("NONE".to_string());
         let best_action = self.best_action.as_ref().map(|action| match action.save_to_notation() {
@@ -804,10 +785,20 @@ impl PVSPlayer {
             Err(_) => "######".to_string(),
         }).unwrap_or("NONE".to_string());
 
-        let writer = match self.options.features.diagnostics {
-            DiagnosticsFeature::Disabled => return Ok(()),
-            DiagnosticsFeature::Enabled { ref mut writer } => writer.as_mut(),
-            DiagnosticsFeature::Verbose { ref mut writer } => writer.as_mut(),
+        let mut debug_writer = None;
+        let writer = match self.options.diagnostics {
+            Diagnostics::Disabled => return Ok(()),
+            Diagnostics::Enabled { progress_writer: ref mut writer } => writer.as_mut(),
+            Diagnostics::Verbose { progress_writer: ref mut writer, debug_writer: ref mut d_writer } => {
+                debug_writer = Some(d_writer);
+                writer.as_mut()
+            },
+            Diagnostics::VerboseOnly { ref mut debug_writer } =>{
+                if let Some(ref mut transposition_table) = self.transposition_table {
+                    transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
+                }
+                return Ok(())
+            }
         };
 
         let mut features = vec![];
@@ -852,8 +843,8 @@ impl PVSPlayer {
         writeln!(writer, "Principal Variation: {}", pv_actions)?;
         if let Some(ref mut transposition_table) = self.transposition_table {
             transposition_table.diagnostics.write_diagnostics(writer)?;
-            if is_verbose {
-                transposition_table.diagnostics.write_transposition_table(writer, transposition_table, Some(100))?;
+            if let Some(debug_writer) = debug_writer {
+                transposition_table.diagnostics.write_transposition_table(debug_writer, transposition_table, None)?;
             }
         }
         writeln!(writer, "─────────────────────────────────────────────────────────────")?;
