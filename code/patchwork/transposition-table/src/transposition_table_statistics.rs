@@ -109,7 +109,7 @@ impl TranspositionTableStatistics {
     /// * `Result<(), std::io::Error>` - The result of the printing.
     #[rustfmt::skip]
     pub fn write_statistics(&self, writer: &mut dyn std::io::Write) -> Result<(), std::io::Error> {
-        writeln!(writer, "┌────────── Transposition Table Statistics ──────────┐")?;
+        writeln!(writer, "┌────────── Transposition Table Statistics ───────────┐")?;
         writeln!(writer, "│Capacity:   {: >17}                        │", self.capacity.load(Self::LOAD_ORDERING))?;
         writeln!(writer, "│Entries:    {: >17} / {:6.2}% filled       │", self.entries.load(Self::LOAD_ORDERING), self.fill_ratio() * 100.0)?;
         writeln!(writer, "│Overwrites: {: >17}                        │", self.overwrites.load(Self::LOAD_ORDERING))?;

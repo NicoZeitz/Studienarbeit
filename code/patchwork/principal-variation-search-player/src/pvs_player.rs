@@ -343,9 +343,10 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         let mut best_action = ActionId::null();
         let mut alpha = alpha;
         let mut evaluation_bound = EvaluationType::UpperBound;
+        let should_late_move_prune = depth >= Self::LMP_DEPTH_LIMIT && self.options.features.late_move_pruning;
 
         for i in 0..action_list.len() {
-            let action = if i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS && self.options.features.late_move_pruning {
+            let action = if should_late_move_prune && i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS {
                 // [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
                 // Remove late moves in move ordering, only prune after trying at least one move for each possible patch
                 let Some(action) = lmp_flags.get_next_missing() else {
