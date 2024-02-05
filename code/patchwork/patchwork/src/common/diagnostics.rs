@@ -44,6 +44,18 @@ pub fn interactive_get_diagnostics(
     }
 }
 
+pub fn get_diagnostics(diagnostics: &str) -> anyhow::Result<Diagnostics> {
+    if let Some(diagnostic) = parse_diagnostics(diagnostics) {
+        return Ok(diagnostic);
+    }
+    println!(
+        "Invalid diagnostics {}. Available options: disabled, enabled, verbose, verbose-only",
+        diagnostics
+    );
+    std::io::stdout().flush()?;
+    return Err(Error::msg(format!("Invalid diagnostics argument: {}", diagnostics)));
+}
+
 pub fn parse_diagnostics(diagnostics: &str) -> Option<Diagnostics> {
     fn create_debug_writer() -> Box<dyn std::io::Write> {
         Box::new(

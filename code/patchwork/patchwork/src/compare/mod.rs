@@ -8,9 +8,7 @@ use anyhow::Error;
 use clap::Parser;
 use rustyline::{error::ReadlineError, history::FileHistory, Editor};
 
-use crate::common::{
-    get_player, interactive_get_diagnostics, interactive_get_player, PlayerType, CTRL_C_MESSAGE, CTRL_D_MESSAGE,
-};
+use crate::common::{get_diagnostics, get_player, interactive_get_player, PlayerType, CTRL_C_MESSAGE, CTRL_D_MESSAGE};
 use patchwork_lib::{
     player::{Diagnostics, Player},
     Patchwork, TerminationType,
@@ -23,10 +21,10 @@ struct CmdArgs {
     player_1: Option<String>,
     #[arg(long = "player-2", alias = "p2", short = '2')]
     player_2: Option<String>,
-    #[arg(long = "diagnostics-1", alias = "d1")]
-    diagnostics_player_1: Option<String>,
-    #[arg(long = "diagnostics-2", alias = "d2")]
-    diagnostics_player_2: Option<String>,
+    #[arg(long = "diagnostics-1", alias = "d1", default_value = "disabled")]
+    diagnostics_player_1: String,
+    #[arg(long = "diagnostics-2", alias = "d2", default_value = "disabled")]
+    diagnostics_player_2: String,
     #[arg(long = "games", short = 'g')]
     games: Option<usize>,
     #[arg(long = "update", short = 'u', default_value = "100")]
@@ -38,8 +36,8 @@ struct CmdArgs {
 pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
     let args = CmdArgs::parse_from(args);
 
-    let player_1_diagnostics = interactive_get_diagnostics(rl, 1, args.diagnostics_player_1)?;
-    let player_2_diagnostics = interactive_get_diagnostics(rl, 2, args.diagnostics_player_2)?;
+    let player_1_diagnostics = get_diagnostics(args.diagnostics_player_1.as_str())?;
+    let player_2_diagnostics = get_diagnostics(args.diagnostics_player_2.as_str())?;
 
     let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_diagnostics)?;
     let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_diagnostics)?;
