@@ -2,31 +2,6 @@ use std::f64::consts::E;
 
 use patchwork_core::{Evaluator, Patchwork, QuiltBoard, StableEvaluator, TimeBoard};
 
-// Copilot continuous zeros / ones
-// The provided solution is already quite efficient, as it operates in O(1) time complexity, which is the best possible time complexity you can achieve
-// for this problem. This is because the number of bits in an integer is fixed (32 bits for a u32), so the loop always iterates 32 times regardless of the input.
-// However, if you're working with a large number of integers and you need to optimize this function further, you could potentially use a lookup table
-// to store the maximum number of continuous zeros for every possible 8-bit or 16-bit integer, and then use this table to compute the result for a 32-bit integer.
-// This would reduce the number of iterations, but it would also increase the space complexity and the complexity of the code.
-//
-// Here's an example of how you might implement this with a lookup table for 8-bit integers:
-//
-// fn max_continuous_zeros(n: u32) -> u32 {
-//     let lookup = [
-//         8, 7, 7, 6, 7, 6, 6, 5, 7, 6, 6, 5, 6, 5, 5, 4, // 0-15
-//         // ... fill in the rest of the table for 16-255
-//     ];
-//     let mut max_count = 0;
-//     for i in (0..32).step_by(8) {
-//         let byte = ((n >> i) & 0xFF) as usize;
-//         max_count = max_count.max(lookup[byte]);
-//     }
-//     max_count
-// }
-//
-// In this code, lookup[i] gives the maximum number of continuous zeros in the binary representation of i. The function then uses this lookup table to compute the result for a 32-bit integer.
-// Please note that you would need to fill in the rest of the lookup table for this code to work. This could be done manually, or you could write a separate function to generate the lookup table.
-
 /// A static evaluator for [`Patchwork`].
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct StaticEvaluator;
@@ -44,13 +19,12 @@ impl Default for StaticEvaluator {
     }
 }
 
-// TODO: implement evaluator so that it is always in a specific range
 impl StableEvaluator for StaticEvaluator {}
 impl Evaluator for StaticEvaluator {
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
         let player_1_score = self.evaluate_state_for_player(game, Patchwork::get_player_1_flag());
         let player_2_score = self.evaluate_state_for_player(game, Patchwork::get_player_2_flag());
-        (player_1_score - player_2_score) as i32 // TODO: better implementation
+        (player_1_score - player_2_score) as i32
     }
 }
 

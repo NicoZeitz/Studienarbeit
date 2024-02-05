@@ -1,0 +1,16 @@
+[package]
+name = "principal-variation-search-player"
+description = "A principal variation search player for patchwork"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../patchwork-core" }
+evaluator = { path = "../evaluator" }
+action-orderer = { path = "../action-orderer" }
+rand = "0.8.5"
+itertools = "0.12.0"
+transposition-table = { path = "../transposition-table" }

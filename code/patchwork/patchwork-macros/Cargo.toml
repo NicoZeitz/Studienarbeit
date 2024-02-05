@@ -1,0 +1,16 @@
+[package]
+name = "patchwork-macros"
+description = "Different macros used by the patchwork-core crate"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.69"
+quote = "1.0.33"
+syn = { version = "2.0.39", features = ["extra-traits", "parsing"] }

@@ -1,0 +1,16 @@
+[package]
+name = "empirical-measurement"
+description = "Empirical measurement of Patchwork statistics like available actions, game length and more"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../../patchwork-core" }
+bincode = "1.3.3"
+clap = { version = "4.4.8", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
+rayon = "1.8.1"
+csv = "1.3.0"

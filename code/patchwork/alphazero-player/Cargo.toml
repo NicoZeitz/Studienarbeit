@@ -1,11 +1,12 @@
 [package]
-name = "evaluator"
-description = "Evaluators for game positions in patchwork"
+name = "alphazero-player"
+description = "An alphaZero player for patchwork"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
+build = "build.rs"
 
 [features]
 default = []
@@ -15,14 +16,8 @@ cuda = ["candle-core/cuda", "candle-core/cudnn", "candle-nn/cuda"]
 [dependencies]
 candle-core = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
 candle-nn = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
-lazy_static = "1.4.0"
-linfa = "0.7.0"
 patchwork-core = { path = "../patchwork-core" }
 
 [[bin]]
-name = "evaluator_verification"
+name = "alphazero-player_verification"
 path = "src/verification.rs"
-
-[[bin]]
-name = "evaluator_train"
-path = "train/main.rs"

@@ -8,9 +8,9 @@ use anyhow::Error;
 use clap::Parser;
 use rustyline::{error::ReadlineError, history::FileHistory, Editor};
 
-use crate::common::{get_diagnostics, get_player, interactive_get_player, PlayerType, CTRL_C_MESSAGE, CTRL_D_MESSAGE};
+use crate::common::{get_logging, get_player, interactive_get_player, PlayerType, CTRL_C_MESSAGE, CTRL_D_MESSAGE};
 use patchwork_lib::{
-    player::{Diagnostics, Player},
+    player::{Logging, Player},
     Patchwork, TerminationType,
 };
 
@@ -21,10 +21,10 @@ struct CmdArgs {
     player_1: Option<String>,
     #[arg(long = "player-2", alias = "p2", short = '2')]
     player_2: Option<String>,
-    #[arg(long = "diagnostics-1", alias = "d1", default_value = "disabled")]
-    diagnostics_player_1: String,
-    #[arg(long = "diagnostics-2", alias = "d2", default_value = "disabled")]
-    diagnostics_player_2: String,
+    #[arg(long = "logging-1", alias = "l1", default_value = "disabled")]
+    logging_player_1: String,
+    #[arg(long = "logging-2", alias = "l2", default_value = "disabled")]
+    logging_player_2: String,
     #[arg(long = "games", short = 'g')]
     games: Option<usize>,
     #[arg(long = "update", short = 'u', default_value = "100")]
@@ -36,11 +36,11 @@ struct CmdArgs {
 pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
     let args = CmdArgs::parse_from(args);
 
-    let player_1_diagnostics = get_diagnostics(args.diagnostics_player_1.as_str())?;
-    let player_2_diagnostics = get_diagnostics(args.diagnostics_player_2.as_str())?;
+    let player_1_logging = get_logging(args.logging_player_1.as_str())?;
+    let player_2_logging = get_logging(args.logging_player_2.as_str())?;
 
-    let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_diagnostics)?;
-    let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_diagnostics)?;
+    let player_1 = interactive_get_player(rl, args.player_1, 1, player_1_logging)?;
+    let player_2 = interactive_get_player(rl, args.player_2, 2, player_2_logging)?;
 
     let games = if let Some(games) = args.games {
         games
@@ -145,8 +145,8 @@ fn compare(
             let player_2_str = player_2.get_construct_name();
             s.spawn(move || {
                 let panic_result = panic::catch_unwind(move || {
-                    let mut player_1 = get_player(player_1_str, 1, Diagnostics::Disabled).unwrap();
-                    let mut player_2 = get_player(player_2_str, 2, Diagnostics::Disabled).unwrap();
+                    let mut player_1 = get_player(player_1_str, 1, Logging::Disabled).unwrap();
+                    let mut player_2 = get_player(player_2_str, 2, Logging::Disabled).unwrap();
 
                     'outer: while iterations_done.load(Ordering::Acquire) < iterations {
                         let mut state = Patchwork::get_initial_state(None);

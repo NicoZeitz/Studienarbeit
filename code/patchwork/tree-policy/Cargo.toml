@@ -1,0 +1,11 @@
+[package]
+name = "tree-policy"
+description = "Tree policies for selecting nodes in a patchwork game tree"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../patchwork-core" }

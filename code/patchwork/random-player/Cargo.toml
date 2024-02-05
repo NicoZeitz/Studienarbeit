@@ -1,0 +1,13 @@
+[package]
+name = "random-player"
+description = "A random player for patchwork"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../patchwork-core" }
+rand = "0.8.5"
+rand_xoshiro = "0.6.0"

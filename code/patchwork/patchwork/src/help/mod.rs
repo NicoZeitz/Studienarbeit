@@ -28,14 +28,14 @@ pub fn print_help() {
     println!("    console   Start an interactive console game of patchwork");
     println!("                -1,   --player-1      The name of the first player");
     println!("                -2,   --player-2      The name of the second player");
-    println!("                --d1, --diagnostics-1 The diagnostic level of the first player (one of disabled, enabled, verbose, verbose-only)");
-    println!("                --d2, --diagnostics-2 The diagnostic level of the second player");
+    println!("                --l1, --logging-1     The logging configuration of the first player");
+    println!("                --l2, --logging-2     The logging configuration of the second player");
     println!("                -s,   --seed          The seed for the initial state");
     println!("    compare   Compare different patchwork ai's against each other");
     println!("                -1,   --player-1      The name of the first player");
     println!("                -2,   --player-2      The name of the second player");
-    println!("                --d1, --diagnostics-1 The diagnostic level of the first player");
-    println!("                --d2, --diagnostics-2 The diagnostic level of the second player");
+    println!("                --l1, --logging-1     The logging configuration of the first player");
+    println!("                --l2, --logging-2     The logging configuration of the second player");
     println!("                -g,   --games         The number of games the players should be compared in");
     println!("                -u,   --update        How often the comparison information should be updated (in ms)");
     println!("                -p,   --parallel      How many games to play in parallel");

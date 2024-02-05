@@ -1,0 +1,13 @@
+[package]
+name = "greedy-player"
+description = "A simple greedy player for patchwork"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../patchwork-core" }
+evaluator = { path = "../evaluator" }
+rand = "0.8.5"

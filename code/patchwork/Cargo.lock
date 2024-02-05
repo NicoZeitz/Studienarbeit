@@ -3,12 +3,12 @@
 version = 3
 
 [[package]]
-name = "action_orderer"
+name = "action-orderer"
 version = "1.0.0"
 dependencies = [
  "criterion",
  "lazy_static",
- "patchwork_core",
+ "patchwork-core",
  "rand",
 ]
 
@@ -43,12 +43,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "alphazero_player"
+name = "alphazero-player"
 version = "1.0.0"
 dependencies = [
  "candle-core",
  "candle-nn",
- "patchwork_core",
+ "patchwork-core",
 ]
 
 [[package]]
@@ -832,13 +832,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
-name = "empirical_measurement"
+name = "empirical-measurement"
 version = "1.0.0"
 dependencies = [
  "bincode",
  "clap 4.4.18",
  "csv",
- "patchwork_core",
+ "patchwork-core",
  "rayon",
  "serde",
 ]
@@ -891,7 +891,7 @@ dependencies = [
  "candle-nn",
  "lazy_static",
  "linfa",
- "patchwork_core",
+ "patchwork-core",
 ]
 
 [[package]]
@@ -1159,11 +1159,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
 
 [[package]]
-name = "greedy_player"
+name = "greedy-player"
 version = "1.0.0"
 dependencies = [
  "evaluator",
- "patchwork_core",
+ "patchwork-core",
  "rand",
 ]
 
@@ -1319,10 +1319,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
 
 [[package]]
-name = "human_player"
+name = "human-player"
 version = "1.0.0"
 dependencies = [
- "patchwork_core",
+ "patchwork-core",
  "rand",
  "rand_xoshiro",
  "regex",
@@ -1620,7 +1620,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "max_button_income"
+name = "max-button-income"
 version = "1.0.0"
 dependencies = [
  "itertools 0.12.0",
@@ -1628,15 +1628,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcts_player"
+name = "mcts-player"
 version = "1.0.0"
 dependencies = [
  "evaluator",
  "itertools 0.12.0",
- "patchwork_core",
+ "patchwork-core",
  "rand",
  "rayon",
- "tree_policy",
+ "tree-policy",
 ]
 
 [[package]]
@@ -1672,11 +1672,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "minimax_player"
+name = "minimax-player"
 version = "1.0.0"
 dependencies = [
  "evaluator",
- "patchwork_core",
+ "patchwork-core",
  "rand",
 ]
 
@@ -1871,7 +1871,7 @@ dependencies = [
  "chrono",
  "clap 4.4.18",
  "ctrlc",
- "patchwork_lib",
+ "patchwork-lib",
  "regex",
  "rustyline",
  "server",
@@ -1880,7 +1880,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "patchwork_core"
+name = "patchwork-core"
 version = "1.0.0"
 dependencies = [
  "anyhow",
@@ -1889,7 +1889,7 @@ dependencies = [
  "criterion",
  "itertools 0.12.0",
  "lazy_static",
- "patchwork_macros",
+ "patchwork-macros",
  "pretty_assertions",
  "rand",
  "rand_xoshiro",
@@ -1900,25 +1900,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "patchwork_lib"
+name = "patchwork-lib"
 version = "1.0.0"
 dependencies = [
- "action_orderer",
- "alphazero_player",
+ "action-orderer",
+ "alphazero-player",
  "evaluator",
- "greedy_player",
- "human_player",
- "mcts_player",
- "minimax_player",
- "patchwork_core",
- "patchwork_macros",
- "principal_variation_search_player",
- "random_player",
- "tree_policy",
+ "greedy-player",
+ "human-player",
+ "mcts-player",
+ "minimax-player",
+ "patchwork-core",
+ "patchwork-macros",
+ "principal-variation-search-player",
+ "random-player",
+ "tree-policy",
 ]
 
 [[package]]
-name = "patchwork_macros"
+name = "patchwork-macros"
 version = "1.0.0"
 dependencies = [
  "proc-macro2",
@@ -2009,15 +2009,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "principal_variation_search_player"
+name = "principal-variation-search-player"
 version = "1.0.0"
 dependencies = [
- "action_orderer",
+ "action-orderer",
  "evaluator",
  "itertools 0.12.0",
- "patchwork_core",
+ "patchwork-core",
  "rand",
- "transposition_table",
+ "transposition-table",
 ]
 
 [[package]]
@@ -2140,10 +2140,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "random_player"
+name = "random-player"
 version = "1.0.0"
 dependencies = [
- "patchwork_core",
+ "patchwork-core",
  "rand",
  "rand_xoshiro",
 ]
@@ -2500,7 +2500,7 @@ dependencies = [
  "headers",
  "lazy_static",
  "mime_guess",
- "patchwork_lib",
+ "patchwork-lib",
  "rust-embed",
  "serde",
  "tokio",
@@ -2915,19 +2915,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "transposition_table"
+name = "transposition-table"
 version = "1.0.0"
 dependencies = [
  "itertools 0.12.0",
- "patchwork_core",
+ "patchwork-core",
  "rand",
 ]
 
 [[package]]
-name = "tree_policy"
+name = "tree-policy"
 version = "1.0.0"
 dependencies = [
- "patchwork_core",
+ "patchwork-core",
 ]
 
 [[package]]
