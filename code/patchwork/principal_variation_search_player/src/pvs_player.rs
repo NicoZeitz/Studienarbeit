@@ -25,28 +25,6 @@ use crate::{pvs_options::FailingStrategy, PVSOptions, SearchDiagnostics, Transpo
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
 ///     - With PV-Action via Transposition Table
-///
-/// # Other Features that could still be implemented:
-/// - [Lazy SMP](https://www.chessprogramming.org/Lazy_SMP) - spawn multiple threads in iterative deepening, share transposition table, take whichever finishes first
-/// - [Automated Tuning](https://www.chessprogramming.org/Automated_Tuning) via regression, reinforcement learning or supervised learning for evaluation
-///   - [Texel's Tuning Method](https://www.chessprogramming.org/Texel%27s_Tuning_Method)
-/// - [ƎUИИ Efficiently Updatable Neural Networks](https://www.chessprogramming.org/NNUE) implementation in Rust [Carp Engine](https://github.com/dede1751/carp/tree/main/chess/src/nnue)
-/// - [(Reverse) Futility Pruning]
-/// - [PV_Extensions](https://www.chessprogramming.org/PV_Extensions)
-/// - [Legality Test](https://www.chessprogramming.org/Legal_Move#Legality_Test) for transposition table entries from key collisions
-/// - [Internal Iterative Deepening (IID)](https://www.chessprogramming.org/Internal_Iterative_Deepening)
-/// - [Null Move Pruning](https://www.chessprogramming.org/Null_Move_Pruning) if it brings something
-///
-/// # BUG:
-///
-/// - Sometimes the nodes searched are 0 but it still continues to the next depth (how can this happen?)
-/// - Sometimes the best action is always NONE
-/// - Sometimes the game crashes with do_action (expected non-null action)
-/// - The performance vs. greedy still seems too bad.
-/// - The evaluation for the best action is sometimes very negative??
-/// - Walking actions are take as best too often? (Or maybe only because they are the only available)
-/// - Branching factor (EFF, MEAN) and Move Ordering often none in diagnostics
-/// - The check with aspiration windows fails even when they are turned off (possible fixed now through right player flag)
 pub struct PVSPlayer<Orderer: ActionOrderer = TableActionOrderer, Eval: Evaluator = StaticEvaluator> {
     /// The name of the player.
     pub name: String,
@@ -499,7 +477,6 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         // action is unknown
         self.store_transposition_table(game, depth, alpha, evaluation_bound, best_action);
 
-        // TODO: remove these
         if ply_from_root == 0 {
             self.best_action = Some(best_action);
             self.best_evaluation = Some(alpha);

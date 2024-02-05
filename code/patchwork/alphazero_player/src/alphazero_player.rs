@@ -26,7 +26,6 @@ impl Player for AlphaZeroPlayer {
     }
 
     fn get_action(&mut self, _game: &Patchwork) -> PlayerResult<ActionId> {
-        // TODO:
-        todo!()
+        unimplemented!("[AlphaZeroPlayer::get_action]")
     }
 }

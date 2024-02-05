@@ -46,10 +46,12 @@ lazy_static! {
 
 impl Default for NeuralNetworkEvaluator {
     fn default() -> Self {
-        // TODO: Correct Implementation with loading from safe tensors embedding into exe
-        let vm = VarMap::new();
-        let vb = VarBuilder::from_varmap(&vm, DType::F32, &Device::Cpu);
-        Self::new(vb).unwrap()
+        // Correct Implementation with loading from safe tensors embedding into exe
+        // Temporary code for creating a NeuralNetworkEvaluator
+        // let vm = VarMap::new();
+        // let vb = VarBuilder::from_varmap(&vm, DType::F32, &Device::Cpu);
+        // Self::new(vb).unwrap()
+        unimplemented!("[NeuralNetworkEvaluator::default]")
     }
 }
 

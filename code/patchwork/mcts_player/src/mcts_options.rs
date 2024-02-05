@@ -51,12 +51,12 @@ impl MCTSOptions {
 
 impl Default for MCTSOptions {
     fn default() -> Self {
-        let _root_parallelization = std::thread::available_parallelism()
+        let root_parallelization = std::thread::available_parallelism()
             .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
             .unwrap_or(NON_ZERO_USIZE_FOUR);
 
         Self {
-            root_parallelization: NON_ZERO_USIZE_ONE, // TODO: replace with variable
+            root_parallelization,
             leaf_parallelization: NON_ZERO_USIZE_ONE,
             end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(20)),
             reuse_tree: false,

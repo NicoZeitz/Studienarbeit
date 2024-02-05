@@ -9,11 +9,6 @@ pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_
 
 use crate::{MCTSEndCondition, MCTSOptions, Node, SearchTree};
 
-// TODO:
-// print tree to verbose
-// allow tree reuse
-// allow root parallelization
-
 /// A computer player that uses the Monte Carlo Tree Search (MCTS) algorithm to choose an action.
 pub struct MCTSPlayer<Policy: TreePolicy = ScoredUCTPolicy, Eval: Evaluator = ScoreEvaluator> {
     /// The options for the MCTS algorithm.
@@ -28,7 +23,9 @@ pub struct MCTSPlayer<Policy: TreePolicy = ScoredUCTPolicy, Eval: Evaluator = Sc
     last_roots: Vec<Rc<RefCell<Node>>>,
 }
 
+/// A Wrapper struct used for unsafe sending a Node to another thread.
 struct NodeWrapper {
+    /// The node to wrap.
     node: Option<Rc<RefCell<Node>>>,
 }
 
@@ -428,6 +425,25 @@ fn get_tree_for_reuse(action: ActionId, root: Rc<RefCell<Node>>) -> Rc<RefCell<N
     new_root
 }
 
+/// Writes the diagnostics of the search tree to the given writer.
+/// The diagnostics include:
+/// * The duration of the search
+/// * The number of iterations
+/// * The expanded depth of the search tree
+/// * The win prediction of the search tree
+/// * The principal variation of the search tree
+/// * The minimum and maximum evaluation of the search tree
+///
+/// # Arguments
+///
+/// * `diagnostics` - The diagnostics with the write targets.
+/// * `iteration` - The current iteration of the search.
+/// * `time_passed` - The time passed since the start of the search.
+/// * `search_tree` - The search tree to write the diagnostics of.
+///
+/// # Returns
+///
+/// The result of the write operation.
 fn write_diagnostics(
     diagnostics: &mut Diagnostics,
     iteration: usize,
@@ -457,6 +473,16 @@ fn write_diagnostics(
     Ok(())
 }
 
+/// Writes the error message to the diagnostics writer.
+///
+/// # Arguments
+///
+/// * `diagnostics` - The diagnostics with the write targets.
+/// * `message` - The message to write.
+///
+/// # Returns
+///
+/// The result of the write operation.
 fn write_worker_error(diagnostics: &mut Diagnostics, message: &str) -> Result<(), std::io::Error> {
     match diagnostics {
         Diagnostics::Disabled => {}
@@ -477,8 +503,22 @@ fn write_worker_error(diagnostics: &mut Diagnostics, message: &str) -> Result<()
     Ok(())
 }
 
-#[rustfmt::skip]
-fn write_verbose_diagnostics(diagnostics: &mut Diagnostics, search_tree: &SearchTree<impl TreePolicy, impl Evaluator>) -> Result<(), std::io::Error> {
+/// Writes the verbose diagnostics of the search tree to the given writer.
+/// This is a full printout of the search tree to the debug writer.
+///
+/// # Arguments
+///
+/// * `diagnostics` - The diagnostics with the write targets.
+/// * `search_tree` - The search tree to write the diagnostics of.
+///
+/// # Returns
+///
+/// The result of the write operation.
+fn write_verbose_diagnostics(
+    diagnostics: &mut Diagnostics,
+    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
+) -> Result<(), std::io::Error> {
+    #[rustfmt::skip]
     match diagnostics {
         Diagnostics::Verbose { debug_writer: ref mut writer, .. } |
         Diagnostics::VerboseOnly { debug_writer: ref mut writer } => {
@@ -489,7 +529,7 @@ fn write_verbose_diagnostics(diagnostics: &mut Diagnostics, search_tree: &Search
             search_tree.write_tree(writer)?;
         },
         _ => {}
-    }
+    };
 
     Ok(())
 }

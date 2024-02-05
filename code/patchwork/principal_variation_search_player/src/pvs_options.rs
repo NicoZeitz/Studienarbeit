@@ -68,7 +68,7 @@ impl Default for PVSFeatures {
     fn default() -> Self {
         Self {
             failing_strategy: FailingStrategy::FailHard,
-            aspiration_window: false, // TODO: reenable
+            aspiration_window: true,
             transposition_table: Default::default(),
             late_move_reductions: true,
             late_move_pruning: true,
