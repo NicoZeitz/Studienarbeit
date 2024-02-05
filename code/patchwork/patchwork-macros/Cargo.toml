@@ -1,6 +1,6 @@
 [package]
-name = "patchwork_macros"
-description = "Different macros used by the patchwork_core crate"
+name = "patchwork-macros"
+description = "Different macros used by the patchwork-core crate"
 edition = "2021"
 version.workspace = true
 authors.workspace = true

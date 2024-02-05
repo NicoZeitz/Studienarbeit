@@ -1,5 +1,5 @@
 [package]
-name = "action_orderer"
+name = "action-orderer"
 description = "A library for ordering actions in a patchwork game"
 edition = "2021"
 version.workspace = true
@@ -9,7 +9,7 @@ license.workspace = true
 
 [dependencies]
 lazy_static = "1.4.0"
-patchwork_core = { path = "../patchwork_core" }
+patchwork-core = { path = "../patchwork-core" }
 
 [dev-dependencies]
 criterion = { version = "0.4" }

@@ -1,0 +1,27 @@
+[package]
+name = "patchwork-lib"
+description = "The package bundles all the libraries (core, players) used by Patchwork."
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[features]
+default = []
+mkl = ["evaluator/mkl", "alphazero-player/mkl"]
+cuda = ["evaluator/cuda", "alphazero-player/cuda"]
+
+[dependencies]
+action-orderer = { path = "../action-orderer" }
+patchwork-core = { path = "../patchwork-core" }
+evaluator = { path = "../evaluator" }
+patchwork-macros = { path = "../patchwork-macros" }
+alphazero-player = { path = "../alphazero-player" }
+human-player = { path = "../human-player" }
+random-player = { path = "../random-player" }
+greedy-player = { path = "../greedy-player" }
+mcts-player = { path = "../mcts-player" }
+minimax-player = { path = "../minimax-player" }
+tree-policy = { path = "../tree-policy" }
+principal-variation-search-player = { path = "../principal-variation-search-player" }

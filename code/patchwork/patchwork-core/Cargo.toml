@@ -1,5 +1,5 @@
 [package]
-name = "patchwork_core"
+name = "patchwork-core"
 description = "Core game logic library for Patchwork."
 edition = "2021"
 version.workspace = true
@@ -9,7 +9,7 @@ license.workspace = true
 
 [dependencies]
 lazy_static = "1.4.0"
-patchwork_macros = { path = "../patchwork_macros" }
+patchwork-macros = { path = "../patchwork-macros" }
 rand = "0.8.5"
 rand_xoshiro = "0.6.0"
 thiserror = "1.0.51"

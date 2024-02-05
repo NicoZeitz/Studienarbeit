@@ -1,5 +1,5 @@
 [package]
-name = "max_button_income"
+name = "max-button-income"
 description = "Analysis of the max button income in patchwork"
 edition = "2021"
 version.workspace = true

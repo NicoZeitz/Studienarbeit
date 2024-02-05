@@ -1,5 +1,5 @@
 [package]
-name = "alphazero_player"
+name = "alphazero-player"
 description = "An alphaZero player for patchwork"
 edition = "2021"
 version.workspace = true
@@ -16,8 +16,8 @@ cuda = ["candle-core/cuda", "candle-core/cudnn", "candle-nn/cuda"]
 [dependencies]
 candle-core = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
 candle-nn = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
-patchwork_core = { path = "../patchwork_core" }
+patchwork-core = { path = "../patchwork-core" }
 
 [[bin]]
-name = "alphazero_player_verification"
+name = "alphazero-player_verification"
 path = "src/verification.rs"

@@ -17,7 +17,7 @@ candle-core = { version = "0.3.3", git = "https://github.com//huggingface/candle
 candle-nn = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
 lazy_static = "1.4.0"
 linfa = "0.7.0"
-patchwork_core = { path = "../patchwork_core" }
+patchwork-core = { path = "../patchwork-core" }
 
 [[bin]]
 name = "evaluator_verification"

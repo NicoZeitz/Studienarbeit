@@ -12,8 +12,8 @@ default = []
 disable-logging = []
 
 [dependencies]
-patchwork_core = { path = "../patchwork_core" }
-tree_policy = { path = "../tree_policy" }
+patchwork-core = { path = "../patchwork-core" }
+tree-policy = { path = "../tree-policy" }
 evaluator = { path = "../evaluator" }
 itertools = "0.12.0"
 rand = "0.8.5"
