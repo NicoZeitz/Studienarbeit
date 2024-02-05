@@ -14,8 +14,8 @@ mkl = ["candle-core/mkl", "candle-nn/mkl"]
 cuda = ["candle-core/cuda", "candle-core/cudnn", "candle-nn/cuda"]
 
 [dependencies]
-candle-core = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
-candle-nn = { version = "0.3.3", git = "https://github.com//huggingface/candle.git" }
+candle-core = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
+candle-nn = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
 patchwork-core = { path = "../patchwork-core" }
 
 [[bin]]

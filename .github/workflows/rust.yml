@@ -34,7 +34,7 @@ jobs:
               working-directory: ./code/patchwork
               run: cargo test --workspace --doc
             - name: Cargo Bench
-              working-directory: ./code/patchwork/patchwork_core
+              working-directory: ./code/patchwork/patchwork-core
               run: cargo bench --bench performance
     fmt:
         name: cargo fmt
