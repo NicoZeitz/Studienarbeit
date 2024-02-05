@@ -36,9 +36,6 @@ pub mod prelude {
 mod tests {
     use std::num::NonZeroUsize;
 
-    use ::evaluator::{StaticEvaluator, WinLossEvaluator};
-    use ::tree_policy::UCTPolicy;
-
     use super::player::*;
     use super::*;
 
@@ -50,7 +47,8 @@ mod tests {
 
     #[test]
     fn greedy_player() {
-        let player = Box::new(GreedyPlayer::new("Greedy Player"));
+        let player: GreedyPlayer = GreedyPlayer::new("Greedy Player");
+        let player = Box::new(player);
         test_player(player);
     }
 
@@ -69,20 +67,21 @@ mod tests {
     #[test]
     #[ignore = "PVS Player fails, needs to be investigated (maybe because of short time?)"]
     fn pvs_player() {
-        let player = Box::new(PVSPlayer::<TableActionOrderer, StaticEvaluator>::new(
+        let player: PVSPlayer = PVSPlayer::new(
             "PVS Player",
             Some(PVSOptions {
                 logging: Logging::Disabled,
                 time_limit: std::time::Duration::from_secs(1),
                 features: PVSFeatures::default(),
             }),
-        ));
+        );
+        let player = Box::new(player);
         test_player(player);
     }
 
     #[test]
     fn mcts_player() {
-        let player = Box::new(MCTSPlayer::<UCTPolicy, WinLossEvaluator>::new(
+        let player: MCTSPlayer = MCTSPlayer::new(
             "MCTS Player",
             Some(MCTSOptions {
                 end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(1)),
@@ -91,7 +90,8 @@ mod tests {
                 root_parallelization: NonZeroUsize::new(1).unwrap(),
                 logging: Logging::Disabled,
             }),
-        ));
+        );
+        let player = Box::new(player);
         test_player(player);
     }
 
