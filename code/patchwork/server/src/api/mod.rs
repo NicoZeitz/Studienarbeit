@@ -5,7 +5,7 @@ use axum::{
     extract::{
         self,
         ws::{Message, WebSocket, WebSocketUpgrade},
-        ConnectInfo,
+        ConnectInfo, Path,
     },
     http::StatusCode,
     response::IntoResponse,
@@ -17,26 +17,53 @@ use lazy_static::lazy_static;
 use patchwork_lib::{GameOptions, Patchwork};
 use uuid::Uuid;
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RunningGame {
+    state: PatchworkState,
+    player_1: String, // TODO: reconnect for player and so on
+    player_2: String,
+    ply: u32,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct Options {
+    seed: Option<u64>,
+}
+
 lazy_static! {
-    static ref GAMES: std::sync::Mutex<HashMap<String, Patchwork>> = std::sync::Mutex::new(HashMap::new());
+    static ref GAMES: std::sync::Mutex<HashMap<Uuid, RunningGame>> = std::sync::Mutex::new(HashMap::new());
 }
 
 pub fn api_router() -> Router {
     Router::new()
+        .route("/game/:uuid", post(game_handler))
         // .route("/available_players")
         // .route("/get_valid_actions(game_id, state)")
         // .route("/is_valid_action(game_id, state, action)")
         // .route("/do_action(game_id, state)")
-        .route("/new-game", post(new_game_handler))
+        // .route("/upi/:uuid", get(ws_handler)) // set_option player
         .route("/upi", get(ws_handler)) // set_option player
         .fallback_service(any(not_found))
 }
 
-async fn new_game_handler(extract::Json(payload): extract::Json<Option<GameOptions>>) -> impl IntoResponse {
-    let state = Patchwork::get_initial_state(payload);
-    let id = Uuid::new_v4().to_string();
-    GAMES.lock().unwrap().insert(id.clone(), state.clone());
-    Json(PatchworkState { state, id })
+async fn game_handler(Path(uuid): Path<Uuid>, payload: Option<extract::Json<Options>>) -> impl IntoResponse {
+    if let Some(game) = GAMES.lock().unwrap().get(&uuid) {
+        // existing game
+        return Json(game.clone());
+    }
+
+    // new game
+    let new_game = RunningGame {
+        state: PatchworkState(Patchwork::get_initial_state(
+            payload.and_then(|o| o.seed).map(|seed| GameOptions { seed }),
+        )),
+        player_1: "player_1".to_string(),
+        player_2: "player_2".to_string(),
+        ply: 0,
+    };
+
+    GAMES.lock().unwrap().insert(uuid, new_game.clone());
+    Json(new_game)
 }
 
 async fn ws_handler(ws: WebSocketUpgrade, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> impl IntoResponse {

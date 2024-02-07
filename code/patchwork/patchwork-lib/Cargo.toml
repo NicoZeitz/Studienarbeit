@@ -25,3 +25,6 @@ mcts-player = { path = "../mcts-player" }
 minimax-player = { path = "../minimax-player" }
 tree-policy = { path = "../tree-policy" }
 principal-variation-search-player = { path = "../principal-variation-search-player" }
+lazy_static = "1.4.0"
+uuid = { version = "1.7.0", features = ["v4", "fast-rng", "serde"] }
+dashmap = "5.5.3"
