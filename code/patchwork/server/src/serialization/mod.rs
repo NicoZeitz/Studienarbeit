@@ -1,18 +1,37 @@
+use std::fmt;
+
 use serde::ser::{SerializeSeq, SerializeStruct};
 
 use patchwork_lib::{time_board_flags, Patch, PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard};
 
-pub struct PatchworkState {
-    pub state: Patchwork,
-    pub id: String,
+pub struct PatchworkState(pub Patchwork);
+
+impl fmt::Debug for PatchworkState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
 }
+
+impl Clone for PatchworkState {
+    fn clone(&self) -> Self {
+        PatchworkState(self.0.clone())
+    }
+}
+
+impl PartialEq for PatchworkState {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
+
+impl Eq for PatchworkState {}
 
 impl serde::Serialize for PatchworkState {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        let PatchworkState { state, id } = self;
+        let PatchworkState(state) = self;
         let mut serialized_state = serializer.serialize_struct("Patchwork", 8)?;
 
         serialized_state.serialize_field(
@@ -42,7 +61,6 @@ impl serde::Serialize for PatchworkState {
         serialized_state.serialize_field("turn_type", &state.turn_type)?;
         serialized_state.serialize_field("status_flags", &StatusFlagSerialization { state })?;
         serialized_state.serialize_field("notation", &state.save_to_notation_with_phantom_state(true).unwrap())?;
-        serialized_state.serialize_field("game_id", &id)?;
         serialized_state.end()
     }
 }

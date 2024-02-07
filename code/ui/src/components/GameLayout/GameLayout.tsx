@@ -1,6 +1,6 @@
 import { Link, LoaderFunctionArgs, useLoaderData } from 'react-router-dom';
 import TableCenter from '../TableCenter/TableCenter.tsx';
-import { API_URL, type PatchworkState } from '../../constants.ts';
+import { API_URL, Game, type PatchworkState } from '../../constants.ts';
 import { createContext } from 'react';
 import Patch from '../Patch/Patch.tsx';
 import { motion } from 'framer-motion';
@@ -10,7 +10,8 @@ export interface GameLayoutProps {}
 export const StateContext = createContext<PatchworkState>(null!);
 
 export default function GameLayout(props: GameLayoutProps) {
-    const state = useLoaderData() as Awaited<ReturnType<typeof gameLoader>>;
+    const game = useLoaderData() as Awaited<ReturnType<typeof gameLoader>>;
+    const { state } = game;
 
     // TODO: extract player info to own component, define player colors somewhere
     return (
@@ -117,17 +118,17 @@ export async function gameLoader({ params }: LoaderFunctionArgs) {
 
     // TODO: other url to start or continue a game
     // const res = await fetch(`${API_URL}/game/${id}`);
-    const res = await fetch(`${API_URL}/new-game`, {
+    const res = await fetch(`${API_URL}/game/${id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ seed: 42 }), // TODO: make optional on server-side
+        // body: JSON.stringify({ parameters }),
     });
-    const state = (await res.json()) as PatchworkState;
+    const game = (await res.json()) as Game;
 
     console.log(id);
-    console.log(state); // TODO: remove
+    console.log(game); // TODO: remove
 
-    return state;
+    return game;
 }

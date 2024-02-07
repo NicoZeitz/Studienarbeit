@@ -32,6 +32,8 @@ pub mod prelude {
     pub use patchwork_core::{ActionId, Patch, Patchwork, Termination, TerminationType};
 }
 
+mod game_manager;
+
 #[cfg(test)]
 mod tests {
     use std::num::NonZeroUsize;
