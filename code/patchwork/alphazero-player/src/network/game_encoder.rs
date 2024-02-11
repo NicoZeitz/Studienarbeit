@@ -69,22 +69,30 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
         })
     }
 
-    /// Encodes the given game into a tensor of shape (1, PATCH_LAYERS + 5, 9, 9)
+    /// Encodes the given games into a tensor of shape (batch_size, PATCH_LAYERS + 5, 9, 9)
     /// The tensor contains the encoded patches, the quilt boards, the current
     /// player and the time board.
     ///
+    /// # Arguments
+    ///
+    /// * `games` - The games to encode of length `batch_size`.
+    ///
     /// # Returns
     ///
-    /// A tensor of shape (1, PATCH_LAYERS + 5, 9, 9) containing the encoded game.
+    /// A tensor of shape (batch_size, PATCH_LAYERS + 5, 9, 9) containing the encoded game.
     #[rustfmt::skip]
-    pub fn encode_state(&self, game: &Patchwork) -> Result<Tensor> {
-        let patches = self.encode_patches(&game.patches)?; // PATCH_LAYERS + 1
-        let player_1_quilt_board = self.encode_quilt_board(&game.player_1.quilt_board)?; // 1 layer
-        let player_2_quilt_board = self.encode_quilt_board(&game.player_2.quilt_board)?; // 1 layer
-        let current_player = self.encode_current_player(game)?; // 1 layer
-        let time_board = self.encode_time_board(&game.time_board)?; // 1 layer
+    pub fn encode_state(&self, games: &[Patchwork]) -> Result<Tensor> {
+        let encoded_games = games.iter().map(|game| {
+            let patches = self.encode_patches(&game.patches)?;                               // PATCH_LAYERS + 1
+            let player_1_quilt_board = self.encode_quilt_board(&game.player_1.quilt_board)?; // 1 layer
+            let player_2_quilt_board = self.encode_quilt_board(&game.player_2.quilt_board)?; // 1 layer
+            let current_player = self.encode_current_player(game)?;                          // 1 layer
+            let time_board = self.encode_time_board(&game.time_board)?;                      // 1 layer
 
-        Tensor::cat(&[&player_1_quilt_board, &player_2_quilt_board, &current_player, &patches, &time_board], 0)?.unsqueeze(0)
+            Tensor::cat(&[&player_1_quilt_board, &player_2_quilt_board, &current_player, &patches, &time_board], 0)
+        }).collect::<Result<Vec<_>>>()?;
+
+        Tensor::stack(&encoded_games, 0)
     }
 
     /// Encodes the given patches into a tensor.

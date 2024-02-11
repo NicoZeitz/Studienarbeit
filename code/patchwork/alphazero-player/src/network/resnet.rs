@@ -76,8 +76,8 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
         for res_block in &self.residual_layers {
             xs = res_block.forward_t(&xs, train)?;
         }
-        let policy = self.policy_head.forward_t(&xs, train)?;
-        let value = self.value_head.forward_t(&xs, train)?;
-        Ok((policy, value))
+        let policies = self.policy_head.forward_t(&xs, train)?;
+        let values = self.value_head.forward_t(&xs, train)?;
+        Ok((policies, values))
     }
 }

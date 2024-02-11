@@ -64,7 +64,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn size(&self) -> usize {
         debug_assert_eq!(
             self.entries.len() * std::mem::size_of::<Entry>(),
@@ -90,7 +90,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn probe_hash_entry(&self, game: &Patchwork, alpha: i32, beta: i32, depth: usize) -> Option<(ActionId, i32)> {
         self.statistics.increment_accesses();
 
@@ -248,7 +248,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     #[allow(clippy::if_same_then_else)]
     pub fn store_evaluation(
         &mut self,
@@ -306,7 +306,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     #[inline(always)]
     fn should_replace(
         &self,
@@ -361,7 +361,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn increment_age(&mut self) {
         self.current_age.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
     }
@@ -430,7 +430,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn probe_pv_move(&self, game: &Patchwork) -> Option<ActionId> {
         let hash = self.zobrist_hash.hash(game);
         let index = (hash % self.entries.len() as u64) as usize;
@@ -450,7 +450,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn clear(&mut self) {
         self.entries = vec![Entry::default(); self.entries.len()];
         self.current_age.store(0, std::sync::atomic::Ordering::SeqCst);
@@ -464,7 +464,7 @@ impl TranspositionTable {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     pub fn reset_statistics(&mut self) {
         let entries = self
             .statistics

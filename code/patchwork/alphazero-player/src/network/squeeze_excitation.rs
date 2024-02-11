@@ -38,7 +38,7 @@ impl SqueezeExcitation {
         )?;
         let activation = activation.unwrap_or(Box::new(candle_nn::func_t(|xs, _train| xs.relu())));
         let scale_activation =
-            scale_activation.unwrap_or(Box::new(candle_nn::func_t(|xs, _train| candle_nn::ops::sigmoid(&xs))));
+            scale_activation.unwrap_or(Box::new(candle_nn::func_t(|xs, _train| candle_nn::ops::sigmoid(xs))));
 
         Ok(Self {
             fc1,

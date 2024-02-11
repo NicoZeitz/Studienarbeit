@@ -867,7 +867,7 @@ impl LMPFlags {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     #[inline(always)]
     pub const fn fake() -> Self {
         LMPFlags {
@@ -942,7 +942,7 @@ impl LMPFlags {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     #[inline(always)]
     pub fn set_action_type_done(&mut self, action: ActionId) {
         if action.is_walking() {
@@ -965,7 +965,7 @@ impl LMPFlags {
     ///
     /// # Complexity
     ///
-    /// `𝒪(1)`
+    /// `𝒪(𝟣)`
     #[inline(always)]
     pub fn get_next_missing(&mut self) -> Option<ActionId> {
         if let Some(action) = self.walking.take() {

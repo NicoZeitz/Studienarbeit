@@ -61,8 +61,8 @@ impl<
     ///
     /// The policy and value tensors.
     #[allow(dead_code)]
-    pub fn forward_t(&self, game: &Patchwork, train: bool) -> Result<(Tensor, Tensor)> {
-        let stack = self.encoder.encode_state(game)?;
+    pub fn forward_t(&self, games: &[Patchwork], train: bool) -> Result<(Tensor, Tensor)> {
+        let stack = self.encoder.encode_state(games)?;
         self.network.forward_t(&stack, train)
     }
 }
