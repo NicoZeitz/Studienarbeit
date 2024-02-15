@@ -432,7 +432,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Returns
     ///
     /// The best child node of the given parent node.
-    fn node_select(&self, node_id: NodeId) -> NodeId {
+    pub fn node_select(&self, node_id: NodeId) -> NodeId {
         let node = self.allocator.get_node(node_id);
         let children = node.children.iter().map(|node_id| self.allocator.get_node(*node_id));
 
@@ -450,7 +450,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Returns
     ///
     /// The new child node.
-    fn node_expand(&mut self, node_id: NodeId) -> Result<NodeId, PatchworkError> {
+    pub fn node_expand(&mut self, node_id: NodeId) -> Result<NodeId, PatchworkError> {
         let node = self.allocator.get_node_mut(node_id);
         let action = node.expandable_actions.remove(0);
 

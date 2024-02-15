@@ -3,7 +3,7 @@ use std::fmt;
 use patchwork_core::{ActionId, Patchwork, TreePolicyNode};
 use rand::seq::SliceRandom;
 
-use crate::{node_id::NodeId, AreaAllocator};
+use crate::{AreaAllocator, NodeId};
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Node {
