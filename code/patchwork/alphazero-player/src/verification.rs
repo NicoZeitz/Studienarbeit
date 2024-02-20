@@ -5,9 +5,9 @@ use candle_nn::{VarBuilder, VarMap};
 fn main() -> Result<()> {
     println!("Starting");
 
-    let device = &Device::cuda_if_available(0)?;
+    let device = Device::cuda_if_available(0)?;
     let vm = VarMap::new();
-    let vb = VarBuilder::from_varmap(&vm, DType::F32, device);
+    let vb = VarBuilder::from_varmap(&vm, DType::F32, &device.clone());
     let patch_zero: PatchZero = PatchZero::new(vb, device)?;
 
     let states = vec![
@@ -24,7 +24,7 @@ fn main() -> Result<()> {
     ];
 
     let now = std::time::Instant::now();
-    let (policies, values) = patch_zero.forward_t(&states, false)?;
+    let (policies, values) = patch_zero.forward_t(&states.iter().collect::<Vec<_>>(), false)?;
 
     let _first_policy = policies.i((0, ..))?;
     let _first_value = values.i((0, ..))?.squeeze(0)?.to_scalar::<f32>()?;

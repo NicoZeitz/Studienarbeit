@@ -1,9 +1,8 @@
-use candle_core::{safetensors, Device};
-use candle_nn::{AdamW, Optimizer, VarMap};
-use patchwork_core::Patchwork;
+use candle_core::Device;
+use candle_nn::Optimizer;
 use tqdm::tqdm;
 
-use crate::PatchZero;
+use crate::{game_state::GameState, PatchZero};
 
 pub struct TrainingArgs {
     // 'C': 2,
@@ -29,7 +28,7 @@ pub struct Trainer<
     pub device: &'a Device,
     pub args: TrainingArgs,
     pub optimizer: Optim,
-    pub network: PatchZero<'a, AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
+    pub network: PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
 }
 
 impl<
@@ -50,7 +49,7 @@ impl<
     /// * `args` - The arguments to use for training the neural network.
     pub fn new(
         device: &'a Device,
-        network: PatchZero<'a, AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
+        network: PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
         optimizer: Optim,
         args: TrainingArgs,
     ) -> Self {
@@ -64,20 +63,20 @@ impl<
 
     pub fn learn(&mut self) {
         for iteration in 0..self.args.number_of_iterations {
-            let memory = vec![];
+            let mut history = vec![];
 
             let self_play_iterations = if iteration != self.args.number_of_iterations - 1 {
                 self.args.number_of_self_play_iterations / self.args.number_of_parallel_games
             } else {
-                self.args.number_of_self_play_iterations - memory.len() as u32
+                self.args.number_of_self_play_iterations - history.len() as u32
             };
 
             for self_play_iteration in tqdm(0..self_play_iterations) {
-                memory.extend(self.self_play(false));
+                history.extend(self.self_play(false));
             }
 
             for epoch in tqdm(0..self.args.number_of_epochs) {
-                self.train(memory);
+                self.train(&mut history);
             }
 
             // VarMap::load(&mut self, path)
@@ -90,15 +89,15 @@ impl<
     }
 
     fn self_play(&self, train: bool) -> Vec<usize> {
-        let mut memory = vec![];
-        let games = (0..self.args.number_of_parallel_games).map(|_| GameState::new());
+        let history = vec![];
+        let games = (0..self.args.number_of_parallel_games).map(|_| GameState::default());
 
         while games.len() > 0 {
             // let states =
         }
 
-        memory
+        history
     }
 
-    fn train(&self, memory: Vec<usize>) {}
+    fn train(&self, memory: &mut [usize]) {}
 }

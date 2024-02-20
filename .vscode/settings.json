@@ -1,6 +1,9 @@
 {
     // Rust
     "rust-analyzer.linkedProjects": ["code\\patchwork\\Cargo.toml"],
+    "rust-analyzer.procMacro.ignored": {
+        "itertools": "test"
+    },
     // "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
         "editor.inlayHints.enabled": "on"
@@ -228,6 +231,7 @@
         "rustc",
         "rustfmt",
         "rustyline",
+        "safetensors",
         "Schnellstart",
         "schreiben",
         "Schrift",

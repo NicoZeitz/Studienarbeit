@@ -28,7 +28,7 @@ pub struct Node {
     // The number of times this node has been won by player 1 (wins from a neutral perspective)
     pub neutral_wins: i32,
     // The number of times this node has been visited.
-    pub visit_count: i32,
+    pub visit_count: usize,
 }
 
 impl Node {
@@ -89,7 +89,7 @@ impl Node {
 impl TreePolicyNode for Node {
     type Player = bool;
 
-    fn visit_count(&self) -> i32 {
+    fn visit_count(&self) -> usize {
         self.visit_count
     }
 
@@ -105,33 +105,33 @@ impl TreePolicyNode for Node {
         }
     }
 
-    fn maximum_score_for(&self, player: Self::Player) -> i32 {
+    fn maximum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.minimum_score_for(!player)
         if player {
-            self.neutral_max_score
+            self.neutral_max_score as f64
         } else {
-            -self.neutral_min_score
+            -self.neutral_min_score as f64
         }
     }
 
-    fn minimum_score_for(&self, player: Self::Player) -> i32 {
+    fn minimum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.maximum_score_for(!player)
         if player {
-            self.neutral_min_score
+            self.neutral_min_score as f64
         } else {
-            -self.neutral_max_score
+            -self.neutral_max_score as f64
         }
     }
 
-    fn score_range(&self) -> i32 {
-        self.neutral_max_score - self.neutral_min_score
+    fn score_range(&self) -> f64 {
+        (self.neutral_max_score - self.neutral_min_score) as f64
     }
 
-    fn score_sum_for(&self, player: Self::Player) -> i64 {
+    fn score_sum_for(&self, player: Self::Player) -> f64 {
         if player {
-            self.neutral_score_sum
+            self.neutral_score_sum as f64
         } else {
-            -self.neutral_score_sum
+            -self.neutral_score_sum as f64
         }
     }
 }

@@ -6,7 +6,6 @@ mod mcts;
 mod network;
 mod train;
 
-use network::*;
-
 pub use alphazero_options::*;
 pub use alphazero_player::AlphaZeroPlayer;
+pub use network::PatchZero;

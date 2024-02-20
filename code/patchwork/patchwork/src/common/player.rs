@@ -615,9 +615,8 @@ fn parse_mcts_player(
 
 fn parse_alphazero_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
     if name == "alphazero" {
-        return Some(Box::new(AlphaZeroPlayer::new(format!(
-            "AlphaZero Player {player_position}"
-        ))));
+        let player: AlphaZeroPlayer = AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}"), None);
+        return Some(Box::new(player));
     }
 
     None

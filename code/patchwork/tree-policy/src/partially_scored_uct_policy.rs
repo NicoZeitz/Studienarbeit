@@ -78,7 +78,7 @@ impl<const SCORE_PORTION: u8> ScoredTreePolicy for PartiallyScoredUCTPolicy<SCOR
 
         let exploration = (parent_visit_count.ln() / child_visit_count).sqrt();
         let exploration_wins = self.exploration_constant * exploration;
-        let exploration_score = self.exploration_constant * parent.score_range() as f64 * exploration;
+        let exploration_score = self.exploration_constant * parent.score_range() * exploration;
 
         Self::PORTION * (exploitation_score + exploration_score)
             + (1f64 - Self::PORTION) * (exploitation_wins + exploration_wins)

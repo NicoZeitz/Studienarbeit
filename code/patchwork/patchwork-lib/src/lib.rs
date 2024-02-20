@@ -100,7 +100,15 @@ mod tests {
     #[test]
     #[ignore = "AlphaZero player is not yet implemented"]
     fn alphazero_player() {
-        let player = Box::new(AlphaZeroPlayer::new("AlphaZero Player"));
+        let player: AlphaZeroPlayer = AlphaZeroPlayer::new(
+            "AlphaZero Player",
+            Some(AlphaZeroOptions {
+                end_condition: AlphaZeroEndCondition::Time(std::time::Duration::from_secs(1)),
+                logging: Logging::Disabled,
+                ..Default::default()
+            }),
+        );
+        let player = Box::new(player);
         test_player(player);
     }
 

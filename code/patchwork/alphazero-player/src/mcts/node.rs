@@ -1,4 +1,4 @@
-use patchwork_core::{ActionId, Patchwork};
+use patchwork_core::{ActionId, Patchwork, TreePolicyNode};
 
 use crate::mcts::NodeId;
 
@@ -17,15 +17,15 @@ pub struct Node {
     /// The children nodes.
     pub children: Vec<NodeId>,
     /// The maximum neutral score of all the nodes in the subtree rooted at this node.
-    pub neutral_max_score: i32,
+    pub neutral_max_score: f32,
     // The minimum neutral score of all the nodes in the subtree rooted at this node.
-    pub neutral_min_score: i32,
+    pub neutral_min_score: f32,
     // The sum of the neutral scores of all the nodes in the subtree rooted at this node.
-    pub neutral_score_sum: i64,
+    pub neutral_score_sum: f64,
     // The number of times this node has been won by player 1 (wins from a neutral perspective)
     pub neutral_wins: i32,
     // The number of times this node has been visited.
-    pub visit_count: i32,
+    pub visit_count: usize,
 }
 
 impl Node {
@@ -53,10 +53,10 @@ impl Node {
             state,
             parent,
             children: vec![],
-            neutral_max_score: i32::MIN,
-            neutral_min_score: i32::MAX,
+            neutral_max_score: f32::NEG_INFINITY,
+            neutral_min_score: f32::INFINITY,
             neutral_wins: 0,
-            neutral_score_sum: 0,
+            neutral_score_sum: 0.0,
             visit_count: 0,
             action_taken,
             prior: prior.unwrap_or(0.0),
@@ -72,5 +72,59 @@ impl Node {
     /// `true` if the node is fully expanded, `false` otherwise.
     pub fn is_fully_expanded(&self) -> bool {
         self.children.len() > 0
+    }
+}
+
+impl TreePolicyNode for Node {
+    type Player = bool;
+
+    fn visit_count(&self) -> usize {
+        self.visit_count
+    }
+
+    fn current_player(&self) -> Self::Player {
+        self.state.is_player_1()
+    }
+
+    fn wins_for(&self, player: Self::Player) -> i32 {
+        if player {
+            self.neutral_wins
+        } else {
+            -self.neutral_wins
+        }
+    }
+
+    fn maximum_score_for(&self, player: Self::Player) -> f64 {
+        // == -self.minimum_score_for(!player)
+        if player {
+            self.neutral_max_score as f64
+        } else {
+            -self.neutral_min_score as f64
+        }
+    }
+
+    fn minimum_score_for(&self, player: Self::Player) -> f64 {
+        // == -self.maximum_score_for(!player)
+        if player {
+            self.neutral_min_score as f64
+        } else {
+            -self.neutral_max_score as f64
+        }
+    }
+
+    fn score_range(&self) -> f64 {
+        (self.neutral_max_score - self.neutral_min_score) as f64
+    }
+
+    fn score_sum_for(&self, player: Self::Player) -> f64 {
+        if player {
+            self.neutral_score_sum
+        } else {
+            -self.neutral_score_sum
+        }
+    }
+
+    fn prior_value(&self) -> f64 {
+        self.prior as f64
     }
 }

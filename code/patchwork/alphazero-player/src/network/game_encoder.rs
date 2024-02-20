@@ -7,15 +7,15 @@ use patchwork_core::{time_board_flags, Patch, PatchManager, Patchwork, QuiltBoar
 /// PATCH_LAYERS is the amount of patches that are encoded into a separate
 /// layer. All other patches will be encoded into a single layer via an lstm.
 #[derive(Debug, Clone)]
-pub struct GameEncoder<'a, const PATCH_LAYERS: usize> {
-    device: &'a Device,
+pub struct GameEncoder<const PATCH_LAYERS: usize> {
+    device: Device,
     patch_embeddings: Embedding,
     patch_lstm: LSTM,
     time_board_fc1: Linear,
     time_board_fc2: Linear,
 }
 
-impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
+impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     /// The amount of input features for the time board neural network.
     const TIME_BOARD_INPUT_SIZE: usize = 3
         + TimeBoard::MAX_POSITION as usize
@@ -35,7 +35,7 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
     /// # Returns
     ///
     /// A new game encoder.
-    pub fn new(vb: VarBuilder, device: &'a Device) -> Result<Self> {
+    pub fn new(vb: VarBuilder, device: Device) -> Result<Self> {
         let patch_embeddings = candle_nn::embedding(
             PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize,
             QuiltBoard::TILES as usize,
@@ -81,7 +81,7 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
     ///
     /// A tensor of shape (batch_size, PATCH_LAYERS + 5, 9, 9) containing the encoded game.
     #[rustfmt::skip]
-    pub fn encode_state(&self, games: &[Patchwork]) -> Result<Tensor> {
+    pub fn encode_state(&self, games: &[&Patchwork]) -> Result<Tensor> {
         let encoded_games = games.iter().map(|game| {
             let patches = self.encode_patches(&game.patches)?;                               // PATCH_LAYERS + 1
             let player_1_quilt_board = self.encode_quilt_board(&game.player_1.quilt_board)?; // 1 layer
@@ -117,20 +117,20 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
     /// the encoded patches.
     #[rustfmt::skip]
     fn encode_patches(&self, patches: &Vec<&'static Patch>) -> Result<Tensor> {
-        let beginning_patch_ids = Tensor::from_iter(patches.iter().take(PATCH_LAYERS).map(|patch| patch.id), self.device)?;
+        let beginning_patch_ids = Tensor::from_iter(patches.iter().take(PATCH_LAYERS).map(|patch| patch.id), &self.device)?;
         let beginning_patches = self.patch_embeddings.forward(&beginning_patch_ids)?.t()?;
 
-        let padding = Tensor::zeros(&[QuiltBoard::TILES as usize, PATCH_LAYERS - patches.len().clamp(0, PATCH_LAYERS)], DType::F32, self.device)?;
+        let padding = Tensor::zeros(&[QuiltBoard::TILES as usize, PATCH_LAYERS - patches.len().clamp(0, PATCH_LAYERS)], DType::F32, &self.device)?;
 
         if patches.len() <= PATCH_LAYERS {
-            return Tensor::cat(&[&beginning_patches, &padding,  &Tensor::zeros(&[1, 81], DType::F32, self.device)?], 1)?.reshape((
+            return Tensor::cat(&[&beginning_patches, &padding,  &Tensor::zeros(&[1, 81], DType::F32, &self.device)?], 1)?.reshape((
                 PATCH_LAYERS + 1,
                 QuiltBoard::ROWS as usize,
                 QuiltBoard::COLUMNS as usize,
             ));
         }
 
-        let ending_patch_ids = Tensor::from_iter(patches.iter().skip(PATCH_LAYERS).map(|patch| patch.id), self.device)?;
+        let ending_patch_ids = Tensor::from_iter(patches.iter().skip(PATCH_LAYERS).map(|patch| patch.id), &self.device)?;
         let ending_patches = self.patch_embeddings.forward(&ending_patch_ids)?;
 
         let mut lstm_state = self.patch_lstm.zero_state(1)?;
@@ -166,7 +166,7 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
         Tensor::from_slice(
             &quilt_board_slice,
             (QuiltBoard::ROWS as usize, QuiltBoard::COLUMNS as usize),
-            self.device,
+            &self.device,
         )?
         .unsqueeze(0)
     }
@@ -185,14 +185,14 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
             Tensor::ones(
                 (QuiltBoard::ROWS as usize, QuiltBoard::COLUMNS as usize),
                 DType::F32,
-                self.device,
+                &self.device,
             )?
             .unsqueeze(0)
         } else {
             Tensor::zeros(
                 (QuiltBoard::ROWS as usize, QuiltBoard::COLUMNS as usize),
                 DType::F32,
-                self.device,
+                &self.device,
             )?
             .unsqueeze(0)
         }
@@ -254,7 +254,7 @@ impl<'a, const PATCH_LAYERS: usize> GameEncoder<'a, PATCH_LAYERS> {
             Self::TIME_BOARD_INPUT_SIZE
         );
 
-        let mut xs = Tensor::from_vec(time_board_input, (1, Self::TIME_BOARD_INPUT_SIZE), self.device)?;
+        let mut xs = Tensor::from_vec(time_board_input, (1, Self::TIME_BOARD_INPUT_SIZE), &self.device)?;
         xs = self.time_board_fc1.forward(&xs)?.relu()?;
         xs = self.time_board_fc2.forward(&xs)?.relu()?;
         xs.reshape((1, QuiltBoard::ROWS as usize, QuiltBoard::COLUMNS as usize))

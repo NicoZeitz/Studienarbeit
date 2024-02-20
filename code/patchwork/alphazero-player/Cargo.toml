@@ -20,6 +20,7 @@ patchwork-core = { path = "../patchwork-core" }
 rand = "0.8.5"
 rand_distr = "0.4.3"
 tqdm = "0.6.0"
+tree-policy = { path = "../tree-policy" }
 
 [[bin]]
 name = "alphazero-player_verification"

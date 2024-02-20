@@ -283,7 +283,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         let root = self.allocator.get_node(self.root);
         let root_player = root.state.is_player_1();
 
-        root.minimum_score_for(root_player)
+        root.minimum_score_for(root_player) as i32
     }
 
     /// Gets the maximum score of all games played from the root node from the perspective of the
@@ -297,7 +297,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         let root = self.allocator.get_node(self.root);
         let root_player = root.state.is_player_1();
 
-        root.maximum_score_for(root_player)
+        root.maximum_score_for(root_player) as i32
     }
 
     /// Gets the amount of actions inside the root node
