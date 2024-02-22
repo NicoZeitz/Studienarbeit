@@ -1,3 +1,4 @@
+import DuckButton from '../DuckButton/DuckButton';
 import PlayerSelector from '../PlayerSelector/PlayerSelector';
 
 export interface MainPageProps {}
@@ -27,6 +28,7 @@ export default function MainPage(props: MainPageProps) {
             <button className="rounded-lg bg-[#68eb5d] px-10 py-3 text-lg font-medium">
                 Spiel starten
             </button>
+            <DuckButton />
         </div>
     );
 }
