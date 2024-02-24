@@ -2,7 +2,7 @@ use candle_core::Device;
 use candle_nn::Optimizer;
 use tqdm::tqdm;
 
-use crate::{game_state::GameState, PatchZero};
+use crate::{game_state::GameState, network::DefaultPatchZero};
 
 pub struct TrainingArgs {
     // 'C': 2,
@@ -18,27 +18,14 @@ pub struct TrainingArgs {
                                              // 'dirichlet_alpha': 0.3
 }
 
-pub struct Trainer<
-    'a,
-    const AMOUNT_PATCH_LAYERS: usize,
-    const AMOUNT_RESIDUAL_LAYERS: usize,
-    const AMOUNT_FILTERS: usize,
-    Optim: Optimizer,
-> {
+pub struct Trainer<'a, Optim: Optimizer> {
     pub device: &'a Device,
     pub args: TrainingArgs,
     pub optimizer: Optim,
-    pub network: PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
+    pub network: DefaultPatchZero,
 }
 
-impl<
-        'a,
-        const AMOUNT_PATCH_LAYERS: usize,
-        const AMOUNT_RESIDUAL_LAYERS: usize,
-        const AMOUNT_FILTERS: usize,
-        Optim: Optimizer,
-    > Trainer<'a, AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS, Optim>
-{
+impl<'a, Optim: Optimizer> Trainer<'a, Optim> {
     /// Creates a new trainer.
     ///
     /// # Arguments
@@ -47,12 +34,7 @@ impl<
     /// * `network` - The neural network to train.
     /// * `optimizer` - The optimizer to use for training the neural network.
     /// * `args` - The arguments to use for training the neural network.
-    pub fn new(
-        device: &'a Device,
-        network: PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
-        optimizer: Optim,
-        args: TrainingArgs,
-    ) -> Self {
+    pub fn new(device: &'a Device, network: DefaultPatchZero, optimizer: Optim, args: TrainingArgs) -> Self {
         Self {
             device,
             network,

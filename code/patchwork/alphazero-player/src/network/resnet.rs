@@ -77,7 +77,7 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
             xs = res_block.forward_t(&xs, train)?;
         }
         let policies = self.policy_head.forward_t(&xs, train)?;
-        let values = self.value_head.forward_t(&xs, train)?;
+        let values = self.value_head.forward_t(&xs, train)?.squeeze(1)?;
         Ok((policies, values))
     }
 }

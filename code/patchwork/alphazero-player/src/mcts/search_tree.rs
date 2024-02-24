@@ -1,26 +1,37 @@
 use std::rc::Rc;
 
 use candle_core::{Device, Tensor};
-use patchwork_core::{ActionId, NaturalActionId, PatchworkError, PlayerResult, TerminationType, TreePolicy};
+use patchwork_core::{ActionId, NaturalActionId, Patchwork, PatchworkError, PlayerResult, TerminationType, TreePolicy};
 use rand_distr::{Dirichlet, Distribution};
 
 use crate::{
     action::map_games_to_action_tensors,
     game_state::GameState,
     mcts::{AreaAllocator, NodeId},
-    AlphaZeroOptions, PatchZero,
+    network::PatchZero,
+    AlphaZeroOptions,
 };
 
 /// The search tree for the Monte Carlo Tree Search (MCTS) algorithm of the AlphaZero Player.
 pub struct SearchTree<
     // The tree policy to use for the MCTS algorithm.
     Policy: TreePolicy,
-    // The 3 patches that can be taken are encoded into separate layers.
+    // The amount of layers to use for encoding patches inside the neural network as own blocks.
+    // The minimum that should be used is 3 so that each available patch can be encoded in it's own
+    // layer.
     const AMOUNT_PATCH_LAYERS: usize = 3,
-    // 40 in paper
-    const AMOUNT_RESIDUAL_LAYERS: usize = 20,
-    // 256 in paper
-    const AMOUNT_FILTERS: usize = 128,
+    // The amount of residual layers to use in the neural network.
+    //
+    // # Note
+    //
+    // In the AlphaZero paper, the amount of residual layers is 40.
+    const AMOUNT_RESIDUAL_LAYERS: usize = 10,
+    // The amount of filters to use in the neural network.
+    //
+    // # Note
+    //
+    // In the AlphaZero paper, the amount of filters is 256.
+    const AMOUNT_FILTERS: usize = 64,
 > {
     /// Whether the network is in training or evaluation/interference mode
     pub train: bool,
@@ -32,6 +43,8 @@ pub struct SearchTree<
     pub dirichlet_noise: Dirichlet<f32>,
     /// The policy to select nodes during the selection phase.
     tree_policy: Policy,
+    // The batch states to evaluate in the next network evaluation
+    batch_states: Vec<(GameState, NodeId)>,
 }
 
 impl<
@@ -63,9 +76,11 @@ impl<
         network: PatchZero<{ AMOUNT_PATCH_LAYERS }, { AMOUNT_RESIDUAL_LAYERS }, { AMOUNT_FILTERS }>,
         options: Rc<AlphaZeroOptions>,
     ) -> Self {
-        let dirichlet_noise =
-            Dirichlet::new(&[options.dirichlet_alpha; NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS])
-                .expect("Failed to create dirichlet noise distribution");
+        let dirichlet_noise = Dirichlet::new_with_size(
+            options.dirichlet_alpha,
+            NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS,
+        )
+        .expect("Failed to create dirichlet noise distribution");
 
         Self {
             train,
@@ -73,6 +88,7 @@ impl<
             network,
             options,
             dirichlet_noise,
+            batch_states: vec![],
         }
     }
 
@@ -98,15 +114,22 @@ impl<
     /// # Returns
     ///
     /// The action probabilities for each game state.
-    pub fn search(&mut self, states: &mut [GameState]) -> PlayerResult<Tensor> {
+    pub fn search(&mut self, states: &[&Patchwork]) -> PlayerResult<Tensor> {
+        let mut states = states
+            .iter()
+            .map(|game| GameState::new((*game).clone()))
+            .collect::<Vec<_>>();
+
         // 1. Expand the root node directly adding dirichlet noise to the policy
-        self.create_root_node(states)?;
+        self.create_root_node(&mut states)?;
 
         // 2. Run a number of simulations/iterations fitting into end condition
-        self.options.end_condition.clone().run_till_end(
+        let states = self.options.end_condition.clone().run_till_end(
+            states,
             #[inline(always)]
-            || self.iteration(states),
-        );
+            |states| self.iteration(states),
+        )?;
+        self.do_batch_evaluation(true);
 
         // 3. Return the action probabilities for each game state
         Ok(Tensor::stack(
@@ -166,17 +189,25 @@ impl<
         )?
         .detach()?;
 
-        let policies = (Tensor::new(1.0 - self.options.dirichlet_epsilon, &self.options.device)? * policies)?
-            .broadcast_add(&(Tensor::new(self.options.dirichlet_epsilon, &self.options.device)? * noise)?)?
-            .detach()?;
+        let policies = Tensor::broadcast_add(
+            &Tensor::broadcast_mul(
+                &Tensor::new(1.0 - self.options.dirichlet_epsilon, &self.options.device)?,
+                &policies,
+            )?,
+            &Tensor::broadcast_mul(
+                &Tensor::new(self.options.dirichlet_epsilon, &self.options.device)?,
+                &noise,
+            )?,
+        )?
+        .detach()?;
 
         let (available_actions_tensor, mut corresponding_action_ids) = map_games_to_action_tensors(
             &states.iter().map(|s| &s.game).collect::<Vec<_>>(),
             &self.options.device,
         )?;
         let policies = (policies * available_actions_tensor)?;
-        let policies_sum = policies.sum(1)?;
-        let policies = (policies / policies_sum)?;
+        let policies_sum = policies.sum_keepdim(1)?;
+        let policies = policies.broadcast_div(&policies_sum)?;
         let policies = policies.to_device(&Device::Cpu)?.to_vec2::<f32>()?;
 
         for (index, game_state) in states.iter_mut().enumerate() {
@@ -185,7 +216,7 @@ impl<
             let corresponding_actions = corresponding_action_ids.pop_front().unwrap();
 
             game_state.root = Some(root_node_id);
-            self.node_expand(root_node_id, &policy, &corresponding_actions, &mut game_state.allocator)?;
+            self.node_expand(root_node_id, policy, &corresponding_actions, &mut game_state.allocator)?;
         }
 
         Ok(())
@@ -200,12 +231,18 @@ impl<
     /// # Returns
     ///
     /// `Ok(())` if the iteration was run successfully, `Err(PatchworkError)` otherwise.
-    pub fn iteration(&mut self, states: &mut [GameState]) -> PlayerResult<()> {
-        let mut states_to_evaluate = vec![];
+    pub fn iteration(&mut self, states: Vec<GameState>) -> PlayerResult<Vec<GameState>> {
+        let mut states_to_evaluate: Vec<(GameState, NodeId)> = vec![];
 
-        for game_state in states.iter_mut() {
+        for mut game_state in states {
             let mut node_id = game_state.root.unwrap();
-            while game_state.allocator.get_node(node_id).is_fully_expanded() {
+            loop {
+                let mut node = game_state.allocator.get_node_mut(node_id);
+                if !node.is_fully_expanded() {
+                    break;
+                }
+
+                node.increment_virtual_loss();
                 node_id = self.node_select(node_id, &mut game_state.allocator);
             }
 
@@ -227,7 +264,28 @@ impl<
             return Ok(());
         }
 
-        let games = states_to_evaluate
+        self.batch_states.extend(states_to_evaluate);
+        self.do_batch_evaluation(false)
+    }
+
+    /// Evaluates the batch states with the network and backpropagates the results.
+    ///
+    /// # Arguments
+    ///
+    /// * `force` - Whether to force the evaluation of the batch states even if there are less batch states than the batch size.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` if the batch evaluation was run successfully, `Err(PatchworkError)` otherwise.
+    fn do_batch_evaluation(&mut self, force: bool) -> PlayerResult<()> {
+        if self.batch_states.len() < self.options.batch_size.get() && !force {
+            return Ok(());
+        }
+
+        let mut batch_states = self.batch_states;
+        self.batch_states = vec![];
+
+        let games = batch_states
             .iter()
             .map(|(game_state, node_id)| {
                 let node = game_state.allocator.get_node(*node_id);
@@ -240,18 +298,17 @@ impl<
         let (mut policies, values) = self.network.forward_t(&games, self.train)?;
         policies = candle_nn::ops::softmax(&policies, 1)?;
         policies = (policies * available_actions_tensor)?;
-        let policies_sum = policies.sum(1)?;
-        policies = (policies / policies_sum)?;
+        let policies_sum = policies.sum_keepdim(1)?;
+        policies = policies.broadcast_div(&policies_sum)?;
         let policies = policies.to_device(&Device::Cpu)?.to_vec2::<f32>()?;
         let values = values.to_device(&Device::Cpu)?.to_vec1::<f32>()?;
 
-        for (index, (game_state, node_id)) in states_to_evaluate.iter_mut().enumerate() {
-            let node = game_state.allocator.get_node_mut(*node_id);
+        for (index, (game_state, node_id)) in batch_states.iter_mut().enumerate() {
             let policy = &policies[index];
             let value = values[index];
             let corresponding_actions = corresponding_action_ids.pop_front().unwrap();
 
-            self.node_expand(*node_id, &policy, &corresponding_actions, &mut game_state.allocator)?;
+            self.node_expand(*node_id, policy, &corresponding_actions, &mut game_state.allocator)?;
             self.node_backpropagate(*node_id, value, &mut game_state.allocator);
         }
 
@@ -275,6 +332,7 @@ impl<
     /// * `node_id` - The id of the node to expand.
     /// * `policies` - The policy for each action.
     /// * `corresponding_actions` - The actions that correspond to the policies.
+    /// * `allocator` - The allocator to use.
     ///
     /// # Returns
     ///
@@ -289,7 +347,6 @@ impl<
         for (probability, action) in policies.iter().zip(corresponding_actions).filter(|(p, _)| **p > 0.0) {
             let mut child_state = allocator.get_node(node_id).state.clone();
             child_state.do_action(*action, false)?;
-            // TODO: take q_value from parent as new fpu parameter
             allocator.new_node(child_state, Some(node_id), Some(*action), Some(*probability));
         }
 
@@ -301,6 +358,7 @@ impl<
     /// # Arguments
     ///
     /// * `node_id` - The id of the parent node to select the best child node from.
+    /// * `allocator` - The allocator to use.
     ///
     /// # Returns
     ///
@@ -311,25 +369,19 @@ impl<
 
         let selected_child = self.tree_policy.select_node(node, children);
         selected_child.id
-
-        //     best_child = None
-        //     best_ucb = -np.inf
-
-        //     for child in self.children:
-        //         ucb = self.get_ucb(child)
-        //         if ucb > best_ucb:
-        //             best_child = child
-        //             best_ucb = ucb
-
-        //     return best_child
-
-        //     if child.visit_count == 0:
-        //     q_value = 0
-        // else:
-        //     q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
-        // return q_value + self.args['C'] * (math.sqrt(self.visit_count) / (child.visit_count + 1)) * child.prior
     }
 
+    /// Backpropagates the score of the game up from the given node until the root node is reached.
+    ///
+    /// # Arguments
+    ///
+    /// * `node_id` - The id of the node to backpropagate from.
+    /// * `value` - The value to backpropagate.
+    /// * `allocator` - The allocator to use.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝑛)` where `𝑛` is the depth of the current node as the chain until the root needs to be traversed
     fn node_backpropagate(&mut self, mut node_id: NodeId, value: f32, allocator: &mut AreaAllocator) {
         loop {
             let node = allocator.get_node_mut(node_id);
@@ -339,6 +391,7 @@ impl<
             node.neutral_score_sum += value as f64;
             node.neutral_wins += if value > 0.0 { 1 } else { -1 };
             node.visit_count += 1;
+            node.decrement_virtual_loss();
 
             if let Some(parent_id) = node.parent {
                 node_id = parent_id;

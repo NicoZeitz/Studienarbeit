@@ -502,7 +502,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         })
     }
 
-    /// Backpropagates the score of the game up from the given node until the parent node is reached.
+    /// Backpropagates the score of the game up from the given node until the root node is reached.
     ///
     /// # Arguments
     ///
@@ -511,7 +511,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// # Complexity
     ///
-    /// `𝒪(𝑛)` where `𝑛` is the depth of the current node as the chain until the parent needs to be traversed
+    /// `𝒪(𝑛)` where `𝑛` is the depth of the current node as the chain until the root needs to be traversed
     pub fn node_backpropagate(&mut self, mut node_id: NodeId, value: i32) {
         loop {
             let node = self.allocator.get_node_mut(node_id);
@@ -530,7 +530,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         }
     }
 
-    /// Backpropagates the scores of the games up from the given node until the parent node is reached.
+    /// Backpropagates the scores of the games up from the given node until the root node is reached.
     ///
     /// # Arguments
     ///
@@ -539,7 +539,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// # Complexity
     ///
-    /// `𝒪(𝑚 · 𝑛)` where `𝑛` is the depth of the current node as the chain until the parent needs to be traversed and
+    /// `𝒪(𝑚 · 𝑛)` where `𝑛` is the depth of the current node as the chain until the root needs to be traversed and
     /// `𝑚` is the amount of values that need to be propagated
     pub fn node_leaf_parallelized_backpropagate(&mut self, mut node_id: NodeId, values: Vec<i32>) {
         loop {

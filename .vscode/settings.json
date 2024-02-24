@@ -2,7 +2,7 @@
     // Rust
     "rust-analyzer.linkedProjects": ["code\\patchwork\\Cargo.toml"],
     "rust-analyzer.procMacro.ignored": {
-        "itertools": "test"
+        // "itertools": "test"
     },
     // "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
@@ -175,11 +175,13 @@
         "iterrows",
         "itertools",
         "KAIMING",
+        "keepdim",
         "Keine",
         "keinen",
         "kibibytes",
         "kleinem",
         "korrekt",
+        "Leela",
         "Leeraum",
         "libiomp",
         "Listenverzeichnisses",
@@ -220,6 +222,7 @@
         "Präambel",
         "Praxisbericht",
         "println",
+        "PUCT",
         "Readline",
         "readyok",
         "realloc",

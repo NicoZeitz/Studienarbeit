@@ -24,7 +24,7 @@ pub fn map_games_to_action_tensors(
     Tensor,
     VecDeque<[ActionId; NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS]>,
 )> {
-    let mut values = vec![0.0; games.len() * NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS];
+    let mut values = vec![0f32; games.len() * NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS];
     let mut corresponding_action_ids =
         VecDeque::<[ActionId; NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS]>::with_capacity(games.len());
 

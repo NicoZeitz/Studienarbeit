@@ -10,7 +10,6 @@ use patchwork_core::{ActionId, Evaluator, Logging, Patchwork, Player, PlayerResu
 use tree_policy::UCTPolicy;
 
 pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
-pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
 
 use crate::{node_id::NodeId, AreaAllocator, MCTSEndCondition, MCTSOptions, SearchTree, Tree};
 

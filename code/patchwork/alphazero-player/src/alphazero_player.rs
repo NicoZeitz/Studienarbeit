@@ -3,14 +3,15 @@ use std::rc::Rc;
 use candle_core::{safetensors, DType, Device};
 use candle_nn::VarBuilder;
 use patchwork_core::{ActionId, Patchwork, Player, PlayerResult, TreePolicy};
-use tree_policy::UCTPolicy; // TODO: replace
+use tree_policy::PUCTPolicy;
 
 use crate::{
-    action::map_games_to_action_tensors, game_state::GameState, mcts::SearchTree, AlphaZeroOptions, PatchZero,
+    action::map_games_to_action_tensors, game_state::GameState, mcts::SearchTree, network::DefaultPatchZero,
+    AlphaZeroOptions,
 };
 
 /// A computer player that uses the AlphaZero algorithm to choose an action.
-pub struct AlphaZeroPlayer<Policy: TreePolicy = UCTPolicy> {
+pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
     /// The name of the player.
     pub name: String,
     /// The options for the AlphaZero algorithm.
@@ -42,11 +43,16 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
 
         let weights = safetensors::load_buffer(NETWORK_WEIGHTS, &options.device).expect("[AlphaZeroPlayer::new] Failed to load network weights");
         let vb = VarBuilder::from_tensors(weights, DType::F32, &options.device);
-        let network: PatchZero = PatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
+        let network = DefaultPatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
 
         AlphaZeroPlayer {
             name: name.into(),
-            search_tree: SearchTree::new(false, Policy::default(), network, Rc::clone(&options)),
+            search_tree: SearchTree::new(
+                false,
+                Policy::default(),
+                network,
+                Rc::clone(&options)
+            ),
             options: Rc::clone(&options),
         }
     }
@@ -64,24 +70,22 @@ impl<Policy: TreePolicy> Player for AlphaZeroPlayer<Policy> {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        let mut game_states = [GameState::new(game.clone())];
-        let policies = self.search_tree.search(&mut game_states)?;
+        let mut games = [game];
+        let policies = self.search_tree.search(&mut games)?;
 
-        let (available_actions_tensor, mut corresponding_action_ids) = map_games_to_action_tensors(
-            &game_states.iter().map(|s| &s.game).collect::<Vec<_>>(),
-            &self.options.device,
-        )?;
+        let (available_actions_tensor, mut corresponding_action_ids) =
+            map_games_to_action_tensors(&games, &self.options.device)?;
 
         let policies = (policies * available_actions_tensor)?;
-        let policies_sum = policies.sum(1)?;
-        let policies = (policies / policies_sum)?;
+        let policies_sum = policies.sum_keepdim(1)?;
+        let policies = policies.broadcast_div(&policies_sum)?;
         let policies = policies.squeeze(0)?.to_device(&Device::Cpu)?.to_vec1::<f32>()?;
         let corresponding_action_ids = corresponding_action_ids.pop_front().unwrap();
 
         let mut best_action_id = ActionId::null();
         let mut best_probability = 0.0;
 
-        // choose the argmax of the policies
+        // choose the argmax of the visit probabilities
         for (index, policy) in policies.iter().enumerate() {
             if *policy > best_probability {
                 best_probability = *policy;

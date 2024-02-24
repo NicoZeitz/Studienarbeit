@@ -229,7 +229,7 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
         // player 2 position [0, TimeBoard::MAX_POSITION] normalized to [0, 1]
         time_board_input.push(player_2_pos as f32 / TimeBoard::MAX_POSITION as f32);
         // player distance [-6, 6] normalized to [-1, 1]
-        time_board_input.push((player_1_pos - player_2_pos) as f32 / 6.0);
+        time_board_input.push((player_1_pos as f32 - player_2_pos as f32) / 6.0);
         // The position of all button income triggers (9) normalized to (0, 1]
         for index in time_board.get_button_income_triggers() {
             time_board_input.push(*index as f32 / TimeBoard::MAX_POSITION as f32);

@@ -26,6 +26,8 @@ pub struct Node {
     pub neutral_wins: i32,
     // The number of times this node has been visited.
     pub visit_count: usize,
+    // The virtual loss of the node.
+    pub virtual_loss: i32,
 }
 
 impl Node {
@@ -60,6 +62,7 @@ impl Node {
             visit_count: 0,
             action_taken,
             prior: prior.unwrap_or(0.0),
+            virtual_loss: 0,
         }
     }
 
@@ -71,7 +74,17 @@ impl Node {
     ///
     /// `true` if the node is fully expanded, `false` otherwise.
     pub fn is_fully_expanded(&self) -> bool {
-        self.children.len() > 0
+        !self.children.is_empty()
+    }
+
+    /// Increments the visit count of the node.
+    pub fn increment_virtual_loss(&mut self) {
+        self.virtual_loss += 1;
+    }
+
+    /// Decrements the virtual loss of the node.
+    pub fn decrement_virtual_loss(&mut self) {
+        self.virtual_loss -= 1;
     }
 }
 
@@ -87,11 +100,9 @@ impl TreePolicyNode for Node {
     }
 
     fn wins_for(&self, player: Self::Player) -> i32 {
-        if player {
-            self.neutral_wins
-        } else {
-            -self.neutral_wins
-        }
+        let wins = if player { self.neutral_wins } else { -self.neutral_wins };
+
+        wins - self.virtual_loss
     }
 
     fn maximum_score_for(&self, player: Self::Player) -> f64 {

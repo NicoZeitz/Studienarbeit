@@ -6,10 +6,22 @@
     "configurations": [
         {
             "preLaunchTask": "Build Rust",
-            "name": "(Windows) Debug executable 'console'",
+            "name": "(Windows) Debug executable 'patchwork console'",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/code/patchwork/target/debug/console.exe",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/patchwork.exe",
+            "args": ["console", "-1", "AlphaZero", "-2", "Greedy", "--l1", "Enabled", "--l2", "Disabled"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/code/patchwork",
+            "environment": [],
+            "console": "internalConsole"
+        },
+        {
+            "preLaunchTask": "Build Rust",
+            "name": "(Windows) Debug executable 'patchwork'",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/patchwork.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/code/patchwork",
@@ -18,10 +30,10 @@
         },
         {
             "preLaunchTask": "Build Rust",
-            "name": "(Windows/External Terminal) Debug executable 'console'",
+            "name": "(Windows/External Terminal) Debug executable 'patchwork'",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/code/patchwork/target/debug/console.exe",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/patchwork.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/code/patchwork",
