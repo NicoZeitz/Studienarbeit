@@ -195,6 +195,8 @@ impl Patchwork {
         #[cfg(debug_assertions)]
         if action.is_null() {
             println!("{}", self);
+            println!("State:\n{:?}", self);
+            println!("Action: \n{:?}", action);
             debug_assert!(!action.is_null(), "[Patchwork::do_action] Expected non-null action");
         }
 
@@ -416,6 +418,8 @@ impl Patchwork {
         #[cfg(debug_assertions)]
         if action.is_null() {
             println!("{}", self);
+            println!("State:\n{:?}", self);
+            println!("Action: \n{:?}", action);
             debug_assert!(!action.is_null(), "[Patchwork::undo_action] Expected non-null action");
         }
 

@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::sync::{Arc, Mutex};
 
 use dashmap::DashMap;

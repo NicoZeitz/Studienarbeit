@@ -109,7 +109,8 @@ impl PUCTPolicy {
                         // use 0 as default value for a 'draw' if the root node has not been visited jet like Leela Chess Zero (Lc0)
                         // [EdgeAndNode::GetQ](https://github.com/LeelaChessZero/lc0/blob/master/src/mcts/node.h#L375)
                         // [Engine Parameters](https://lczero.org/play/flags)
-                        0.0
+                        // 0.0
+                        child.wins_for(parent_player) as f64 // push up virtual loss
                     } else {
                         parent.wins_for(parent_player) as f64 / parent_visit_count - reduction
                     }
@@ -128,8 +129,6 @@ impl PUCTPolicy {
     ) -> f64 {
         let child_visit_count = child.visit_count() as f64;
         let parent_visit_count = parent.visit_count() as f64;
-
-        // TODO: is the prior value correct?
         self.exploration_constant * child.prior_value() * (parent_visit_count.sqrt() / (1.0 + child_visit_count))
     }
 }

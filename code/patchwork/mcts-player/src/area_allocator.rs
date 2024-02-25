@@ -144,3 +144,9 @@ impl AreaAllocator {
         &mut self.nodes[node_id.0]
     }
 }
+
+impl Default for AreaAllocator {
+    fn default() -> Self {
+        Self::new()
+    }
+}

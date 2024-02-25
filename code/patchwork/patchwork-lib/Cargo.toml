@@ -10,7 +10,9 @@ license.workspace = true
 [features]
 default = []
 mkl = ["evaluator/mkl", "alphazero-player/mkl"]
+accelerate = ["evaluator/accelerate", "alphazero-player/accelerate"]
 cuda = ["evaluator/cuda", "alphazero-player/cuda"]
+metal = ["evaluator/metal", "alphazero-player/metal"]
 
 [dependencies]
 action-orderer = { path = "../action-orderer" }

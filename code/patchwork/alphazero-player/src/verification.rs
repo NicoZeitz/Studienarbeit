@@ -1,4 +1,4 @@
-use alphazero_player::PatchZero;
+use alphazero_player::network::PatchZero;
 use candle_core::{DType, Device, IndexOp, Result};
 use candle_nn::{VarBuilder, VarMap};
 

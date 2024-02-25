@@ -10,7 +10,9 @@ license.workspace = true
 [features]
 default = []
 mkl = ["patchwork-lib/mkl", "server/mkl"]
+accelerate = ["patchwork-lib/accelerate", "patchwork-lib/accelerate"]
 cuda = ["patchwork-lib/cuda", "server/cuda"]
+metal = ["patchwork-lib/metal", "server/metal"]
 
 [dependencies]
 anyhow = "1.0.79"

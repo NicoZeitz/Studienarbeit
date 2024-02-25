@@ -49,3 +49,10 @@ opt-level = 3        # Optimization level
 panic = "abort"      # Abort on panic
 codegen-units = 1    # Number of threads to use for codegen
 strip = "symbols"    # Strip debug symbols
+
+# override debug_assertions = true
+[profile.fast-debug]
+inherits = "release"
+debug = true
+debug-assertions = true
+overflow-checks = true

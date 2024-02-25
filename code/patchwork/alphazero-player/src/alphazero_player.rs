@@ -1,14 +1,15 @@
-use std::rc::Rc;
+use std::{collections::HashMap, rc::Rc};
 
-use candle_core::{safetensors, DType, Device};
+use candle_core::{safetensors, DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use patchwork_core::{ActionId, Patchwork, Player, PlayerResult, TreePolicy};
 use tree_policy::PUCTPolicy;
 
 use crate::{
-    action::map_games_to_action_tensors, game_state::GameState, mcts::SearchTree, network::DefaultPatchZero,
-    AlphaZeroOptions,
+    action::map_games_to_action_tensors, mcts::DefaultSearchTree, network::DefaultPatchZero, AlphaZeroOptions,
 };
+
+// TODO: Temperature tau
 
 /// A computer player that uses the AlphaZero algorithm to choose an action.
 pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
@@ -17,7 +18,7 @@ pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
     /// The options for the AlphaZero algorithm.
     pub options: Rc<AlphaZeroOptions>,
     /// The search tree used to search for the best action.
-    search_tree: SearchTree<Policy>,
+    search_tree: DefaultSearchTree<Policy>,
 }
 
 /// The default network weights for the AlphaZeroPlayer.
@@ -42,12 +43,39 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         let options = Rc::new(options.unwrap_or_default());
 
         let weights = safetensors::load_buffer(NETWORK_WEIGHTS, &options.device).expect("[AlphaZeroPlayer::new] Failed to load network weights");
+
+        Self::internal_new(
+            Self::format_name(name.into(), options.as_ref(), None),
+            options,
+            weights
+        )
+    }
+
+    #[rustfmt::skip]
+    pub fn from_weights_file(
+        name: impl Into<String>,
+        options: Option<AlphaZeroOptions>,
+        file_path: &std::path::Path,
+    ) -> Self {
+        let options = Rc::new(options.unwrap_or_default());
+
+        let weights = safetensors::load(file_path, &options.device).unwrap_or_else(|_| panic!("[AlphaZeroPlayer::from_weights_file] Failed to load network weights from file {}", file_path.display()));
+
+        Self::internal_new(Self::format_name(name.into(), options.as_ref(), Some(file_path)), options, weights)
+    }
+
+    #[rustfmt::skip]
+    fn internal_new(
+        name: String,
+        options: Rc<AlphaZeroOptions>,
+        weights: HashMap<String, Tensor>,
+    ) -> Self {
         let vb = VarBuilder::from_tensors(weights, DType::F32, &options.device);
         let network = DefaultPatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
 
         AlphaZeroPlayer {
-            name: name.into(),
-            search_tree: SearchTree::new(
+            name,
+            search_tree: DefaultSearchTree::new(
                 false,
                 Policy::default(),
                 network,
@@ -55,6 +83,33 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
             ),
             options: Rc::clone(&options),
         }
+    }
+
+    fn format_name(name: String, options: &AlphaZeroOptions, weights_file: Option<&std::path::Path>) -> String {
+        format!(
+            "{} [{}|B{}|P{}|α{:.2}|ε{:.2}]{}",
+            name,
+            if options.device.is_cuda() {
+                "GPU"
+            } else if options.device.is_metal() {
+                "METAL"
+            } else if cfg!(feature = "mkl") {
+                "MKL"
+            } else if cfg!(features = "accelerate") {
+                "ACCELERATE"
+            } else {
+                "CPU"
+            },
+            options.batch_size.get(),
+            options.parallelization.get(),
+            options.dirichlet_alpha,
+            options.dirichlet_epsilon,
+            if let Some(weights_file) = weights_file {
+                format!(" ({})", weights_file.display())
+            } else {
+                "".to_string()
+            }
+        )
     }
 }
 
@@ -70,8 +125,10 @@ impl<Policy: TreePolicy> Player for AlphaZeroPlayer<Policy> {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        let mut games = [game];
-        let policies = self.search_tree.search(&mut games)?;
+        println!("{} is thinking...", self.name);
+
+        let games = [game];
+        let policies = self.search_tree.search(&games)?;
 
         let (available_actions_tensor, mut corresponding_action_ids) =
             map_games_to_action_tensors(&games, &self.options.device)?;

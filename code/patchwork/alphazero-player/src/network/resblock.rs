@@ -23,8 +23,7 @@ impl ResBlock {
         let batch_norm_1 = batch_norm(num_filters, BatchNormConfig::default(), vb.pp("batch_norm1"))?;
         let convolution_2 = conv2d(num_filters, num_filters, 3, convolution_config, vb.pp("conv2"))?;
         let batch_norm_2 = batch_norm(num_filters, BatchNormConfig::default(), vb.pp("batch_norm1"))?;
-        let squeeze_excitation =
-            SqueezeExcitation::new(num_filters, num_filters / 8, None, None, vb.pp("squeeze_excitation"))?; // TODO: get 8 from NUMBER_OF_PATCH_LAYERS + 5
+        let squeeze_excitation = SqueezeExcitation::new(num_filters, num_filters / 8, vb.pp("squeeze_excitation"))?; // TODO: get 8 from NUMBER_OF_PATCH_LAYERS + 5
 
         Ok(Self {
             convolution_1,

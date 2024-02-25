@@ -4,12 +4,13 @@ use std::{
 };
 
 use candle_core::Device;
-use patchwork_core::{Logging, PlayerResult};
+use patchwork_core::Logging;
 
 /// Different end conditions for the AlphaZero algorithm.
 #[derive(Clone, Debug)]
 pub enum AlphaZeroEndCondition {
-    /// The number of simulations to run.
+    /// The number of simulations to run. This is the minimum number of simulations to run. It can happen that more simulations are run in
+    /// multi-threaded environments.
     Iterations { iterations: usize },
     /// The time to run simulations for.
     Time {
@@ -20,39 +21,7 @@ pub enum AlphaZeroEndCondition {
     Flag { flag: Arc<AtomicBool> },
     // TODO: extract end condition for all players
     // add something like till end for other players (e.g. greedy random)
-}
-
-impl AlphaZeroEndCondition {
-    #[inline(always)]
-    pub fn run_till_end<Data, Closure>(&self, mut data: Data, mut closure: Closure) -> PlayerResult<Data>
-    where
-        Closure: FnMut(Data) -> PlayerResult<Data>,
-    {
-        match self {
-            AlphaZeroEndCondition::Iterations { iterations } => {
-                for _ in 0..*iterations {
-                    data = closure(data)?;
-                }
-            }
-            AlphaZeroEndCondition::Time {
-                duration,
-                safety_margin,
-            } => {
-                let duration = *duration - *safety_margin;
-
-                let start = std::time::Instant::now();
-                while start.elapsed() < duration {
-                    data = closure(data)?;
-                }
-            }
-            AlphaZeroEndCondition::Flag { flag } => {
-                while !flag.load(std::sync::atomic::Ordering::Relaxed) {
-                    data = closure(data)?;
-                }
-            }
-        }
-        Ok(data)
-    }
+    // UntilEnd,
 }
 
 pub struct AlphaZeroOptions {
