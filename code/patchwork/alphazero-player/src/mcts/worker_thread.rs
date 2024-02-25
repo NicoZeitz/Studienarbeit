@@ -59,6 +59,7 @@ impl<
                     patchwork_core::TerminationType::Player1Won => 1.0,
                     patchwork_core::TerminationType::Player2Won => -1.0,
                 };
+                drop(node);
                 Node::backpropagate(node_id, value, &game_state.allocator, 1);
             } else {
                 // add current node to allow for batch evaluation with the network

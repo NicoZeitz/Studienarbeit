@@ -68,7 +68,7 @@ fn print_board(board: u128) {
 ## Missing DLLs
 
 With Visual Studio installed the `dumpbin.exe` can be used to check for missing DLLs.
-Usually found in ` C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\Hostx64\x64`
+Usually found in `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\Hostx64\x64`
 
 ```sh
 .\dumpbin.exe /dependents "<path/to/exe>"

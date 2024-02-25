@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "preLaunchTask": "Build Rust",
+            "preLaunchTask": "Build Rust (Debug)",
             "name": "(Windows) Debug executable 'patchwork console'",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/code/patchwork/target/debug/patchwork.exe",
+            "program": "${workspaceRoot}/code/patchwork/target/fast-debug/patchwork.exe",
             "args": ["console", "-1", "AlphaZero", "-2", "Greedy", "--l1", "Enabled", "--l2", "Disabled"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/code/patchwork",
@@ -17,7 +17,7 @@
             "console": "internalConsole"
         },
         {
-            "preLaunchTask": "Build Rust",
+            "preLaunchTask": "Build Rust (Debug)",
             "name": "(Windows) Debug executable 'patchwork'",
             "type": "cppvsdbg",
             "request": "launch",
@@ -29,7 +29,7 @@
             "console": "internalConsole"
         },
         {
-            "preLaunchTask": "Build Rust",
+            "preLaunchTask": "Build Rust (Debug)",
             "name": "(Windows/External Terminal) Debug executable 'patchwork'",
             "type": "cppvsdbg",
             "request": "launch",

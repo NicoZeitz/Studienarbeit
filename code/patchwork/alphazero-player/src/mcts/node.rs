@@ -74,26 +74,31 @@ impl Node {
     /// # Returns
     ///
     /// `true` if the node is fully expanded, `false` otherwise.
+    #[inline]
     pub fn is_fully_expanded(&self) -> bool {
         !self.children.is_empty()
     }
 
     /// Increments the visit count of the node.
+    #[inline]
     pub fn increment_virtual_loss(&self) {
         self.virtual_loss.fetch_add(1, Ordering::Relaxed);
     }
 
     /// Decrements the virtual loss of the node.
+    #[inline]
     pub fn decrement_virtual_loss(&self) {
         self.virtual_loss.fetch_sub(1, Ordering::Relaxed);
     }
 
     /// Increments the virtual loss of the node by the given amount.
+    #[inline]
     pub fn increment_virtual_loss_by(&self, amount: i32) {
         self.virtual_loss.fetch_add(amount, Ordering::Relaxed);
     }
 
     /// Decrements the virtual loss of the node by the given amount.
+    #[inline]
     pub fn decrement_virtual_loss_by(&self, amount: i32) {
         self.virtual_loss.fetch_sub(amount, Ordering::Relaxed);
     }
@@ -167,6 +172,8 @@ impl Node {
                 allocator,
             })
             .collect::<Vec<_>>();
+
+        debug_assert!(!children.is_empty(), "[Node::select] Node has no children");
 
         let selected_child = tree_policy.select_node(&parent, children.iter());
 

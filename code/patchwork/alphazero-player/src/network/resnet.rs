@@ -19,6 +19,7 @@ pub struct ResNet<
 
 // https://adspassets.blob.core.windows.net/website/content/alpha_go_zero_cheat_sheet.png
 // https://discovery.ucl.ac.uk/id/eprint/10045895/1/agz_unformatted_nature.pdf
+// [model sharing in multi-threaded scenario [Question]](https://github.com/huggingface/candle/issues/1519)
 impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize, const NUMBER_OF_FILTERS: usize>
     ResNet<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>
 {

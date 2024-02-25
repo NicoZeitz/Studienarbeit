@@ -14,6 +14,8 @@ use patchwork_lib::{
     Patchwork, TerminationType,
 };
 
+// TODO: Bayesian Elo File Output in PNG Support https://www.remi-coulom.fr/Bayesian-Elo/
+
 #[derive(Debug, Parser, Default)]
 #[command(no_binary_name(true))]
 struct CmdArgs {

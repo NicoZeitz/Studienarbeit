@@ -62,7 +62,7 @@ pub fn interactive_get_player(
     logging: Logging,
 ) -> anyhow::Result<PlayerType> {
     if let Some(player_name) = player_name {
-        let Ok(player) = get_player(player_name.as_str(), 1, logging) else {
+        let Ok(player) = get_player(player_name.as_str(), player_position, logging) else {
             println!("Could not find player {}. Available players: ", player_name);
             for p in get_available_players() {
                 println!("  {}", p);
