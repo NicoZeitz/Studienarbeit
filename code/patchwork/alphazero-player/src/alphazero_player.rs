@@ -64,6 +64,11 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         Self::internal_new(Self::format_name(name.into(), options.as_ref(), Some(file_path)), options, weights)
     }
 
+    pub fn get_explorative_action(&mut self, game: &Patchwork, _temperature: f64) -> PlayerResult<ActionId> {
+        // TODO: select with temperature tau τ (AlphaGo Zero paper page 8)
+        self.get_action(game)
+    }
+
     #[rustfmt::skip]
     fn internal_new(
         name: String,
@@ -125,8 +130,6 @@ impl<Policy: TreePolicy> Player for AlphaZeroPlayer<Policy> {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        println!("{} is thinking...", self.name);
-
         let games = [game];
         let policies = self.search_tree.search(&games)?;
 

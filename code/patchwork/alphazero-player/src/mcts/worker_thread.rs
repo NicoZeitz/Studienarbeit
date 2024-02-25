@@ -1,8 +1,10 @@
+use std::io::Write;
 use std::sync::{atomic::Ordering, Arc};
+use std::time::UNIX_EPOCH;
 
 use candle_core::Device;
 use dashmap::DashMap;
-use patchwork_core::{PlayerResult, TreePolicy};
+use patchwork_core::{NaturalActionId, PlayerResult, TreePolicy};
 
 use crate::{
     action::map_games_to_action_tensors,
@@ -91,7 +93,7 @@ impl<
                 .search_data
                 .mini_batch_counter
                 .fetch_update(Ordering::Release, Ordering::Acquire, |value| {
-                    if value > self.search_data.mini_batch_size {
+                    if value >= self.search_data.mini_batch_size {
                         Some(0)
                     } else {
                         None
@@ -108,11 +110,15 @@ impl<
             .evaluation_mini_batch
             .swap(Arc::new(DashMap::with_capacity(self.search_data.mini_batch_size)));
 
-        println!(
-            "Evaluating mini batch with {:?} entries with {:?} values",
-            evaluation_mini_batch.len(),
-            evaluation_mini_batch.iter().map(|entry| *entry.value()).sum::<i32>()
-        );
+        // println!(
+        //     "Mini batch Eval ({:?} entries, {:?} values) {:?}",
+        //     evaluation_mini_batch.len(),
+        //     evaluation_mini_batch.iter().map(|entry| *entry.value()).sum::<i32>(),
+        //     evaluation_mini_batch
+        //         .iter()
+        //         .map(|entry| *entry.value())
+        //         .collect::<Vec<_>>()
+        // );
 
         if evaluation_mini_batch.is_empty() {
             return Ok(());
@@ -131,7 +137,9 @@ impl<
             map_games_to_action_tensors(&games, &self.search_data.device)?;
 
         // TODO: diagnostics
+        // let start = std::time::Instant::now();
         let (mut policies, values) = self.search_data.network.forward_t(&games, self.search_data.train)?;
+        // println!("Network forward took {:?}", start.elapsed());
 
         drop(games);
         drop(nodes);
@@ -150,6 +158,28 @@ impl<
             policies.len(),
             values.len()
         );
+
+        // Dump all policies along with their corresponding action to file
+        // let mut file = std::fs::OpenOptions::new()
+        //     .create(true)
+        //     .write(true)
+        //     .append(false)
+        //     .open(format!(
+        //         "values_{:?}.txt",
+        //         std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap()
+        //     ))
+        //     .unwrap();
+        // writeln!(file, "[").unwrap(); // TODO: remove
+        // for action_index in 0..NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS {
+        //     for mini_batch_index in 0..policies.len() {
+        //         // ActionId(88839) 15
+        //         let policy = policies[mini_batch_index][action_index];
+        //         let corresponding_action_id = corresponding_action_ids[mini_batch_index][action_index];
+        //         write!(file, "      {: <15?} {: <13?}", corresponding_action_id, policy).unwrap();
+        //     }
+        //     writeln!(file).unwrap();
+        // }
+        // writeln!(file, "]").unwrap();
 
         for (mini_batch_index, entry) in evaluation_mini_batch.iter().enumerate() {
             let (batch_index, node_id) = *entry.key();

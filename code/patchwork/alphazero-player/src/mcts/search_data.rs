@@ -14,7 +14,7 @@ pub struct SearchData<
     const AMOUNT_RESIDUAL_LAYERS: usize,
     const AMOUNT_FILTERS: usize,
 > {
-    /// The amount of iterations that have been done.
+    /// The amount of iterations that have been done., TODO: move to search diagnostics and add network avg time, diagnostics like a push-only vec for mini batch eval
     pub iterations: AtomicUsize,
     /// The device to use for the neural network.
     pub device: Device,

@@ -39,7 +39,7 @@ pub fn map_games_to_action_tensors(
             game_corresponding_action_ids[natural_action_id] = action_id;
         }
 
-        corresponding_action_ids.push_front(game_corresponding_action_ids);
+        corresponding_action_ids.push_back(game_corresponding_action_ids);
     }
 
     Ok((

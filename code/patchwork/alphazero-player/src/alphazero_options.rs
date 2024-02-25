@@ -69,14 +69,17 @@ impl AlphaZeroOptions {
     ///
     /// The default device to use for the AlphaZero algorithm.
     pub fn default_device() -> Device {
-        if candle_core::utils::cuda_is_available() {
-            Device::new_cuda(0).ok()
-        } else if candle_core::utils::metal_is_available() {
-            Device::new_metal(0).ok()
-        } else {
-            Some(Device::Cpu)
-        }
-        .unwrap_or(Device::Cpu)
+        // if candle_core::utils::cuda_is_available() {
+        //     Device::new_cuda(0).ok()
+        // } else if candle_core::utils::metal_is_available() {
+        //     Device::new_metal(0).ok()
+        // } else {
+        //     Some(Device::Cpu)
+        // }
+        // .unwrap_or(Device::Cpu)
+
+        // CPU is always faster than GPU. Probably because of the overhead of copying the data to the GPU.
+        Device::Cpu
     }
 
     /// Returns the default parallelization to use for the AlphaZero algorithm.
@@ -86,7 +89,9 @@ impl AlphaZeroOptions {
     /// The default parallelization to use for the AlphaZero algorithm.
     pub fn default_parallelization() -> NonZeroUsize {
         std::thread::available_parallelism()
-            .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
+            // .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
+            .ok()
+            .and_then(|n| NonZeroUsize::new(n.get() - 1))
             .unwrap_or(NonZeroUsize::new(4).unwrap())
     }
 }

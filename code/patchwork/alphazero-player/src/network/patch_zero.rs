@@ -51,13 +51,7 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     /// The policy and value tensors.
     #[allow(dead_code)]
     pub fn forward_t(&self, games: &[&Patchwork], train: bool) -> Result<(Tensor, Tensor)> {
-        let start = std::time::Instant::now();
-
         let stack = self.encoder.encode_state(games)?;
-        let res = self.network.forward_t(&stack, train);
-
-        println!("forward_t took: {:?}", start.elapsed());
-
-        res
+        self.network.forward_t(&stack, train)
     }
 }

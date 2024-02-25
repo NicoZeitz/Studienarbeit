@@ -153,6 +153,11 @@ impl<
             PlayerResult::Ok(())
         })?;
 
+        println!(
+            "Iterations: {}",
+            search_data.iterations.load(std::sync::atomic::Ordering::SeqCst)
+        );
+
         // 5. Reset search data
         let SearchData {
             tree_policy,
