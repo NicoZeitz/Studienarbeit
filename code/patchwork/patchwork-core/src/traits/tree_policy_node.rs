@@ -92,6 +92,7 @@ pub trait TreePolicyNode {
     /// # Returns
     ///
     /// The prior value of the node.
+    #[inline]
     fn prior_value(&self) -> f64 {
         0.0
     }

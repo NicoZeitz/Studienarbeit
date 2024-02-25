@@ -9,7 +9,7 @@
             "name": "(Windows) Debug executable 'patchwork console'",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/code/patchwork/target/fast-debug/patchwork.exe",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/patchwork.exe",
             "args": ["console", "-1", "AlphaZero", "-2", "Greedy", "--l1", "Enabled", "--l2", "Disabled"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/code/patchwork",

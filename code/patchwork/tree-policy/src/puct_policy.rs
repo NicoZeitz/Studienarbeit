@@ -90,7 +90,7 @@ impl Default for PUCTPolicy {
 }
 
 impl PUCTPolicy {
-    #[inline(always)]
+    // #[inline(always)]
     fn get_exploitation<Player: Copy>(
         &self,
         parent: &impl TreePolicyNode<Player = Player>,
@@ -118,7 +118,21 @@ impl PUCTPolicy {
             };
         }
 
-        child.wins_for(parent_player) as f64 / child_visit_count
+        let res = child.wins_for(parent_player) as f64 / child_visit_count;
+
+        if res.is_infinite() {
+            println!(
+                "Infinite exploitation: wins: {}, visit count: {} or {} = {} or {}",
+                child.wins_for(parent_player) as f64,
+                child.visit_count() as f64,
+                child_visit_count,
+                child.wins_for(parent_player) as f64 / child.visit_count() as f64,
+                res
+            );
+            panic!("Infinite exploitation")
+        }
+
+        res
     }
 
     #[inline(always)]

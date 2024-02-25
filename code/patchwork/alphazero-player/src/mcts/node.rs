@@ -1,4 +1,10 @@
-use std::sync::atomic::{AtomicI32, Ordering};
+use std::{
+    cell::RefCell,
+    sync::{
+        atomic::{AtomicI32, Ordering},
+        RwLockReadGuard,
+    },
+};
 
 use patchwork_core::{ActionId, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
 
@@ -130,21 +136,23 @@ impl Node {
         }
         let child_state = allocator.get_node_read(node_id).state.clone();
 
-        for (probability, action) in policies.iter().zip(corresponding_actions).filter(|(p, _)| **p > 0.0) {
-            let mut child_state = child_state.clone();
+        let children = policies
+            .iter()
+            .zip(corresponding_actions)
+            .filter(|(p, _)| **p > 0.0)
+            .map(|(probability, action)| {
+                let mut child_state = child_state.clone();
+                child_state.do_action(*action, false)?;
+                let child_id = allocator.new_node(child_state, Some(node_id), Some(*action), Some(*probability));
 
-            #[cfg(debug_assertions)]
-            if action.is_null() {
-                panic!(
-                    "[SearchTree::node_expand] Action with non zero probability ({:?}) is null",
-                    probability
-                );
-            }
+                Ok(child_id)
+            })
+            .collect::<Result<Vec<_>, PatchworkError>>()?;
 
-            child_state.do_action(*action, false)?;
-            let child_id = allocator.new_node(child_state, Some(node_id), Some(*action), Some(*probability));
-
-            allocator.get_node_write(node_id).children.push(child_id);
+        let mut node = allocator.get_node_write(node_id);
+        // it could be that another thread already expanded the node. Just ignore the created children in that case
+        if node.children.is_empty() {
+            node.children = children;
         }
 
         Ok(())
@@ -162,22 +170,41 @@ impl Node {
     ///
     /// The best child node of the given parent node.
     pub fn select(node_id: NodeId, allocator: &AreaAllocator, tree_policy: &impl TreePolicy) -> NodeId {
-        let parent = NodeWrapper { node_id, allocator };
-        let children = allocator
-            .get_node_read(node_id)
-            .children
+        let parent = allocator.get_node_read(node_id);
+        let parent_data = NodeDataSnapshot {
+            id: node_id,
+            current_player: parent.current_player(),
+            visit_count: parent.visit_count(),
+            neutral_max_score: parent.neutral_max_score as f64,
+            neutral_min_score: parent.neutral_min_score as f64,
+            neutral_score_sum: parent.neutral_score_sum,
+            neutral_wins: parent.neutral_wins,
+            virtual_loss: parent.virtual_loss.load(Ordering::Relaxed),
+            prior: parent.prior as f64,
+        };
+        let children_ids = parent.children.clone();
+        drop(parent);
+        let children = children_ids
             .iter()
-            .map(|node_id| NodeWrapper {
-                node_id: *node_id,
-                allocator,
+            .map(|child| {
+                let child = allocator.get_node_read(*child);
+                NodeDataSnapshot {
+                    id: child.id,
+                    current_player: child.current_player(),
+                    visit_count: child.visit_count(),
+                    neutral_max_score: child.neutral_max_score as f64,
+                    neutral_min_score: child.neutral_min_score as f64,
+                    neutral_score_sum: child.neutral_score_sum,
+                    neutral_wins: child.neutral_wins,
+                    virtual_loss: child.virtual_loss.load(Ordering::Relaxed),
+                    prior: child.prior as f64,
+                }
             })
             .collect::<Vec<_>>();
 
-        debug_assert!(!children.is_empty(), "[Node::select] Node has no children");
+        let selected_child = tree_policy.select_node(&parent_data, children.iter());
 
-        let selected_child = tree_policy.select_node(&parent, children.iter());
-
-        selected_child.node_id
+        selected_child.id
     }
 
     /// Backpropagates the score of the game up from the given node until the root node is reached.
@@ -265,43 +292,64 @@ impl TreePolicyNode for Node {
     }
 }
 
-struct NodeWrapper<'a> {
-    node_id: NodeId,
-    allocator: &'a AreaAllocator,
+struct NodeDataSnapshot {
+    pub id: NodeId,
+    current_player: bool,
+    visit_count: usize,
+    neutral_max_score: f64,
+    neutral_min_score: f64,
+    neutral_score_sum: f64,
+    neutral_wins: i32,
+    virtual_loss: i32,
+    prior: f64,
 }
 
-impl TreePolicyNode for NodeWrapper<'_> {
+impl TreePolicyNode for NodeDataSnapshot {
     type Player = bool;
     #[inline(always)]
     fn visit_count(&self) -> usize {
-        self.allocator.get_node_read(self.node_id).visit_count()
+        self.visit_count
     }
     #[inline(always)]
     fn current_player(&self) -> Self::Player {
-        self.allocator.get_node_read(self.node_id).current_player()
+        self.current_player
     }
     #[inline(always)]
     fn wins_for(&self, player: Self::Player) -> i32 {
-        self.allocator.get_node_read(self.node_id).wins_for(player)
+        let wins = if player { self.neutral_wins } else { -self.neutral_wins };
+
+        wins - self.virtual_loss
     }
     #[inline(always)]
     fn maximum_score_for(&self, player: Self::Player) -> f64 {
-        self.allocator.get_node_read(self.node_id).maximum_score_for(player)
+        if player {
+            self.neutral_max_score
+        } else {
+            -self.neutral_min_score
+        }
     }
     #[inline(always)]
     fn minimum_score_for(&self, player: Self::Player) -> f64 {
-        self.allocator.get_node_read(self.node_id).minimum_score_for(player)
+        if player {
+            self.neutral_min_score
+        } else {
+            -self.neutral_max_score
+        }
     }
     #[inline(always)]
     fn score_range(&self) -> f64 {
-        self.allocator.get_node_read(self.node_id).score_range()
+        (self.neutral_max_score - self.neutral_min_score)
     }
     #[inline(always)]
     fn score_sum_for(&self, player: Self::Player) -> f64 {
-        self.allocator.get_node_read(self.node_id).score_sum_for(player)
+        if player {
+            self.neutral_score_sum
+        } else {
+            -self.neutral_score_sum
+        }
     }
     #[inline(always)]
     fn prior_value(&self) -> f64 {
-        self.allocator.get_node_read(self.node_id).prior_value()
+        self.prior
     }
 }
