@@ -16,7 +16,7 @@ impl RandomPlayer {
     /// Creates a new [`RandomPlayer`] with the given name and options.
     pub fn new(name: impl Into<String>, options: Option<RandomOptions>) -> Self {
         let options = options.unwrap_or_default();
-        RandomPlayer {
+        Self {
             name: name.into(),
             rng: Xoshiro256PlusPlus::seed_from_u64(options.seed),
         }
@@ -25,7 +25,7 @@ impl RandomPlayer {
 
 impl Default for RandomPlayer {
     fn default() -> Self {
-        Self::new("Random Player".to_string(), Default::default())
+        Self::new("Random Player".to_string(), None)
     }
 }
 

@@ -12,7 +12,7 @@ pub struct AreaAllocator {
 
 impl AreaAllocator {
     /// Create a new [`AreaAllocator`] with no nodes.
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self { nodes: Vec::new() }
     }
 

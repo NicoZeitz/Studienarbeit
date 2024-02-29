@@ -38,7 +38,8 @@ impl ScoredUCTPolicy {
     /// # Returns
     ///
     /// The new [`ScoredUCTPolicy`].
-    pub fn new(exploration_constant: f64) -> Self {
+    #[must_use]
+    pub const fn new(exploration_constant: f64) -> Self {
         Self { exploration_constant }
     }
 }

@@ -23,7 +23,8 @@ impl Termination {
     ///
     /// The score of the game.
     #[inline]
-    pub fn score(&self) -> i32 {
+    #[must_use]
+    pub const fn score(&self) -> i32 {
         self.player_1_score - self.player_2_score
     }
 }

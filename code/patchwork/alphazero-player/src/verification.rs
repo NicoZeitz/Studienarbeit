@@ -7,7 +7,7 @@ fn main() -> Result<()> {
 
     let device = Device::cuda_if_available(0)?;
     let vm = VarMap::new();
-    let vb = VarBuilder::from_varmap(&vm, DType::F32, &device.clone());
+    let vb = VarBuilder::from_varmap(&vm, DType::F32, &device);
     let patch_zero: PatchZero<3, 10, 64> = PatchZero::new(vb, device)?;
 
     let states = vec![
@@ -30,8 +30,8 @@ fn main() -> Result<()> {
     let _first_value = values.i((0,))?.to_scalar::<f32>()?;
 
     println!("Forward pass done in {:?}", now.elapsed());
-    println!("Policies: {:?}", policies);
-    println!("Values: {:?}", values);
+    println!("Policies: {policies:?}");
+    println!("Values: {values:?}");
 
     // save the model
     vm.save("patch_zero.safetensors")?;

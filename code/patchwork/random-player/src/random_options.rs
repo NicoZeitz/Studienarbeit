@@ -7,7 +7,8 @@ pub struct RandomOptions {
 
 impl RandomOptions {
     /// Creates a new [`RandomOptions`].
-    pub fn new(seed: u64) -> Self {
+    #[must_use]
+    pub const fn new(seed: u64) -> Self {
         Self { seed }
     }
 }

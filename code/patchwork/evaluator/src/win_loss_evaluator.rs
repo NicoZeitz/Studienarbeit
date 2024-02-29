@@ -5,8 +5,9 @@ pub struct WinLossEvaluator {}
 
 impl WinLossEvaluator {
     /// Creates a new [`WinLossEvaluator`].
-    pub fn new() -> Self {
-        WinLossEvaluator {}
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {}
     }
 }
 

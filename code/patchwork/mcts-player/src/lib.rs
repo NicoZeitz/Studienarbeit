@@ -7,7 +7,7 @@ mod search_tree;
 mod tree;
 
 use area_allocator::AreaAllocator;
-use node::*;
+use node::{Node, NodeDebug};
 use node_id::NodeId;
 use search_tree::SearchTree;
 use tree::Tree;

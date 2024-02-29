@@ -32,7 +32,7 @@ pub struct SearchData<
     /// the batch vector and the correct node id to evaluate. The value is the amount of times the node needs to
     /// be evaluated. The amount will be 1 most of the time but it can happen that a node is selected multiple times
     /// before a batch evaluation is done even if the virtual loss makes this less likely
-    pub evaluation_mini_batch: ArcSwap<DashMap<(usize, NodeId), i32>>,
+    pub evaluation_mini_batch: ArcSwap<DashMap<(usize, NodeId), u32>>,
     /// The counter for the mini-batch evaluation. This is used to determine when to do a mini-batch evaluation.
     /// The counter is incremented every time a node is selected for evaluation.
     pub mini_batch_counter: AtomicUsize,

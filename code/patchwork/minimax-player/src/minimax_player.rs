@@ -1,6 +1,6 @@
 use patchwork_core::{ActionId, Evaluator, Patchwork, Player, PlayerResult};
 
-use evaluator::StaticEvaluator as MinimaxEvaluator;
+use evaluator::StaticEvaluator;
 
 use crate::MinimaxOptions;
 
@@ -15,7 +15,7 @@ pub struct MinimaxPlayer {
     /// This is used to reduce the branching factor.
     pub amount_actions_per_piece: usize,
     /// The evaluator to evaluate the game state.
-    pub evaluator: MinimaxEvaluator, // TODO: use boxed stable evaluator
+    pub evaluator: StaticEvaluator, // TODO: use boxed stable evaluator
 }
 
 impl MinimaxPlayer {
@@ -25,9 +25,9 @@ impl MinimaxPlayer {
             depth,
             amount_actions_per_piece,
         } = options.unwrap_or_default();
-        MinimaxPlayer {
+        Self {
             name: name.into(),
-            evaluator: Default::default(),
+            evaluator: StaticEvaluator,
             depth,
             amount_actions_per_piece,
         }
@@ -36,7 +36,7 @@ impl MinimaxPlayer {
 
 impl Default for MinimaxPlayer {
     fn default() -> Self {
-        Self::new("Minimax Player".to_string(), Default::default())
+        Self::new("Minimax Player".to_string(), None)
     }
 }
 
@@ -161,8 +161,7 @@ impl MinimaxPlayer {
 
         if place_first_piece_tuple
             .first()
-            .map(|(_, a, _)| a.is_special_patch_placement())
-            .unwrap_or(false)
+            .is_some_and(|(_, a, _)| a.is_special_patch_placement())
         {
             let mut place_first_piece_tuple = place_first_piece_tuple;
             place_first_piece_tuple.sort_by(|(_, _, e1), (_, _, e2)| {

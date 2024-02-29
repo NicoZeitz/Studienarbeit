@@ -6,7 +6,7 @@ use std::{
 use candle_core::Device;
 use patchwork_core::Logging;
 
-/// Different end conditions for the AlphaZero algorithm.
+/// Different end conditions for the `AlphaZero` algorithm.
 #[derive(Clone, Debug)]
 pub enum AlphaZeroEndCondition {
     /// The number of simulations to run. This is the minimum number of simulations to run. It can happen that more simulations are run in
@@ -43,7 +43,8 @@ pub struct AlphaZeroOptions {
 
 impl AlphaZeroOptions {
     /// Creates a new [`AlphaZeroOptions`].
-    pub fn new(
+    #[must_use]
+    pub const fn new(
         end_condition: AlphaZeroEndCondition,
         dirichlet_epsilon: f32,
         dirichlet_alpha: f32,
@@ -53,22 +54,23 @@ impl AlphaZeroOptions {
         logging: Logging,
     ) -> Self {
         Self {
-            end_condition,
             dirichlet_epsilon,
             dirichlet_alpha,
             device,
             batch_size,
             parallelization,
+            end_condition,
             logging,
         }
     }
 
-    /// Returns the default device to use for the AlphaZero algorithm.
+    /// Returns the default device to use for the `AlphaZero` algorithm.
     ///
     /// # Returns
     ///
-    /// The default device to use for the AlphaZero algorithm.
-    pub fn default_device() -> Device {
+    /// The default device to use for the `AlphaZero` algorithm.
+    #[must_use]
+    pub const fn default_device() -> Device {
         // if candle_core::utils::cuda_is_available() {
         //     Device::new_cuda(0).ok()
         // } else if candle_core::utils::metal_is_available() {
@@ -82,11 +84,13 @@ impl AlphaZeroOptions {
         Device::Cpu
     }
 
-    /// Returns the default parallelization to use for the AlphaZero algorithm.
+    /// Returns the default parallelization to use for the `AlphaZero` algorithm.
     ///
     /// # Returns
     ///
-    /// The default parallelization to use for the AlphaZero algorithm.
+    /// The default parallelization to use for the `AlphaZero` algorithm.
+    #[must_use]
+
     pub fn default_parallelization() -> NonZeroUsize {
         std::thread::available_parallelism()
             // .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })

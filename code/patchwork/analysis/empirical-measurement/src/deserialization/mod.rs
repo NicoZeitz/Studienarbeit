@@ -3,17 +3,17 @@ use std::num::NonZeroUsize;
 use patchwork_core::{ActionId, Patchwork};
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub(crate) struct Game {
+pub struct Game {
     pub turns: Vec<GameTurn>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub(crate) struct GameTurn {
+pub struct GameTurn {
     pub state: Patchwork,
     pub action: Option<ActionId>,
 }
 
-pub(crate) struct GameLoader {
+pub struct GameLoader {
     rx: std::sync::mpsc::Receiver<Game>,
     loaded: std::sync::Arc<std::sync::atomic::AtomicUsize>,
 }

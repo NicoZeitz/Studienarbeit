@@ -2,7 +2,7 @@ use std::{cmp::Reverse, collections::VecDeque, num::NonZeroUsize, thread};
 
 use itertools::Itertools;
 
-use patchwork_core::{Evaluator, Notation, Patchwork, PatchworkError, PlayerResult, TreePolicy, TreePolicyNode};
+use patchwork_core::{Evaluator, Notation, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
 
 use crate::{AreaAllocator, NodeDebug, NodeId, Tree};
 
@@ -116,9 +116,9 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         tree_policy: &'tree_lifetime Policy,
         evaluator: &'tree_lifetime Eval,
         abort_search_after: Option<std::time::Duration>,
-    ) -> PlayerResult<Self> {
+    ) -> Self {
         let Some(mut last_tree) = last_tree else {
-            return Ok(Self::new(game, tree_policy, evaluator));
+            return Self::new(game, tree_policy, evaluator);
         };
 
         let mut queue = VecDeque::new();
@@ -145,29 +145,24 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
                 // found the correct node
                 let node_id = last_tree.allocator.realloc_to_new_root(node_id);
 
-                return Ok(SearchTree {
+                return SearchTree {
                     root: node_id,
                     tree_policy,
                     evaluator,
                     depth: 0,
                     reused: true,
                     allocator: last_tree.allocator,
-                });
+                };
             }
 
-            for child in node.children.iter() {
+            for child in &node.children {
                 queue.push_back((depth + 1, *child));
             }
         }
 
         // The root node was not found in the tree.
         // This means that the tree is not reusable.
-        Ok(Self::new_with_allocator(
-            last_tree.allocator,
-            game,
-            tree_policy,
-            evaluator,
-        ))
+        Self::new_with_allocator(last_tree.allocator, game, tree_policy, evaluator)
     }
 
     /// Plays out a single iteration of the MCTS algorithm. The random playouts can be done in
@@ -221,7 +216,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
             };
 
             // 4. Backpropagation
-            self.node_leaf_parallelized_backpropagate(node_id, values);
+            self.node_leaf_parallelized_backpropagate(node_id, &values);
         }
 
         Ok(())
@@ -232,7 +227,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Returns
     ///
     /// The depth of the search tree.
-    #[inline(always)]
+    #[inline]
     pub const fn get_expanded_depth(&self) -> usize {
         self.depth
     }
@@ -242,7 +237,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Returns
     ///
     /// Whether the search tree is reused.
-    #[inline(always)]
+    #[inline]
     pub const fn is_reused(&self) -> bool {
         self.reused
     }
@@ -252,7 +247,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     /// # Returns
     ///
     /// The amount of nodes in this search tree.
-    #[inline(always)]
+    #[inline]
     pub fn get_nodes(&self) -> usize {
         self.allocator.size()
     }
@@ -266,7 +261,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
         let root = self.allocator.get_node(self.root);
         let root_player = root.state.is_player_1();
 
-        let root_wins = root.wins_for(root_player).abs() as f64;
+        let root_wins = f64::from(root.wins_for(root_player).abs());
         let root_visits = root.visit_count as f64;
 
         root_wins / root_visits
@@ -293,6 +288,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// The maximum score of all games played from the root node from the perspective of the current
     /// player.
+
     pub fn get_max_score(&self) -> i32 {
         let root = self.allocator.get_node(self.root);
         let root_player = root.state.is_player_1();
@@ -345,9 +341,10 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
         let action_line = actions
             .iter()
-            .map(|action| match action.save_to_notation() {
-                Ok(notation) => notation,
-                Err(_) => "######".to_string(),
+            .map(|action| {
+                action
+                    .save_to_notation()
+                    .map_or_else(|_| "######".to_string(), |notation| notation)
             })
             .join(" → ");
 
@@ -406,7 +403,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
             for (inner_index, line) in self.tree_to_string(child.id).iter().enumerate() {
                 let front = if inner_index == 0 { branching_front } else { other_front };
-                result.push(format!("{}{}", front, line));
+                result.push(format!("{front}{line}"));
             }
         }
 
@@ -518,7 +515,7 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
 
             node.neutral_max_score = node.neutral_max_score.max(value);
             node.neutral_min_score = node.neutral_min_score.min(value);
-            node.neutral_score_sum += value as i64;
+            node.neutral_score_sum += i64::from(value);
             node.neutral_wins += if value > 0 { 1 } else { -1 };
             node.visit_count += 1;
 
@@ -541,14 +538,14 @@ impl<'tree_lifetime, Policy: TreePolicy, Eval: Evaluator> SearchTree<'tree_lifet
     ///
     /// `𝒪(𝑚 · 𝑛)` where `𝑛` is the depth of the current node as the chain until the root needs to be traversed and
     /// `𝑚` is the amount of values that need to be propagated
-    pub fn node_leaf_parallelized_backpropagate(&mut self, mut node_id: NodeId, values: Vec<i32>) {
+    pub fn node_leaf_parallelized_backpropagate(&mut self, mut node_id: NodeId, values: &[i32]) {
         loop {
             let node = self.allocator.get_node_mut(node_id);
 
-            for value in values.iter() {
+            for value in values {
                 node.neutral_max_score = node.neutral_max_score.max(*value);
                 node.neutral_min_score = node.neutral_min_score.min(*value);
-                node.neutral_score_sum += *value as i64;
+                node.neutral_score_sum += i64::from(*value);
                 node.neutral_wins += if *value > 0 { 1 } else { -1 };
                 node.visit_count += 1;
             }

@@ -35,6 +35,7 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝑛)` where `𝑛` is the size of the transposition table as all entries
     /// are initialized.
+    #[must_use]
     pub fn new(size: Size, fail_soft: bool) -> Self {
         let size = match size {
             Size::B(size) => size as usize,
@@ -91,6 +92,7 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+
     pub fn probe_hash_entry(&self, game: &Patchwork, alpha: i32, beta: i32, depth: usize) -> Option<(ActionId, i32)> {
         self.statistics.increment_accesses();
 
@@ -250,6 +252,7 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝟣)`
     #[allow(clippy::if_same_then_else)]
+
     pub fn store_evaluation(
         &mut self,
         game: &Patchwork,
@@ -307,7 +310,7 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
     fn should_replace(
         &self,
         entry_key: u64,
@@ -380,6 +383,7 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `𝑛` is the depth of the PV line.
+
     pub fn get_pv_line(&self, game: &Patchwork, depth: usize) -> Vec<ActionId> {
         let mut pv_line = Vec::with_capacity(depth);
 
@@ -399,11 +403,11 @@ impl TranspositionTable {
 
                     // TODO: remove prints
                     println!("──────────────────────────────────────────────────────────────────────────────");
-                    println!("game: {:?}", game_2);
-                    println!("action: {:?}", action_2);
-                    println!("table_depth: {:?}", table_depth);
-                    println!("table_evaluation: {:?}", table_evaluation);
-                    println!("table_evaluation_type: {:?}", table_evaluation_type);
+                    println!("game: {game_2:?}");
+                    println!("action: {action_2:?}");
+                    println!("table_depth: {table_depth:?}");
+                    println!("table_evaluation: {table_evaluation:?}");
+                    println!("table_evaluation_type: {table_evaluation_type:?}");
                     unreachable!("[TranspositionTable::get_pv_line] PV action is invalid");
                 }
                 pv_line.push(action);

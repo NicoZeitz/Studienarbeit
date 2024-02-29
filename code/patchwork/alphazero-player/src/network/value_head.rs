@@ -12,7 +12,8 @@ pub struct ValueHead<const NUMBER_OF_FILTERS: usize> {
 impl<const NUMBER_OF_FILTERS: usize> ValueHead<NUMBER_OF_FILTERS> {
     const VALUE_HEAD_FILTERS: usize = 1;
 
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let conv = conv2d(
             NUMBER_OF_FILTERS,
             Self::VALUE_HEAD_FILTERS,

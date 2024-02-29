@@ -1,4 +1,3 @@
-extern crate proc_macro;
 use std::collections::HashSet;
 
 use proc_macro::TokenStream;
@@ -42,6 +41,7 @@ pub fn generate_patches(input: TokenStream) -> TokenStream {
     .into()
 }
 
+#[allow(clippy::struct_field_names)]
 struct Patches {
     pub patches: Vec<Patch>,
     pub tiles: Vec<PatchTiling>,
@@ -76,18 +76,15 @@ struct PatchTransformation {
 }
 
 impl Parse for Patches {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let mut patches = Patches {
+    fn parse(input: syn::parse::ParseStream<'_>) -> syn::Result<Self> {
+        let mut patches = Self {
             patches: vec![],
             tiles: vec![],
             normalized_tiles: vec![],
             transformations: vec![],
         };
 
-        for (patch, tiling, transformation) in input
-            .parse_terminated(Self::parse_single_wrapped, Token![,])?
-            .into_iter()
-        {
+        for (patch, tiling, transformation) in input.parse_terminated(Self::parse_single_wrapped, Token![,])? {
             patches.patches.push(patch);
             patches.normalized_tiles.push(normalize_tiling(&tiling.tiles));
             patches.tiles.push(tiling);
@@ -99,20 +96,22 @@ impl Parse for Patches {
 }
 
 impl Patches {
-    fn parse_single_wrapped(input: syn::parse::ParseStream) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
+    fn parse_single_wrapped(
+        input: syn::parse::ParseStream<'_>,
+    ) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
         input.parse::<kw::patch>()?;
         let content;
         parenthesized!(content in input);
-        let (patch, tiling, transformation) = Patches::parse_single(&content)?;
+        let (patch, tiling, transformation) = Self::parse_single(&content)?;
         Ok((patch, tiling, transformation))
     }
 
-    fn parse_single(input: syn::parse::ParseStream) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
-        let id = Patches::parse_property::<kw::id>(input)?;
-        let button_cost = Patches::parse_property::<kw::button_cost>(input)?;
-        let time_cost = Patches::parse_property::<kw::time_cost>(input)?;
-        let button_income = Patches::parse_property::<kw::button_income>(input)?;
-        let tiles = Patches::parse_tiles(input)?;
+    fn parse_single(input: syn::parse::ParseStream<'_>) -> syn::Result<(Patch, PatchTiling, PatchTransformations)> {
+        let id = Self::parse_property::<kw::id>(input)?;
+        let button_cost = Self::parse_property::<kw::button_cost>(input)?;
+        let time_cost = Self::parse_property::<kw::time_cost>(input)?;
+        let button_income = Self::parse_property::<kw::button_income>(input)?;
+        let tiles = Self::parse_tiles(input)?;
         let transformations = generate_transformations(&tiles);
 
         let patch = Patch {
@@ -127,7 +126,7 @@ impl Patches {
         Ok((patch, tiling, transformation))
     }
 
-    fn parse_property<Keyword: syn::parse::Parse>(input: syn::parse::ParseStream) -> syn::Result<u8> {
+    fn parse_property<Keyword: syn::parse::Parse>(input: syn::parse::ParseStream<'_>) -> syn::Result<u8> {
         input.parse::<Keyword>()?;
         input.parse::<Token![:]>()?;
         let value: u8 = input.parse::<syn::LitInt>()?.base10_parse()?;
@@ -135,23 +134,23 @@ impl Patches {
         Ok(value)
     }
 
-    fn parse_tiles(input: syn::parse::ParseStream) -> syn::Result<Vec<Vec<u8>>> {
+    fn parse_tiles(input: syn::parse::ParseStream<'_>) -> syn::Result<Vec<Vec<u8>>> {
         let content;
         input.parse::<kw::tiles>()?;
         input.parse::<Token![:]>()?;
         bracketed!(content in input);
-        let tiles = content.parse_terminated(Patches::parse_single_row, Token![,])?;
+        let tiles = content.parse_terminated(Self::parse_single_row, Token![,])?;
         Ok(tiles.into_iter().collect())
     }
 
-    fn parse_single_row(input: syn::parse::ParseStream) -> syn::Result<Vec<u8>> {
+    fn parse_single_row(input: syn::parse::ParseStream<'_>) -> syn::Result<Vec<u8>> {
         let content;
         bracketed!(content in input);
-        let row = content.parse_terminated(Patches::parse_single_tile, Token![,])?;
+        let row = content.parse_terminated(Self::parse_single_tile, Token![,])?;
         Ok(row.into_iter().collect())
     }
 
-    fn parse_single_tile(input: syn::parse::ParseStream) -> syn::Result<u8> {
+    fn parse_single_tile(input: syn::parse::ParseStream<'_>) -> syn::Result<u8> {
         let value: u8 = input.parse::<syn::LitInt>()?.base10_parse()?;
         if value != 0 && value != 1 {
             return Err(syn::Error::new(input.span(), "Tile value must be 0 or 1"));
@@ -162,7 +161,7 @@ impl Patches {
 
 impl ToTokens for Patch {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let Patch {
+        let Self {
             id,
             button_cost,
             time_cost,
@@ -182,7 +181,7 @@ impl ToTokens for Patch {
 
 impl ToTokens for PatchTiling {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let PatchTiling { tiles } = self;
+        let Self { tiles } = self;
         let quoted = tiles.iter().map(|tiling| {
             quote! {
                 vec![
@@ -201,7 +200,7 @@ impl ToTokens for PatchTiling {
 
 impl ToTokens for PatchNormalizedTiling {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let PatchNormalizedTiling { normalized_tiles } = self;
+        let Self { normalized_tiles } = self;
         let quoted = normalized_tiles.iter().map(|tiling| {
             quote! {
                 [
@@ -220,7 +219,7 @@ impl ToTokens for PatchNormalizedTiling {
 
 impl ToTokens for PatchTransformations {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let PatchTransformations { transformations } = self;
+        let Self { transformations } = self;
         tokens.extend(quote! {
             vec![
                 #(#transformations),*
@@ -231,13 +230,13 @@ impl ToTokens for PatchTransformations {
 
 impl ToTokens for PatchTransformation {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let PatchTransformation {
+        let Self {
             row,
             column,
             transformation,
             tiling,
         } = self;
-        let tiling_literal = format!("{:#083b}u128", tiling).parse::<proc_macro2::Literal>().unwrap();
+        let tiling_literal = format!("{tiling:#083b}u128").parse::<proc_macro2::Literal>().unwrap();
 
         tokens.extend(quote! {
             PatchTransformation {
@@ -250,7 +249,7 @@ impl ToTokens for PatchTransformation {
     }
 }
 
-fn generate_transformations(tiles: &Vec<Vec<u8>>) -> Vec<PatchTransformation> {
+fn generate_transformations(tiles: &[Vec<u8>]) -> Vec<PatchTransformation> {
     let mut saved_transformations = HashSet::<u128>::new();
     let mut transformations: Vec<PatchTransformation> = vec![];
 
@@ -296,9 +295,10 @@ impl Constants {
     pub const FLIPPED_ROTATION_270: u8 = 0b111;
 }
 
-fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8>> {
+#[allow(clippy::match_same_arms)]
+fn get_transformed_tiles(tiles: &[Vec<u8>], transformation: u8) -> Vec<Vec<u8>> {
     match transformation {
-        Constants::ROTATION_0 => tiles.clone(),
+        Constants::ROTATION_0 => tiles.to_owned(),
         Constants::ROTATION_90 => {
             let mut new_tiles = vec![vec![0; tiles.len()]; tiles[0].len()];
             for (i, tile_row) in tiles.iter().enumerate() {
@@ -327,12 +327,12 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         Constants::FLIPPED => {
-            let mut new_tiles = tiles.clone();
+            let mut new_tiles = tiles.to_owned();
             new_tiles.reverse();
             new_tiles
         }
         Constants::FLIPPED_ROTATION_90 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles.len()]; flipped_tiles[0].len()];
@@ -344,7 +344,7 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         Constants::FLIPPED_ROTATION_180 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles[0].len()]; flipped_tiles.len()];
@@ -356,7 +356,7 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         Constants::FLIPPED_ROTATION_270 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles.len()]; flipped_tiles[0].len()];
@@ -367,7 +367,7 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             }
             new_tiles
         }
-        _ => tiles.clone(),
+        _ => tiles.to_owned(),
     }
 }
 

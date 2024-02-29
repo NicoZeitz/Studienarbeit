@@ -4,7 +4,7 @@ use patchwork_core::{time_board_flags, Patch, PatchManager, Patchwork, QuiltBoar
 
 /// A game encoder encodes a game of patchwork into a tensor.
 ///
-/// PATCH_LAYERS is the amount of patches that are encoded into a separate
+/// `PATCH_LAYERS` is the amount of patches that are encoded into a separate
 /// layer. All other patches will be encoded into a single layer via an lstm.
 #[derive(Debug, Clone)]
 pub struct GameEncoder<const PATCH_LAYERS: usize> {
@@ -35,7 +35,8 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     /// # Returns
     ///
     /// A new game encoder.
-    pub fn new(vb: VarBuilder, device: Device) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>, device: Device) -> Result<Self> {
         let patch_embeddings = candle_nn::embedding(
             PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize,
             QuiltBoard::TILES as usize,
@@ -61,15 +62,15 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
         )?;
 
         Ok(Self {
+            device,
             patch_embeddings,
             patch_lstm,
             time_board_fc1,
             time_board_fc2,
-            device,
         })
     }
 
-    /// Encodes the given games into a tensor of shape (batch_size, PATCH_LAYERS + 5, 9, 9)
+    /// Encodes the given games into a tensor of shape (`batch_size`, `PATCH_LAYERS` + 5, 9, 9)
     /// The tensor contains the encoded patches, the quilt boards, the current
     /// player and the time board.
     ///
@@ -79,7 +80,7 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     ///
     /// # Returns
     ///
-    /// A tensor of shape (batch_size, PATCH_LAYERS + 5, 9, 9) containing the encoded game.
+    /// A tensor of shape (`batch_size`, `PATCH_LAYERS` + 5, 9, 9) containing the encoded game.
     #[rustfmt::skip]
     pub fn encode_state(&self, games: &[&Patchwork]) -> Result<Tensor> {
         let encoded_games = games.iter().map(|game| {
@@ -116,7 +117,7 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     /// A tensor of shape ([`PATCH_LAYERS`] + 1, 9, 9) containing
     /// the encoded patches.
     #[rustfmt::skip]
-    fn encode_patches(&self, patches: &Vec<&'static Patch>) -> Result<Tensor> {
+    fn encode_patches(&self, patches: &[&'static Patch]) -> Result<Tensor> {
         let beginning_patch_ids = Tensor::from_iter(patches.iter().take(PATCH_LAYERS).map(|patch| patch.id), &self.device)?;
         let beginning_patches = self.patch_embeddings.forward(&beginning_patch_ids)?.t()?;
 
@@ -160,7 +161,7 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     fn encode_quilt_board(&self, quilt_board: &QuiltBoard) -> Result<Tensor> {
         let mut quilt_board_slice = [0.0; QuiltBoard::COLUMNS as usize * QuiltBoard::ROWS as usize];
         for index in 0..QuiltBoard::TILES {
-            quilt_board_slice[index as usize] = quilt_board.get_at(index) as u8 as f32;
+            quilt_board_slice[index as usize] = f32::from(u8::from(quilt_board.get_at(index)));
         }
 
         Tensor::from_slice(
@@ -205,8 +206,8 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
     /// tensor is then reshaped to (9, 9).
     ///
     /// The different values are:
-    /// * player 1 position [0, TimeBoard::MAX_POSITION] normalized to [0, 1]
-    /// * player 2 position [0, TimeBoard::MAX_POSITION] normalized to [0, 1]
+    /// * player 1 position [0, `TimeBoard::MAX_POSITION`] normalized to [0, 1]
+    /// * player 2 position [0, `TimeBoard::MAX_POSITION`] normalized to [0, 1]
     /// * player distance [-6, 6] normalized to [-1, 1]
     /// * The position of all button income triggers (9) normalized to (0, 1]
     /// * The position of all special patches (5) normalized to (0, 1)
@@ -225,25 +226,25 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
         let (player_1_pos, player_2_pos) = time_board.get_player_positions();
 
         // player 1 position [0, TimeBoard::MAX_POSITION] normalized to [0, 1]
-        time_board_input.push(player_1_pos as f32 / TimeBoard::MAX_POSITION as f32);
+        time_board_input.push(f32::from(player_1_pos) / f32::from(TimeBoard::MAX_POSITION));
         // player 2 position [0, TimeBoard::MAX_POSITION] normalized to [0, 1]
-        time_board_input.push(player_2_pos as f32 / TimeBoard::MAX_POSITION as f32);
+        time_board_input.push(f32::from(player_2_pos) / f32::from(TimeBoard::MAX_POSITION));
         // player distance [-6, 6] normalized to [-1, 1]
-        time_board_input.push((player_1_pos as f32 - player_2_pos as f32) / 6.0);
+        time_board_input.push((f32::from(player_1_pos) - f32::from(player_2_pos)) / 6.0);
         // The position of all button income triggers (9) normalized to (0, 1]
         for index in time_board.get_button_income_triggers() {
-            time_board_input.push(*index as f32 / TimeBoard::MAX_POSITION as f32);
+            time_board_input.push(f32::from(*index) / f32::from(TimeBoard::MAX_POSITION));
         }
         // The position of all special patches (5) normalized to (0, 1)
         for index in time_board.get_special_patches() {
-            time_board_input.push(*index as f32 / TimeBoard::MAX_POSITION as f32);
+            time_board_input.push(f32::from(*index) / f32::from(TimeBoard::MAX_POSITION));
         }
         // Each tile of the time board (54) normalized to [0, 1)
         time_board_input.extend(
             time_board
                 .tiles
                 .iter()
-                .map(|tile| *tile as f32 / time_board_flags::MAX_VALUE as f32),
+                .map(|tile| f32::from(*tile) / f32::from(time_board_flags::MAX_VALUE)),
         );
 
         debug_assert_eq!(

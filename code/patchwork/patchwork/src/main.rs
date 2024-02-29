@@ -46,11 +46,11 @@ fn main() {
                 }
             }
             Err(ReadlineError::Interrupted) => {
-                println!("{}", CTRL_C_MESSAGE);
+                println!("{CTRL_C_MESSAGE}");
                 handle_exit(0);
             }
             Err(ReadlineError::Eof) => {
-                println!("{}", CTRL_D_MESSAGE);
+                println!("{CTRL_D_MESSAGE}");
                 handle_exit(0);
             }
             Err(err) => handle_exit_with_error(err.into()),
@@ -84,7 +84,7 @@ fn handle_args() -> anyhow::Result<()> {
 fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()> {
     let mut input = line.split_whitespace();
     let cmd = input.next();
-    let args = input.map(|s| s.to_string()).collect::<Vec<_>>();
+    let args = input.map(std::string::ToString::to_string).collect::<Vec<_>>();
     match cmd {
         Some("help" | "h") => print_help(),
         Some("exit" | "quit" | "q") => handle_exit(0),
@@ -93,25 +93,25 @@ fn match_line(line: &str, rl: &mut Editor<(), FileHistory>) -> anyhow::Result<()
         Some("debug") => print_debug(),
         Some("upi") => {
             if let Err(err) = handle_upi(rl, args) {
-                println!("UPI exited with error: {}", err);
+                println!("UPI exited with error: {err}");
             }
         }
         Some("console") => {
             if let Err(err) = handle_console(rl, args) {
-                println!("Console exited with error: {}", err);
+                println!("Console exited with error: {err}");
             }
         }
         Some("compare") => {
             if let Err(err) = handle_compare(rl, args) {
-                println!("Compare exited with error: {}", err);
+                println!("Compare exited with error: {err}");
             }
         }
         Some("server") => {
             if let Err(err) = handle_server(rl, args) {
-                println!("Server exited with error: {}", err);
+                println!("Server exited with error: {err}");
             }
         }
-        _ => println!("Unknown command \"{}\". Type \"help\" for more information.", line),
+        _ => println!("Unknown command \"{line}\". Type \"help\" for more information."),
     }
 
     Ok(())

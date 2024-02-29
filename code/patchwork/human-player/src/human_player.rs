@@ -17,7 +17,7 @@ pub struct HumanPlayer {
 impl HumanPlayer {
     /// Creates a new [`HumanPlayer`] with the given name.
     pub fn new(name: impl Into<String>) -> Self {
-        HumanPlayer { name: name.into() }
+        Self { name: name.into() }
     }
 }
 
@@ -60,6 +60,7 @@ impl HumanPlayer {
             "Player '{}' has to place the special patch. Please enter the row and column of the patch (row, column):",
             self.name
         );
+        #[allow(clippy::redundant_clone)] // This clone is needed but clippy does not get this
         let mut prompt = initial_prompt.clone();
 
         loop {
@@ -73,11 +74,11 @@ impl HumanPlayer {
             let human_inputs = Regex::new(r"[, ]+")
                 .unwrap()
                 .split(&human_input)
-                .map(|x| x.to_string())
+                .map(std::string::ToString::to_string)
                 .collect::<Vec<_>>();
 
             if human_inputs.len() != 2 {
-                prompt = format!("Please enter 'row, column'. {}", initial_prompt);
+                prompt = format!("Please enter 'row, column'. {initial_prompt}");
                 continue;
             }
 
@@ -130,7 +131,7 @@ impl HumanPlayer {
                             let action_column = action.get_column();
                             format!("({}, {})", action_row + 1, action_column + 1)
                         } else {
-                            "".to_string()
+                            String::new()
                         }
                     })
                     .collect::<Vec<_>>()
@@ -165,7 +166,7 @@ impl HumanPlayer {
             }
         }
 
-        let mut available_actions = actions.iter().map(|a| format!("'{}'", a)).collect::<Vec<_>>();
+        let mut available_actions = actions.iter().map(|a| format!("'{a}'")).collect::<Vec<_>>();
         available_actions.sort_unstable();
 
         let initial_prompt = format!(
@@ -173,6 +174,7 @@ impl HumanPlayer {
             self.name,
             available_actions.join(", ")
         );
+        #[allow(clippy::redundant_clone)] // This clone is needed but clippy does not get this
         let mut prompt = initial_prompt.clone();
 
         loop {
@@ -193,8 +195,9 @@ impl HumanPlayer {
                     valid_actions
                         .iter()
                         .filter(|action| action.is_first_patch_taken())
-                        .cloned()
-                        .collect::<Vec<ActionId>>(),
+                        .copied()
+                        .collect::<Vec<ActionId>>()
+                        .as_slice(),
                     0,
                 );
             } else if human_input == "take 2" && actions.contains("take 2") {
@@ -203,8 +206,9 @@ impl HumanPlayer {
                     valid_actions
                         .iter()
                         .filter(|action| action.is_second_patch_taken())
-                        .cloned()
-                        .collect::<Vec<ActionId>>(),
+                        .copied()
+                        .collect::<Vec<ActionId>>()
+                        .as_slice(),
                     1,
                 );
             } else if human_input == "take 3" && actions.contains("take 3") {
@@ -213,13 +217,14 @@ impl HumanPlayer {
                     valid_actions
                         .iter()
                         .filter(|action| action.is_third_patch_taken())
-                        .cloned()
-                        .collect::<Vec<ActionId>>(),
+                        .copied()
+                        .collect::<Vec<ActionId>>()
+                        .as_slice(),
                     2,
                 );
             }
 
-            prompt = format!("Please enter a valid action. {}", initial_prompt);
+            prompt = format!("Please enter a valid action. {initial_prompt}");
         }
     }
 
@@ -232,10 +237,12 @@ impl HumanPlayer {
     fn handle_place_patch(
         &mut self,
         state: &Patchwork,
-        valid_actions: Vec<ActionId>,
+        valid_actions: &[ActionId],
         patch_index: u8,
     ) -> PlayerResult<ActionId> {
         let initial_prompt = format!("You chose to place the following patch: \n{}\nPlease enter the  rotation (0, 90, 180, 270) and orientation (if flipped: y/n) of the patch:", state.patches[patch_index as usize]);
+
+        #[allow(clippy::redundant_clone)] // This clone is needed but clippy does not get this
         let mut prompt = initial_prompt.clone();
 
         loop {
@@ -244,11 +251,11 @@ impl HumanPlayer {
             let human_inputs = Regex::new(r"[, ]+")
                 .unwrap()
                 .split(&human_input)
-                .map(|x| x.to_string())
+                .map(std::string::ToString::to_string)
                 .collect::<Vec<_>>();
 
             if human_inputs.len() != 2 {
-                prompt = format!("Please enter 'rotation, orientation'. {}", initial_prompt);
+                prompt = format!("Please enter 'rotation, orientation'. {initial_prompt}");
                 continue;
             }
 
@@ -256,10 +263,7 @@ impl HumanPlayer {
             let optional_orientation = human_inputs[1].parse::<char>();
 
             if optional_rotation.is_err() {
-                prompt = format!(
-                    "Please enter a valid number for rotation (0, 90, 180, 270). {}",
-                    initial_prompt
-                );
+                prompt = format!("Please enter a valid number for rotation (0, 90, 180, 270). {initial_prompt}");
                 continue;
             }
 
@@ -267,7 +271,7 @@ impl HumanPlayer {
             let orientation = optional_orientation.unwrap_or('x');
 
             if orientation != 'y' && orientation != 'n' {
-                prompt = format!("Please enter 'y' or 'n' for orientation. {}", initial_prompt);
+                prompt = format!("Please enter 'y' or 'n' for orientation. {initial_prompt}");
                 continue;
             }
 
@@ -277,15 +281,12 @@ impl HumanPlayer {
                 180 => PatchTransformation::ROTATION_180,
                 270 => PatchTransformation::ROTATION_270,
                 _ => {
-                    prompt = format!(
-                        "Please enter a valid number for rotation (0, 90, 180, 270). {}",
-                        initial_prompt
-                    );
+                    prompt = format!("Please enter a valid number for rotation (0, 90, 180, 270). {initial_prompt}");
                     continue;
                 }
             };
 
-            let orientation: u8 = if orientation == 'n' { 0 } else { 1 };
+            let orientation: u8 = u8::from(orientation != 'n');
 
             let new_valid_actions = valid_actions
                 .iter()
@@ -303,16 +304,15 @@ impl HumanPlayer {
                         false
                     }
                 })
-                .cloned()
+                .copied()
                 .collect::<Vec<ActionId>>();
 
             if !new_valid_actions.is_empty() {
-                return self.handle_place_patch_position(new_valid_actions);
+                return self.handle_place_patch_position(&new_valid_actions);
             }
 
             prompt = format!(
-                "Rotation '{}' and Orientation '{}' is not valid. Please enter a valid rotation and orientation. {}",
-                rotation, orientation, initial_prompt
+                "Rotation '{rotation}' and Orientation '{orientation}' is not valid. Please enter a valid rotation and orientation. {initial_prompt}"
             );
         }
     }
@@ -326,7 +326,7 @@ impl HumanPlayer {
     /// # Returns
     ///
     /// The action.
-    fn handle_place_patch_position(&mut self, valid_actions: Vec<ActionId>) -> PlayerResult<ActionId> {
+    fn handle_place_patch_position(&mut self, valid_actions: &[ActionId]) -> PlayerResult<ActionId> {
         let initial_prompt = "Please enter the row and column of the patch (row, column):";
         let mut prompt = initial_prompt.to_string();
 
@@ -335,11 +335,11 @@ impl HumanPlayer {
             let human_inputs = Regex::new(r"[, ]+")
                 .unwrap()
                 .split(&human_input)
-                .map(|x| x.to_string())
+                .map(std::string::ToString::to_string)
                 .collect::<Vec<_>>();
 
             if human_inputs.len() != 2 {
-                prompt = format!("Please enter 'row, column'. {}", initial_prompt);
+                prompt = format!("Please enter 'row, column'. {initial_prompt}");
                 continue;
             }
 
@@ -371,7 +371,7 @@ impl HumanPlayer {
 
             let patch_position = (row - 1, column - 1);
 
-            for action in &valid_actions {
+            for action in valid_actions {
                 if action.is_patch_placement() {
                     let action_row = action.get_row();
                     let action_column = action.get_column();
@@ -394,7 +394,7 @@ impl HumanPlayer {
                             let action_column = action.get_column();
                             format!("({}, {})", action_row + 1, action_column + 1)
                         } else {
-                            "".to_string()
+                            String::new()
                         }
                     })
                     .collect::<Vec<_>>()
@@ -406,7 +406,7 @@ impl HumanPlayer {
 
     fn get_human_input(&mut self, prompt: &str) -> PlayerResult<String> {
         let mut human_input = String::new();
-        print!("{} ", prompt);
+        print!("{prompt} ");
         io::stdout().lock().flush().unwrap();
         io::stdin().read_line(&mut human_input)?;
 
@@ -421,6 +421,7 @@ impl HumanPlayer {
     /// # Arguments
     ///
     /// * `human_input` - The human input.
+    #[allow(clippy::unused_self)]
     fn handle_exit_input(&mut self, human_input: &str) {
         if human_input == "exit" {
             println!("Exiting...");

@@ -76,12 +76,10 @@ async fn handle_socket(socket: WebSocket, who: SocketAddr) {
     while let Some(Ok(msg)) = receiver.next().await {
         match msg {
             Message::Text(_) => {
-                println!("Received message from `{}`: {:?}", who, msg);
+                println!("Received message from `{who}`: {msg:?}");
                 let _ = sender.send(Message::Text("Hello!".to_string())).await;
             }
-            Message::Binary(_) => {}
-            Message::Ping(_) => {}
-            Message::Pong(_) => {}
+            Message::Binary(_) | Message::Ping(_) | Message::Pong(_) => {}
             Message::Close(_) => {
                 break;
             }

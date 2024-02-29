@@ -44,6 +44,7 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn from_surrogate_action_id(surrogate_action_id: ActionId) -> Self {
         debug_assert!(
             ActionId::is_valid_action_id(surrogate_action_id.as_bits()),
@@ -52,19 +53,19 @@ impl Action {
         );
 
         match surrogate_action_id.as_bits() {
-            ActionId::PHANTOM_ACTION_ID => Action::Phantom,
-            ActionId::NULL_ACTION_ID => Action::Null,
+            ActionId::PHANTOM_ACTION_ID => Self::Phantom,
+            ActionId::NULL_ACTION_ID => Self::Null,
             _ => {
                 if surrogate_action_id.is_walking() {
-                    Action::Walking {
+                    Self::Walking {
                         starting_index: surrogate_action_id.get_starting_index(),
                     }
                 } else if surrogate_action_id.is_special_patch_placement() {
-                    Action::SpecialPatchPlacement {
+                    Self::SpecialPatchPlacement {
                         quilt_board_index: surrogate_action_id.get_quilt_board_index(),
                     }
                 } else {
-                    Action::PatchPlacement {
+                    Self::PatchPlacement {
                         patch_id: surrogate_action_id.get_patch_id(),
                         patch_index: surrogate_action_id.get_patch_index(),
                         patch_transformation_index: surrogate_action_id.get_patch_transformation_index(),
@@ -93,6 +94,7 @@ impl Action {
     ///
     /// If the given natural action id is walking or patch placement and does
     /// not contain hidden information. This will panic in debug mode.
+    #[must_use]
     pub fn from_natural_action_id(natural_action_id: NaturalActionId) -> Self {
         debug_assert!(
             NaturalActionId::is_valid_natural_action_id(natural_action_id.as_bits()),
@@ -102,38 +104,34 @@ impl Action {
 
         match natural_action_id.as_bits() {
             NaturalActionId::WALKING_ACTION_ID => {
-                if cfg!(debug_assertions) && !natural_action_id.contains_hidden_information() {
-                    panic!(
+                debug_assert!(!natural_action_id.contains_hidden_information(),
                         "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
                         natural_action_id.as_bits_with_hidden_information()
                     );
-                }
 
                 let starting_index = natural_action_id.get_starting_index();
 
                 Self::Walking { starting_index }
             }
-            NaturalActionId::PHANTOM_ACTION_ID => Action::Phantom,
-            NaturalActionId::NULL_ACTION_ID => Action::Null,
+            NaturalActionId::PHANTOM_ACTION_ID => Self::Phantom,
+            NaturalActionId::NULL_ACTION_ID => Self::Null,
             _ => {
                 if natural_action_id.is_special_patch_placement() {
                     Self::SpecialPatchPlacement {
                         quilt_board_index: natural_action_id.get_quilt_board_index(),
                     }
                 } else {
-                    if cfg!(debug_assertions) && !natural_action_id.is_patch_placement() {
-                        panic!(
-                            "[Action::from_natural_action_id] The given natural action id is not a patch placement action ({:064b})",
-                            natural_action_id.as_bits_with_hidden_information()
-                        );
-                    }
+                    debug_assert!(
+                        !natural_action_id.is_patch_placement(),
+                        "[Action::from_natural_action_id] The given natural action id is not a patch placement action ({:064b})",
+                        natural_action_id.as_bits_with_hidden_information()
+                    );
 
-                    if cfg!(debug_assertions) && !natural_action_id.contains_hidden_information() {
-                        panic!(
-                            "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
-                            natural_action_id.as_bits_with_hidden_information()
-                        );
-                    }
+                    debug_assert!(
+                        !natural_action_id.contains_hidden_information(),
+                        "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
+                        natural_action_id.as_bits_with_hidden_information()
+                    );
 
                     // patch placement
                     let patch_id = natural_action_id.get_patch_id();
@@ -161,7 +159,8 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn to_surrogate_action_id(&self) -> ActionId {
         ActionId::from_action(self)
     }
@@ -175,7 +174,8 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn to_natural_action_id(&self) -> NaturalActionId {
         NaturalActionId::from_action(self)
     }
@@ -189,9 +189,10 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_walking(&self) -> bool {
-        matches!(self, Action::Walking { .. })
+        matches!(self, Self::Walking { .. })
     }
 
     /// Whether this action is a special patch placement action.
@@ -203,9 +204,10 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_special_patch_placement(&self) -> bool {
-        matches!(self, Action::SpecialPatchPlacement { .. })
+        matches!(self, Self::SpecialPatchPlacement { .. })
     }
 
     /// Whether this action is a normal patch placement action.
@@ -217,9 +219,10 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_patch_placement(&self) -> bool {
-        matches!(self, Action::PatchPlacement { .. })
+        matches!(self, Self::PatchPlacement { .. })
     }
 
     /// Whether this action is a phantom action.
@@ -231,9 +234,10 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_phantom(&self) -> bool {
-        matches!(self, Action::Phantom)
+        matches!(self, Self::Phantom)
     }
 
     /// Whether this action is a null action.
@@ -245,9 +249,10 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_null(&self) -> bool {
-        matches!(self, Action::Null)
+        matches!(self, Self::Null)
     }
 
     /// Whether this action took the first patch.
@@ -259,10 +264,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_first_patch_taken(&self) -> bool {
         match self {
-            Action::PatchPlacement { patch_index, .. } => *patch_index == 0,
+            Self::PatchPlacement { patch_index, .. } => *patch_index == 0,
             _ => false,
         }
     }
@@ -276,10 +282,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_second_patch_taken(&self) -> bool {
         match self {
-            Action::PatchPlacement { patch_index, .. } => *patch_index == 1,
+            Self::PatchPlacement { patch_index, .. } => *patch_index == 1,
             _ => false,
         }
     }
@@ -293,10 +300,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_third_patch_taken(&self) -> bool {
         match self {
-            Action::PatchPlacement { patch_index, .. } => *patch_index == 2,
+            Self::PatchPlacement { patch_index, .. } => *patch_index == 2,
             _ => false,
         }
     }
@@ -312,10 +320,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn try_get_starting_index(&self) -> Option<u8> {
         match self {
-            Action::Walking { starting_index } => Some(*starting_index),
+            Self::Walking { starting_index } => Some(*starting_index),
             _ => None,
         }
     }
@@ -331,10 +340,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn try_get_patch_id(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement { patch_id, .. } => Some(*patch_id),
+            Self::PatchPlacement { patch_id, .. } => Some(*patch_id),
             _ => None,
         }
     }
@@ -350,10 +360,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn try_get_patch_index(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement { patch_index, .. } => Some(*patch_index),
+            Self::PatchPlacement { patch_index, .. } => Some(*patch_index),
             _ => None,
         }
     }
@@ -369,10 +380,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn try_get_quilt_board_index(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_transformation_index,
                 ..
@@ -381,7 +393,7 @@ impl Action {
                     PatchManager::get_transformation(*patch_id, *patch_transformation_index);
                 Some(QuiltBoard::get_index(*row, *column))
             }
-            Action::SpecialPatchPlacement { quilt_board_index } => Some(*quilt_board_index),
+            Self::SpecialPatchPlacement { quilt_board_index } => Some(*quilt_board_index),
             _ => None,
         }
     }
@@ -398,9 +410,10 @@ impl Action {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[must_use]
     pub fn try_get_row(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_transformation_index,
                 ..
@@ -409,9 +422,7 @@ impl Action {
                     PatchManager::get_transformation(*patch_id, *patch_transformation_index);
                 Some(*row)
             }
-            Action::SpecialPatchPlacement { quilt_board_index } => {
-                Some(QuiltBoard::get_row_column(*quilt_board_index).0)
-            }
+            Self::SpecialPatchPlacement { quilt_board_index } => Some(QuiltBoard::get_row_column(*quilt_board_index).0),
             _ => None,
         }
     }
@@ -428,9 +439,10 @@ impl Action {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[must_use]
     pub fn try_get_column(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_transformation_index,
                 ..
@@ -439,9 +451,7 @@ impl Action {
                     PatchManager::get_transformation(*patch_id, *patch_transformation_index);
                 Some(*column)
             }
-            Action::SpecialPatchPlacement { quilt_board_index } => {
-                Some(QuiltBoard::get_row_column(*quilt_board_index).1)
-            }
+            Self::SpecialPatchPlacement { quilt_board_index } => Some(QuiltBoard::get_row_column(*quilt_board_index).1),
             _ => None,
         }
     }
@@ -456,10 +466,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn try_get_rotation(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_transformation_index,
                 ..
@@ -481,10 +492,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn try_get_orientation(&self) -> Option<u8> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_transformation_index,
                 ..
@@ -507,10 +519,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn try_get_patch_transformation_index(&self) -> Option<u16> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_transformation_index,
                 ..
             } => Some(*patch_transformation_index),
@@ -529,10 +542,11 @@ impl Action {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn try_get_previous_player_was_1(&self) -> Option<bool> {
         match self {
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 previous_player_was_1, ..
             } => Some(*previous_player_was_1),
             _ => None,
@@ -559,14 +573,14 @@ impl Display for Action {
         write!(f, "Action {}", natural_action.as_bits())?;
 
         match self {
-            Action::Walking { starting_index } => {
-                write!(f, " - Walking (starting at {})", starting_index)
+            Self::Walking { starting_index } => {
+                write!(f, " - Walking (starting at {starting_index})")
             }
-            Action::SpecialPatchPlacement { quilt_board_index } => {
+            Self::SpecialPatchPlacement { quilt_board_index } => {
                 let (row, column) = QuiltBoard::get_row_column(*quilt_board_index);
-                write!(f, " - Special patch placement at ({}, {})", row, column)
+                write!(f, " - Special patch placement at ({row}, {column})")
             }
-            Action::PatchPlacement {
+            Self::PatchPlacement {
                 patch_id,
                 patch_index,
                 patch_transformation_index,
@@ -584,10 +598,10 @@ impl Display for Action {
                     *patch_id, *patch_index, row, column, rotation, orientation
                 )
             }
-            Action::Phantom => {
+            Self::Phantom => {
                 write!(f, " - Phantom")
             }
-            Action::Null => {
+            Self::Null => {
                 write!(f, " - Null")
             }
         }

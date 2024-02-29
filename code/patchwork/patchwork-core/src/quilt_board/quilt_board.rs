@@ -23,7 +23,7 @@ impl QuiltBoard {
     /// The amount of columns on the quilt board
     pub const COLUMNS: u8 = 9;
     /// The amount of tiles on the quilt board
-    pub const TILES: u8 = QuiltBoard::ROWS * QuiltBoard::COLUMNS;
+    pub const TILES: u8 = Self::ROWS * Self::COLUMNS;
     /// The amount of buttons a full board generates.
     pub const FULL_BOARD_BUTTON_INCOME: i32 = 7;
 
@@ -43,9 +43,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_index(row: u8, column: u8) -> u8 {
-        row * QuiltBoard::COLUMNS + column
+        row * Self::COLUMNS + column
     }
 
     /// Converts the given index to a row and column.
@@ -61,9 +62,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_row_column(index: u8) -> (u8, u8) {
-        (index / QuiltBoard::COLUMNS, index % QuiltBoard::COLUMNS)
+        (index / Self::COLUMNS, index % Self::COLUMNS)
     }
 
     /// Creates a new [`QuiltBoard`] which is empty.
@@ -76,8 +78,9 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝟣)`
     #[inline]
-    pub const fn new() -> QuiltBoard {
-        QuiltBoard {
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {
             tiles: 0,
             button_income: 0,
         }
@@ -92,9 +95,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_full(&self) -> bool {
-        self.tiles.count_ones() == QuiltBoard::TILES as u32
+        self.tiles.count_ones() == Self::TILES as u32
     }
 
     /// Whether the board has a special tile condition.
@@ -109,16 +113,16 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝟣)`
     #[rustfmt::skip]
-    pub const fn is_special_tile_condition_reached(&self) -> bool {
-        const BOARD_1X1: u128 = 0b00001111111001111111001111111001111111001111111001111111001111111u128;
-        const BOARD_1X2: u128 = 0b00011111110011111110011111110011111110011111110011111110011111110u128;
-        const BOARD_1X3: u128 = 0b00111111100111111100111111100111111100111111100111111100111111100u128;
-        const BOARD_2X1: u128 = 0b00001111111001111111001111111001111111001111111001111111001111111000000000u128;
-        const BOARD_2X2: u128 = 0b00011111110011111110011111110011111110011111110011111110011111110000000000u128;
-        const BOARD_2X3: u128 = 0b00111111100111111100111111100111111100111111100111111100111111100000000000u128;
-        const BOARD_3X1: u128 = 0b00001111111001111111001111111001111111001111111001111111001111111000000000000000000u128;
-        const BOARD_3X2: u128 = 0b00011111110011111110011111110011111110011111110011111110011111110000000000000000000u128;
-        const BOARD_3X3: u128 = 0b00111111100111111100111111100111111100111111100111111100111111100000000000000000000u128;
+    #[must_use]    pub const fn is_special_tile_condition_reached(&self) -> bool {
+        const BOARD_1X1: u128 = 0b0_0001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_u128;
+        const BOARD_1X2: u128 = 0b0_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_u128;
+        const BOARD_1X3: u128 = 0b0_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_u128;
+        const BOARD_2X1: u128 = 0b00_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0000_0000_u128;
+        const BOARD_2X2: u128 = 0b00_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_0000_0000_u128;
+        const BOARD_2X3: u128 = 0b00_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1000_0000_0000_u128;
+        const BOARD_3X1: u128 = 0b000_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_0000_0000_0000_0000_u128;
+        const BOARD_3X2: u128 = 0b000_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1000_0000_0000_0000_0000_u128;
+        const BOARD_3X3: u128 = 0b001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0000_0000_0000_0000_0000_u128;
 
         (self.tiles & BOARD_1X1) == BOARD_1X1 ||
         (self.tiles & BOARD_1X2) == BOARD_1X2 ||
@@ -140,7 +144,8 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn tiles_filled(&self) -> u32 {
         self.tiles.count_ones()
     }
@@ -154,9 +159,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn tiles_free(&self) -> u32 {
-        QuiltBoard::TILES as u32 - self.tiles_filled()
+        Self::TILES as u32 - self.tiles_filled()
     }
 
     /// The percentage of tiles that are filled.
@@ -168,9 +174,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn percent_full(&self) -> f32 {
-        self.tiles.count_ones() as f32 / QuiltBoard::TILES as f32
+        self.tiles.count_ones() as f32 / f32::from(Self::TILES)
     }
 
     /// The score the player has with this quilt board.
@@ -185,7 +192,8 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn score(&self) -> i32 {
         -2 * (self.tiles_free() as i32)
     }
@@ -206,9 +214,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub fn get(&self, row: u8, column: u8) -> bool {
-        let index = QuiltBoard::get_index(row, column);
+    #[inline]
+    #[must_use]
+    pub const fn get(&self, row: u8, column: u8) -> bool {
+        let index = Self::get_index(row, column);
         (self.tiles >> index) & 1 > 0
     }
 
@@ -225,8 +234,9 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub fn get_at(&self, index: u8) -> bool {
+    #[inline]
+    #[must_use]
+    pub const fn get_at(&self, index: u8) -> bool {
         (self.tiles >> index) & 1 > 0
     }
 
@@ -244,9 +254,10 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[must_use]
     pub const fn get_row(&self, row: u8) -> u16 {
-        let start = row * QuiltBoard::COLUMNS;
-        let end = start + QuiltBoard::COLUMNS;
+        let start = row * Self::COLUMNS;
+        let end = start + Self::COLUMNS;
         (self.tiles >> start) as u16 & ((1 << end) - 1)
     }
 
@@ -264,10 +275,11 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of rows, which is usually 9.
     #[inline]
+    #[must_use]
     pub fn get_column(&self, column: u8) -> u16 {
         let mut result = 0;
-        for row in 0..QuiltBoard::ROWS {
-            let index = QuiltBoard::get_index(row, column);
+        for row in 0..Self::ROWS {
+            let index = Self::get_index(row, column);
             result |= (self.tiles >> index) & 1 << row;
         }
         result as u16
@@ -280,6 +292,11 @@ impl QuiltBoard {
     /// # Arguments
     ///
     /// * `action` - The action to apply.
+    ///
+    /// # Panics
+    ///
+    /// When the given action cannot be done because it is not a patch placement or because the tiles that are
+    /// affected are already filled.
     ///
     /// # Complexity
     ///
@@ -300,8 +317,7 @@ impl QuiltBoard {
             if (self.tiles >> index) & 1 > 0 {
                 let (row, column) = Self::get_row_column(index);
                 panic!(
-                    "[QuiltBoard::do_action] Invalid action! The tile at row {} and column {} is already filled!",
-                    row, column
+                    "[QuiltBoard::do_action] Invalid action! The tile at row {row} and column {column} is already filled!"
                 );
             }
 
@@ -314,6 +330,11 @@ impl QuiltBoard {
     /// # Arguments
     ///
     /// * `action` - The action to undo.
+    ///
+    /// # Panics
+    ///
+    /// When the given action cannot be undone because it is not a patch placement or because the tiles that are
+    /// affected are already empty.
     ///
     /// # Complexity
     ///
@@ -334,8 +355,7 @@ impl QuiltBoard {
             if (self.tiles >> index) & 1 == 0 {
                 let (row, column) = Self::get_row_column(index);
                 panic!(
-                    "[QuiltBoard::undo_action] Invalid action! The tile at row {} and column {} is not filled!",
-                    row, column
+                    "[QuiltBoard::undo_action] Invalid action! The tile at row {row} and column {column} is not filled!"
                 );
             }
 
@@ -359,6 +379,8 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of transformations for the given patch.
+    #[must_use]
+
     pub fn get_valid_actions_for_patch(
         &self,
         patch: &'static Patch,
@@ -393,9 +415,10 @@ impl QuiltBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the quilt board.
+    #[must_use]
     pub fn get_valid_actions_for_special_patch(&self) -> Vec<ActionId> {
         let mut valid_actions = vec![];
-        for index in 0..QuiltBoard::TILES {
+        for index in 0..Self::TILES {
             if (self.tiles >> index) & 1 > 0 {
                 continue;
             }
@@ -424,13 +447,14 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝑛)` where `𝑛` is the amount of tiles on the quilt board.
     #[inline]
+    #[must_use]
     pub fn flip_horizontally_then_rotate_tiles(tiles: u128, rotate: u8, flip: bool) -> u128 {
         let tiles = if flip {
-            QuiltBoard::flip_tiles_horizontally(tiles)
+            Self::flip_tiles_horizontally(tiles)
         } else {
             tiles
         };
-        QuiltBoard::rotate_tiles(tiles, rotate)
+        Self::rotate_tiles(tiles, rotate)
     }
 
     /// Rotates the tiles of the given quilt board.
@@ -471,19 +495,20 @@ impl QuiltBoard {
     ///    ░░░░░░░░░          ░░░░░░░░░          ░░░░░░░░█           █░░░░░░░░
     ///    ░░░░░░░░░          ░░░░░░░░░          ░░░░░░███           ██░░░░░░░
     /// ```
+    #[must_use]
     pub fn rotate_tiles(tiles: u128, rotation: u8) -> u128 {
         let mut result = 0;
-        for (row, column) in itertools::iproduct!(0..QuiltBoard::ROWS, 0..QuiltBoard::COLUMNS) {
-            let index = QuiltBoard::get_index(row, column);
+        for (row, column) in itertools::iproduct!(0..Self::ROWS, 0..Self::COLUMNS) {
+            let index = Self::get_index(row, column);
             let tile = (tiles >> index) & 1 > 0;
             let new_index = match rotation {
                 0 => index,
-                1 => (column * QuiltBoard::ROWS) + (QuiltBoard::ROWS - row - 1),
-                2 => (QuiltBoard::TILES - 1) - index,
-                3 => (QuiltBoard::TILES - 1) - ((column * QuiltBoard::ROWS) + (QuiltBoard::ROWS - row - 1)),
+                1 => (column * Self::ROWS) + (Self::ROWS - row - 1),
+                2 => (Self::TILES - 1) - index,
+                3 => (Self::TILES - 1) - ((column * Self::ROWS) + (Self::ROWS - row - 1)),
                 _ => unreachable!("[QuiltBoard::rotate_tiles] Invalid rotation: {}.", rotation),
             };
-            result |= (tile as u128) << new_index;
+            result |= u128::from(tile) << new_index;
         }
         result
     }
@@ -515,13 +540,14 @@ impl QuiltBoard {
     /// ░░░░░░░░░   ░░░░░░░░░
     /// ░░░░░░░░░   ░░░░░░░░░
     /// ```
+    #[must_use]
     pub fn flip_tiles_horizontally(tiles: u128) -> u128 {
         let mut result = 0;
-        for (row, column) in itertools::iproduct!(0..QuiltBoard::ROWS, 0..QuiltBoard::COLUMNS) {
-            let index = QuiltBoard::get_index(row, column);
+        for (row, column) in itertools::iproduct!(0..Self::ROWS, 0..Self::COLUMNS) {
+            let index = Self::get_index(row, column);
             let tile = (tiles >> index) & 1 > 0;
-            let new_index = (row * QuiltBoard::COLUMNS) + (QuiltBoard::COLUMNS - column - 1);
-            result |= (tile as u128) << new_index;
+            let new_index = (row * Self::COLUMNS) + (Self::COLUMNS - column - 1);
+            result |= u128::from(tile) << new_index;
         }
         result
     }
@@ -553,13 +579,14 @@ impl QuiltBoard {
     /// ░░░░░░░░░   █░░░░░░░░
     /// ░░░░░░░░░   ███░░░░░░
     /// ```
+    #[must_use]
     pub fn flip_tiles_vertically(tiles: u128) -> u128 {
         let mut result = 0;
-        for (row, column) in itertools::iproduct!(0..QuiltBoard::ROWS, 0..QuiltBoard::COLUMNS) {
-            let index = QuiltBoard::get_index(row, column);
+        for (row, column) in itertools::iproduct!(0..Self::ROWS, 0..Self::COLUMNS) {
+            let index = Self::get_index(row, column);
             let tile = (tiles >> index) & 1 > 0;
-            let new_index = ((QuiltBoard::ROWS - row - 1) * QuiltBoard::COLUMNS) + column;
-            result |= (tile as u128) << new_index;
+            let new_index = ((Self::ROWS - row - 1) * Self::COLUMNS) + column;
+            result |= u128::from(tile) << new_index;
         }
         result
     }
@@ -581,8 +608,8 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝟣)`
     #[rustfmt::skip]
-    pub fn flip_horizontally_then_rotate_row_and_column(row: u8, column: u8, rotation: u8, flip: bool) -> (u8, u8) {
-        debug_assert!(rotation < 4, "[QuiltBoard::flip_horizontally_then_rotate_row_and_column] Invalid rotation: {}", rotation);
+    #[must_use]    pub fn flip_horizontally_then_rotate_row_and_column(row: u8, column: u8, rotation: u8, flip: bool) -> (u8, u8) {
+        debug_assert!(rotation < 4, "[QuiltBoard::flip_horizontally_then_rotate_row_and_column] Invalid rotation: {rotation}");
 
         match (rotation, flip) {
             // ☐░░░ Identity
@@ -593,29 +620,29 @@ impl QuiltBoard {
             // ░░░  Rotation 90°
             // ░█░    ☐ Row: 0, ☐ Column: 2
             // ░░░    █ Row: 2, █ Column: 1
-            (1, false) => (column,                           QuiltBoard::ROWS    - 1 - row),
+            (1, false) => (column,                           Self::ROWS    - 1 - row),
             // ░░░░ Rotation 180°
             // ░█░░   ☐ Row: 2, ☐ Column: 3
             // ░░░☐   █ Row: 1, █ Column: 1
-            (2, false) => (QuiltBoard::ROWS    - 1 - row,    QuiltBoard::COLUMNS - 1 - column),
+            (2, false) => (Self::ROWS    - 1 - row,    Self::COLUMNS - 1 - column),
             // ░░░
             // ░█░  Rotation 270°
             // ░░░    ☐ Row: 3, ☐ Column: 0
             // ☐░░    █ Row: 1, █ Column: 1
-            (3, false) => (QuiltBoard::COLUMNS - 1 - column, row),
+            (3, false) => (Self::COLUMNS - 1 - column, row),
             // ░░░☐ Horizontal Flip
             // ░█░░   ☐ Row: 0, ☐ Column: 3
             // ░░░░   █ Row: 1, █ Column: 1
-            (0, true)  => (row,                              QuiltBoard::COLUMNS - 1 - column),
+            (0, true)  => (row,                              Self::COLUMNS - 1 - column),
             // ░░░
             // ░█░  Horizontal Flip then Rotation 90°
             // ░░░    ☐ Row: 3, ☐ Column: 2
             // ░░☐    █ Row: 1, █ Column: 1
-            (1, true)  => (QuiltBoard::COLUMNS - 1 - column, QuiltBoard::ROWS    - 1 - row),
+            (1, true)  => (Self::COLUMNS - 1 - column, Self::ROWS    - 1 - row),
             // ░░░░ Horizontal Flip then Rotation 180°
             // ░░█░   ☐ Row: 2, ☐ Column: 0
             // ☐░░░   █ Row: 1, █ Column: 2
-            (2, true)  => (QuiltBoard::ROWS    - 1 - row,    column),
+            (2, true)  => (Self::ROWS    - 1 - row,    column),
             // ☐░░
             // ░░░  Horizontal Flip then Rotation 270°
             // ░█░    ☐ Row: 0, ☐ Column: 0
@@ -630,16 +657,16 @@ impl Display for QuiltBoard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut result = String::new();
 
-        for row in 0..QuiltBoard::ROWS {
-            for column in 0..QuiltBoard::COLUMNS {
-                let index = row * QuiltBoard::COLUMNS + column;
+        for row in 0..Self::ROWS {
+            for column in 0..Self::COLUMNS {
+                let index = row * Self::COLUMNS + column;
                 let tile = if (self.tiles >> index) & 1 > 0 { "█" } else { "░" };
                 result.push_str(tile);
             }
             result.push('\n');
         }
 
-        write!(f, "{}", result)?;
+        write!(f, "{result}")?;
         write!(f, "Button income: {}", self.button_income)
     }
 }

@@ -98,7 +98,7 @@ fn clone(c: &mut Criterion) {
                 let seed = rand::random::<u64>();
                 Patchwork::get_initial_state(Some(GameOptions { seed }))
             },
-            |patchwork: Patchwork| black_box(patchwork.clone()),
+            |patchwork: Patchwork| black_box(patchwork),
         );
     });
 }

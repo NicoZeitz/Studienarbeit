@@ -8,6 +8,9 @@ repository.workspace = true
 license.workspace = true
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
 default = []
 mkl = ["candle-core/mkl", "candle-nn/mkl"]

@@ -1,7 +1,7 @@
 use patchwork_core::{ScoredTreePolicy, TreePolicyNode};
 
 /// The First Play Urgency (FPU) strategy to use for the MCTS. The FPU is used to give a exploitation value to unvisited
-/// nodes. The original AlphaZero paper used a value of -1 for the FPU (see [AlphaZero paper, and Lc0 v0.19.1](https://lczero.org/blog/2018/12/alphazero-paper-and-lc0-v0191/)).
+/// nodes. The original `AlphaZero` paper used a value of -1 for the FPU (see [AlphaZero paper, and Lc0 v0.19.1](https://lczero.org/blog/2018/12/alphazero-paper-and-lc0-v0191/)).
 /// This means that unvisited nodes are considered as losses. Leela Chess Zero (Lc0) initializes the FPU with the parent
 /// value reduced by a certain amount (0.44) (see [Engine parameters](https://lczero.org/play/flags/)).
 pub enum FPUStrategy {
@@ -21,21 +21,22 @@ impl FPUStrategy {
     /// # Returns
     ///
     /// The FPU value for the given parent value.
+    #[must_use]
     pub fn get_fpu(&self, parent_value: f64) -> f64 {
         match self {
-            FPUStrategy::Absolute(fpu) => *fpu,
-            FPUStrategy::Reduction(reduction) => parent_value - reduction,
+            Self::Absolute(fpu) => *fpu,
+            Self::Reduction(reduction) => parent_value - reduction,
         }
     }
 }
 
 impl Default for FPUStrategy {
     fn default() -> Self {
-        FPUStrategy::Reduction(0.44)
+        Self::Reduction(0.44)
     }
 }
 
-/// An implementation of the PUCT policy used in AlphaZero and Leela Chess Zero (Lc0).
+/// An implementation of the PUCT policy used in `AlphaZero` and Leela Chess Zero (Lc0).
 ///
 /// # Formula
 ///
@@ -75,7 +76,8 @@ impl PUCTPolicy {
     /// # Returns
     ///
     /// The new [`AlphaZeroUCTPolicy`].
-    pub fn new(exploration_constant: f64, fpu_strategy: FPUStrategy) -> Self {
+    #[must_use]
+    pub const fn new(exploration_constant: f64, fpu_strategy: FPUStrategy) -> Self {
         Self {
             exploration_constant,
             fpu_strategy,
@@ -90,7 +92,7 @@ impl Default for PUCTPolicy {
 }
 
 impl PUCTPolicy {
-    // #[inline(always)]
+    // #[inline]
     fn get_exploitation<Player: Copy>(
         &self,
         parent: &impl TreePolicyNode<Player = Player>,
@@ -110,23 +112,23 @@ impl PUCTPolicy {
                         // [EdgeAndNode::GetQ](https://github.com/LeelaChessZero/lc0/blob/master/src/mcts/node.h#L375)
                         // [Engine Parameters](https://lczero.org/play/flags)
                         // 0.0
-                        child.wins_for(parent_player) as f64 // push up virtual loss
+                        f64::from(child.wins_for(parent_player)) // push up virtual loss
                     } else {
-                        parent.wins_for(parent_player) as f64 / parent_visit_count - reduction
+                        f64::from(parent.wins_for(parent_player)) / parent_visit_count - reduction
                     }
                 }
             };
         }
 
-        let res = child.wins_for(parent_player) as f64 / child_visit_count;
+        let res = f64::from(child.wins_for(parent_player)) / child_visit_count;
 
         if res.is_infinite() {
             println!(
                 "Infinite exploitation: wins: {}, visit count: {} or {} = {} or {}",
-                child.wins_for(parent_player) as f64,
+                f64::from(child.wins_for(parent_player)),
                 child.visit_count() as f64,
                 child_visit_count,
-                child.wins_for(parent_player) as f64 / child.visit_count() as f64,
+                f64::from(child.wins_for(parent_player)) / child.visit_count() as f64,
                 res
             );
             panic!("Infinite exploitation")
@@ -135,7 +137,8 @@ impl PUCTPolicy {
         res
     }
 
-    #[inline(always)]
+    #[inline]
+
     fn get_exploration<Player: Copy>(
         &self,
         parent: &impl TreePolicyNode<Player = Player>,

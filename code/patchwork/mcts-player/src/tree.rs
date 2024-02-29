@@ -14,7 +14,7 @@ impl Tree {
     ///
     /// * `root` - The root node of the tree.
     /// * `allocator` - The allocator holding all nodes of the tree.
-    pub fn new(root: NodeId, allocator: AreaAllocator) -> Self {
+    pub const fn new(root: NodeId, allocator: AreaAllocator) -> Self {
         Self { root, allocator }
     }
 }

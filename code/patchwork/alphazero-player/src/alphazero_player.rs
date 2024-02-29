@@ -11,7 +11,7 @@ use crate::{
 
 // TODO: Temperature tau
 
-/// A computer player that uses the AlphaZero algorithm to choose an action.
+/// A computer player that uses the `AlphaZero` algorithm to choose an action.
 pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
     /// The name of the player.
     pub name: String,
@@ -21,7 +21,7 @@ pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
     search_tree: DefaultSearchTree<Policy>,
 }
 
-/// The default network weights for the AlphaZeroPlayer.
+/// The default network weights for the `AlphaZeroPlayer`.
 static NETWORK_WEIGHTS: &[u8; include_bytes!("network/weights/patch_zero.safetensors").len()] =
     include_bytes!("network/weights/patch_zero.safetensors");
 
@@ -33,27 +33,34 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
     /// # Arguments
     ///
     /// * `name` - The name of the player.
-    /// * `options` - The options for the AlphaZero algorithm.
+    /// * `options` - The options for the `AlphaZero` algorithm.
     ///
     /// # Panics
     ///
     /// Panics if the network weights cannot be loaded or the network cannot be created.
     #[rustfmt::skip]
-    pub fn new(name: impl Into<String>, options: Option<AlphaZeroOptions>) -> Self {
+    #[must_use]
+    pub fn new(name: &str, options: Option<AlphaZeroOptions>) -> Self {
         let options = Rc::new(options.unwrap_or_default());
 
         let weights = safetensors::load_buffer(NETWORK_WEIGHTS, &options.device).expect("[AlphaZeroPlayer::new] Failed to load network weights");
 
         Self::internal_new(
-            Self::format_name(name.into(), options.as_ref(), None),
+            Self::format_name(name, options.as_ref(), None),
             options,
             weights
         )
     }
 
+    /// Creates a new [`AlphaZeroPlayer`] with the given name, options, and network weights file.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the network weights cannot be loaded or the network cannot be created.
     #[rustfmt::skip]
+    #[must_use]
     pub fn from_weights_file(
-        name: impl Into<String>,
+        name: &str,
         options: Option<AlphaZeroOptions>,
         file_path: &std::path::Path,
     ) -> Self {
@@ -61,7 +68,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
 
         let weights = safetensors::load(file_path, &options.device).unwrap_or_else(|_| panic!("[AlphaZeroPlayer::from_weights_file] Failed to load network weights from file {}", file_path.display()));
 
-        Self::internal_new(Self::format_name(name.into(), options.as_ref(), Some(file_path)), options, weights)
+        Self::internal_new(Self::format_name(name, options.as_ref(), Some(file_path)), options, weights)
     }
 
     pub fn get_explorative_action(&mut self, game: &Patchwork, _temperature: f64) -> PlayerResult<ActionId> {
@@ -78,7 +85,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         let vb = VarBuilder::from_tensors(weights, DType::F32, &options.device);
         let network = DefaultPatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
 
-        AlphaZeroPlayer {
+        Self {
             name,
             search_tree: DefaultSearchTree::new(
                 false,
@@ -86,11 +93,11 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
                 network,
                 Rc::clone(&options)
             ),
-            options: Rc::clone(&options),
+            options,
         }
     }
 
-    fn format_name(name: String, options: &AlphaZeroOptions, weights_file: Option<&std::path::Path>) -> String {
+    fn format_name(name: &str, options: &AlphaZeroOptions, weights_file: Option<&std::path::Path>) -> String {
         format!(
             "{} [{}|B{}|P{}|α{:.2}|ε{:.2}]{}",
             name,
@@ -109,18 +116,14 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
             options.parallelization.get(),
             options.dirichlet_alpha,
             options.dirichlet_epsilon,
-            if let Some(weights_file) = weights_file {
-                format!(" ({})", weights_file.display())
-            } else {
-                "".to_string()
-            }
+            weights_file.map_or_else(String::new, |weights_file| format!(" ({})", weights_file.display()))
         )
     }
 }
 
 impl<Policy: TreePolicy + Default> Default for AlphaZeroPlayer<Policy> {
     fn default() -> Self {
-        Self::new("AlphaZero Player".to_string(), None)
+        Self::new("AlphaZero Player", None)
     }
 }
 

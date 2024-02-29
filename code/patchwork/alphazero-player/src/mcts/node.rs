@@ -1,10 +1,4 @@
-use std::{
-    cell::RefCell,
-    sync::{
-        atomic::{AtomicI32, Ordering},
-        RwLockReadGuard,
-    },
-};
+use std::sync::atomic::{AtomicI32, Ordering};
 
 use patchwork_core::{ActionId, Patchwork, PatchworkError, TreePolicy, TreePolicyNode};
 
@@ -154,6 +148,7 @@ impl Node {
         if node.children.is_empty() {
             node.children = children;
         }
+        drop(node);
 
         Ok(())
     }
@@ -175,12 +170,12 @@ impl Node {
             id: node_id,
             current_player: parent.current_player(),
             visit_count: parent.visit_count(),
-            neutral_max_score: parent.neutral_max_score as f64,
-            neutral_min_score: parent.neutral_min_score as f64,
+            neutral_max_score: f64::from(parent.neutral_max_score),
+            neutral_min_score: f64::from(parent.neutral_min_score),
             neutral_score_sum: parent.neutral_score_sum,
             neutral_wins: parent.neutral_wins,
             virtual_loss: parent.virtual_loss.load(Ordering::Relaxed),
-            prior: parent.prior as f64,
+            prior: f64::from(parent.prior),
         };
         let children_ids = parent.children.clone();
         drop(parent);
@@ -192,12 +187,12 @@ impl Node {
                     id: child.id,
                     current_player: child.current_player(),
                     visit_count: child.visit_count(),
-                    neutral_max_score: child.neutral_max_score as f64,
-                    neutral_min_score: child.neutral_min_score as f64,
+                    neutral_max_score: f64::from(child.neutral_max_score),
+                    neutral_min_score: f64::from(child.neutral_min_score),
                     neutral_score_sum: child.neutral_score_sum,
                     neutral_wins: child.neutral_wins,
                     virtual_loss: child.virtual_loss.load(Ordering::Relaxed),
-                    prior: child.prior as f64,
+                    prior: f64::from(child.prior),
                 }
             })
             .collect::<Vec<_>>();
@@ -219,16 +214,17 @@ impl Node {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `𝑛` is the depth of the current node as the chain until the root needs to be traversed
-    pub fn backpropagate(mut node_id: NodeId, value: f32, allocator: &AreaAllocator, amount: i32) {
+
+    pub fn backpropagate(mut node_id: NodeId, value: f32, allocator: &AreaAllocator, amount: u32) {
         loop {
             let mut node = allocator.get_node_write(node_id);
 
             node.neutral_max_score = node.neutral_max_score.max(value);
             node.neutral_min_score = node.neutral_min_score.min(value);
-            node.neutral_score_sum += value as f64 * amount as f64;
-            node.neutral_wins += if value > 0.0 { amount } else { -amount };
+            node.neutral_score_sum += f64::from(value) * f64::from(amount);
+            node.neutral_wins += if value > 0.0 { amount as i32 } else { -(amount as i32) };
             node.visit_count += amount as usize;
-            node.decrement_virtual_loss_by(amount);
+            node.decrement_virtual_loss_by(amount as i32);
 
             if let Some(parent_id) = node.parent {
                 node_id = parent_id;
@@ -260,23 +256,23 @@ impl TreePolicyNode for Node {
     fn maximum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.minimum_score_for(!player)
         if player {
-            self.neutral_max_score as f64
+            f64::from(self.neutral_max_score)
         } else {
-            -self.neutral_min_score as f64
+            f64::from(-self.neutral_min_score)
         }
     }
 
     fn minimum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.maximum_score_for(!player)
         if player {
-            self.neutral_min_score as f64
+            f64::from(self.neutral_min_score)
         } else {
-            -self.neutral_max_score as f64
+            f64::from(-self.neutral_max_score)
         }
     }
 
     fn score_range(&self) -> f64 {
-        (self.neutral_max_score - self.neutral_min_score) as f64
+        f64::from(self.neutral_max_score - self.neutral_min_score)
     }
 
     fn score_sum_for(&self, player: Self::Player) -> f64 {
@@ -288,7 +284,7 @@ impl TreePolicyNode for Node {
     }
 
     fn prior_value(&self) -> f64 {
-        self.prior as f64
+        f64::from(self.prior)
     }
 }
 
@@ -306,21 +302,21 @@ struct NodeDataSnapshot {
 
 impl TreePolicyNode for NodeDataSnapshot {
     type Player = bool;
-    #[inline(always)]
+    #[inline]
     fn visit_count(&self) -> usize {
         self.visit_count
     }
-    #[inline(always)]
+    #[inline]
     fn current_player(&self) -> Self::Player {
         self.current_player
     }
-    #[inline(always)]
+    #[inline]
     fn wins_for(&self, player: Self::Player) -> i32 {
         let wins = if player { self.neutral_wins } else { -self.neutral_wins };
 
         wins - self.virtual_loss
     }
-    #[inline(always)]
+    #[inline]
     fn maximum_score_for(&self, player: Self::Player) -> f64 {
         if player {
             self.neutral_max_score
@@ -328,7 +324,7 @@ impl TreePolicyNode for NodeDataSnapshot {
             -self.neutral_min_score
         }
     }
-    #[inline(always)]
+    #[inline]
     fn minimum_score_for(&self, player: Self::Player) -> f64 {
         if player {
             self.neutral_min_score
@@ -336,11 +332,11 @@ impl TreePolicyNode for NodeDataSnapshot {
             -self.neutral_max_score
         }
     }
-    #[inline(always)]
+    #[inline]
     fn score_range(&self) -> f64 {
-        (self.neutral_max_score - self.neutral_min_score)
+        self.neutral_max_score - self.neutral_min_score
     }
-    #[inline(always)]
+    #[inline]
     fn score_sum_for(&self, player: Self::Player) -> f64 {
         if player {
             self.neutral_score_sum
@@ -348,7 +344,7 @@ impl TreePolicyNode for NodeDataSnapshot {
             -self.neutral_score_sum
         }
     }
-    #[inline(always)]
+    #[inline]
     fn prior_value(&self) -> f64 {
         self.prior
     }

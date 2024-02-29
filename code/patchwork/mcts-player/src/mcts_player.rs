@@ -9,7 +9,7 @@ use evaluator::WinLossEvaluator;
 use patchwork_core::{ActionId, Evaluator, Logging, Patchwork, Player, PlayerResult, TreePolicy, TreePolicyNode};
 use tree_policy::UCTPolicy;
 
-pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
+pub const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
 
 use crate::{node_id::NodeId, AreaAllocator, MCTSEndCondition, MCTSOptions, SearchTree, Tree};
 
@@ -40,7 +40,7 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
             Vec::new()
         };
 
-        MCTSPlayer {
+        Self {
             name: format!(
                 "{} [R{}|L{}|T{}]",
                 name.into(),
@@ -58,7 +58,7 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
 
 impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> Default for MCTSPlayer<Policy, Eval> {
     fn default() -> Self {
-        Self::new("MCTS Player".to_string(), Default::default())
+        Self::new("MCTS Player".to_string(), Option::default())
     }
 }
 
@@ -184,6 +184,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
         &self.name
     }
 
+    #[allow(clippy::too_many_lines)]
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let start_time = std::time::Instant::now();
 
@@ -195,10 +196,10 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 reuse_tree,
                 logging,
             } => {
-                let last_tree = if !self.last_trees.is_empty() {
-                    Some(self.last_trees.swap_remove(0))
-                } else {
+                let last_tree = if self.last_trees.is_empty() {
                     None
+                } else {
+                    Some(self.last_trees.swap_remove(0))
                 };
 
                 let mut search_tree = SearchTree::<Policy, Eval>::from_root(
@@ -207,7 +208,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                     &self.policy,
                     &self.evaluator,
                     REUSE_TREE_SEARCH_ABORT,
-                )?;
+                );
 
                 play_until_end!(
                     start_time,
@@ -233,7 +234,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 let action = pick_best_action(&search_tree);
 
                 if *reuse_tree {
-                    self.last_trees = vec![get_tree_for_reuse(action, search_tree.root, search_tree.allocator)]
+                    self.last_trees = vec![get_tree_for_reuse(action, search_tree.root, search_tree.allocator)];
                 } else {
                     drop(search_tree);
                 }
@@ -276,7 +277,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                                 policy,
                                 evaluator,
                                 REUSE_TREE_SEARCH_ABORT,
-                            )?;
+                            );
 
                             play_until_end_worker_thread!(start_time, end_cond, {
                                 search_tree.playout(leaf_parallel)?;
@@ -286,10 +287,10 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         }));
                     }
 
-                    let last_tree = if !self.last_trees.is_empty() {
-                        Some(self.last_trees.swap_remove(0))
-                    } else {
+                    let last_tree = if self.last_trees.is_empty() {
                         None
+                    } else {
+                        Some(self.last_trees.swap_remove(0))
                     };
 
                     let mut search_tree = SearchTree::<Policy, Eval>::from_root(
@@ -298,7 +299,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         &self.policy,
                         &self.evaluator,
                         REUSE_TREE_SEARCH_ABORT,
-                    )?;
+                    );
 
                     play_until_end!(
                         start_time,
@@ -328,7 +329,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                             Err(error) => {
                                 log_worker_error(
                                     logging,
-                                    format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error).as_str(),
+                                    format!("[MCTSPlayer::get_action] Error in worker thread: {error:?}").as_str(),
                                 )?;
                                 continue; // Work with data from other threads
                             }
@@ -336,13 +337,12 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                                 if let Some(error) = error.downcast_ref::<String>() {
                                     log_worker_error(
                                         logging,
-                                        format!("[MCTSPlayer::get_action] Error in worker thread: {}", error).as_str(),
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {error}").as_str(),
                                     )?;
                                 } else {
                                     log_worker_error(
                                         logging,
-                                        format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error)
-                                            .as_str(),
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {error:?}").as_str(),
                                     )?;
                                 }
                                 continue; // Work with data from other threads
@@ -381,7 +381,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
 /// # Returns
 ///
 /// The best action from the root node.
-pub fn pick_best_action(search_tree: &SearchTree<impl TreePolicy, impl Evaluator>) -> ActionId {
+pub fn pick_best_action(search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>) -> ActionId {
     let root_id = search_tree.root;
     let root = search_tree.allocator.get_node(root_id);
     let root_player = root.state.is_player_1();
@@ -429,7 +429,7 @@ pub fn pick_best_action_from_multiple(nodes: &[Tree]) -> ActionId {
         let allocator = &tree.allocator;
 
         let parent = allocator.get_node(tree.root);
-        for child_id in parent.children.iter() {
+        for child_id in &parent.children {
             let child = allocator.get_node(*child_id);
 
             if let Some(action) = child.action_taken {
@@ -469,7 +469,7 @@ fn get_tree_for_reuse(action: ActionId, root: NodeId, allocator: AreaAllocator) 
     // default to current
     let mut next_root = root;
 
-    for child_id in allocator.get_node(next_root).children.iter() {
+    for child_id in &allocator.get_node(next_root).children {
         let child = allocator.get_node(*child_id);
 
         if let Some(action_taken) = child.action_taken {
@@ -511,7 +511,7 @@ fn write_statistics(
     root_parallelization: usize,
     leaf_parallelization: usize,
     reuse_tree: bool,
-    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
+    search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
     match logging {
@@ -525,10 +525,10 @@ fn write_statistics(
         } => {
             let mut features = vec![];
             if root_parallelization > 1 {
-                features.push(format!("RP({})", root_parallelization));
+                features.push(format!("RP({root_parallelization})"));
             }
             if leaf_parallelization > 1 {
-                features.push(format!("LP({})", leaf_parallelization));
+                features.push(format!("LP({leaf_parallelization})"));
             }
             if reuse_tree {
                 features.push("RT".to_string());
@@ -536,11 +536,11 @@ fn write_statistics(
 
             writeln!(writer, "──────────────────────── MCTS Player ────────────────────────")?;
             writeln!(writer, "Features:            [{}]", features.join(", "))?;
-            writeln!(writer, "Duration:            {:.3?}", time_passed)?;
+            writeln!(writer, "Duration:            {time_passed:.3?}")?;
             if root_parallelization > 1 {
-                writeln!(writer, "Total Iterations:    {}", total_iterations)?;
+                writeln!(writer, "Total Iterations:    {total_iterations}")?;
             }
-            writeln!(writer, "Iterations:          {}", iterations)?;
+            writeln!(writer, "Iterations:          {iterations}")?;
             writeln!(writer, "Nodes:               {}", search_tree.get_nodes())?;
             if reuse_tree {
                 writeln!(writer, "Reused Tree:         {}", search_tree.is_reused())?;
@@ -569,17 +569,17 @@ fn log_worker_error(logging: &mut Logging, message: &str) -> Result<(), std::io:
     match logging {
         Logging::Disabled => {}
         Logging::Enabled { progress_writer } => {
-            writeln!(progress_writer, "{}", message)?;
+            writeln!(progress_writer, "{message}")?;
         }
         Logging::Verbose {
             progress_writer,
             debug_writer,
         } => {
-            writeln!(progress_writer, "{}", message)?;
-            writeln!(debug_writer, "{}", message)?;
+            writeln!(progress_writer, "{message}")?;
+            writeln!(debug_writer, "{message}")?;
         }
         Logging::VerboseOnly { debug_writer } => {
-            writeln!(debug_writer, "{}", message)?;
+            writeln!(debug_writer, "{message}")?;
         }
     }
     Ok(())
@@ -598,7 +598,7 @@ fn log_worker_error(logging: &mut Logging, message: &str) -> Result<(), std::io:
 /// The result of the write operation.
 fn log_verbose_information(
     logging: &mut Logging,
-    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
+    search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
     match logging {

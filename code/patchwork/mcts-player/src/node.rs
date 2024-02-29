@@ -81,7 +81,7 @@ impl Node {
     /// # Returns
     ///
     /// `true` if the node is terminal, `false` otherwise.
-    pub fn is_terminal(&self) -> bool {
+    pub const fn is_terminal(&self) -> bool {
         self.state.is_terminated()
     }
 }
@@ -108,23 +108,23 @@ impl TreePolicyNode for Node {
     fn maximum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.minimum_score_for(!player)
         if player {
-            self.neutral_max_score as f64
+            f64::from(self.neutral_max_score)
         } else {
-            -self.neutral_min_score as f64
+            f64::from(-self.neutral_min_score)
         }
     }
 
     fn minimum_score_for(&self, player: Self::Player) -> f64 {
         // == -self.maximum_score_for(!player)
         if player {
-            self.neutral_min_score as f64
+            f64::from(self.neutral_min_score)
         } else {
-            -self.neutral_max_score as f64
+            f64::from(-self.neutral_max_score)
         }
     }
 
     fn score_range(&self) -> f64 {
-        (self.neutral_max_score - self.neutral_min_score) as f64
+        f64::from(self.neutral_max_score - self.neutral_min_score)
     }
 
     fn score_sum_for(&self, player: Self::Player) -> f64 {
@@ -142,17 +142,15 @@ pub struct NodeDebug<'a> {
 }
 
 impl fmt::Debug for NodeDebug<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let wins_from_parent = if let Some(parent_id) = self.node.parent {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let wins_from_parent = self.node.parent.map_or(0, |parent_id| {
             let parent = self.allocator.get_node(parent_id);
             if parent.state.is_player_1() {
                 self.node.neutral_wins
             } else {
                 -self.node.neutral_wins
             }
-        } else {
-            0
-        };
+        });
 
         f.debug_struct("Node")
             // .field("state", &self.state)

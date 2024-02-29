@@ -124,7 +124,7 @@ mod tests {
                 Ok(action) => action,
                 Err(error) => {
                     println!("Player '{}' get_action failed with: {}", player.name(), error);
-                    println!("State:\n{}", state);
+                    println!("State:\n{state}");
                     panic!("{}", error);
                 }
             };
@@ -132,15 +132,15 @@ mod tests {
             let valid_actions = state.get_valid_actions();
             if !valid_actions.contains(&action) {
                 println!("Player '{}' chose invalid action: {}", player.name(), action);
-                println!("State:\n{}", state);
+                println!("State:\n{state}");
                 panic!("Invalid action!");
             }
 
             match state.do_action(action, false) {
-                Ok(_) => {}
+                Ok(()) => {}
                 Err(error) => {
                     println!("Player '{}' do_action failed with: {}", player.name(), error);
-                    println!("State:\n{}", state);
+                    println!("State:\n{state}");
                     panic!("{}", error);
                 }
             }

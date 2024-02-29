@@ -3,8 +3,9 @@
 use candle_core::Device;
 use candle_nn::Optimizer;
 use tqdm::tqdm;
+use tree_policy::PUCTPolicy;
 
-use crate::{game_state::GameState, network::DefaultPatchZero};
+use crate::{game_state::GameState, mcts::DefaultSearchTree};
 
 pub struct TrainingArgs {
     // 'C': 2,
@@ -13,18 +14,16 @@ pub struct TrainingArgs {
     pub number_of_self_play_iterations: u32, // 500
     pub number_of_parallel_games: u32,       // 100
     pub number_of_epochs: u32,               // 4
-
-                                             // 'batch_size': 128,
-                                             // 'temperature': 1.25,
-                                             // 'dirichlet_epsilon': 0.25,
-                                             // 'dirichlet_alpha': 0.3
+    pub temperature: f32,
+    // 'batch_size': 128,
+    // 'temperature': 1.25,
 }
 
 pub struct Trainer<'a, Optim: Optimizer> {
     pub device: &'a Device,
     pub args: TrainingArgs,
     pub optimizer: Optim,
-    pub network: DefaultPatchZero,
+    pub mcts: DefaultSearchTree<PUCTPolicy>,
 }
 
 // impl<'a, Optim: Optimizer> Trainer<'a, Optim> {

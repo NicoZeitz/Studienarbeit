@@ -43,7 +43,8 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn get_instance() -> &'static Self {
         &INSTANCE
     }
@@ -61,13 +62,14 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn get_patch(patch_id: u8) -> &'static Patch {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager::get_patch] Invalid patch id"
         );
-        &PatchManager::get_instance().patches[patch_id as usize]
+        &Self::get_instance().patches[patch_id as usize]
     }
 
     /// Gets the transformation of the patch with the given id.
@@ -83,12 +85,13 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_transformations(patch_id: u8) -> &'static Vec<PatchTransformation> {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager::get_transformations] Invalid patch id"
         );
-        &PatchManager::get_instance().transformations[patch_id as usize]
+        &Self::get_instance().transformations[patch_id as usize]
     }
 
     /// Gets the transformation of the patch with the given id and transformation index.
@@ -105,10 +108,10 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
     #[rustfmt::skip]
-    pub fn get_transformation(patch_id: u8, patch_transformation_index: u16) -> &'static PatchTransformation {
-        let transformations = PatchManager::get_transformations(patch_id);
+    #[must_use]    pub fn get_transformation(patch_id: u8, patch_transformation_index: u16) -> &'static PatchTransformation {
+        let transformations = Self::get_transformations(patch_id);
 
         debug_assert!((patch_transformation_index as usize) < transformations.len(), "[PatchManager::get_transformations] Invalid patch transformation index");
 
@@ -128,11 +131,12 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `𝑛` is the amount of patches (33)
+    #[must_use]
     pub fn generate_patches(seed: Option<u64>) -> Vec<&'static Patch> {
         const PATCH_AMOUNT: usize = PatchManager::AMOUNT_OF_NORMAL_PATCHES as usize;
 
         let mut patches = Vec::with_capacity(PATCH_AMOUNT);
-        for patch in &PatchManager::get_instance().patches[(Self::AMOUNT_OF_STARTING_PATCHES) as usize
+        for patch in &Self::get_instance().patches[(Self::AMOUNT_OF_STARTING_PATCHES) as usize
             ..(Self::AMOUNT_OF_STARTING_PATCHES + Self::AMOUNT_OF_NON_STARTING_PATCHES) as usize]
         {
             patches.push(patch);
@@ -144,7 +148,7 @@ impl PatchManager {
         } else {
             patches.shuffle(&mut thread_rng());
         }
-        patches.push(PatchManager::get_starting_patch());
+        patches.push(Self::get_starting_patch());
         patches
     }
 
@@ -169,6 +173,7 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_special_patch(index: usize) -> &'static Patch {
         let mapped_index = match index {
             26 => 0,
@@ -179,7 +184,7 @@ impl PatchManager {
             _ => panic!("[PatchManager::get_special_patch] Invalid special patch index!"),
         };
         let id = (Self::AMOUNT_OF_STARTING_PATCHES + Self::AMOUNT_OF_NON_STARTING_PATCHES) as usize + mapped_index;
-        &PatchManager::get_instance().patches[id]
+        &Self::get_instance().patches[id]
     }
 
     /// Gets the position of the special patch with the given id.
@@ -203,6 +208,7 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_position_from_special_patch_id(&self, patch_id: usize) -> usize {
         match patch_id {
             33 => 26,
@@ -227,12 +233,13 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_tiles(patch_id: u8) -> &'static Vec<Vec<u8>> {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager::get_tiles] Invalid patch id"
         );
-        &PatchManager::get_instance().tiles[patch_id as usize]
+        &Self::get_instance().tiles[patch_id as usize]
     }
 
     /// Gets the normalized tiles (fit into 5x3) of the patch with the given id.
@@ -248,12 +255,13 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_normalized_tiles(patch_id: u8) -> &'static [[u8; 5]; 3] {
         debug_assert!(
             patch_id < Self::AMOUNT_OF_PATCHES,
             "[PatchManager::get_normalized_tiles] Invalid patch id"
         );
-        &PatchManager::get_instance().normalized_tiles[patch_id as usize]
+        &Self::get_instance().normalized_tiles[patch_id as usize]
     }
 
     /// Returns the starting patch.
@@ -265,8 +273,9 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_starting_patch() -> &'static Patch {
-        &PatchManager::get_instance().patches[0]
+        &Self::get_instance().patches[0]
     }
 
     /// Generates all patches in the game (excluding the special as well as the starting patches).
@@ -278,8 +287,9 @@ impl PatchManager {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_normal_patches() -> Vec<&'static Patch> {
-        PatchManager::get_instance().patches[(Self::AMOUNT_OF_STARTING_PATCHES as usize)
+        Self::get_instance().patches[(Self::AMOUNT_OF_STARTING_PATCHES as usize)
             ..(Self::AMOUNT_OF_STARTING_PATCHES + Self::AMOUNT_OF_NON_STARTING_PATCHES) as usize]
             .iter()
             .collect()

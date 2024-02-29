@@ -71,8 +71,8 @@ fn main() {
         }
 
         if current_income > best_income.fetch_max(current_income, std::sync::atomic::Ordering::Relaxed) {
-            println!("Best income: {}", current_income);
-            println!("Best permutation: {:?}", current_permutation);
+            println!("Best income: {current_income}");
+            println!("Best permutation: {current_permutation:?}");
 
             let mut guard = best_permutation.lock().unwrap();
             *guard = current_permutation;

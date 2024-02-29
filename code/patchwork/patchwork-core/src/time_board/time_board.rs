@@ -1,4 +1,7 @@
-use std::{fmt::Display, ops::Range};
+use std::{
+    fmt::Display,
+    ops::{Range, RangeInclusive},
+};
 
 /// The entities that can be on a tile of the time board.
 pub mod time_board_flags {
@@ -49,7 +52,8 @@ impl TimeBoard {
     pub const LAST_BUTTON_INCOME_TRIGGER_POSITION: u8 = 53;
 
     /// Creates a new time board.
-    pub const fn new() -> TimeBoard {
+    #[must_use]
+    pub const fn new() -> Self {
         let mut tiles = [0; 54];
 
         tiles[0] = time_board_flags::PLAYER_1 | time_board_flags::PLAYER_2;
@@ -70,7 +74,7 @@ impl TimeBoard {
         tiles[44] = time_board_flags::SPECIAL_PATCH;
         tiles[50] = time_board_flags::SPECIAL_PATCH;
 
-        TimeBoard { tiles }
+        Self { tiles }
     }
 
     // ──────────────────────────────────────────────── SPECIAL PATCHES ────────────────────────────────────────────────
@@ -84,7 +88,8 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn get_special_patches(&self) -> &[u8] {
+    #[must_use]
+    pub const fn get_special_patches(&self) -> &[u8] {
         &[26, 32, 38, 44, 50]
     }
 
@@ -99,7 +104,7 @@ impl TimeBoard {
     /// `𝒪(𝟣)`
     #[inline]
     pub fn set_special_patch(&mut self, index: u8) {
-        let clamped_index: usize = (index as usize).min(TimeBoard::MAX_POSITION as usize);
+        let clamped_index: usize = (index as usize).min(Self::MAX_POSITION as usize);
         self.tiles[clamped_index] |= time_board_flags::SPECIAL_PATCH;
     }
 
@@ -114,7 +119,7 @@ impl TimeBoard {
     /// `𝒪(𝟣)`
     #[inline]
     pub fn unset_special_patch(&mut self, index: u8) {
-        let clamped_index: usize = (index as usize).min(TimeBoard::MAX_POSITION as usize);
+        let clamped_index: usize = (index as usize).min(Self::MAX_POSITION as usize);
         self.tiles[clamped_index] &= !time_board_flags::SPECIAL_PATCH;
     }
 
@@ -148,6 +153,7 @@ impl TimeBoard {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[must_use]
     pub const fn is_special_patch_at(&self, index: usize) -> bool {
         self.tiles[index] & time_board_flags::SPECIAL_PATCH > 0
     }
@@ -172,6 +178,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
+    #[must_use]
     pub fn is_special_patches_in_range(&self, range: Range<usize>) -> bool {
         for i in range {
             if self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0 {
@@ -199,6 +206,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
+    #[must_use]
     pub fn get_amount_special_patches_in_range(&self, range: Range<usize>) -> usize {
         let mut amount = 0;
         for i in range {
@@ -225,7 +233,8 @@ impl TimeBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
     #[inline]
-    pub fn get_single_special_patch_in_range(&self, range: Range<usize>) -> Option<u8> {
+    #[must_use]
+    pub fn get_single_special_patch_in_range(&self, range: RangeInclusive<usize>) -> Option<u8> {
         let mut range = range;
         range
             .find(|&i| self.tiles[i] & time_board_flags::SPECIAL_PATCH > 0)
@@ -246,6 +255,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
+    #[must_use]
     pub fn get_all_special_patches_in_range(&self, range: Range<usize>) -> Vec<u8> {
         let mut result = vec![];
         for i in range {
@@ -283,6 +293,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn get_special_patch_before_position(&self, position: u8) -> Option<u8> {
         if position >= 50 {
             return Some(50);
@@ -313,7 +324,8 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn get_button_income_triggers(&self) -> &[u8] {
+    #[must_use]
+    pub const fn get_button_income_triggers(&self) -> &[u8] {
         &[5, 11, 17, 23, 29, 35, 41, 47, 53]
     }
 
@@ -332,6 +344,7 @@ impl TimeBoard {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[must_use]
     pub const fn is_button_income_trigger_at(&self, index: usize) -> bool {
         self.tiles[index] & time_board_flags::BUTTON_INCOME_TRIGGER > 0
     }
@@ -356,7 +369,8 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
-    pub fn is_button_income_trigger_in_range(&self, range: Range<usize>) -> bool {
+    #[must_use]
+    pub fn is_button_income_trigger_in_range(&self, range: RangeInclusive<usize>) -> bool {
         for i in range {
             if self.tiles[i] & time_board_flags::BUTTON_INCOME_TRIGGER > 0 {
                 return true;
@@ -383,6 +397,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
+    #[must_use]
     pub fn get_amount_button_income_trigger_in_range(&self, range: Range<usize>) -> usize {
         let mut amount = 0;
         for i in range {
@@ -409,6 +424,7 @@ impl TimeBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
     #[inline]
+    #[must_use]
     pub fn get_single_button_income_trigger_in_range(&self, range: Range<usize>) -> Option<u8> {
         let mut range = range;
         range
@@ -430,6 +446,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles in the given range.
+    #[must_use]
     pub fn get_all_button_income_triggers_in_range(&self, range: Range<usize>) -> Vec<u8> {
         let mut result = vec![];
         for i in range {
@@ -467,6 +484,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn get_button_income_trigger_before_position(&self, position: u8) -> Option<u8> {
         if position >= 53 {
             return Some(53);
@@ -513,6 +531,8 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
+    #[must_use]
+
     pub fn get_player_position(&self, player_flag: u8) -> u8 {
         debug_assert!(player_flag >> 2 == 0, "[TimeBoard::get_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
         self.tiles
@@ -531,6 +551,7 @@ impl TimeBoard {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
+    #[must_use]
     pub fn get_player_positions(&self) -> (u8, u8) {
         let mut player_1_position = 0;
         let mut player_2_position = 0;
@@ -559,12 +580,12 @@ impl TimeBoard {
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the time board (usually 54).
     pub fn set_player_position(&mut self, player_flag: u8, position: usize) {
         debug_assert!(player_flag >> 2 == 0, "[TimeBoard::set_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
-        let clamped_position = position.min(TimeBoard::MAX_POSITION as usize);
+        let clamped_position = position.min(Self::MAX_POSITION as usize);
         self.tiles.iter_mut().for_each(|tile| *tile &= !player_flag);
         self.tiles[clamped_position] |= player_flag;
     }
 
-    /// Moves the player from the old_position to the new_position.
+    /// Moves the player from the `old_position` to the `new_position`.
     /// This function does not check if the given old position is valid.
     ///
     /// # Arguments
@@ -582,22 +603,20 @@ impl TimeBoard {
     /// This function is undefined behavior if the given old position is not valid.
     /// This will panic in debug mode.
     pub fn move_player_position(&mut self, player_flag: u8, old_position: u8, new_position: u8) {
-        let old_position = old_position.min(TimeBoard::MAX_POSITION);
+        let old_position = old_position.min(Self::MAX_POSITION);
 
         debug_assert!(player_flag >> 2 == 0, "[TimeBoard::move_player_position] The given parameters are likely a patchwork status flags and not the player flags: {player_flag:b}");
         debug_assert_eq!(
             self.get_player_position(player_flag),
             old_position,
-            "[TimeBoard::move_player_position] time_board.get_player_position({:?}) != {:?} (old_position): The given old position is not valid.",
-            player_flag,
-            old_position
+            "[TimeBoard::move_player_position] time_board.get_player_position({player_flag:?}) != {old_position:?} (old_position): The given old position is not valid."
         );
 
         // reset old position
         self.tiles[old_position as usize] ^= player_flag;
 
         // set new position
-        let clamped_position = (new_position as usize).min(TimeBoard::MAX_POSITION as usize);
+        let clamped_position = (new_position as usize).min(Self::MAX_POSITION as usize);
         self.tiles[clamped_position] |= player_flag;
     }
 }
@@ -608,7 +627,7 @@ impl Display for TimeBoard {
         let mut second_line = vec![];
         let mut third_line = vec![];
 
-        for field in self.tiles.iter() {
+        for field in &self.tiles {
             let tile_str = get_str_for_tile(*field);
             first_line.push("-".repeat(tile_str.len()));
             third_line.push("-".repeat(tile_str.len()));
@@ -622,7 +641,7 @@ impl Display for TimeBoard {
 }
 
 fn get_str_for_tile(tile: u8) -> String {
-    let mut result_str = "".to_string();
+    let mut result_str = String::new();
 
     if tile & time_board_flags::PLAYER_1 > 0 {
         result_str += "1";

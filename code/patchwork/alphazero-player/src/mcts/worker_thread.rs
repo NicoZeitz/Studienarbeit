@@ -1,10 +1,8 @@
-use std::io::Write;
 use std::sync::{atomic::Ordering, Arc};
-use std::time::UNIX_EPOCH;
 
 use candle_core::Device;
 use dashmap::DashMap;
-use patchwork_core::{NaturalActionId, PlayerResult, TreePolicy};
+use patchwork_core::{PlayerResult, TreePolicy};
 
 use crate::{
     action::map_games_to_action_tensors,
@@ -55,6 +53,7 @@ impl<
 
             let node = game_state.allocator.get_node_read(node_id);
             if node.state.is_terminated() {
+                #[allow(clippy::significant_drop_in_scrutinee)]
                 let value = match node.state.get_termination_result().termination {
                     patchwork_core::TerminationType::Player1Won => 1.0,
                     patchwork_core::TerminationType::Player2Won => -1.0,

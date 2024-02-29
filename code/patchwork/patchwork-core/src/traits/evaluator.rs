@@ -74,8 +74,8 @@ pub trait Evaluator: Sync {
 
         #[cfg(debug_assertions)]
         if !(evaluator_constants::NEGATIVE_INFINITY..=evaluator_constants::POSITIVE_INFINITY).contains(&score) {
-            println!("Game: {}", game);
-            println!("Score: {}", score);
+            println!("Game: {game}");
+            println!("Score: {score}");
 
             panic!("The score is not in the allowed range.");
         }

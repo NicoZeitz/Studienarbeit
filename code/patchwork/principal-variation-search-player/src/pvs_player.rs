@@ -62,10 +62,10 @@ impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orde
             }
         };
 
-        PVSPlayer {
+        Self {
             name: name.into(),
             options,
-            statistics: Default::default(),
+            statistics: SearchStatistics::default(),
             evaluator: Default::default(),
             action_orderer: Default::default(),
             transposition_table,
@@ -78,7 +78,7 @@ impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orde
 
 impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> Default for PVSPlayer<Orderer, Eval> {
     fn default() -> Self {
-        Self::new("Principal Variation Search Player".to_string(), Default::default())
+        Self::new("Principal Variation Search Player".to_string(), None)
     }
 }
 
@@ -210,9 +210,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                 debug_assert!(
                     self.options.features.aspiration_window, // this should never happen if aspiration windows are off
-                    "[PVSPlayer::search] Assert evaluation({}) <= alpha({}) should imply aspiration window but was not.",
-                    evaluation,
-                    alpha
+                    "[PVSPlayer::search] Assert evaluation({evaluation}) <= alpha({alpha}) should imply aspiration window but was not."
                 );
 
                 beta = (alpha + beta) / 2; // adjust beta towards alpha
@@ -226,9 +224,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                 debug_assert!(
                     self.options.features.aspiration_window, // this should never happen if aspiration windows are off
-                    "[PVSPlayer::search] Assert evaluation({}) >= beta({}) should imply aspiration window but was not.",
-                    evaluation,
-                    beta
+                    "[PVSPlayer::search] Assert evaluation({evaluation}) >= beta({beta}) should imply aspiration window but was not."
                 );
 
                 beta = (evaluation + delta).min(Self::MAX_BETA_BOUND);
@@ -239,7 +235,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
             let _ = self.write_statistics(game, depth); // ignore errors
 
-            if let Some(evaluator_constants::POSITIVE_INFINITY) = self.best_evaluation {
+            if self.best_evaluation == Some(evaluator_constants::POSITIVE_INFINITY) {
                 // We found a winning game, so we can stop searching
                 // TODO: it would be possible here to get the plys to win by offset
                 break;
@@ -263,7 +259,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             game.get_random_action()
         });
 
-        let _ = self.write_log(format!("Best action: {:?}", best_action).as_str()); // ignore errors
+        let _ = self.write_log(format!("Best action: {best_action:?}").as_str()); // ignore errors
         let _ = self.write_statistics(game, depth); // ignore errors
 
         Ok(best_action)
@@ -280,6 +276,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// * `beta` - The beta value.
     /// * `color` - The color of the player to search for. (`+1` for player 1 and `-1` for player 2)
     #[allow(clippy::needless_range_loop)]
+    #[allow(clippy::too_many_lines)]
+    #[allow(clippy::useless_let_if_seq)]
     fn principal_variation_search(
         &mut self,
         game: &mut Patchwork,
@@ -391,7 +389,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     -beta,
                     -alpha,
                     num_extensions + extension,
-                )?
+                )?;
             } else {
                 self.statistics.increment_zero_window_search();
                 // Apply [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions) if we're not in the early moves (and this is not a PV node)
@@ -571,6 +569,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// Implement another function "quiescence search" that searches for a stable evaluation before calling this evaluation function
     /// This would mitigate the horizon effect
     /// The question is if this is even needed in patchwork
+    #[allow(clippy::useless_let_if_seq)]
     fn evaluation(&mut self, game: &mut Patchwork) -> PlayerResult<i32> {
         self.statistics.increment_nodes_searched();
         self.statistics.increment_leaf_nodes_searched();
@@ -634,7 +633,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// * `action` - The best action to take in this position
     fn store_transposition_table(
         &mut self,
-        game: &mut Patchwork,
+        game: &Patchwork,
         depth: usize,
         evaluation: i32,
         evaluation_type: EvaluationType,
@@ -662,7 +661,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     ///
     /// The principal variation action for the given game state or `None` if no
     /// principal variation action could be found.
-    fn get_pv_action(&self, game: &mut Patchwork, ply_from_root: usize) -> Option<ActionId> {
+    fn get_pv_action(&self, game: &Patchwork, ply_from_root: usize) -> Option<ActionId> {
         if ply_from_root == 0 {
             if let Some(pv_action) = self.best_action {
                 return Some(pv_action);
@@ -713,19 +712,19 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             return transposition_table
                 .get_pv_line(game, depth)
                 .iter()
-                .map(|action| match action.save_to_notation() {
-                    Ok(notation) => notation,
-                    Err(_) => "######".to_string(),
+                .map(|action| {
+                    action
+                        .save_to_notation()
+                        .map_or_else(|_| "######".to_string(), |notation| notation)
                 })
                 .join(" → ");
         }
 
         if depth == 0 {
             if let Some(pv_action) = self.best_action {
-                return match pv_action.save_to_notation() {
-                    Ok(notation) => format!("{} → ...", notation),
-                    Err(_) => "###### → ...".to_string(),
-                };
+                return pv_action
+                    .save_to_notation()
+                    .map_or_else(|_| "###### → ...".to_string(), |notation| format!("{notation} → ..."));
             }
         }
 
@@ -754,7 +753,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             } => writer.as_mut(),
         };
 
-        writeln!(writer, "{}", logging)
+        writeln!(writer, "{logging}")
     }
 
     /// Writes the statistics to the logging writer.
@@ -774,11 +773,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         depth: usize,
     ) -> Result<(), std::io::Error> {
         let pv_actions = self.get_pv_action_line(game, depth);
-        let best_evaluation = self.best_evaluation.map(|eval| format!("{}", eval)).unwrap_or("NONE".to_string());
-        let best_action = self.best_action.as_ref().map(|action| match action.save_to_notation() {
-            Ok(notation) => notation,
-            Err(_) => "######".to_string(),
-        }).unwrap_or("NONE".to_string());
+        let best_evaluation = self.best_evaluation.map_or("NONE".to_string(), |eval| format!("{eval}"));
+        let best_action = self.best_action.as_ref().map_or("NONE".to_string(), |action| action.save_to_notation().map_or_else(|_| "######".to_string(), |notation| notation));
 
         let mut debug_writer = None;
         let writer = match self.options.logging {
@@ -824,18 +820,18 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         let player_2_pos = game.player_2.get_position();
 
         writeln!(writer, "───────────── Principal Variation Search Player ─────────────")?;
-        writeln!(writer, "Features:            [{}]", features)?;
+        writeln!(writer, "Features:            [{features}]")?;
         writeln!(writer, "Depth:               {:?} started from (1: {}, 2: {}, type: {:?})", depth, player_1_pos, player_2_pos, game.turn_type)?;
         writeln!(writer, "Time:                {:?}", std::time::Instant::now().duration_since(self.statistics.start_time))?;
         writeln!(writer, "Nodes searched:      {:?}", self.statistics.nodes_searched)?;
-        writeln!(writer, "Branching factor:    {:.2} AVG / {:.2} EFF / {:.2} MEAN", average_branching_factor, effective_branching_factor, mean_branching_factor)?;
-        writeln!(writer, "Best Action:         {} ({} pts)", best_action, best_evaluation)?;
+        writeln!(writer, "Branching factor:    {average_branching_factor:.2} AVG / {effective_branching_factor:.2} EFF / {mean_branching_factor:.2} MEAN")?;
+        writeln!(writer, "Best Action:         {best_action} ({best_evaluation} pts)")?;
         writeln!(writer, "Move Ordering:       {:?} ({} high pv / {} high)", (self.statistics.fail_high_first as f64) / (self.statistics.fail_high as f64), self.statistics.fail_high_first, self.statistics.fail_high)?;
         writeln!(writer, "Aspiration window:   {:?} low / {:?} high", self.statistics.aspiration_window_fail_low, self.statistics.aspiration_window_fail_high)?;
         writeln!(writer, "Zero window search:  {:?} fails ({:.2}%)", self.statistics.zero_window_search_fail, self.statistics.zero_window_search_fail_rate() * 100.0)?;
         writeln!(writer, "Search Extensions:   {:?} SP, {:?} ST ({})", self.statistics.special_patch_extensions, self.statistics.special_tile_extensions, if self.options.features.search_extensions { "enabled" } else { "disabled" })?;
         writeln!(writer, "LMR / LMP:           {:?} / {:?}", self.statistics.late_move_reductions, self.statistics.late_move_pruning)?;
-        writeln!(writer, "Principal Variation: {}", pv_actions)?;
+        writeln!(writer, "Principal Variation: {pv_actions}")?;
         if let Some(ref mut transposition_table) = self.transposition_table {
             transposition_table.statistics.write_statistics(writer)?;
             if let Some(debug_writer) = debug_writer {
@@ -868,9 +864,9 @@ impl LMPFlags {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
     pub const fn fake() -> Self {
-        LMPFlags {
+        Self {
             walking: None,
             patch1: None,
             patch2: None,
@@ -892,9 +888,9 @@ impl LMPFlags {
     ///
     /// `𝒪(𝑛)` where `𝑛` is the length of the action list.
     #[allow(clippy::collapsible_if)]
-    #[inline(always)]
+    #[inline]
     pub fn initialize_from(action_list: &ActionList<'_>) -> Self {
-        let mut flags = LMPFlags {
+        let mut flags = Self {
             walking: None,
             patch1: None,
             patch2: None,
@@ -943,7 +939,7 @@ impl LMPFlags {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
     pub fn set_action_type_done(&mut self, action: ActionId) {
         if action.is_walking() {
             self.walking = None;
@@ -966,7 +962,7 @@ impl LMPFlags {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
     pub fn get_next_missing(&mut self) -> Option<ActionId> {
         if let Some(action) = self.walking.take() {
             return Some(action);

@@ -5,7 +5,7 @@ use crate::{
     SPECIAL_PATCH_PLACEMENT_OPENING_TABLE, WALKING_ENDGAME_TABLE, WALKING_OPENING_TABLE,
 };
 
-/// An ActionSorter that uses a table of weights to score actions.
+/// An `ActionSorter` that uses a table of weights to score actions.
 ///
 /// The implementation scores Actions by the following:
 /// 1. PV-Action: If an action is the pv action is gets the highest score.
@@ -28,10 +28,11 @@ const AVG_PATCHWORK_PLIES: f64 = 42.8176;
 fn interpolate(ply: usize, opening_value: f64, endgame_value: f64) -> f64 {
     let ratio = (ply as f64 / AVG_PATCHWORK_PLIES).max(1.0);
 
-    opening_value * (1.0 - ratio) + endgame_value * ratio
+    opening_value.mul_add(1.0 - ratio, endgame_value * ratio)
 }
 
 impl ActionOrderer for TableActionOrderer {
+    #[allow(clippy::unreadable_literal)]
     fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64 {
         if pv_action.is_some() && action == pv_action.unwrap() {
             return 100000.0;

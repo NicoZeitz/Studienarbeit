@@ -37,6 +37,7 @@ impl Entry {
     ///
     /// * `EvaluationType` - The evaluation type
     #[inline]
+    #[must_use]
     pub fn get_evaluation_type(data: u64) -> EvaluationType {
         match data & 0b11 {
             0 => EvaluationType::Exact,
@@ -56,7 +57,8 @@ impl Entry {
     ///
     /// * `usize` - The depth
     #[inline]
-    pub fn get_depth(data: u64) -> usize {
+    #[must_use]
+    pub const fn get_depth(data: u64) -> usize {
         ((data >> 2) & 0xFF) as usize
     }
 
@@ -70,7 +72,8 @@ impl Entry {
     ///
     /// * `usize` - The action id
     #[inline]
-    pub fn get_action_id(data: u64) -> ActionId {
+    #[must_use]
+    pub const fn get_action_id(data: u64) -> ActionId {
         ActionId::from_bits(((data >> 10) & 0x1FFFF) as u32)
     }
 
@@ -84,8 +87,9 @@ impl Entry {
     ///
     /// * `isize` - The evaluation
     #[inline]
+    #[must_use]
     pub fn get_evaluation(data: u64) -> i32 {
-        let extracted = (data >> 27) & 0x1FFFFFFFFF;
+        let extracted = (data >> 27) & 0x001F_FFFF_FFFF;
 
         (unsafe { std::mem::transmute::<u64, i64>(extracted) }) as i32 + evaluator_constants::NEGATIVE_INFINITY
     }
@@ -100,6 +104,7 @@ impl Entry {
     /// # Returns
     ///
     /// * `Some((depth, evaluation, evaluation_type, action))` - The unpacked data
+    #[must_use]
     pub fn unpack_data(data: u64) -> (usize, i32, EvaluationType, ActionId) {
         let evaluation_type = Self::get_evaluation_type(data);
         let depth = Self::get_depth(data);
@@ -123,18 +128,18 @@ impl Entry {
     ///
     /// The packed data and extra data
     #[rustfmt::skip]
-    pub fn pack_data(
+    #[must_use]    pub fn pack_data(
         depth: usize,
         evaluation: i32,
         evaluation_type: EvaluationType,
         action_id: ActionId,
     ) -> u64 {
         // Force evaluation to be positive to allow reconstruction of the number later on
-        let adjusted_evaluation = (evaluation - evaluator_constants::NEGATIVE_INFINITY) as i64;
+        let adjusted_evaluation = i64::from(evaluation - evaluator_constants::NEGATIVE_INFINITY);
         let mut data = 0u64;
         data |=  evaluation_type     as u64;        //  2 bits for evaluation type
         data |= (depth               as u64) << 2;  //  8 bits for depth     (as a max depth of 256 is used)
-        data |= (action_id.as_bits() as u64) << 10; // 17 bits for action id (as a max of 2026 actions are possible)
+        data |= u64::from(action_id.as_bits()) << 10; // 17 bits for action id (as a max of 2026 actions are possible)
         data |= unsafe {std::mem::transmute::<i64, u64>(adjusted_evaluation) } << 27; // 37 bits left for evaluation
 
         data

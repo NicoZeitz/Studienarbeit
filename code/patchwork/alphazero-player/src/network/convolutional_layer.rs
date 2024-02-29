@@ -9,7 +9,8 @@ pub struct ConvolutionalLayer<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_
 impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_FILTERS: usize>
     ConvolutionalLayer<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_FILTERS>
 {
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let conv2d_config: Conv2dConfig = Conv2dConfig {
             padding: 1,
             ..Conv2dConfig::default()

@@ -7,6 +7,9 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 patchwork-core = { path = "../patchwork-core" }
 rand = "0.8.5"

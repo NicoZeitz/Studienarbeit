@@ -32,7 +32,8 @@ impl UCTPolicy {
     /// # Returns
     ///
     /// The new [`UCTPolicy`].
-    pub fn new(exploration_constant: f64) -> Self {
+    #[must_use]
+    pub const fn new(exploration_constant: f64) -> Self {
         Self { exploration_constant }
     }
 }
@@ -53,7 +54,7 @@ impl ScoredTreePolicy for UCTPolicy {
         let parent_visit_count = parent.visit_count() as f64;
         let parent_player = parent.current_player();
 
-        let exploitation_wins = child.wins_for(parent_player) as f64 / child_visit_count;
+        let exploitation_wins = f64::from(child.wins_for(parent_player)) / child_visit_count;
 
         let exploration = (parent_visit_count.ln() / child_visit_count).sqrt();
         let exploration_wins = self.exploration_constant * exploration;

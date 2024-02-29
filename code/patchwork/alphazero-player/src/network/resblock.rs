@@ -13,7 +13,8 @@ pub struct ResBlock {
 }
 
 impl ResBlock {
-    pub fn new(num_filters: usize, vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(num_filters: usize, vb: VarBuilder<'_>) -> Result<Self> {
         let convolution_config = Conv2dConfig {
             padding: 1,
             ..Conv2dConfig::default()

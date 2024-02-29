@@ -4,7 +4,7 @@ use candle_nn::{conv2d, Conv2d, Conv2dConfig, VarBuilder};
 
 /// Squeeze and Excitation block
 ///
-/// Paper: https://arxiv.org/abs/1709.01507
+/// Paper: [Squeeze-and-Excitation Networks](https://arxiv.org/abs/1709.01507)
 ///
 /// Ported from [Pytorch SqueezeExcitation](https://pytorch.org/vision/main/_modules/torchvision/ops/misc.html#SqueezeExcitation)
 pub struct SqueezeExcitation {
@@ -13,7 +13,8 @@ pub struct SqueezeExcitation {
 }
 
 impl SqueezeExcitation {
-    pub fn new(input_channels: usize, squeeze_channels: usize, vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(input_channels: usize, squeeze_channels: usize, vb: VarBuilder<'_>) -> Result<Self> {
         let fc1 = conv2d(
             input_channels,
             squeeze_channels,

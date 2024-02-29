@@ -17,7 +17,7 @@ use crate::{
 pub type DefaultSearchTree<Policy> =
     SearchTree<Policy, DEFAULT_AMOUNT_PATCH_LAYERS, DEFAULT_AMOUNT_RESIDUAL_LAYERS, DEFAULT_AMOUNT_FILTERS>;
 
-/// The search tree for the Monte Carlo Tree Search (MCTS) algorithm of the AlphaZero Player.
+/// The search tree for the Monte Carlo Tree Search (MCTS) algorithm of the `AlphaZero` Player.
 pub struct SearchTree<
     Policy: TreePolicy,
     const AMOUNT_PATCH_LAYERS: usize,
@@ -59,6 +59,7 @@ impl<
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+
     pub fn new(
         train: bool,
         tree_policy: Policy,
@@ -169,7 +170,7 @@ impl<
         self.tree_policy = Some(tree_policy);
 
         // 6. Return the action probabilities for each game state using the visit counts
-        self.get_action_probabilities(batch)
+        self.get_action_probabilities(&batch)
     }
 
     /// Runs the search until the end condition is met.
@@ -185,7 +186,7 @@ impl<
     fn run_until_end(
         &self,
         start_time: std::time::Instant,
-        worker: &WorkerThread<Policy, AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
+        worker: &WorkerThread<'_, Policy, AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
     ) -> PlayerResult<()> {
         match &self.options.end_condition {
             AlphaZeroEndCondition::Iterations { iterations } => {
@@ -274,7 +275,8 @@ impl<
     /// # Returns
     ///
     /// The action probabilities for each game state.
-    fn get_action_probabilities(&self, batch: Vec<GameState>) -> PlayerResult<Tensor> {
+
+    fn get_action_probabilities(&self, batch: &[GameState]) -> PlayerResult<Tensor> {
         Ok(Tensor::stack(
             batch
                 .iter()
@@ -283,7 +285,7 @@ impl<
 
                     let root_node_id = state.root;
                     let root_node = state.allocator.get_node_read(root_node_id);
-                    for node_id in root_node.children.iter() {
+                    for node_id in &root_node.children {
                         let node = state.allocator.get_node_read(*node_id);
 
                         if let Some(action_taken) = node.action_taken {
@@ -291,9 +293,10 @@ impl<
                             action_probabilities[natural_action_id] = node.visit_count as f32;
                         }
                     }
+                    drop(root_node);
 
                     let sum = action_probabilities.iter().sum::<f32>();
-                    for probability in action_probabilities.iter_mut() {
+                    for probability in &mut action_probabilities {
                         *probability /= sum;
                     }
 

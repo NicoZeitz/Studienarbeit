@@ -11,7 +11,8 @@ pub struct PolicyHead<const NUMBER_OF_FILTERS: usize> {
 impl<const NUMBER_OF_FILTERS: usize> PolicyHead<NUMBER_OF_FILTERS> {
     const POLICY_HEAD_FILTERS: usize = 2;
 
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let conv = conv2d(
             NUMBER_OF_FILTERS,
             Self::POLICY_HEAD_FILTERS,

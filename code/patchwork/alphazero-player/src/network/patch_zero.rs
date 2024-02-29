@@ -27,15 +27,16 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     ///
     /// A new patch zero neural network.
     #[allow(dead_code)]
-    pub fn new(vb: VarBuilder, device: Device) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>, device: Device) -> Result<Self> {
         let encoder = GameEncoder::<NUMBER_OF_PATCH_LAYERS>::new(vb.pp("encoder"), device.clone())?;
         let network =
             ResNet::<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>::new(vb.pp("network"))?;
 
         Ok(Self {
+            device,
             encoder,
             network,
-            device,
         })
     }
 
@@ -49,6 +50,10 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     /// # Returns
     ///
     /// The policy and value tensors.
+    ///
+    /// # Errors
+    ///
+    /// When there is a error inside the neural network.
     #[allow(dead_code)]
     pub fn forward_t(&self, games: &[&Patchwork], train: bool) -> Result<(Tensor, Tensor)> {
         let stack = self.encoder.encode_state(games)?;

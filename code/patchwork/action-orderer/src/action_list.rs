@@ -32,6 +32,7 @@ impl<'a> ActionList<'a> {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn len(&self) -> usize {
         self.actions.len()
     }
@@ -63,6 +64,7 @@ impl<'a> ActionList<'a> {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_action(&self, index: usize) -> ActionId {
         self.actions[index]
     }
@@ -80,6 +82,7 @@ impl<'a> ActionList<'a> {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub fn get_score(&self, index: usize) -> f64 {
         self.scores[index]
     }

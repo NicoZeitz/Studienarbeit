@@ -24,10 +24,11 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     ResNet<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>
 {
     #[rustfmt::skip]
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let convolutional_layer = ConvolutionalLayer::new(vb.pp("convolutional_layer"))?;
         let residual_layers = (0..NUMBER_OF_RESIDUAL_LAYERS)
-            .map(|i| ResBlock::new(NUMBER_OF_FILTERS, vb.pp(format!("resblock_{}", i).as_str())))
+            .map(|i| ResBlock::new(NUMBER_OF_FILTERS, vb.pp(format!("resblock_{i}").as_str())))
             .collect::<Result<Vec<_>>>()?;
         let policy_head = PolicyHead::new(vb.pp("policy_head"))?;
         let value_head = ValueHead::new(vb.pp("value_head"))?;

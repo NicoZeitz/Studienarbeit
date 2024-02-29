@@ -42,7 +42,7 @@ impl Eq for NaturalActionId {}
 
 impl Hash for NaturalActionId {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.as_bits().hash(state)
+        self.as_bits().hash(state);
     }
 }
 
@@ -97,8 +97,9 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub const fn walking(starting_index: u8) -> NaturalActionId {
+    #[inline]
+    #[must_use]
+    pub const fn walking(starting_index: u8) -> Self {
         Self(transform_walking_to_natural_id(starting_index))
     }
 
@@ -118,13 +119,14 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn patch_placement(
         patch_id: u8,
         patch_index: u8,
         patch_transformation_index: u16,
         was_previous_player_1: bool,
-    ) -> NaturalActionId {
+    ) -> Self {
         Self(transform_patch_placement_to_natural_id(
             patch_id,
             patch_index,
@@ -146,8 +148,9 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub const fn special_patch_placement(quilt_board_index: u8) -> NaturalActionId {
+    #[inline]
+    #[must_use]
+    pub const fn special_patch_placement(quilt_board_index: u8) -> Self {
         Self(quilt_board_index as u64 + Self::SPECIAL_PATCH_PLACEMENT_ID_START)
     }
 
@@ -160,8 +163,9 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub const fn phantom() -> NaturalActionId {
+    #[inline]
+    #[must_use]
+    pub const fn phantom() -> Self {
         Self(Self::PHANTOM_ACTION_ID)
     }
 
@@ -174,8 +178,9 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
-    pub const fn null() -> NaturalActionId {
+    #[inline]
+    #[must_use]
+    pub const fn null() -> Self {
         Self(Self::NULL_ACTION_ID)
     }
 
@@ -192,7 +197,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_valid_natural_action_id(natural_action_id: u64) -> bool {
         (natural_action_id & Self::TOP_BIT_MASK) <= Self::NULL_ACTION_ID
     }
@@ -206,7 +212,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn as_bits(&self) -> u64 {
         // mask of the top 24 bits
         self.0 & Self::TOP_BIT_MASK
@@ -221,7 +228,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn as_bits_with_hidden_information(&self) -> u64 {
         self.0
     }
@@ -237,7 +245,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn contains_hidden_information(&self) -> bool {
         self.0 & Self::TOP_BIT_MASK != self.0
     }
@@ -260,7 +269,8 @@ impl NaturalActionId {
     ///
     /// If the given bits are not a valid natural action id.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn from_bits(bits: u64) -> Self {
         debug_assert!(
             Self::is_valid_natural_action_id(bits),
@@ -283,11 +293,11 @@ impl NaturalActionId {
     ///
     /// `𝒪(𝟣)`
     #[rustfmt::skip]
-    pub fn from_action(action: &Action) -> Self {
+    #[must_use]    pub fn from_action(action: &Action) -> Self {
         Self(match action {
             Action::Walking { starting_index } => transform_walking_to_natural_id(*starting_index),
             Action::SpecialPatchPlacement { quilt_board_index } => {
-                (*quilt_board_index) as u64 + Self::SPECIAL_PATCH_PLACEMENT_ID_START
+                u64::from(*quilt_board_index) + Self::SPECIAL_PATCH_PLACEMENT_ID_START
             }
             Action::PatchPlacement {
                 patch_id,
@@ -313,7 +323,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn from_surrogate_action_id(action_id: ActionId) -> NaturalActionId {
+    #[must_use]
+    pub fn from_surrogate_action_id(action_id: ActionId) -> Self {
         debug_assert!(
             ActionId::is_valid_action_id(action_id.as_bits()),
             "[NaturalActionId::from_action_id] The given action id is not a valid action id."
@@ -325,7 +336,7 @@ impl NaturalActionId {
                 transform_walking_to_natural_id(action_id.get_starting_index())
             }
             ActionId::SPECIAL_PATCH_PLACEMENT_ID_START..=ActionId::SPECIAL_PATCH_PLACEMENT_ID_END => {
-                masked_surrogate_action_id as u64 - ActionId::SPECIAL_PATCH_PLACEMENT_ID_START as u64
+                u64::from(masked_surrogate_action_id) - u64::from(ActionId::SPECIAL_PATCH_PLACEMENT_ID_START)
                     + Self::SPECIAL_PATCH_PLACEMENT_ID_START
             }
             ActionId::PATCH_PLACEMENT_ID_START..=ActionId::PATCH_PLACEMENT_ID_END => {
@@ -341,8 +352,8 @@ impl NaturalActionId {
                     previous_player_was_1,
                 )
             }
-            ActionId::PHANTOM_ACTION_ID => NaturalActionId::PHANTOM_ACTION_ID,
-            ActionId::NULL_ACTION_ID => NaturalActionId::NULL_ACTION_ID,
+            ActionId::PHANTOM_ACTION_ID => Self::PHANTOM_ACTION_ID,
+            ActionId::NULL_ACTION_ID => Self::NULL_ACTION_ID,
             _ => unreachable!("[NaturalActionId::from_action_id] Invalid surrogate action id."),
         })
     }
@@ -361,7 +372,8 @@ impl NaturalActionId {
     ///
     /// Panics if this natural action id is a walking action or a patch placement and does not
     /// contain hidden information.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn to_action(&self) -> Action {
         Action::from_natural_action_id(*self)
     }
@@ -379,7 +391,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn try_to_action(&self) -> Option<Action> {
         if (self.is_walking() || self.is_patch_placement()) && !self.contains_hidden_information() {
             None
@@ -402,7 +415,8 @@ impl NaturalActionId {
     ///
     /// Panics if this natural action id is a walking action or a patch placement and does not
     /// contain hidden information.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn to_surrogate_action_id(&self) -> ActionId {
         ActionId::from_natural_action_id(*self)
     }
@@ -420,7 +434,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn try_to_surrogate_action_id(&self) -> Option<ActionId> {
         if (self.is_walking() || self.is_patch_placement()) && !self.contains_hidden_information() {
             None
@@ -438,7 +453,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_walking(&self) -> bool {
         self.as_bits() == Self::WALKING_ACTION_ID
     }
@@ -452,7 +468,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_special_patch_placement(&self) -> bool {
         let masked_id = self.as_bits();
         masked_id >= Self::SPECIAL_PATCH_PLACEMENT_ID_START && masked_id <= Self::SPECIAL_PATCH_PLACEMENT_ID_END
@@ -467,7 +484,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_patch_placement(&self) -> bool {
         let masked_id = self.as_bits();
         masked_id >= Self::PATCH_PLACEMENT_ID_START && masked_id <= Self::PATCH_PLACEMENT_ID_END
@@ -482,7 +500,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_phantom(&self) -> bool {
         self.as_bits() == Self::PHANTOM_ACTION_ID
     }
@@ -496,7 +515,8 @@ impl NaturalActionId {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_null(&self) -> bool {
         self.as_bits() == Self::NULL_ACTION_ID
     }
@@ -515,7 +535,8 @@ impl NaturalActionId {
     ///
     /// If the natural action id does not contain hidden information.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_first_patch_taken(&self) -> bool {
         debug_assert!(
             self.contains_hidden_information(),
@@ -538,7 +559,8 @@ impl NaturalActionId {
     ///
     /// If the natural action id does not contain hidden information.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_second_patch_taken(&self) -> bool {
         debug_assert!(
             self.contains_hidden_information(),
@@ -560,7 +582,8 @@ impl NaturalActionId {
     ///
     /// If the natural action id does not contain hidden information.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_third_patch_taken(&self) -> bool {
         debug_assert!(
             self.contains_hidden_information(),
@@ -584,7 +607,8 @@ impl NaturalActionId {
     ///
     /// If the action is not a walking action or does not contain hidden
     /// information. This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_starting_index(&self) -> u8 {
         debug_assert!(
             self.is_walking(),
@@ -613,7 +637,8 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action or does not contain hidden
     /// information. This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_patch_id(&self) -> u8 {
         debug_assert!(
             self.is_patch_placement(),
@@ -642,17 +667,18 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_patch_index(&self) -> u8 {
-        debug_assert!(
-            self.is_patch_placement(),
-            "[NaturalActionId::get_patch_index] The action is not a patch placement action."
-        );
-
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
         const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
         const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
+        debug_assert!(
+            self.is_patch_placement(),
+            "[NaturalActionId::get_patch_index] The action is not a patch placement action."
+        );
 
         ((self.as_bits() - Self::PATCH_PLACEMENT_ID_START) / (ROWS * COLUMNS * ROTATIONS * ORIENTATIONS)) as u8
     }
@@ -672,17 +698,18 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement or special patch placement action.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_quilt_board_index(&self) -> u8 {
-        debug_assert!(
-            self.is_patch_placement() || self.is_special_patch_placement(),
-            "[NaturalActionId::get_quilt_board_index] The action is not a patch placement or special patch placement action."
-        );
-
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
         const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
         const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[NaturalActionId::get_quilt_board_index] The action is not a patch placement or special patch placement action."
+        );
 
         let masked_id = self.as_bits();
 
@@ -711,16 +738,17 @@ impl NaturalActionId {
     /// If the action is not a patch placement or special patch placement action.
     /// This will panic in debug mode.
     #[inline]
+    #[must_use]
     pub const fn get_row(&self) -> u8 {
-        debug_assert!(
-            self.is_patch_placement() || self.is_special_patch_placement(),
-            "[NaturalActionId::get_row] The action is not a patch placement or special patch placement action."
-        );
-
         const ROWS: u64 = QuiltBoard::ROWS as u64;
         const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
         const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
         const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
+        debug_assert!(
+            self.is_patch_placement() || self.is_special_patch_placement(),
+            "[NaturalActionId::get_row] The action is not a patch placement or special patch placement action."
+        );
 
         let masked_id = self.as_bits();
 
@@ -747,15 +775,16 @@ impl NaturalActionId {
     /// If the action is not a patch placement or special patch placement action.
     /// This will panic in debug mode.
     #[inline]
+    #[must_use]
     pub const fn get_column(&self) -> u8 {
+        const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
+        const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
+        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
         debug_assert!(
             self.is_patch_placement() || self.is_special_patch_placement(),
             "[NaturalActionId::get_column] The action is not a patch placement or special patch placement action."
         );
-
-        const COLUMNS: u64 = QuiltBoard::COLUMNS as u64;
-        const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
-        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
 
         let masked_id = self.as_bits();
 
@@ -781,15 +810,16 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_rotation(&self) -> u8 {
+        const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
+        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
         debug_assert!(
             self.is_patch_placement(),
             "[NaturalActionId::get_rotation] The action is not a patch placement action."
         );
-
-        const ROTATIONS: u64 = PatchTransformation::AMOUNT_OF_ROTATIONS as u64;
-        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
 
         ((self.as_bits() - Self::PATCH_PLACEMENT_ID_START) / (ORIENTATIONS) % ROTATIONS) as u8
     }
@@ -809,14 +839,15 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action.
     /// This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_orientation(&self) -> u8 {
+        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
+
         debug_assert!(
             self.is_patch_placement(),
             "[NaturalActionId::get_orientation] The action is not a patch placement action."
         );
-
-        const ORIENTATIONS: u64 = PatchTransformation::AMOUNT_OF_ORIENTATIONS as u64;
 
         (self.as_bits() - Self::PATCH_PLACEMENT_ID_START % ORIENTATIONS) as u8
     }
@@ -836,7 +867,8 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action or does not contain hidden
     /// information. This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_patch_transformation_index(&self) -> u16 {
         debug_assert!(
             self.is_patch_placement(),
@@ -865,7 +897,8 @@ impl NaturalActionId {
     ///
     /// If the action is not a patch placement action or does not contain hidden
     /// information. This will panic in debug mode.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_previous_player_was_1(&self) -> bool {
         debug_assert!(
             self.is_patch_placement(),
@@ -955,11 +988,11 @@ fn transform_patch_placement_to_natural_id(
 
     let transformation = PatchManager::get_transformation(patch_id, patch_transformation_index);
 
-    let patch_index = patch_index as u64;
-    let row = transformation.row as u64;
-    let column = transformation.column as u64;
-    let rotation = transformation.rotation_flag() as u64;
-    let orientation = transformation.orientation_flag() as u64;
+    let patch_index = u64::from(patch_index);
+    let row = u64::from(transformation.row);
+    let column = u64::from(transformation.column);
+    let rotation = u64::from(transformation.rotation_flag());
+    let orientation = u64::from(transformation.orientation_flag());
 
     let id = patch_index * ROWS * COLUMNS * ROTATIONS * ORIENTATIONS
         + row * COLUMNS * ROTATIONS * ORIENTATIONS
@@ -970,9 +1003,9 @@ fn transform_patch_placement_to_natural_id(
 
     // the top 25 bits are used to save the patch id (8 bits), the patch transformation index (16 bits) and if the
     // previous player was player 1 (1 bit). This allows for conversion to action and surrogate action id
-    let hidden_information = ((patch_id as u64) << 56)
-        + ((patch_transformation_index as u64) << 40)
-        + ((was_previous_player_1 as u64) << 39);
+    let hidden_information = (u64::from(patch_id) << 56)
+        + (u64::from(patch_transformation_index) << 40)
+        + (u64::from(was_previous_player_1) << 39);
 
     id + hidden_information
 }
@@ -983,6 +1016,7 @@ mod tests {
 
     use pretty_assertions::assert_eq;
 
+    #[allow(clippy::unreadable_literal)]
     fn as_bits_string(natural_action_id: NaturalActionId) -> String {
         let bits = natural_action_id.as_bits_with_hidden_information();
         format!(

@@ -10,6 +10,6 @@ pub(crate) use area_allocator::AreaAllocator;
 pub(crate) use node::Node;
 pub(crate) use node_id::NodeId;
 pub(crate) use search_data::SearchData;
-pub(crate) use search_statistics::SearchStatistics;
+
 pub use search_tree::{DefaultSearchTree, SearchTree};
 pub(crate) use worker_thread::WorkerThread;

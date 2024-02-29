@@ -35,7 +35,8 @@ pub struct MCTSOptions {
 
 impl MCTSOptions {
     /// Creates a new [`MCTSOptions`].
-    pub fn new(
+    #[must_use]
+    pub const fn new(
         root_parallelization: NonZeroUsize,
         leaf_parallelization: NonZeroUsize,
         end_condition: MCTSEndCondition,
@@ -45,8 +46,8 @@ impl MCTSOptions {
         Self {
             root_parallelization,
             leaf_parallelization,
-            end_condition,
             reuse_tree,
+            end_condition,
             logging,
         }
     }
@@ -63,7 +64,7 @@ impl Default for MCTSOptions {
             leaf_parallelization: NonZeroUsize::new(1).unwrap(),
             end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(10)),
             reuse_tree: true,
-            logging: Default::default(),
+            logging: Logging::default(),
         }
     }
 }
