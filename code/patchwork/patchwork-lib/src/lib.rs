@@ -1,7 +1,7 @@
 pub use action_orderer::*;
 pub use patchwork_core::{
     status_flags, time_board_flags, Action, ActionId, GameOptions, NaturalActionId, Notation, Patch, PatchManager,
-    PatchTransformation, Patchwork, PlayerState, QuiltBoard, Termination, TerminationType, TimeBoard,
+    PatchTransformation, Patchwork, PatchworkError, PlayerState, QuiltBoard, Termination, TerminationType, TimeBoard,
 };
 
 pub mod evaluator {
@@ -100,7 +100,18 @@ mod tests {
     #[test]
     #[ignore = "AlphaZero player is not yet implemented"]
     fn alphazero_player() {
-        let player = Box::new(AlphaZeroPlayer::new("AlphaZero Player"));
+        let player: AlphaZeroPlayer = AlphaZeroPlayer::new(
+            "AlphaZero Player",
+            Some(AlphaZeroOptions {
+                end_condition: AlphaZeroEndCondition::Time {
+                    duration: std::time::Duration::from_secs(1),
+                    safety_margin: std::time::Duration::from_millis(50),
+                },
+                logging: Logging::Disabled,
+                ..Default::default()
+            }),
+        );
+        let player = Box::new(player);
         test_player(player);
     }
 
@@ -113,7 +124,7 @@ mod tests {
                 Ok(action) => action,
                 Err(error) => {
                     println!("Player '{}' get_action failed with: {}", player.name(), error);
-                    println!("State: {}", state);
+                    println!("State:\n{state}");
                     panic!("{}", error);
                 }
             };
@@ -121,16 +132,15 @@ mod tests {
             let valid_actions = state.get_valid_actions();
             if !valid_actions.contains(&action) {
                 println!("Player '{}' chose invalid action: {}", player.name(), action);
-                println!("State: {}", state);
+                println!("State:\n{state}");
                 panic!("Invalid action!");
             }
 
             match state.do_action(action, false) {
-                Ok(_) => {}
+                Ok(()) => {}
                 Err(error) => {
                     println!("Player '{}' do_action failed with: {}", player.name(), error);
-                    println!("State:");
-                    println!("{}", state);
+                    println!("State:\n{state}");
                     panic!("{}", error);
                 }
             }

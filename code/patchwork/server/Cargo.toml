@@ -7,10 +7,15 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[lints]
+workspace = true
+
 [features]
 default = []
 mkl = ["patchwork-lib/mkl"]
+accelerate = ["patchwork-lib/accelerate"]
 cuda = ["patchwork-lib/cuda"]
+metal = ["patchwork-lib/metal"]
 
 [dependencies]
 axum = { version = "0.7.4", features = ["tracing", "ws"] }

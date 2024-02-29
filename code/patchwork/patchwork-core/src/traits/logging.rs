@@ -29,18 +29,19 @@ impl Logging {
     /// # Returns
     ///
     /// `true` if the logging is enabled, `false` otherwise.
-    pub fn is_enabled(&self) -> bool {
-        !matches!(self, Logging::Disabled)
+    #[must_use]
+    pub const fn is_enabled(&self) -> bool {
+        !matches!(self, Self::Disabled)
     }
 }
 
 impl fmt::Debug for Logging {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Logging::Disabled => write!(f, "Logging::Disabled"),
-            Logging::Enabled { .. } => write!(f, "Logging::Enabled"),
-            Logging::Verbose { .. } => write!(f, "Logging::Verbose"),
-            Logging::VerboseOnly { .. } => write!(f, "Logging::VerboseOnly"),
+            Self::Disabled => write!(f, "Logging::Disabled"),
+            Self::Enabled { .. } => write!(f, "Logging::Enabled"),
+            Self::Verbose { .. } => write!(f, "Logging::Verbose"),
+            Self::VerboseOnly { .. } => write!(f, "Logging::VerboseOnly"),
         }
     }
 }
@@ -48,11 +49,11 @@ impl fmt::Debug for Logging {
 impl Default for Logging {
     fn default() -> Self {
         if cfg!(debug_assertions) {
-            Logging::Enabled {
+            Self::Enabled {
                 progress_writer: Box::new(std::io::stdout()),
             }
         } else {
-            Logging::Disabled
+            Self::Disabled
         }
     }
 }

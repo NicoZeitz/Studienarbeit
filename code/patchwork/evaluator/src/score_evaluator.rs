@@ -5,8 +5,9 @@ pub struct ScoreEvaluator {}
 
 impl ScoreEvaluator {
     /// Creates a new [`ScoreEvaluator`].
-    pub fn new() -> Self {
-        ScoreEvaluator {}
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {}
     }
 }
 

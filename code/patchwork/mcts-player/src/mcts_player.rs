@@ -1,8 +1,6 @@
 use std::{
-    cell::RefCell,
     num::NonZeroUsize,
     ops::Sub,
-    rc::Rc,
     sync::{atomic::AtomicUsize, Arc},
     thread,
 };
@@ -11,10 +9,9 @@ use evaluator::WinLossEvaluator;
 use patchwork_core::{ActionId, Evaluator, Logging, Patchwork, Player, PlayerResult, TreePolicy, TreePolicyNode};
 use tree_policy::UCTPolicy;
 
-pub(crate) const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
-pub(crate) const NON_ZERO_USIZE_FOUR: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(4) };
+pub const NON_ZERO_USIZE_ONE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
 
-use crate::{MCTSEndCondition, MCTSOptions, Node, SearchTree};
+use crate::{node_id::NodeId, AreaAllocator, MCTSEndCondition, MCTSOptions, SearchTree, Tree};
 
 const REUSE_TREE_SEARCH_ABORT: Option<std::time::Duration> = Some(std::time::Duration::from_millis(2));
 const TIME_LIMIT_SAFETY_MARGIN: std::time::Duration = std::time::Duration::from_millis(75);
@@ -29,38 +26,21 @@ pub struct MCTSPlayer<Policy: TreePolicy = UCTPolicy, Eval: Evaluator = WinLossE
     pub policy: Policy,
     /// The evaluator to evaluate the game state.
     pub evaluator: Eval,
-    /// The root nodes where the last search was started from. Used to reuse the tree.
-    last_roots: Vec<Rc<RefCell<Node>>>,
+    /// The full trees of the last run with the action that was taken to speed up the later search.
+    last_trees: Vec<Tree>,
 }
-
-/// A Wrapper struct used for unsafe sending a Node to another thread.
-struct NodeWrapper {
-    /// The node to wrap.
-    node: Option<Rc<RefCell<Node>>>,
-}
-
-/// SAFETY: Node cannot be send as it contains an Rc. This wrapper is used to
-/// allow sending a Node to another thread. We only modify the Rc's in node while
-/// doing mcts. During the search the node is fully owned by a search thread.
-/// This wrapper only allows sending the complete tree back to the main
-/// search-tree thread, where it is parked (and not modified) until another
-/// search is started and the wrapper is used again to send the node to the mcts
-/// search thread.
-/// I hereby promise that I *know* Node is in a state where it is safe when
-/// wrapping it into a node wrapper.
-unsafe impl Send for NodeWrapper {}
 
 impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy, Eval> {
     /// Creates a new [`MCTSPlayer`] with the given name.
     pub fn new(name: impl Into<String>, options: Option<MCTSOptions>) -> Self {
         let options = options.unwrap_or_default();
-        let last_roots = if options.reuse_tree {
+        let last_trees = if options.reuse_tree {
             Vec::with_capacity(options.root_parallelization.get())
         } else {
             Vec::new()
         };
 
-        MCTSPlayer {
+        Self {
             name: format!(
                 "{} [R{}|L{}|T{}]",
                 name.into(),
@@ -71,14 +51,14 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
             policy: Default::default(),
             evaluator: Default::default(),
             options,
-            last_roots,
+            last_trees,
         }
     }
 }
 
 impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> Default for MCTSPlayer<Policy, Eval> {
     fn default() -> Self {
-        Self::new("MCTS Player".to_string(), Default::default())
+        Self::new("MCTS Player".to_string(), Option::default())
     }
 }
 
@@ -204,6 +184,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
         &self.name
     }
 
+    #[allow(clippy::too_many_lines)]
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
         let start_time = std::time::Instant::now();
 
@@ -215,19 +196,19 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 reuse_tree,
                 logging,
             } => {
-                let last_root = if !self.last_roots.is_empty() {
-                    Some(self.last_roots.swap_remove(0))
-                } else {
+                let last_tree = if self.last_trees.is_empty() {
                     None
+                } else {
+                    Some(self.last_trees.swap_remove(0))
                 };
 
                 let mut search_tree = SearchTree::<Policy, Eval>::from_root(
-                    last_root,
+                    last_tree,
                     game,
                     &self.policy,
                     &self.evaluator,
                     REUSE_TREE_SEARCH_ABORT,
-                )?;
+                );
 
                 play_until_end!(
                     start_time,
@@ -253,7 +234,7 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 let action = pick_best_action(&search_tree);
 
                 if *reuse_tree {
-                    self.last_roots = vec![get_tree_for_reuse(action, search_tree.root)]
+                    self.last_trees = vec![get_tree_for_reuse(action, search_tree.root, search_tree.allocator)];
                 } else {
                     drop(search_tree);
                 }
@@ -269,20 +250,19 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
             } => {
                 let other_iterations = Arc::new(AtomicUsize::new(0));
 
-                let roots = thread::scope::<'_, _, PlayerResult<Vec<Rc<RefCell<Node>>>>>(|s| {
+                let trees = thread::scope::<'_, _, PlayerResult<Vec<Tree>>>(|s| {
                     let root_parallelization = (*root_parallelization).get();
-                    let mut handles: Vec<thread::ScopedJoinHandle<'_, PlayerResult<NodeWrapper>>> =
+                    let mut handles: Vec<thread::ScopedJoinHandle<'_, PlayerResult<Tree>>> =
                         Vec::with_capacity(root_parallelization);
 
                     for _ in 0..(root_parallelization - 1) {
                         // check for len > 2 to always keep at least the first root for the main search thread
-                        let last_root = if self.last_roots.len() > 2 {
-                            Some(self.last_roots.remove(self.last_roots.len() - 1))
+                        let last_tree = if self.last_trees.len() > 2 {
+                            Some(self.last_trees.remove(self.last_trees.len() - 1))
                         } else {
                             None
                         };
 
-                        let wrapper = NodeWrapper { node: last_root };
                         let evaluator = &self.evaluator;
                         let policy = &self.policy;
                         let leaf_parallel = *leaf_parallelization;
@@ -291,42 +271,35 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
 
                         // start worker search thread
                         handles.push(s.spawn(move || {
-                            let wrapper = wrapper;
-                            let last_root = wrapper.node;
-
                             let mut search_tree = SearchTree::<Policy, Eval>::from_root(
-                                last_root,
+                                last_tree,
                                 game,
                                 policy,
                                 evaluator,
                                 REUSE_TREE_SEARCH_ABORT,
-                            )?;
+                            );
 
                             play_until_end_worker_thread!(start_time, end_cond, {
                                 search_tree.playout(leaf_parallel)?;
                                 iterations.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
                             });
-
-                            let wrapper = NodeWrapper {
-                                node: Some(search_tree.root),
-                            };
-                            Ok(wrapper)
+                            Ok(Tree::new(search_tree.root, search_tree.allocator))
                         }));
                     }
 
-                    let last_root = if !self.last_roots.is_empty() {
-                        Some(self.last_roots.swap_remove(0))
-                    } else {
+                    let last_tree = if self.last_trees.is_empty() {
                         None
+                    } else {
+                        Some(self.last_trees.swap_remove(0))
                     };
 
                     let mut search_tree = SearchTree::<Policy, Eval>::from_root(
-                        last_root,
+                        last_tree,
                         game,
                         &self.policy,
                         &self.evaluator,
                         REUSE_TREE_SEARCH_ABORT,
-                    )?;
+                    );
 
                     play_until_end!(
                         start_time,
@@ -345,16 +318,18 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         matches!(logging, Logging::Enabled { .. } | Logging::Verbose { .. })
                     );
 
-                    let mut roots = vec![Rc::clone(&search_tree.root)];
+                    log_verbose_information(logging, &search_tree)?;
+
+                    let mut trees = vec![Tree::new(search_tree.root, search_tree.allocator)];
 
                     for handle in handles {
                         match handle.join() {
                             // safe to unwrap as the thread always puts the root into the wrapper before exiting
-                            Ok(Ok(wrapper)) => roots.push(wrapper.node.unwrap()),
+                            Ok(Ok(last_tree)) => trees.push(last_tree),
                             Err(error) => {
                                 log_worker_error(
                                     logging,
-                                    format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error).as_str(),
+                                    format!("[MCTSPlayer::get_action] Error in worker thread: {error:?}").as_str(),
                                 )?;
                                 continue; // Work with data from other threads
                             }
@@ -362,13 +337,12 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                                 if let Some(error) = error.downcast_ref::<String>() {
                                     log_worker_error(
                                         logging,
-                                        format!("[MCTSPlayer::get_action] Error in worker thread: {}", error).as_str(),
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {error}").as_str(),
                                     )?;
                                 } else {
                                     log_worker_error(
                                         logging,
-                                        format!("[MCTSPlayer::get_action] Error in worker thread: {:?}", error)
-                                            .as_str(),
+                                        format!("[MCTSPlayer::get_action] Error in worker thread: {error:?}").as_str(),
                                     )?;
                                 }
                                 continue; // Work with data from other threads
@@ -376,14 +350,16 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                         }
                     }
 
-                    log_verbose_information(logging, &search_tree)?;
-                    Ok(roots)
+                    Ok(trees)
                 })?;
 
-                let action = pick_best_action_from_multiple(&roots);
+                let action = pick_best_action_from_multiple(&trees);
 
                 if *reuse_tree {
-                    self.last_roots = roots.into_iter().map(|root| get_tree_for_reuse(action, root)).collect();
+                    self.last_trees = trees
+                        .into_iter()
+                        .map(|tree| get_tree_for_reuse(action, tree.root, tree.allocator))
+                        .collect();
                 }
 
                 action
@@ -405,19 +381,23 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
 /// # Returns
 ///
 /// The best action from the root node.
-pub fn pick_best_action(search_tree: &SearchTree<impl TreePolicy, impl Evaluator>) -> ActionId {
-    let root = RefCell::borrow(&search_tree.root);
+pub fn pick_best_action(search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>) -> ActionId {
+    let root_id = search_tree.root;
+    let root = search_tree.allocator.get_node(root_id);
     let root_player = root.state.is_player_1();
 
-    let best_action = root
+    let best_action_node_id = *root
         .children
         .iter()
-        .max_by_key(|child| {
-            let child = RefCell::borrow(child);
+        .max_by_key(|child_id| {
+            let child = search_tree.allocator.get_node(**child_id);
             (child.visit_count, child.wins_for(root_player))
         })
-        .unwrap()
-        .borrow()
+        .unwrap();
+
+    let best_action = search_tree
+        .allocator
+        .get_node(best_action_node_id)
         .action_taken
         .unwrap();
 
@@ -433,6 +413,7 @@ pub fn pick_best_action(search_tree: &SearchTree<impl TreePolicy, impl Evaluator
 /// # Arguments
 ///
 /// * `nodes` - The root nodes to pick the best action from.
+/// * `allocator` - The allocator holding all nodes of the trees.
 ///
 /// # Returns
 ///
@@ -441,16 +422,20 @@ pub fn pick_best_action(search_tree: &SearchTree<impl TreePolicy, impl Evaluator
 /// # Complexity
 ///
 /// `𝒪(𝑚 · 𝑛)` where `𝑚` is the number of nodes and `𝑛` is the number of children of each root node.
-pub fn pick_best_action_from_multiple(nodes: &[Rc<RefCell<Node>>]) -> ActionId {
+pub fn pick_best_action_from_multiple(nodes: &[Tree]) -> ActionId {
     let mut action_map = std::collections::HashMap::new();
 
-    for root in nodes {
-        for child in RefCell::borrow(root).children.iter() {
-            let child = RefCell::borrow(child);
+    for tree in nodes {
+        let allocator = &tree.allocator;
+
+        let parent = allocator.get_node(tree.root);
+        for child_id in &parent.children {
+            let child = allocator.get_node(*child_id);
+
             if let Some(action) = child.action_taken {
                 let entry = action_map.entry(action).or_insert((0, 0));
                 entry.0 += child.visit_count;
-                entry.1 += child.wins_for(child.state.is_player_1());
+                entry.1 += child.wins_for(parent.state.is_player_1());
             }
         }
     }
@@ -470,7 +455,8 @@ pub fn pick_best_action_from_multiple(nodes: &[Rc<RefCell<Node>>]) -> ActionId {
 /// # Arguments
 ///
 /// * `action` - The action to search for.
-/// * `root` - The root node to search in.
+/// * `root` - The id of the root node.
+/// * `allocator` - The allocator holding all nodes of the tree.
 ///
 /// # Returns
 ///
@@ -479,20 +465,22 @@ pub fn pick_best_action_from_multiple(nodes: &[Rc<RefCell<Node>>]) -> ActionId {
 /// # Complexity
 ///
 /// `𝒪(𝑛)` where `𝑛` is the number of children of the root node.
-fn get_tree_for_reuse(action: ActionId, root: Rc<RefCell<Node>>) -> Rc<RefCell<Node>> {
+fn get_tree_for_reuse(action: ActionId, root: NodeId, allocator: AreaAllocator) -> Tree {
     // default to current
-    let mut new_root = Rc::clone(&root);
+    let mut next_root = root;
 
-    for child in RefCell::borrow(&root).children.iter() {
-        if let Some(action_taken) = RefCell::borrow(child).action_taken {
+    for child_id in &allocator.get_node(next_root).children {
+        let child = allocator.get_node(*child_id);
+
+        if let Some(action_taken) = child.action_taken {
             if action_taken == action {
-                new_root = Rc::clone(child);
+                next_root = *child_id;
                 break;
             }
         }
     }
 
-    new_root
+    Tree::new(next_root, allocator)
 }
 
 /// Writes the logging information of the search tree to the given writer.
@@ -523,7 +511,7 @@ fn write_statistics(
     root_parallelization: usize,
     leaf_parallelization: usize,
     reuse_tree: bool,
-    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
+    search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
     match logging {
@@ -537,10 +525,10 @@ fn write_statistics(
         } => {
             let mut features = vec![];
             if root_parallelization > 1 {
-                features.push(format!("RP({})", root_parallelization));
+                features.push(format!("RP({root_parallelization})"));
             }
             if leaf_parallelization > 1 {
-                features.push(format!("LP({})", leaf_parallelization));
+                features.push(format!("LP({leaf_parallelization})"));
             }
             if reuse_tree {
                 features.push("RT".to_string());
@@ -548,16 +536,16 @@ fn write_statistics(
 
             writeln!(writer, "──────────────────────── MCTS Player ────────────────────────")?;
             writeln!(writer, "Features:            [{}]", features.join(", "))?;
-            writeln!(writer, "Duration:            {:.3?}", time_passed)?;
+            writeln!(writer, "Duration:            {time_passed:.3?}")?;
             if root_parallelization > 1 {
-                writeln!(writer, "Total Iterations:    {}", total_iterations)?;
+                writeln!(writer, "Total Iterations:    {total_iterations}")?;
             }
-            writeln!(writer, "Iterations:          {}", iterations)?;
+            writeln!(writer, "Iterations:          {iterations}")?;
             writeln!(writer, "Nodes:               {}", search_tree.get_nodes())?;
             if reuse_tree {
                 writeln!(writer, "Reused Tree:         {}", search_tree.is_reused())?;
             }
-            writeln!(writer, "Root actions:        {}", RefCell::borrow(&search_tree.root).children.len() + RefCell::borrow(&search_tree.root).expandable_actions.len())?;
+            writeln!(writer, "Root actions:        {}", search_tree.get_root_actions())?;
             writeln!(writer, "Expanded Depth:      {}", search_tree.get_expanded_depth())?;
             writeln!(writer, "Win Percentage:      {:.2}%", search_tree.get_win_prediction() * 100.0)?;
             writeln!(writer, "Principal Variation: {}", search_tree.get_pv_action_line())?;
@@ -581,17 +569,17 @@ fn log_worker_error(logging: &mut Logging, message: &str) -> Result<(), std::io:
     match logging {
         Logging::Disabled => {}
         Logging::Enabled { progress_writer } => {
-            writeln!(progress_writer, "{}", message)?;
+            writeln!(progress_writer, "{message}")?;
         }
         Logging::Verbose {
             progress_writer,
             debug_writer,
         } => {
-            writeln!(progress_writer, "{}", message)?;
-            writeln!(debug_writer, "{}", message)?;
+            writeln!(progress_writer, "{message}")?;
+            writeln!(debug_writer, "{message}")?;
         }
         Logging::VerboseOnly { debug_writer } => {
-            writeln!(debug_writer, "{}", message)?;
+            writeln!(debug_writer, "{message}")?;
         }
     }
     Ok(())
@@ -610,7 +598,7 @@ fn log_worker_error(logging: &mut Logging, message: &str) -> Result<(), std::io:
 /// The result of the write operation.
 fn log_verbose_information(
     logging: &mut Logging,
-    search_tree: &SearchTree<impl TreePolicy, impl Evaluator>,
+    search_tree: &SearchTree<'_, impl TreePolicy, impl Evaluator>,
 ) -> Result<(), std::io::Error> {
     #[rustfmt::skip]
     match logging {

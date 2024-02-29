@@ -5,7 +5,7 @@
     "tasks": [
         // task to run cargo build in the code/patchwork directory
         {
-            "label": "Build Rust",
+            "label": "Build Rust (Debug)",
             "detail": "Build all rust crates for the patchwork game",
             "icon": {
                 "color": "terminal.ansiRed",

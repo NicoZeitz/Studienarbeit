@@ -43,7 +43,7 @@ pub fn handle_upi(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow
 
                 match receiver.recv() {
                     Ok(msg) => {
-                        print!("{}", msg);
+                        print!("{msg}");
                         std::io::stdout().flush().unwrap();
                     }
                     Err(_) => break, // channel closed, exit loop
@@ -59,14 +59,11 @@ pub fn handle_upi(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow
             let readline = rl.readline(prompt);
             match readline {
                 Ok(line) => {
-                    match sender.send(line) {
-                        Ok(_) => {}
-                        Err(_) => {
-                            // channel closed, exit loop
-                            close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
-                            return Ok(());
-                        }
-                    };
+                    if sender.send(line).is_err() {
+                        // channel closed, exit loop
+                        close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                        return Ok(());
+                    }
                     std::thread::sleep(std::time::Duration::from_millis(250));
                 }
                 Err(ReadlineError::Interrupted) => {

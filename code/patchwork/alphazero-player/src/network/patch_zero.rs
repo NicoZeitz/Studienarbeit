@@ -6,26 +6,15 @@ use crate::network::{game_encoder::GameEncoder, resnet::ResNet};
 
 /// The neural network that plays patchwork.
 #[allow(dead_code)]
-pub struct PatchZero<
-    'a,
-    // The 3 patches that can be taken are encoded into separate layers.
-    const AMOUNT_PATCH_LAYERS: usize = 3,
-    // 40 in paper
-    const AMOUNT_RESIDUAL_LAYERS: usize = 20,
-    // 256 in paper
-    const AMOUNT_FILTERS: usize = 128,
-> {
-    device: &'a Device,
-    encoder: GameEncoder<'a, AMOUNT_PATCH_LAYERS>,
+pub struct PatchZero<const AMOUNT_PATCH_LAYERS: usize, const AMOUNT_RESIDUAL_LAYERS: usize, const AMOUNT_FILTERS: usize>
+{
+    device: Device,
+    encoder: GameEncoder<AMOUNT_PATCH_LAYERS>,
     network: ResNet<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
 }
 
-impl<
-        'a,
-        const NUMBER_OF_PATCH_LAYERS: usize,
-        const NUMBER_OF_RESIDUAL_LAYERS: usize,
-        const NUMBER_OF_FILTERS: usize,
-    > PatchZero<'a, NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>
+impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize, const NUMBER_OF_FILTERS: usize>
+    PatchZero<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>
 {
     /// Creates a new patch zero neural network.
     ///
@@ -38,15 +27,16 @@ impl<
     ///
     /// A new patch zero neural network.
     #[allow(dead_code)]
-    pub fn new(vb: VarBuilder, device: &'a Device) -> Result<Self> {
-        let encoder = GameEncoder::<NUMBER_OF_PATCH_LAYERS>::new(vb.pp("encoder"), device)?;
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>, device: Device) -> Result<Self> {
+        let encoder = GameEncoder::<NUMBER_OF_PATCH_LAYERS>::new(vb.pp("encoder"), device.clone())?;
         let network =
             ResNet::<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>::new(vb.pp("network"))?;
 
         Ok(Self {
+            device,
             encoder,
             network,
-            device,
         })
     }
 
@@ -60,9 +50,13 @@ impl<
     /// # Returns
     ///
     /// The policy and value tensors.
+    ///
+    /// # Errors
+    ///
+    /// When there is a error inside the neural network.
     #[allow(dead_code)]
-    pub fn forward_t(&self, game: &Patchwork, train: bool) -> Result<(Tensor, Tensor)> {
-        let stack = self.encoder.encode_state(game)?;
+    pub fn forward_t(&self, games: &[&Patchwork], train: bool) -> Result<(Tensor, Tensor)> {
+        let stack = self.encoder.encode_state(games)?;
         self.network.forward_t(&stack, train)
     }
 }

@@ -10,7 +10,8 @@ pub struct MinimaxOptions {
 
 impl MinimaxOptions {
     /// Creates a new [`MinimaxOptions`].
-    pub fn new(depth: usize, amount_actions_per_piece: usize) -> Self {
+    #[must_use]
+    pub const fn new(depth: usize, amount_actions_per_piece: usize) -> Self {
         Self {
             depth,
             amount_actions_per_piece,

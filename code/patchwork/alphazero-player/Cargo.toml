@@ -8,15 +8,27 @@ repository.workspace = true
 license.workspace = true
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
 default = []
 mkl = ["candle-core/mkl", "candle-nn/mkl"]
+accelerate = ["candle-core/accelerate", "candle-nn/accelerate"]
 cuda = ["candle-core/cuda", "candle-core/cudnn", "candle-nn/cuda"]
+metal = ["candle-core/metal", "candle-nn/metal"]
 
 [dependencies]
+arc-swap = "1.6.0"
+boxcar = "0.2.4"
 candle-core = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
 candle-nn = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
+dashmap = { version = "5.5.3", features = ["inline"] }
 patchwork-core = { path = "../patchwork-core" }
+rand = "0.8.5"
+rand_distr = "0.4.3"
+tqdm = "0.6.0"
+tree-policy = { path = "../tree-policy" }
 
 [[bin]]
 name = "alphazero-player_verification"

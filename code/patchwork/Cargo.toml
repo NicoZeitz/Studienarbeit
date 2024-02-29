@@ -6,6 +6,8 @@ package.authors = ["Fabian Wolf", "Nico Zeitz"]
 package.description = "The board game Patchwork implemented in Rust with different AI players."
 package.repository = "https://github.com/NicoZeitz/Studienarbeit"
 package.license = "MIT"
+package.readme = "./README.md"
+resolver = "2"
 members = [
     "action-orderer",
     "alphazero-player",
@@ -27,17 +29,23 @@ members = [
     "tree-policy",
     "upi",
 ]
-resolver = "2"
 
-[lints.rust]
-missing_debug_implementations = "warn"
+[workspace.lints.rust]
 rust_2018_idioms = "warn"
-missing_docs = "warn"
+# missing_debug_implementations = "warn"
+# missing_docs = "warn"
 
-[lints.clippy]
+[workspace.lints.clippy]
 all = "warn"
 pedantic = "warn"
 nursery = "warn"
+cast_possible_truncation = "allow"
+cast_precision_loss = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+module_name_repetitions = "allow"
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html#custom-profiles
 # https://deterministic.space/high-performance-rust.html
@@ -49,3 +57,13 @@ opt-level = 3        # Optimization level
 panic = "abort"      # Abort on panic
 codegen-units = 1    # Number of threads to use for codegen
 strip = "symbols"    # Strip debug symbols
+
+# override debug_assertions = true
+[profile.fast-debug]
+inherits = "release"
+debug = true
+debug-assertions = true
+overflow-checks = true
+
+# [target.'cfg(any(windows, unix))']
+# rustflags = ["-C target-cpu=native"]

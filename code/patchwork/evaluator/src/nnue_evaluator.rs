@@ -49,7 +49,9 @@ pub struct NNUEEvaluator {
 
 impl NNUEEvaluator {
     #[rustfmt::skip]
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::unreadable_literal)]
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let player_weight = vb.get_with_hints((63, 84), "player_weight",  candle_nn::init::DEFAULT_KAIMING_NORMAL)?;
         let player_bias = vb.get_with_hints(63, "player_bias", candle_nn::Init::Uniform {
             lo: -0.1111111111111111, // -1/9
@@ -75,14 +77,15 @@ impl NNUEEvaluator {
         })
     }
 
-    fn get_player_tensor(&mut self, player: &PlayerState) -> Tensor {
+    #[allow(clippy::unused_self)]
+    fn get_player_tensor(&self, player: &PlayerState) -> Tensor {
         let mut vec = Vec::with_capacity(84);
 
         for index in 0..QuiltBoard::TILES {
-            vec.push(player.quilt_board.get_at(index) as i32 as f32);
+            vec.push(i32::from(player.quilt_board.get_at(index)) as f32);
         }
-        vec.push(player.get_position() as f32);
-        vec.push(player.quilt_board.button_income as f32);
+        vec.push(f32::from(player.get_position()));
+        vec.push(f32::from(player.quilt_board.button_income));
         vec.push(player.button_balance as f32);
 
         Tensor::from_vec(vec, (84,), &Device::Cpu).unwrap()
@@ -111,6 +114,11 @@ impl NNUEEvaluator {
     /// * `game` - The game state after the action has been executed.
     /// * `action` - The action that has been executed.
     /// * `undo_action` - Whether the action was done (false) or undone (true) in this update.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the given action is invalid for the given game state.
+
     pub fn update_state(&mut self, game: &Patchwork, action: ActionId, was_player_1: bool) {
         if action.is_phantom() || action.is_null() {
             return;
@@ -156,7 +164,7 @@ impl NNUEEvaluator {
         }
     }
 
-    fn get_special_patch_tensor(&self, game: &Patchwork) -> &Tensor {
+    const fn get_special_patch_tensor(&self, game: &Patchwork) -> &Tensor {
         if matches!(
             game.turn_type,
             TurnType::SpecialPatchPlacement | TurnType::SpecialPhantom
@@ -167,7 +175,7 @@ impl NNUEEvaluator {
         }
     }
 
-    fn get_special_tile_tensor(&self, game: &Patchwork) -> &Tensor {
+    const fn get_special_tile_tensor(&self, game: &Patchwork) -> &Tensor {
         if game.is_special_tile_condition_reached_by_player_1() {
             &self.one_scalar
         } else if game.is_special_tile_condition_reached_by_player_2() {
@@ -177,7 +185,8 @@ impl NNUEEvaluator {
         }
     }
 
-    fn is_player_1(&self, game: &Patchwork) -> bool {
+    #[allow(clippy::unused_self)]
+    const fn is_player_1(&self, game: &Patchwork) -> bool {
         match game.turn_type {
             TurnType::Normal | TurnType::SpecialPatchPlacement => game.is_player_1(),
             // If we are in a phantom state actually it is the other players turn
@@ -235,6 +244,7 @@ impl NNUEEvaluator {
 impl StableEvaluator for NNUEEvaluator {}
 impl Evaluator for NNUEEvaluator {
     #[rustfmt::skip]
+
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
         let special_patch = self.get_special_patch_tensor(game);
         let special_tile = self.get_special_tile_tensor(game);

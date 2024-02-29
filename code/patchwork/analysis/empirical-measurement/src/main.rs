@@ -4,7 +4,8 @@ use patchwork_core::{PatchManager, TerminationType, TurnType};
 
 use crate::deserialization::GameLoader;
 
-fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gather: Gather) {
+#[allow(clippy::too_many_lines)]
+fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gather: &Gather) {
     if !gather.has_something() {
         println!("Nothing to gather");
         return;
@@ -58,7 +59,7 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
     };
     let mut action_scores_map = std::collections::HashMap::new();
 
-    println!("Getting game statistics from {:?}", input);
+    println!("Getting game statistics from {input:?}");
     let mut games = 0;
     let mut no_games = true;
     for game in GameLoader::new(input, None) {
@@ -174,10 +175,10 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
                     let key = if action.is_walking() {
                         0
                     } else if action.is_special_patch_placement() {
-                        action.get_quilt_board_index() as u32 + 1
+                        u32::from(action.get_quilt_board_index()) + 1
                     } else if action.is_patch_placement() {
-                        action.get_patch_id() as u32 * PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
-                            + action.get_patch_transformation_index() as u32
+                        u32::from(action.get_patch_id()) * PatchManager::MAX_AMOUNT_OF_TRANSFORMATIONS
+                            + u32::from(action.get_patch_transformation_index())
                             + 82
                     } else {
                         unreachable!(
@@ -239,7 +240,7 @@ fn get_game_statistics(input: &std::path::PathBuf, output: &std::path::Path, gat
 
         games += 1;
         if games % 10000 == 0 {
-            print!("\r================= Game {} =================", games);
+            print!("\r================= Game {games} =================");
         }
     }
 
@@ -303,6 +304,7 @@ impl std::hash::Hash for F64Key {
     }
 }
 
+#[allow(clippy::struct_excessive_bools)]
 struct Gather {
     game: bool,
     available_actions: bool,
@@ -312,7 +314,7 @@ struct Gather {
 }
 
 impl Gather {
-    pub fn has_something(&self) -> bool {
+    pub const fn has_something(&self) -> bool {
         self.game || self.available_actions || self.available_special_actions || self.action_scores
     }
 }
@@ -382,7 +384,7 @@ fn main() {
     get_game_statistics(
         matches.get_one::<std::path::PathBuf>("in").unwrap(),
         matches.get_one::<std::path::PathBuf>("out").unwrap(),
-        Gather {
+        &Gather {
             game: matches.get_flag("game"),
             available_actions: matches.get_flag("available-actions"),
             available_special_actions: matches.get_flag("available-special-actions"),

@@ -19,6 +19,7 @@ impl Patchwork {
     /// # Returns
     ///
     /// The initial state of the game.
+    #[must_use]
     pub fn get_initial_state(options: Option<GameOptions>) -> Self {
         // 1. Each player takes a quilt board, a time token and 5 buttons
         //    (as currency). Keep the remaining buttons on the table close at
@@ -31,7 +32,7 @@ impl Patchwork {
         // 3. Place your time tokens on the starting space of the
         //    time board. The player who last used a needle begins
         let time_board = TimeBoard::default();
-        let status_flags = Patchwork::get_player_1_flag();
+        let status_flags = Self::get_player_1_flag();
 
         // 4. Place the (regular) patches in a circle or oval around the time
         //     board.
@@ -46,7 +47,7 @@ impl Patchwork {
         // # 7. Place the special patches on the marked spaces of the time board
 
         // # 8. Now you are ready to go!
-        Patchwork {
+        Self {
             patches,
             time_board,
             player_1,
@@ -71,6 +72,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the number of valid actions.
+    #[must_use]
     pub fn get_valid_actions(&self) -> Vec<ActionId> {
         // Phantom Actions - the current player is not really allowed to take a turn
         if matches!(self.turn_type, TurnType::NormalPhantom | TurnType::SpecialPhantom) {
@@ -87,7 +89,7 @@ impl Patchwork {
         // on top goes first.
 
         // Placing a Special Patch is a special action
-        if let TurnType::SpecialPatchPlacement = self.turn_type {
+        if self.turn_type == TurnType::SpecialPatchPlacement {
             return self.current_player().quilt_board.get_valid_actions_for_special_patch();
         }
 
@@ -112,6 +114,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the number of valid actions.
+    #[must_use]
     pub fn get_random_action(&self) -> ActionId {
         // PERF: more efficient implementation
         let mut valid_actions = self.get_valid_actions();
@@ -134,6 +137,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the number of valid actions.
+    #[must_use]
     pub fn get_seeded_random_action(&self, seed: u64) -> ActionId {
         let mut random = Xoshiro256PlusPlus::seed_from_u64(seed);
         let mut valid_actions = self.get_valid_actions();
@@ -153,6 +157,7 @@ impl Patchwork {
     ///
     /// `𝒪(𝑚 · 𝑛)` where `n` is the number of valid actions every turn and `𝑚` is the amount of
     /// actions that are taken until the game is terminated.
+    #[must_use]
     pub fn random_rollout(&self) -> Self {
         let mut state = self.clone();
 
@@ -190,11 +195,19 @@ impl Patchwork {
     ///
     /// This function has undefined when a null action is given.
     /// This will panic in debug mode
+    ///
+    /// # Panics
+    ///
+    /// When a null action is given in debug mode. In release mode this is
+    /// undefined behavior.
     #[allow(unused_variables)]
+    #[allow(clippy::too_many_lines)]
     pub fn do_action(&mut self, action: ActionId, force_player_switch: bool) -> Result<(), PatchworkError> {
         #[cfg(debug_assertions)]
         if action.is_null() {
-            println!("{}", self);
+            println!("{self}");
+            println!("State:\n{self:?}");
+            println!("Action: \n{action:?}");
             debug_assert!(!action.is_null(), "[Patchwork::do_action] Expected non-null action");
         }
 
@@ -283,12 +296,11 @@ impl Patchwork {
             #[cfg(debug_assertions)]
             if now_current_player_position != action.get_starting_index() {
                 let starting_index = action.get_starting_index();
-                println!("{}", self);
-                println!("State:\n{:?}", self);
-                println!("Action: \n{:?}", action);
+                println!("{self}");
+                println!("State:\n{self:?}");
+                println!("Action: \n{action:?}");
                 println!(
-                    "Starting Index {} of Walking action does not match current player position {}",
-                    starting_index, now_current_player_position
+                    "Starting Index {starting_index} of Walking action does not match current player position {now_current_player_position}"
                 );
                 debug_assert_eq!(now_current_player_position, starting_index);
             }
@@ -296,8 +308,8 @@ impl Patchwork {
             let current_player = self.current_player_mut();
             time_cost = now_other_player_position - now_current_player_position + 1;
 
-            let button_income =
-                now_other_player_position.min(TimeBoard::MAX_POSITION) as i32 - now_current_player_position as i32;
+            let button_income = i32::from(now_other_player_position.min(TimeBoard::MAX_POSITION))
+                - i32::from(now_current_player_position);
             if now_current_player_position + time_cost > TimeBoard::MAX_POSITION {
                 current_player.button_balance += button_income;
             } else {
@@ -323,7 +335,7 @@ impl Patchwork {
 
             let current_player = self.current_player_mut();
 
-            current_player.button_balance -= patch.button_cost as i32;
+            current_player.button_balance -= i32::from(patch.button_cost);
 
             current_player.quilt_board.do_action(action);
             if current_player.quilt_board.is_special_tile_condition_reached()
@@ -352,13 +364,14 @@ impl Patchwork {
             next_current_player_position,
         );
         let walking_range = (now_current_player_position as usize + 1)
-            ..(next_current_player_position.min(TimeBoard::MAX_POSITION) as usize + 1);
+            ..=(next_current_player_position.min(TimeBoard::MAX_POSITION) as usize);
 
         // 5. test if player moved over button income trigger (only a single one possible) and add button income
         {
-            let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range.clone()) as i32;
+            let button_income_trigger =
+                i32::from(self.time_board.is_button_income_trigger_in_range(walking_range.clone()));
             let current_player = self.current_player_mut();
-            let button_income = current_player.quilt_board.button_income as i32;
+            let button_income = i32::from(current_player.quilt_board.button_income);
             current_player.button_balance += button_income_trigger * button_income;
         }
 
@@ -412,10 +425,13 @@ impl Patchwork {
     ///
     /// This function has undefined if the game is in initial state or when a null action is given.
     /// This will panic in debug mode
+    #[allow(clippy::too_many_lines)]
     pub fn undo_action(&mut self, action: ActionId, force_player_switch: bool) -> Result<(), PatchworkError> {
         #[cfg(debug_assertions)]
         if action.is_null() {
-            println!("{}", self);
+            println!("{self}");
+            println!("State:\n{self:?}");
+            println!("Action: \n{action:?}");
             debug_assert!(!action.is_null(), "[Patchwork::undo_action] Expected non-null action");
         }
 
@@ -480,9 +496,9 @@ impl Patchwork {
             let starting_index = action.get_starting_index().min(TimeBoard::MAX_POSITION);
 
             let time_cost = if previous_other_player_position >= TimeBoard::MAX_POSITION as usize {
-                previous_other_player_position as i32 - starting_index as i32
+                previous_other_player_position as i32 - i32::from(starting_index)
             } else {
-                previous_other_player_position as i32 - starting_index as i32 + 1
+                previous_other_player_position as i32 - i32::from(starting_index) + 1
             };
 
             let now_current_player_position;
@@ -494,11 +510,11 @@ impl Patchwork {
             }
 
             {
-                let walking_range = (starting_index as usize + 1)
-                    ..(now_current_player_position.min(TimeBoard::MAX_POSITION) as usize + 1);
-                let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range) as i32;
+                let walking_range =
+                    (starting_index as usize + 1)..=(now_current_player_position.min(TimeBoard::MAX_POSITION) as usize);
+                let button_income_trigger = i32::from(self.time_board.is_button_income_trigger_in_range(walking_range));
                 let current_player = self.current_player_mut();
-                let button_income = current_player.quilt_board.button_income as i32;
+                let button_income = i32::from(current_player.quilt_board.button_income);
                 current_player.button_balance -= button_income_trigger * button_income;
             }
 
@@ -543,15 +559,15 @@ impl Patchwork {
             {
                 let current_player = self.current_player_mut();
                 now_current_player_position = current_player.position;
-                current_player.button_balance += patch.button_cost as i32;
+                current_player.button_balance += i32::from(patch.button_cost);
                 current_player.position = previous_current_player_position;
             }
             {
                 let walking_range = (previous_current_player_position as usize + 1)
-                    ..((previous_current_player_position + patch.time_cost).min(TimeBoard::MAX_POSITION) as usize + 1);
-                let button_income_trigger = self.time_board.is_button_income_trigger_in_range(walking_range) as i32;
+                    ..=((previous_current_player_position + patch.time_cost).min(TimeBoard::MAX_POSITION) as usize);
+                let button_income_trigger = i32::from(self.time_board.is_button_income_trigger_in_range(walking_range));
                 let current_player = self.current_player_mut();
-                let button_income = current_player.quilt_board.button_income as i32;
+                let button_income = i32::from(current_player.quilt_board.button_income);
                 current_player.button_balance -= button_income_trigger * button_income;
             }
 
@@ -616,7 +632,8 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn get_current_player(&self) -> u8 {
         self.status_flags & status_flags::BOTH_PLAYERS
     }
@@ -630,7 +647,8 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn is_terminated(&self) -> bool {
         let player_1_position = self.player_1.position;
         let player_2_position = self.player_2.position;
@@ -685,9 +703,10 @@ impl Patchwork {
     ///
     /// `𝒪(𝟣)`
     #[inline]
+    #[allow(clippy::unused_self)]
     fn can_player_take_patch(&self, player: &PlayerState, patch: &Patch) -> bool {
         // player can only place pieces that they can afford
-        if patch.button_cost as i32 > player.button_balance {
+        if i32::from(patch.button_cost) > player.button_balance {
             return false;
         }
 
@@ -812,8 +831,7 @@ mod tests {
 
     fn test_undo_redo_actions(force_swap: bool, seed: u64) {
         println!(
-            "────────────── Testing undo/redo actions with force_swap = {}, seed = {} ──────────────",
-            force_swap, seed
+            "────────────── Testing undo/redo actions with force_swap = {force_swap}, seed = {seed} ──────────────"
         );
 
         let mut state = Patchwork::get_initial_state(Some(GameOptions { seed }));
@@ -833,7 +851,9 @@ mod tests {
                 "{: >2}: {} → {}",
                 iteration,
                 state.save_to_notation_with_phantom_state(true).unwrap(),
-                action.save_to_notation().unwrap_or("Not Displayable".to_string())
+                action
+                    .save_to_notation()
+                    .unwrap_or_else(|_| "Not Displayable".to_string())
             );
 
             let cloned_state = state.clone();
@@ -857,7 +877,7 @@ mod tests {
 
             state
                 .undo_action(action, force_swap)
-                .map_err(|e| println!("{:?}", e))
+                .map_err(|e| println!("{e:?}"))
                 .unwrap();
 
             iteration -= 1;
@@ -866,7 +886,9 @@ mod tests {
                 old_state,
                 state,
                 "Old State != Restored State, Undo action {:?} failed at iteration {}",
-                action.save_to_notation().unwrap_or("Not Displayable".to_string()),
+                action
+                    .save_to_notation()
+                    .unwrap_or_else(|_| "Not Displayable".to_string()),
                 iteration
             );
         }
@@ -906,13 +928,13 @@ mod history_tests {
     }
 
     fn record_games(file_name: &str, force_swap: bool, amount_of_games_to_capture: usize) {
-        println!("────────────── Recording games to {} ──────────────", file_name);
+        println!("────────────── Recording games to {file_name} ──────────────");
 
         let mut file = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
-            .open(format!("history/{}", file_name))
+            .open(format!("history/{file_name}"))
             .unwrap();
 
         let mut games = Vec::<Game>::new();
@@ -963,28 +985,26 @@ mod history_tests {
     }
 
     fn replay_games(file_name: &str, force_swap: bool) {
-        println!("────────────── Replaying games from {} ──────────────", file_name);
+        println!("────────────── Replaying games from {file_name} ──────────────");
         let file = OpenOptions::new()
             .read(true)
-            .open(format!("history/{}", file_name))
+            .open(format!("history/{file_name}"))
             .unwrap();
 
         let games: Vec<Game> = bincode::deserialize_from(file).unwrap();
         for (i, game) in games.iter().enumerate() {
-            println!("────────────── Replaying game {} ──────────────", i);
+            println!("────────────── Replaying game {i} ──────────────");
             let mut state = Patchwork::get_initial_state(Some(GameOptions { seed: i as u64 }));
 
             for (j, turn) in game.turns.iter().enumerate() {
-                println!("────────────── Replaying turn {} ──────────────", j);
+                println!("────────────── Replaying turn {j} ──────────────");
                 assert_eq!(state, turn.state, "State does not match");
                 if let Some(action) = turn.action {
                     let valid_actions = state.get_valid_actions();
 
                     assert!(
                         valid_actions.contains(&action),
-                        "Action {:?} is not valid in state {:?}",
-                        action,
-                        state
+                        "Action {action:?} is not valid in state {state:?}"
                     );
 
                     state.do_action(action, force_swap).unwrap();
@@ -1031,9 +1051,10 @@ mod record_tests {
     #[test]
     #[ignore]
     fn record_all_games() {
-        if cfg!(debug_assertions) {
-            panic!("[record_tests::record_all_games] Recording the games should only be run in release mode");
-        }
+        assert!(
+            !cfg!(debug_assertions),
+            "[record_tests::record_all_games] Recording the games should only be run in release mode"
+        );
 
         let mut workers = Vec::<thread::JoinHandle<()>>::new();
         let games_done = Arc::new(AtomicUsize::new(0));
@@ -1049,8 +1070,8 @@ mod record_tests {
                     return;
                 }
 
-                println!("────────────── Recording game {:04} ──────────────", value);
-                record_games(&format!("{:04}.game.bin", value), FORCE_SWAP, 10_000);
+                println!("────────────── Recording game {value:04} ──────────────");
+                record_games(&format!("{value:04}.game.bin"), FORCE_SWAP, 10_000);
             });
 
             workers.push(worker);
@@ -1066,7 +1087,7 @@ mod record_tests {
             .write(true)
             .create(true)
             .truncate(true)
-            .open(format!("{}/{}", FOLDER, file_name))
+            .open(format!("{FOLDER}/{file_name}"))
             .unwrap();
 
         let mut games = Vec::<Game>::new();

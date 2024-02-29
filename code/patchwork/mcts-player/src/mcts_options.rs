@@ -5,8 +5,6 @@ use std::{
 
 use patchwork_core::Logging;
 
-use crate::mcts_player::{NON_ZERO_USIZE_FOUR, NON_ZERO_USIZE_ONE};
-
 /// Different end conditions for the Monte Carlo Tree Search (MCTS) algorithm.
 #[derive(Clone, Debug)]
 pub enum MCTSEndCondition {
@@ -37,7 +35,8 @@ pub struct MCTSOptions {
 
 impl MCTSOptions {
     /// Creates a new [`MCTSOptions`].
-    pub fn new(
+    #[must_use]
+    pub const fn new(
         root_parallelization: NonZeroUsize,
         leaf_parallelization: NonZeroUsize,
         end_condition: MCTSEndCondition,
@@ -47,8 +46,8 @@ impl MCTSOptions {
         Self {
             root_parallelization,
             leaf_parallelization,
-            end_condition,
             reuse_tree,
+            end_condition,
             logging,
         }
     }
@@ -58,14 +57,14 @@ impl Default for MCTSOptions {
     fn default() -> Self {
         let root_parallelization = std::thread::available_parallelism()
             .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
-            .unwrap_or(NON_ZERO_USIZE_FOUR);
+            .unwrap_or(NonZeroUsize::new(4).unwrap());
 
         Self {
             root_parallelization,
-            leaf_parallelization: NON_ZERO_USIZE_ONE,
+            leaf_parallelization: NonZeroUsize::new(1).unwrap(),
             end_condition: MCTSEndCondition::Time(std::time::Duration::from_secs(10)),
             reuse_tree: true,
-            logging: Default::default(),
+            logging: Logging::default(),
         }
     }
 }

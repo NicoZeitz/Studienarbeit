@@ -56,8 +56,15 @@ impl Default for NeuralNetworkEvaluator {
 }
 
 impl NeuralNetworkEvaluator {
+    /// Create a new `NeuralNetworkEvaluator`.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if the initialization of the network fails.
     #[rustfmt::skip]
-    pub fn new(vb: VarBuilder) -> Result<Self> {
+    #[allow(clippy::unreadable_literal)]
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn new(vb: VarBuilder<'_>) -> Result<Self> {
         let player_weight = vb.get_with_hints((63, 84), "player_weight",  candle_nn::init::DEFAULT_KAIMING_NORMAL)?;
         let player_bias = vb.get_with_hints(63, "player_bias", candle_nn::Init::Uniform {
             lo: -0.1111111111111111, // -1/9
@@ -67,26 +74,24 @@ impl NeuralNetworkEvaluator {
         let linear_layer_1 = candle_nn::linear(128, 32, vb.pp("linear_1"))?;
         let linear_layer_2 = candle_nn::linear(32, 1, vb.pp("linear_2"))?;
 
-        Ok(Self {
-            player_weight,
-            player_bias,
-            linear_layer_1,
-            linear_layer_2,
-        })
+        Ok(Self { linear_layer_1, linear_layer_2, player_weight, player_bias })
     }
 
+    #[allow(clippy::unused_self)]
     fn get_player_tensor(&self, player: &PlayerState) -> Tensor {
         let mut vec = Vec::with_capacity(84);
 
         for index in 0..QuiltBoard::TILES {
-            vec.push(player.quilt_board.get_at(index) as i32 as f32);
+            vec.push(i32::from(player.quilt_board.get_at(index)) as f32);
         }
-        vec.push(player.get_position() as f32);
-        vec.push(player.quilt_board.button_income as f32);
+        vec.push(f32::from(player.get_position()));
+        vec.push(f32::from(player.quilt_board.button_income));
         vec.push(player.button_balance as f32);
 
         Tensor::from_vec(vec, (84,), &Device::Cpu).unwrap()
     }
+
+    #[allow(clippy::unused_self)]
     fn get_special_patch_tensor(&self, game: &Patchwork) -> &Tensor {
         if matches!(
             game.turn_type,
@@ -98,6 +103,7 @@ impl NeuralNetworkEvaluator {
         }
     }
 
+    #[allow(clippy::unused_self)]
     fn get_special_tile_tensor(&self, game: &Patchwork) -> &Tensor {
         if game.is_special_tile_condition_reached_by_player_1() {
             &ONE_SCALAR
@@ -108,7 +114,8 @@ impl NeuralNetworkEvaluator {
         }
     }
 
-    fn is_player_1(&self, game: &Patchwork) -> bool {
+    #[allow(clippy::unused_self)]
+    const fn is_player_1(&self, game: &Patchwork) -> bool {
         match game.turn_type {
             TurnType::Normal | TurnType::SpecialPatchPlacement => game.is_player_1(),
             // If we are in a phantom state actually it is the other players turn
@@ -116,6 +123,7 @@ impl NeuralNetworkEvaluator {
         }
     }
 
+    #[must_use]
     pub fn forward(&self, game: &Patchwork) -> Tensor {
         let player_1 = self.get_player_tensor(&game.player_1);
         let player_2 = self.get_player_tensor(&game.player_2);
@@ -162,6 +170,7 @@ impl NeuralNetworkEvaluator {
 impl StableEvaluator for NeuralNetworkEvaluator {}
 impl Evaluator for NeuralNetworkEvaluator {
     #[rustfmt::skip]
+
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
         (self.forward(game).to_scalar::<f32>().unwrap() * evaluator_constants::POSITIVE_INFINITY as f32) as i32
     }

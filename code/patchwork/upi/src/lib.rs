@@ -2,6 +2,11 @@
 
 use std::sync::mpsc::{Receiver, Sender};
 
+/// Starts the UPI server
+///
+/// # Errors
+///
+/// This function will return an error if sending or receiving messages over the channels fails.
 pub fn start_upi(message_receiver: Receiver<String>, message_sender: Sender<String>) -> anyhow::Result<()> {
     while let Ok(msg) = message_receiver.recv() {
         let msg = msg.trim().to_lowercase();
@@ -29,6 +34,9 @@ pub fn start_upi(message_receiver: Receiver<String>, message_sender: Sender<Stri
             }
         }
     }
+
+    drop(message_receiver);
+    drop(message_sender);
 
     Ok(())
 }

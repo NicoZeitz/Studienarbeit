@@ -36,8 +36,8 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
 
     let mut i = 1;
     loop {
-        println!("─────────────────────────────────────────────────── TURN {} ──────────────────────────────────────────────────", i);
-        println!("{}", state);
+        println!("─────────────────────────────────────────────────── TURN {i} ──────────────────────────────────────────────────");
+        println!("{state}");
 
         #[cfg(debug_assertions)]
         let old_state = state.clone();
@@ -54,9 +54,9 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
         if old_state != state {
             println!("─────────────────────────────────────────────────── ERROR ───────────────────────────────────────────────────");
             println!("Old state:");
-            println!("{}", old_state);
+            println!("{old_state}");
             println!("New state:");
-            println!("{}", state);
+            println!("{state}");
             panic!("State changed!");
         }
 
@@ -68,7 +68,7 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
                 player_2.name()
             },
             action,
-            action.save_to_notation().unwrap_or("######".to_string()),
+            action.save_to_notation().unwrap_or_else(|_| "######".to_string()),
             end_time - start_time
         );
 
@@ -80,7 +80,7 @@ fn handle_console_repl(mut player_1: PlayerType, mut player_2: PlayerType, seed:
             let termination = state.get_termination_result();
 
             println!("────────────────────────────────────────────────── RESULT ────────────────────────────────────────────────────");
-            println!("{}", state);
+            println!("{state}");
 
             match termination.termination {
                 TerminationType::Player1Won => println!("Player 1 ({}) won!", player_1.name()),

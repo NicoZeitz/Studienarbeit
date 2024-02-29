@@ -59,13 +59,14 @@ impl Notation for Patchwork {
     /// # Returns
     ///
     /// The state of the game or an error if the state is invalid.
+    #[allow(clippy::too_many_lines)]
     fn load_from_notation(state: &str) -> Result<Self, PatchworkError> {
         let error = PatchworkError::InvalidNotationError {
             notation: state.to_string(),
             reason: "[Patchwork::load_from_notation] Invalid notation!",
         };
 
-        let captures = STATE_REGEX.captures(state).ok_or(error.clone())?;
+        let captures = STATE_REGEX.captures(state).ok_or_else(|| error.clone())?;
 
         if captures.name("phantom").is_some() {
             return Err(PatchworkError::InvalidNotationError {
@@ -77,41 +78,41 @@ impl Notation for Patchwork {
         let player_1_quilt_board = captures
             .name("player_1_quilt_board")
             .and_then(|s| u128::from_str_radix(s.as_str(), 16).ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_1_income = captures
             .name("player_1_button_balance")
             .and_then(|s| s.as_str().parse::<i32>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_1_button_income = captures
             .name("player_1_button_income")
             .and_then(|s| s.as_str().parse::<u8>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_1_position = captures
             .name("player_1_position")
             .and_then(|s| s.as_str().parse::<u8>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
 
         let player_2_quilt_board = captures
             .name("player_2_quilt_board")
             .and_then(|s| u128::from_str_radix(s.as_str(), 16).ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_2_income = captures
             .name("player_2_button_balance")
             .and_then(|s| s.as_str().parse::<i32>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_2_button_income = captures
             .name("player_2_button_income")
             .and_then(|s| s.as_str().parse::<u8>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
         let player_2_position = captures
             .name("player_2_position")
             .and_then(|s| s.as_str().parse::<u8>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
 
         let status_flags = captures
             .name("status_flags")
             .and_then(|s| s.as_str().parse::<u8>().ok())
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
 
         let special_patch_placement_move = captures
             .name("special_patch_placement_move")
@@ -125,7 +126,7 @@ impl Notation for Patchwork {
                     None
                 }
             })
-            .ok_or(error.clone())?;
+            .ok_or_else(|| error.clone())?;
 
         let patches = captures
             .name("patches")
@@ -133,7 +134,7 @@ impl Notation for Patchwork {
                 let indices = s
                     .as_str()
                     .split('/')
-                    .flat_map(|s| s.parse::<usize>().ok())
+                    .filter_map(|s| s.parse::<usize>().ok())
                     .collect::<Vec<_>>();
 
                 let unique: HashSet<_> = indices.iter().collect();
@@ -150,7 +151,7 @@ impl Notation for Patchwork {
                     .map(|patch_id| &PatchManager::get_instance().patches[*patch_id])
                     .collect::<Vec<_>>())
             })
-            .ok_or(error.clone())??;
+            .ok_or_else(|| error.clone())??;
 
         let further_player_position = player_1_position.max(player_2_position);
 
@@ -162,11 +163,11 @@ impl Notation for Patchwork {
         }
 
         let mut time_board = TimeBoard::default();
-        time_board.move_player_position(Patchwork::get_player_1_flag(), 0, player_1_position); // too big player positions will be clamped
-        time_board.move_player_position(Patchwork::get_player_2_flag(), 0, player_2_position);
+        time_board.move_player_position(Self::get_player_1_flag(), 0, player_1_position); // too big player positions will be clamped
+        time_board.move_player_position(Self::get_player_2_flag(), 0, player_2_position);
         time_board.unset_special_patches_until(further_player_position);
 
-        Ok(Patchwork {
+        Ok(Self {
             patches,
             time_board,
             player_1: PlayerState {
@@ -204,7 +205,7 @@ impl Patchwork {
     pub fn save_to_notation_with_phantom_state(&self, allow_phantom_state: bool) -> Result<String, PatchworkError> {
         if !allow_phantom_state && matches!(self.turn_type, TurnType::NormalPhantom | TurnType::SpecialPhantom) {
             return Err(PatchworkError::InvalidNotationError {
-                notation: "".to_string(),
+                notation: String::new(),
                 reason: "[Patchwork::save_to_notation] Cannot save phantom state!",
             });
         }
@@ -257,7 +258,7 @@ impl Patchwork {
         //    a slash starting from the first patch the current player can take
         //    or '-' if no patches are left
         if self.patches.is_empty() {
-            state.push('-')
+            state.push('-');
         } else {
             state.push_str(
                 self.patches
@@ -265,7 +266,6 @@ impl Patchwork {
                     .map(|patch| format!("{:?}", patch.id))
                     .collect::<Vec<String>>()
                     .join("/")
-                    .to_string()
                     .as_str(),
             );
         }

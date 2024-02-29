@@ -8,7 +8,7 @@ where
     T: ActionOrderer + Default,
 {
     let typename_t = std::any::type_name::<T>().split("::").last().unwrap();
-    let bench_name = format!("{}::score_action", typename_t);
+    let bench_name = format!("{typename_t}::score_action");
 
     c.bench_function(&bench_name, |b| {
         b.iter_with_setup(
@@ -22,7 +22,7 @@ where
             |(mut actions, mut scores)| {
                 let mut action_list: ActionList<'_> = ActionList::new(&mut actions, &mut scores);
                 let table_action_orderer = T::default();
-                black_box(table_action_orderer.score_actions(&mut action_list, None, 42))
+                black_box(table_action_orderer.score_actions(&mut action_list, None, 42));
             },
         );
     });

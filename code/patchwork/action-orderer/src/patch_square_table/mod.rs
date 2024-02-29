@@ -1,3 +1,5 @@
+#![allow(clippy::unreadable_literal)]
+
 mod patch_placement;
 mod special_patch_placement;
 mod walking;

@@ -14,18 +14,17 @@ pub fn interactive_get_logging(
     if let Some(logging) = logging {
         let Some(logging) = parse_logging(&logging) else {
             println!(
-                "Invalid logging configuration {}. Available options: disabled, enabled, verbose, verbose-only",
-                logging
+                "Invalid logging configuration {logging}. Available options: disabled, enabled, verbose, verbose-only"
             );
             std::io::stdout().flush()?;
-            return Err(Error::msg(format!("Invalid logging argument: {}", logging)));
+            return Err(Error::msg(format!("Invalid logging argument: {logging}")));
         };
 
         return Ok(logging);
     }
 
     loop {
-        let prompt = format!("Player {} logging: ", player_position);
+        let prompt = format!("Player {player_position} logging: ");
         let input = if player_position == 1 {
             rl.readline_with_initial(prompt.as_str(), ("Enabled", ""))
         } else {
@@ -39,8 +38,7 @@ pub fn interactive_get_logging(
                 }
 
                 println!(
-                    "Invalid logging configuration {}. Available options: disabled, enabled, verbose, verbose-only",
-                    logging
+                    "Invalid logging configuration {logging}. Available options: disabled, enabled, verbose, verbose-only"
                 );
                 std::io::stdout().flush()?;
             }
@@ -55,12 +53,9 @@ pub fn get_logging(logging: &str) -> anyhow::Result<Logging> {
     if let Some(logging) = parse_logging(logging) {
         return Ok(logging);
     }
-    println!(
-        "Invalid logging configuration {}. Available options: disabled, enabled, verbose, verbose-only",
-        logging
-    );
+    println!("Invalid logging configuration {logging}. Available options: disabled, enabled, verbose, verbose-only");
     std::io::stdout().flush()?;
-    Err(Error::msg(format!("Invalid logging argument: {}", logging)))
+    Err(Error::msg(format!("Invalid logging argument: {logging}")))
 }
 
 pub fn parse_logging(logging: &str) -> Option<Logging> {

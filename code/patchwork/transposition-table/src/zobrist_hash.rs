@@ -176,7 +176,7 @@ impl ZobristHash {
     /// not achievable in the game as the time cost of 66 is greater than the
     /// allowed time cost of 54.
     ///
-    /// Time adjustment: percentage / time_cost = buttons / (tiles * time_cost)
+    /// Time adjustment: percentage / `time_cost` = buttons / (tiles * `time_cost`)
     ///
     /// Table sorted after time adjusted percentage
     /// ```txt
@@ -235,6 +235,7 @@ impl ZobristHash {
     ///
     /// A new Zobrist hash struct.
     #[allow(clippy::needless_range_loop)]
+    #[must_use]
     pub fn new() -> Self {
         // QUESTION: maybe we can reduce the amount of memory required by using 2 rank 1 vectors and then using the dot
         // product to create a matrix on the fly?
@@ -265,7 +266,7 @@ impl ZobristHash {
             zobrist_player_2_quilt_board_table[i] = rand::random();
         }
 
-        for i in 0..TimeBoard::MAX_POSITION as usize + 1 {
+        for i in 0..=(TimeBoard::MAX_POSITION as usize) {
             zobrist_player_1_position_table[i] = rand::random();
             zobrist_player_2_position_table[i] = rand::random();
         }
@@ -310,6 +311,7 @@ impl ZobristHash {
     /// # Returns
     ///
     /// The hash of the given game state.
+    #[must_use]
     pub fn hash(&self, game: &Patchwork) -> u64 {
         let mut hash = 0;
 

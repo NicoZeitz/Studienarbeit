@@ -13,7 +13,7 @@ pub struct GreedyPlayer<Eval: Evaluator = StaticEvaluator> {
 impl<Eval: Evaluator + Default> GreedyPlayer<Eval> {
     /// Creates a new [`GreedyPlayer`] with the given name.
     pub fn new(name: impl Into<String>) -> Self {
-        GreedyPlayer {
+        Self {
             name: name.into(),
             evaluator: Default::default(),
         }
@@ -40,7 +40,7 @@ impl<Eval: Evaluator> Player for GreedyPlayer<Eval> {
         let mut chosen_action = valid_actions[0];
         let mut chosen_evaluation = if maximizing_player { i32::MIN } else { i32::MAX };
 
-        for action in valid_actions.iter() {
+        for action in &valid_actions {
             game.do_action(*action, false)?;
             let evaluation = self.evaluator.evaluate_node(&game);
             game.undo_action(*action, false)?;

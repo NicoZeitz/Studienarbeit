@@ -1,5 +1,10 @@
+mod action;
+mod alphazero_options;
 mod alphazero_player;
-mod network;
+pub mod game_state;
+pub mod mcts;
+pub mod network;
+mod train;
 
+pub use alphazero_options::{AlphaZeroEndCondition, AlphaZeroOptions};
 pub use alphazero_player::AlphaZeroPlayer;
-pub use network::*;

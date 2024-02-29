@@ -14,6 +14,8 @@ use patchwork_lib::{
     Patchwork, TerminationType,
 };
 
+// TODO: Bayesian Elo File Output in PNG Support https://www.remi-coulom.fr/Bayesian-Elo/
+
 #[derive(Debug, Parser, Default)]
 #[command(no_binary_name(true))]
 struct CmdArgs {
@@ -50,10 +52,9 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> an
                 Ok(games) => {
                     if let Ok(games) = games.parse::<usize>() {
                         break games;
-                    } else {
-                        println!("Please enter a valid positive number.");
-                        std::io::stdout().flush().unwrap();
                     }
+                    println!("Please enter a valid positive number.");
+                    std::io::stdout().flush().unwrap();
                 }
                 Err(ReadlineError::Interrupted) => return Err(Error::msg(CTRL_C_MESSAGE)),
                 Err(ReadlineError::Eof) => return Err(Error::msg(CTRL_D_MESSAGE)),
@@ -67,16 +68,15 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> an
     } else {
         loop {
             match rl.readline_with_initial(
-                &format!("Parallelization (max {}): ", available_parallelism),
+                &format!("Parallelization (max {available_parallelism}): "),
                 (available_parallelism.to_string().as_str(), ""),
             ) {
                 Ok(parallelization) => {
                     if let Ok(parallelization) = parallelization.parse::<usize>() {
                         break parallelization;
-                    } else {
-                        println!("Please enter a valid positive number.");
-                        std::io::stdout().flush().unwrap();
                     }
+                    println!("Please enter a valid positive number.");
+                    std::io::stdout().flush().unwrap();
                 }
                 Err(ReadlineError::Interrupted) => return Err(Error::msg(CTRL_C_MESSAGE)),
                 Err(ReadlineError::Eof) => return Err(Error::msg(CTRL_D_MESSAGE)),
@@ -87,17 +87,18 @@ pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> an
 
     compare(
         games,
-        player_1,
-        player_2,
+        &player_1,
+        &player_2,
         std::time::Duration::from_millis(args.update),
         parallelization,
     )
 }
 
+#[allow(clippy::too_many_lines)]
 fn compare(
     iterations: usize,
-    player_1: PlayerType,
-    player_2: PlayerType,
+    player_1: &PlayerType,
+    player_2: &PlayerType,
     update: std::time::Duration,
     parallelization: usize,
 ) -> anyhow::Result<()> {
@@ -155,8 +156,8 @@ fn compare(
                                 break 'outer;
                             }
 
+                            let start_time = std::time::Instant::now();
                             let action = if state.is_player_1() {
-                                let start_time = std::time::Instant::now();
                                 let action = player_1.get_action(&state).unwrap();
                                 let end =
                                     u64::try_from(std::time::Instant::now().duration_since(start_time).as_nanos())
@@ -166,7 +167,6 @@ fn compare(
                                 turns_player_1.fetch_add(1, Ordering::Relaxed);
                                 action
                             } else {
-                                let start_time = std::time::Instant::now();
                                 let action = player_2.get_action(&state).unwrap();
                                 let end =
                                     u64::try_from(std::time::Instant::now().duration_since(start_time).as_nanos())
@@ -211,9 +211,9 @@ fn compare(
 
                     println!("Panic in thread: {:?}", std::thread::current().id());
                     if let Some(cause) = cause.downcast_ref::<String>() {
-                        println!("Cause: {}", cause);
+                        println!("Cause: {cause}");
                     } else {
-                        println!("Cause: {:?}", cause);
+                        println!("Cause: {cause:?}");
                     }
                 }
             });
@@ -232,8 +232,8 @@ fn compare(
                 max_player_2_score.load(Ordering::Relaxed),
                 min_player_1_score.load(Ordering::Relaxed),
                 min_player_2_score.load(Ordering::Relaxed),
-                sum_player_1_score.load(Ordering::Relaxed) as f64,
-                sum_player_2_score.load(Ordering::Relaxed) as f64,
+                f64::from(sum_player_1_score.load(Ordering::Relaxed)),
+                f64::from(sum_player_2_score.load(Ordering::Relaxed)),
                 sum_time_player_1.load(Ordering::Relaxed) as f64,
                 sum_time_player_2.load(Ordering::Relaxed) as f64,
                 n_time_player_1.load(Ordering::Relaxed) as f64,
@@ -257,8 +257,8 @@ fn compare(
         max_player_2_score.load(Ordering::Relaxed),
         min_player_1_score.load(Ordering::Relaxed),
         min_player_2_score.load(Ordering::Relaxed),
-        sum_player_1_score.load(Ordering::Relaxed) as f64,
-        sum_player_2_score.load(Ordering::Relaxed) as f64,
+        f64::from(sum_player_1_score.load(Ordering::Relaxed)),
+        f64::from(sum_player_2_score.load(Ordering::Relaxed)),
         sum_time_player_1.load(Ordering::Relaxed) as f64,
         sum_time_player_2.load(Ordering::Relaxed) as f64,
         n_time_player_1.load(Ordering::Relaxed) as f64,
@@ -295,7 +295,7 @@ fn print_progress(
     let avg_player_2_time = sum_time_player_2 / turns_player_2;
 
     print!("\x1b[4A\r");
-    println!("Iteration {: >7} / {}", iteration, iterations);
+    println!("Iteration {iteration: >7} / {iterations}");
     println!(
         "Player 1: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {: >9.3?}, turns: {}]                       ",
         wins_player_1,

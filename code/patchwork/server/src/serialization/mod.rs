@@ -14,7 +14,7 @@ impl fmt::Debug for PatchworkState {
 
 impl Clone for PatchworkState {
     fn clone(&self) -> Self {
-        PatchworkState(self.0.clone())
+        Self(self.0.clone())
     }
 }
 
@@ -31,7 +31,7 @@ impl serde::Serialize for PatchworkState {
     where
         S: serde::Serializer,
     {
-        let PatchworkState(state) = self;
+        let Self(state) = self;
         let mut serialized_state = serializer.serialize_struct("Patchwork", 8)?;
 
         serialized_state.serialize_field(
@@ -70,10 +70,12 @@ struct TimeBoardSerialization<'a> {
 }
 
 impl serde::Serialize for TimeBoardSerialization<'_> {
+    #[allow(clippy::too_many_lines)]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
+        #[allow(clippy::struct_excessive_bools)]
         struct TimeBoardTileSerialization {
             player_1: bool,
             player_2: bool,

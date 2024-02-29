@@ -15,6 +15,11 @@ pub struct PVSOptions {
 
 impl PVSOptions {
     /// Creates a new [`PVSOptions`].
+    ///
+    /// # Panics
+    ///
+    /// When some features are used in combination that is not allowed
+    #[must_use]
     pub fn new(time_limit: std::time::Duration, features: PVSFeatures, logging: Logging) -> Self {
         if matches!(features.lazy_smp, LazySMPFeature::Yes(_)) {
             unimplemented!("The lazy SMP feature is not implemented jet.") // UNIMPLEMENTED: implement
@@ -38,13 +43,14 @@ impl Default for PVSOptions {
     fn default() -> Self {
         Self {
             time_limit: std::time::Duration::from_secs(10),
-            features: Default::default(),
-            logging: Default::default(),
+            features: PVSFeatures::default(),
+            logging: Logging::default(),
         }
     }
 }
 
 /// Different features that can be enabled or disabled for the pvs player.
+#[allow(clippy::struct_excessive_bools)]
 pub struct PVSFeatures {
     /// The failing strategy to use.
     pub failing_strategy: FailingStrategy,
@@ -69,7 +75,7 @@ impl Default for PVSFeatures {
         Self {
             failing_strategy: FailingStrategy::FailHard,
             aspiration_window: true,
-            transposition_table: Default::default(),
+            transposition_table: TranspositionTableFeature::default(),
             late_move_reductions: true,
             late_move_pruning: true,
             search_extensions: true,
@@ -94,10 +100,9 @@ pub enum LazySMPFeature {
 
 impl Default for LazySMPFeature {
     fn default() -> Self {
-        match std::thread::available_parallelism().map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) }) {
-            Ok(amount) => Self::Yes(amount),
-            Err(_) => Self::No,
-        }
+        std::thread::available_parallelism()
+            .map(|n| unsafe { NonZeroUsize::new_unchecked(n.get() / 2) })
+            .map_or(Self::No, Self::Yes)
     }
 }
 

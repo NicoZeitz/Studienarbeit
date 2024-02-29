@@ -17,7 +17,7 @@ impl Notation for ActionId {
 
     fn load_from_notation(notation: &str) -> Result<Self, PatchworkError> {
         let action = Action::load_from_notation(notation)?;
-        Ok(ActionId::from_action(&action))
+        Ok(Self::from_action(&action))
     }
 }
 
@@ -26,14 +26,14 @@ impl Notation for NaturalActionId {
         self.try_to_action()
             .ok_or(PatchworkError::InvalidNotationError {
                 reason: "[NaturalActionId::save_to_notation] Cannot convert this natural action id to notation",
-                notation: format!("{:?}", self),
+                notation: format!("{self:?}"),
             })?
             .save_to_notation()
     }
 
     fn load_from_notation(notation: &str) -> Result<Self, PatchworkError> {
         let action = Action::load_from_notation(notation)?;
-        Ok(NaturalActionId::from_action(&action))
+        Ok(Self::from_action(&action))
     }
 }
 
@@ -80,8 +80,8 @@ impl Notation for Action {
     /// ```
     fn save_to_notation(&self) -> Result<String, PatchworkError> {
         Ok(match self {
-            Action::Walking { starting_index } => format!("W{}", starting_index),
-            Action::PatchPlacement {
+            Self::Walking { starting_index } => format!("W{starting_index}"),
+            Self::PatchPlacement {
                 patch_id,
                 patch_index,
                 patch_transformation_index,
@@ -95,15 +95,21 @@ impl Notation for Action {
 
                 format!(
                     "P{:?}I{:?}═{:?}‖{:?}↻{:?}↔{:?}P{:?}",
-                    patch_id, patch_index, row, column, rotation, orientation, *previous_player_was_1 as u8
+                    patch_id,
+                    patch_index,
+                    row,
+                    column,
+                    rotation,
+                    orientation,
+                    u8::from(*previous_player_was_1)
                 )
             }
-            Action::SpecialPatchPlacement { quilt_board_index } => {
+            Self::SpecialPatchPlacement { quilt_board_index } => {
                 let (row, column) = QuiltBoard::get_row_column(*quilt_board_index);
-                format!("S═{:?}‖{:?}", row, column)
+                format!("S═{row:?}‖{column:?}")
             }
-            Action::Phantom => "_".to_string(),
-            Action::Null => "N".to_string(),
+            Self::Phantom => "_".to_string(),
+            Self::Null => "N".to_string(),
         })
     }
 
@@ -116,6 +122,8 @@ impl Notation for Action {
     /// # Returns
     ///
     /// The action or an error if the notation is invalid.
+    #[allow(clippy::too_many_lines)]
+    #[allow(clippy::similar_names)]
     fn load_from_notation(notation: &str) -> Result<Self, PatchworkError> {
         let captures = ACTION_NOTATION_REGEX
             .captures(notation)
@@ -125,10 +133,10 @@ impl Notation for Action {
             })?;
 
         if captures.name("null_action").is_some() {
-            return Ok(Action::Null);
+            return Ok(Self::Null);
         }
         if captures.name("phantom_action").is_some() {
-            return Ok(Action::Phantom);
+            return Ok(Self::Phantom);
         }
 
         if let Some(w_starting_index) = captures.name("w_starting_index") {
@@ -140,7 +148,7 @@ impl Notation for Action {
                         notation: notation.to_string(),
                         reason: "[Action::load_from_notation] Invalid starting index for action",
                     })?;
-            return Ok(Action::Walking { starting_index });
+            return Ok(Self::Walking { starting_index });
         }
 
         if let Some(patch_id) = captures.name("p_patch_id") {
@@ -265,7 +273,7 @@ impl Notation for Action {
                     reason: "[Action::load_from_notation] Invalid patch transformation (row, column, rotation and orientation combination) for action",
                 })? as u16;
 
-            return Ok(Action::PatchPlacement {
+            return Ok(Self::PatchPlacement {
                 patch_id,
                 patch_index,
                 patch_transformation_index,
@@ -308,7 +316,7 @@ impl Notation for Action {
                 });
             }
 
-            return Ok(Action::SpecialPatchPlacement {
+            return Ok(Self::SpecialPatchPlacement {
                 quilt_board_index: QuiltBoard::get_index(row, column),
             });
         }
@@ -320,7 +328,7 @@ impl Notation for Action {
     }
 }
 
-/// Code partially copied from code/patchwork/patchwork_macros/src/lib.rs
+/// Code partially copied from `code/patchwork/patchwork_macros/src/lib.rs`
 fn get_tiling_from_transformation(patch_id: u8, row: u8, column: u8, rotation: u8, orientation: u8) -> u128 {
     let tiles = &PatchManager::get_instance().tiles[patch_id as usize];
     let row = row as usize;
@@ -339,10 +347,11 @@ fn get_tiling_from_transformation(patch_id: u8, row: u8, column: u8, rotation: u
     tiling
 }
 
-/// Copied from code/patchwork/patchwork_macros/src/lib.rs
-fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8>> {
+/// Copied from `code/patchwork/patchwork_macros/src/lib.rs`
+#[allow(clippy::match_same_arms)]
+fn get_transformed_tiles(tiles: &[Vec<u8>], transformation: u8) -> Vec<Vec<u8>> {
     match transformation {
-        PatchTransformation::ROTATION_0 => tiles.clone(),
+        PatchTransformation::ROTATION_0 => tiles.to_owned(),
         PatchTransformation::ROTATION_90 => {
             let mut new_tiles = vec![vec![0; tiles.len()]; tiles[0].len()];
             for (i, tile_row) in tiles.iter().enumerate() {
@@ -371,12 +380,12 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         PatchTransformation::FLIPPED => {
-            let mut new_tiles = tiles.clone();
+            let mut new_tiles = tiles.to_owned();
             new_tiles.reverse();
             new_tiles
         }
         PatchTransformation::FLIPPED_ROTATION_90 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles.len()]; flipped_tiles[0].len()];
@@ -388,7 +397,7 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         PatchTransformation::FLIPPED_ROTATION_180 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles[0].len()]; flipped_tiles.len()];
@@ -400,7 +409,7 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             new_tiles
         }
         PatchTransformation::FLIPPED_ROTATION_270 => {
-            let mut flipped_tiles = tiles.clone();
+            let mut flipped_tiles = tiles.to_owned();
             flipped_tiles.reverse();
 
             let mut new_tiles = vec![vec![0; flipped_tiles.len()]; flipped_tiles[0].len()];
@@ -411,6 +420,6 @@ fn get_transformed_tiles(tiles: &Vec<Vec<u8>>, transformation: u8) -> Vec<Vec<u8
             }
             new_tiles
         }
-        _ => tiles.clone(),
+        _ => tiles.to_owned(),
     }
 }

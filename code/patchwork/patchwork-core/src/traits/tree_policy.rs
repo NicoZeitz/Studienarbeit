@@ -47,10 +47,7 @@ pub trait ScoredTreePolicy: Sync {
     ) -> f64;
 }
 
-impl<T> TreePolicy for T
-where
-    T: ScoredTreePolicy,
-{
+impl<T: ScoredTreePolicy> TreePolicy for T {
     /// Selects the best child node of the given parent node by scoring each
     /// node from the perspective of the parent and selecting the node with the
     /// best score

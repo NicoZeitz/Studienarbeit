@@ -38,7 +38,8 @@ impl ScoredUCTPolicy {
     /// # Returns
     ///
     /// The new [`ScoredUCTPolicy`].
-    pub fn new(exploration_constant: f64) -> Self {
+    #[must_use]
+    pub const fn new(exploration_constant: f64) -> Self {
         Self { exploration_constant }
     }
 }
@@ -62,7 +63,7 @@ impl ScoredTreePolicy for ScoredUCTPolicy {
         let exploitation_score = child.average_score_for(parent_player);
 
         let exploration = (parent_visit_count.ln() / child_visit_count).sqrt();
-        let exploration_score = self.exploration_constant * parent.score_range() as f64 * exploration;
+        let exploration_score = self.exploration_constant * parent.score_range() * exploration;
 
         exploitation_score + exploration_score
     }

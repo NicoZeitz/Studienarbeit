@@ -23,10 +23,11 @@ impl PlayerState {
     pub const STARTING_BUTTON_BALANCE: i32 = 5;
 
     /// Creates a new [`PlayerState`] with the default values.
-    pub fn new() -> PlayerState {
-        PlayerState {
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {
             position: 0,
-            button_balance: PlayerState::STARTING_BUTTON_BALANCE,
+            button_balance: Self::STARTING_BUTTON_BALANCE,
             quilt_board: QuiltBoard::new(),
         }
     }
@@ -40,7 +41,8 @@ impl PlayerState {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn get_position(&self) -> u8 {
         self.position.min(TimeBoard::MAX_POSITION)
     }

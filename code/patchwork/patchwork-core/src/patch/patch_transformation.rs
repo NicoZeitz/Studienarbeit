@@ -36,31 +36,35 @@ impl PatchTransformation {
 
     /// Returns the rotation as 0, 90, 180 or 270 degree rotation.
     /// This is the same as the rotation flag, but in degrees.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn rotation(&self) -> u32 {
         match self.transformation {
-            PatchTransformation::ROTATION_0 | PatchTransformation::FLIPPED => 0,
-            PatchTransformation::ROTATION_90 | PatchTransformation::FLIPPED_ROTATION_90 => 90,
-            PatchTransformation::ROTATION_180 | PatchTransformation::FLIPPED_ROTATION_180 => 180,
-            PatchTransformation::ROTATION_270 | PatchTransformation::FLIPPED_ROTATION_270 => 270,
+            Self::ROTATION_0 | Self::FLIPPED => 0,
+            Self::ROTATION_90 | Self::FLIPPED_ROTATION_90 => 90,
+            Self::ROTATION_180 | Self::FLIPPED_ROTATION_180 => 180,
+            Self::ROTATION_270 | Self::FLIPPED_ROTATION_270 => 270,
             _ => panic!("[PatchTransformation::rotation] Invalid transformation!"),
         }
     }
 
     /// Returns whether the patch is flipped.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn flipped(&self) -> bool {
         self.transformation & 0b100 != 0
     }
 
     /// Returns the rotation as 0 (0°), 1 (90°), 2 (180°) or 3 (270°).
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn rotation_flag(&self) -> u8 {
         self.transformation & 0b011
     }
 
     /// Returns the orientation as 0 (normal) or 1 (flipped).
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub const fn orientation_flag(&self) -> u8 {
         (self.transformation & 0b100) >> 2
     }
@@ -74,6 +78,6 @@ impl Debug for PatchTransformation {
             .field("rotation", &self.rotation())
             .field("flipped", &self.flipped())
             .field("tiles", &format_args!("{:#083b}", self.tiles))
-            .finish()
+            .finish_non_exhaustive()
     }
 }

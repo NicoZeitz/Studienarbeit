@@ -25,8 +25,7 @@ pub enum PlayerType {
 impl PlayerType {
     pub fn get_construct_name(&self) -> &str {
         match self {
-            PlayerType::BuildIn(_, name) => name,
-            PlayerType::Upi(name) => name,
+            Self::Upi(name) | Self::BuildIn(_, name) => name,
         }
     }
 }
@@ -34,8 +33,8 @@ impl PlayerType {
 impl Player for PlayerType {
     fn name(&self) -> &str {
         match self {
-            PlayerType::BuildIn(player, _) => player.name(),
-            PlayerType::Upi(_) => unimplemented!("[PlayerType::name] UPI is not yet implemented."),
+            Self::BuildIn(player, _) => player.name(),
+            Self::Upi(_) => unimplemented!("[PlayerType::name] UPI is not yet implemented."),
         }
     }
 
@@ -49,8 +48,8 @@ impl Player for PlayerType {
         }
 
         match self {
-            PlayerType::BuildIn(player, _) => player.get_action(game),
-            PlayerType::Upi(_) => unimplemented!("[PlayerType::get_action] UPI is not yet implemented."),
+            Self::BuildIn(player, _) => player.get_action(game),
+            Self::Upi(_) => unimplemented!("[PlayerType::get_action] UPI is not yet implemented."),
         }
     }
 }
@@ -62,13 +61,13 @@ pub fn interactive_get_player(
     logging: Logging,
 ) -> anyhow::Result<PlayerType> {
     if let Some(player_name) = player_name {
-        let Ok(player) = get_player(player_name.as_str(), 1, logging) else {
-            println!("Could not find player {}. Available players: ", player_name);
+        let Ok(player) = get_player(player_name.as_str(), player_position, logging) else {
+            println!("Could not find player {player_name}. Available players: ");
             for p in get_available_players() {
-                println!("  {}", p);
+                println!("  {p}");
             }
             std::io::stdout().flush()?;
-            return Err(Error::msg(format!("Could not find player {}", player_position)));
+            return Err(Error::msg(format!("Could not find player {player_position}")));
         };
         Ok(player)
     } else {
@@ -83,14 +82,14 @@ fn ask_for_player(
 ) -> anyhow::Result<PlayerType> {
     loop {
         // match rl.readline_with_initial("Player 1: ", ("Human", "")) {
-        match rl.readline(format!("Player {}: ", player_position).as_str()) {
+        match rl.readline(format!("Player {player_position}: ").as_str()) {
             Ok(player) => match get_player(&player, 1, logging) {
                 Ok(player) => return Ok(player),
                 Err(d) => {
                     logging = d;
-                    println!("Could not find player {}. Available players: ", player);
+                    println!("Could not find player {player}. Available players: ");
                     for player in get_available_players() {
-                        println!("  {}", player);
+                        println!("  {player}");
                     }
                     std::io::stdout().flush()?;
                 }
@@ -160,7 +159,7 @@ pub fn get_available_players() -> Vec<String> {
         "alphazero",
     ]
     .iter()
-    .map(|s| s.to_string())
+    .map(|s| (*s).to_string())
     .collect()
 }
 
@@ -187,8 +186,7 @@ fn parse_human_player(name: &str, player_position: usize) -> Option<Box<dyn Play
         .unwrap()
         .captures(passed_options)
         .and_then(|o| o.name("name"))
-        .map(|o| o.as_str())
-        .unwrap_or(default_name.as_str());
+        .map_or(default_name.as_str(), |o| o.as_str());
 
     Some(Box::new(HumanPlayer::new(name)))
 }
@@ -262,7 +260,7 @@ fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
         .and_then(|o| o.name("eval"))
         .map(|o| o.as_str())
     {
-        evaluator = eval
+        evaluator = eval;
     }
 
     let player: Box<dyn Player> = match evaluator {
@@ -326,6 +324,7 @@ fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Pl
     )))
 }
 
+#[allow(clippy::too_many_lines)]
 fn parse_pvs_player(
     name: &str,
     player_position: usize,
@@ -464,7 +463,7 @@ fn parse_pvs_player(
         .and_then(|o| o.name("ord"))
         .map(|o| o.as_str())
     {
-        orderer = order
+        orderer = order;
     }
 
     if let Some(eval) = Regex::new(r"eval:\s*(?<eval>static|win|score|nn)")
@@ -473,7 +472,7 @@ fn parse_pvs_player(
         .and_then(|o| o.name("eval"))
         .map(|o| o.as_str())
     {
-        evaluator = eval
+        evaluator = eval;
     }
 
     let player: Box<dyn Player> = match (orderer, evaluator) {
@@ -487,6 +486,7 @@ fn parse_pvs_player(
     (Some(player), None)
 }
 
+#[allow(clippy::too_many_lines)]
 fn parse_mcts_player(
     name: &str,
     player_position: usize,
@@ -615,9 +615,9 @@ fn parse_mcts_player(
 
 fn parse_alphazero_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
     if name == "alphazero" {
-        return Some(Box::new(AlphaZeroPlayer::new(format!(
-            "AlphaZero Player {player_position}"
-        ))));
+        let player: AlphaZeroPlayer =
+            AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}").as_str(), None);
+        return Some(Box::new(player));
     }
 
     None

@@ -16,7 +16,7 @@ pub trait ActionOrderer {
     ///
     /// `𝒪(𝑚 · 𝑛)` where `n` is the amount of actions and `𝒪(𝑚)` is the complexity of the `score_action` function
     /// which is usually `𝒪(𝟣)`.
-    fn score_actions(&self, actions: &mut ActionList, pv_action: Option<ActionId>, current_ply: usize) {
+    fn score_actions(&self, actions: &mut ActionList<'_>, pv_action: Option<ActionId>, current_ply: usize) {
         for i in 0..actions.len() {
             actions.scores[i] = self.score_action(actions.get_action(i), pv_action, current_ply);
         }
@@ -46,8 +46,8 @@ pub trait ActionOrderer {
 
             if highest_action != pv_action {
                 println!("PV-Node action is not sorted first!");
-                println!("PV-Action: {:?} with score {}", pv_action, pv_action_score);
-                println!("BEST_ACTION: {:?} with score {}", highest_action, highest_score);
+                println!("PV-Action: {pv_action:?} with score {pv_action_score}");
+                println!("BEST_ACTION: {highest_action:?} with score {highest_score}");
 
                 debug_assert_eq!(highest_action, pv_action, "Highest Action != PV-Action");
             }
@@ -91,7 +91,7 @@ pub trait ActionOrderer {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `n` is the amount of actions.
-    fn pick_action(&self, actions: &mut ActionList, start_index: usize) -> ActionId {
+    fn pick_action(&self, actions: &mut ActionList<'_>, start_index: usize) -> ActionId {
         for i in (start_index + 1)..actions.len() {
             if actions.get_score(i) > actions.get_score(start_index) {
                 actions.swap(start_index, i);

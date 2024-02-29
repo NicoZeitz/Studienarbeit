@@ -53,7 +53,7 @@ impl Default for SearchStatistics {
 }
 
 impl SearchStatistics {
-    #[inline(always)]
+    #[inline]
     pub fn reset(&mut self) {
         self.nodes_searched_previous_iteration = 0;
         self.nodes_searched = 0;
@@ -89,7 +89,7 @@ impl SearchStatistics {
     ///
     /// Sets:
     /// * The number of nodes searched in the previous iteration to the number of nodes searched.
-    #[inline(always)]
+    #[inline]
     pub fn reset_iterative_deepening_iteration(&mut self) {
         self.nodes_searched_previous_iteration = self.nodes_searched;
         self.nodes_searched = 0;
@@ -108,13 +108,13 @@ impl SearchStatistics {
     }
 
     /// Increments the number of nodes searched.
-    #[inline(always)]
+    #[inline]
     pub fn increment_nodes_searched(&mut self) {
         self.nodes_searched += 1;
     }
 
     /// Increments the number of leaf nodes searched.
-    #[inline(always)]
+    #[inline]
     pub fn increment_leaf_nodes_searched(&mut self) {
         self.leaf_nodes_searched += 1;
     }
@@ -124,7 +124,7 @@ impl SearchStatistics {
     /// # Arguments
     ///
     /// * `first` - Whether the search failed high on the first / pv node.
-    #[inline(always)]
+    #[inline]
     pub fn increment_fail_high(&mut self, first: bool) {
         if first {
             self.fail_high_first += 1;
@@ -133,54 +133,55 @@ impl SearchStatistics {
     }
 
     /// Increments the number of times the aspiration window failed low.
-    #[inline(always)]
+    #[inline]
     pub fn increment_aspiration_window_fail_low(&mut self) {
         self.aspiration_window_fail_low += 1;
     }
 
     /// Increments the number of times the aspiration window failed high.
-    #[inline(always)]
+    #[inline]
     pub fn increment_aspiration_window_fail_high(&mut self) {
         self.aspiration_window_fail_high += 1;
     }
 
     /// Increments the number of times the zero window search was performed.
-    #[inline(always)]
+    #[inline]
     pub fn increment_zero_window_search(&mut self) {
         self.zero_window_search += 1;
     }
     /// Increments the number of times the zero window search failed.
-    #[inline(always)]
+    #[inline]
     pub fn increment_zero_window_search_fail(&mut self) {
         self.zero_window_search_fail += 1;
     }
 
     /// Increments the number of times a special patch extension was made.
-    #[inline(always)]
+    #[inline]
     pub fn increment_special_patch_extensions(&mut self) {
         self.special_patch_extensions += 1;
     }
 
     /// Increments the number of times a special tile extension was made.
-    #[inline(always)]
+    #[inline]
     pub fn increment_special_tile_extensions(&mut self) {
         self.special_tile_extensions += 1;
     }
 
     /// Increments the number of times late move reductions were performed.
-    #[inline(always)]
+    #[inline]
     pub fn increment_late_move_reductions(&mut self) {
         self.late_move_reductions += 1;
     }
 
     // Increment the number of times late move reductions were performed.
-    #[inline(always)]
+    #[inline]
     pub fn increment_late_move_pruning(&mut self) {
         self.late_move_pruning += 1;
     }
 
     /// Returns the rate of failing zero window searches in relation to the number of zero window searches.
-    #[inline(always)]
+    #[inline]
+    #[must_use]
     pub fn zero_window_search_fail_rate(&self) -> f64 {
         if self.zero_window_search == 0 {
             return 0.0;

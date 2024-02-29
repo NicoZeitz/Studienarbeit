@@ -75,6 +75,7 @@ pub struct Patchwork {
 impl Patchwork {
     /// Gets the player with the given flag.
     #[inline]
+    #[must_use]
     pub const fn get_player(&self, player: u8) -> &PlayerState {
         if (player & status_flags::PLAYER_1) > 0 {
             &self.player_1
@@ -85,43 +86,50 @@ impl Patchwork {
 
     // Returns if the current player is player 1.
     #[inline]
+    #[must_use]
     pub const fn is_player_1(&self) -> bool {
         (self.status_flags & status_flags::PLAYER_1) > 0
     }
 
     // Returns if the given player is player 1.
     #[inline]
+    #[must_use]
     pub const fn is_flag_player_1(player_flag: u8) -> bool {
         player_flag == status_flags::PLAYER_1
     }
 
     // Returns if the current player is player 2.
     #[inline]
+    #[must_use]
     pub const fn is_player_2(&self) -> bool {
         (self.status_flags & status_flags::PLAYER_2) > 0
     }
 
     // Returns if the given player is player 2.
     #[inline]
+    #[must_use]
     pub const fn is_flag_player_2(player_flag: u8) -> bool {
         player_flag == status_flags::PLAYER_2
     }
 
     /// Returns the flag for player 1.
     #[inline]
+    #[must_use]
     pub const fn get_player_1_flag() -> u8 {
         status_flags::PLAYER_1
     }
 
     /// Returns the flag for player 2.
     #[inline]
+    #[must_use]
     pub const fn get_player_2_flag() -> u8 {
         status_flags::PLAYER_2
     }
 
     /// Returns the current player.
     #[inline]
-    pub fn current_player(&self) -> &PlayerState {
+    #[must_use]
+    pub const fn current_player(&self) -> &PlayerState {
         if self.is_player_1() {
             &self.player_1
         } else {
@@ -141,6 +149,7 @@ impl Patchwork {
 
     /// Returns the other player.
     #[inline]
+    #[must_use]
     pub const fn other_player(&self) -> &PlayerState {
         if self.is_player_1() {
             &self.player_2
@@ -180,6 +189,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn is_special_tile_condition_reached(&self) -> bool {
         self.status_flags & (status_flags::PLAYER_1_HAS_SPECIAL_TILE | status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0
     }
@@ -193,6 +203,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn is_special_tile_condition_reached_by_player_1(&self) -> bool {
         self.status_flags & status_flags::PLAYER_1_HAS_SPECIAL_TILE > 0
     }
@@ -206,6 +217,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn is_special_tile_condition_reached_by_player_2(&self) -> bool {
         self.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE > 0
     }
@@ -261,6 +273,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn is_goal_reached(&self) -> bool {
         self.status_flags & (status_flags::PLAYER_1_FIRST_AT_END | status_flags::PLAYER_2_FIRST_AT_END) > 0
     }
@@ -274,6 +287,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn player_1_was_first_to_reach_goal(&self) -> bool {
         self.status_flags & status_flags::PLAYER_1_FIRST_AT_END > 0
     }
@@ -287,6 +301,7 @@ impl Patchwork {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
+    #[must_use]
     pub const fn player_2_was_first_to_reach_goal(&self) -> bool {
         self.status_flags & status_flags::PLAYER_2_FIRST_AT_END > 0
     }
@@ -345,6 +360,7 @@ impl Patchwork {
     /// # Returns
     ///
     /// The score of the given player.
+    #[must_use]
     pub const fn get_score(&self, player_flag: u8) -> i32 {
         let player = &self.get_player(player_flag);
 
@@ -369,6 +385,7 @@ impl Patchwork {
     /// # Returns
     ///
     /// The termination result of the game associated with the given state.
+    #[must_use]
     pub fn get_termination_result(&self) -> Termination {
         let player_1_score = self.get_score(status_flags::PLAYER_1);
         let player_2_score = self.get_score(status_flags::PLAYER_2);
@@ -417,43 +434,39 @@ impl Display for Patchwork {
 
         // pad each line in player 1 to the same length
         for (player_1_line, player_2_line) in player_1_lines.zip(&mut player_2_lines) {
-            write!(f, "{}", player_1_line)?;
+            write!(f, "{player_1_line}")?;
             write!(f, "{}", " ".repeat(max_length - player_1_line.chars().count()))?;
-            writeln!(f, " │ {}", player_2_line)?;
+            writeln!(f, " │ {player_2_line}")?;
         }
 
         write!(f, "\nTime board:\n{}\n", self.time_board)?;
         writeln!(f, "Next 6 patches (can only take first 3):")?;
 
         // only take first 6 patches
-        let patch_strings = self.patches.iter().take(6).map(|patch| format!("{}", patch));
+        let patch_strings = self.patches.iter().take(6).map(|patch| format!("{patch}"));
 
         let patch_strings_lines = patch_strings
             .into_iter()
             .map(|patch_string| {
                 patch_string
                     .split('\n')
-                    .map(|line| line.to_string())
+                    .map(std::string::ToString::to_string)
                     .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();
 
-        let max_amount_of_lines = patch_strings_lines.iter().map(|lines| lines.len()).max().unwrap_or(0);
+        let max_amount_of_lines = patch_strings_lines.iter().map(std::vec::Vec::len).max().unwrap_or(0);
 
         // pad each patch with newlines on top to max length
+        // pad each line in each patch to the same length
         let patch_strings_lines = patch_strings_lines
             .into_iter()
             .map(|mut lines| {
                 while lines.len() < max_amount_of_lines {
-                    lines.insert(0, "".to_string());
+                    lines.insert(0, String::new());
                 }
                 lines
             })
-            .collect::<Vec<_>>();
-
-        // pad each line in each patch to the same length
-        let patch_strings_lines = patch_strings_lines
-            .into_iter()
             .map(|lines| {
                 let max_length = lines
                     .clone()
@@ -482,7 +495,7 @@ impl Display for Patchwork {
 
         for patch_strings_lines in patch_strings_lines {
             for line in patch_strings_lines {
-                write!(f, "{}    ", line)?;
+                write!(f, "{line}    ")?;
             }
             writeln!(f)?;
         }
