@@ -5,7 +5,7 @@ import { createContext } from 'react';
 import Patch from '../Patch/Patch.tsx';
 import { motion } from 'framer-motion';
 
-export interface GameLayoutProps {}
+export interface GameLayoutProps { }
 
 export const StateContext = createContext<PatchworkState>(null!);
 
@@ -35,7 +35,7 @@ export default function GameLayout(props: GameLayoutProps) {
 
                     <div
                         style={{ gridTemplateRows: '1fr auto 1fr' }}
-                        className="grid h-full grid-cols-1 items-center gap-5 pl-[15%] pr-[15%]"
+                        className="grid h-full grid-cols-1 items-center gap-1 pl-[15%] pr-[15%]"
                     >
                         <div className="relative ml-auto mr-auto flex gap-2">
                             <div className="absolute left-[-10%] top-0 h-full w-[6%]">
@@ -82,7 +82,7 @@ export default function GameLayout(props: GameLayoutProps) {
                     initial={{ translateY: 100 }}
                     animate={{ translateY: 0 }}
                     transition={{ duration: 0.75 }}
-                    className="flex justify-between"
+                    className="flex justify-between fixed left-0 right-0 bottom-0 items-end"
                 >
                     <motion.div
                         initial={{ translateX: -100 }}
