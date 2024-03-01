@@ -1,40 +1,22 @@
-use alphazero_player::network::PatchZero;
-use candle_core::{DType, Device, IndexOp, Result};
-use candle_nn::{VarBuilder, VarMap};
+use std::path::Path;
 
-fn main() -> Result<()> {
-    println!("Starting");
+use alphazero_player::train::{Trainer, TrainingArgs};
 
-    let device = Device::cuda_if_available(0)?;
-    let vm = VarMap::new();
-    let vb = VarBuilder::from_varmap(&vm, DType::F32, &device);
-    let patch_zero: PatchZero<3, 10, 64> = PatchZero::new(vb, device)?;
+use candle_core::Device;
+use patchwork_core::PlayerResult;
+use tree_policy::PUCTPolicy;
 
-    let states = vec![
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-        patchwork_core::Patchwork::get_initial_state(None),
-    ];
-
-    let now = std::time::Instant::now();
-    let (policies, values) = patch_zero.forward_t(&states.iter().collect::<Vec<_>>(), false)?;
-
-    let _first_policy = policies.i((0, ..))?;
-    let _first_value = values.i((0,))?.to_scalar::<f32>()?;
-
-    println!("Forward pass done in {:?}", now.elapsed());
-    println!("Policies: {policies:?}");
-    println!("Values: {values:?}");
-
-    // save the model
-    vm.save("patch_zero.safetensors")?;
+fn main() -> PlayerResult<()> {
+    let trainer = Trainer::new(
+        Path::new("training"),
+        TrainingArgs {
+            number_of_training_iterations: 1,
+            number_of_epochs: 1,
+            ..TrainingArgs::default()
+        },
+        Device::cuda_if_available(0)?,
+    );
+    trainer.learn::<PUCTPolicy>()?;
 
     Ok(())
 }

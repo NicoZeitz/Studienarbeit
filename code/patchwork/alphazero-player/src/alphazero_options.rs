@@ -25,10 +25,6 @@ pub enum AlphaZeroEndCondition {
 }
 
 pub struct AlphaZeroOptions {
-    /// The epsilon value for the Dirichlet noise. This is the fraction of the noise to add to the policy.
-    pub dirichlet_epsilon: f32,
-    /// The alpha value for the Dirichlet noise.
-    pub dirichlet_alpha: f32,
     /// The device to use for the neural network.
     pub device: Device,
     /// The batch size to use for running mcts simulations before doing a network evaluation.
@@ -46,16 +42,12 @@ impl AlphaZeroOptions {
     #[must_use]
     pub const fn new(
         end_condition: AlphaZeroEndCondition,
-        dirichlet_epsilon: f32,
-        dirichlet_alpha: f32,
         device: Device,
         batch_size: NonZeroUsize,
         parallelization: NonZeroUsize,
         logging: Logging,
     ) -> Self {
         Self {
-            dirichlet_epsilon,
-            dirichlet_alpha,
             device,
             batch_size,
             parallelization,
@@ -107,8 +99,6 @@ impl Default for AlphaZeroOptions {
                 duration: std::time::Duration::from_secs(10),
                 safety_margin: std::time::Duration::from_millis(100),
             },
-            dirichlet_epsilon: 0.25,
-            dirichlet_alpha: 0.3,
             device: Self::default_device(),
             batch_size: NonZeroUsize::new(20).unwrap(),
             parallelization: Self::default_parallelization(),

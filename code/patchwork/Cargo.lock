@@ -60,6 +60,7 @@ dependencies = [
  "patchwork-core",
  "rand",
  "rand_distr",
+ "regex",
  "tqdm",
  "tree-policy",
 ]

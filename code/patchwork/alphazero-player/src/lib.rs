@@ -4,7 +4,7 @@ mod alphazero_player;
 pub mod game_state;
 pub mod mcts;
 pub mod network;
-mod train;
+pub mod train;
 
 pub use alphazero_options::{AlphaZeroEndCondition, AlphaZeroOptions};
 pub use alphazero_player::AlphaZeroPlayer;
