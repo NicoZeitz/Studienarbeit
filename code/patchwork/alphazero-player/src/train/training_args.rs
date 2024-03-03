@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TrainingArgs {
     // Hyperparameters
 
@@ -15,6 +15,8 @@ pub struct TrainingArgs {
     pub temperature: f32,
     /// The ply after which the temperature is set to a infinitesimal value (0.00001)
     pub temperature_end: usize,
+    /// The L² regularization factor to use for training the neural network.
+    pub regularization: f64,
 
     // Train loop
 
@@ -47,6 +49,7 @@ impl Default for TrainingArgs {
             dirichlet_alpha: 0.2,
             temperature: 1.25,
             temperature_end: 35,
+            regularization: 5e-5, // 1e-4,
 
             number_of_training_iterations: 8,
 

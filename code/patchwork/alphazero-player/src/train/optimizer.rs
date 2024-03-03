@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use candle_core::{backprop::GradStore, safetensors, Device, IndexOp, Result, Tensor, Var};
+use candle_core::{backprop::GradStore, safetensors, Device, Result, Tensor, Var};
 use candle_nn::Optimizer;
 
 #[derive(Clone, Debug)]
@@ -120,47 +120,32 @@ impl AdamW {
     /// If there is an error saving the state to the file.
     pub fn save<P: AsRef<std::path::Path>>(&self, path: P) -> Result<()> {
         let mut data = HashMap::<String, Tensor>::new();
-        data.insert(
-            "step_t".to_string(),
-            Tensor::from_slice(&[self.step_t as f64], (1,), &Device::Cpu)?,
-        );
-        data.insert(
-            "params.lr".to_string(),
-            Tensor::from_slice(&[self.params.lr], (1,), &Device::Cpu)?,
-        );
+        data.insert("step_t".to_string(), Tensor::new(self.step_t as f64, &Device::Cpu)?);
+        data.insert("params.lr".to_string(), Tensor::new(self.params.lr, &Device::Cpu)?);
         data.insert(
             "params.beta1".to_string(),
-            Tensor::from_slice(&[self.params.beta1], (1,), &Device::Cpu)?,
+            Tensor::new(self.params.beta1, &Device::Cpu)?,
         );
         data.insert(
             "params.beta2".to_string(),
-            Tensor::from_slice(&[self.params.beta2], (1,), &Device::Cpu)?,
+            Tensor::new(self.params.beta2, &Device::Cpu)?,
         );
-        data.insert(
-            "params.eps".to_string(),
-            Tensor::from_slice(&[self.params.eps], (1,), &Device::Cpu)?,
-        );
+        data.insert("params.eps".to_string(), Tensor::new(self.params.eps, &Device::Cpu)?);
         data.insert(
             "params.weight_decay".to_string(),
-            Tensor::from_slice(&[self.params.weight_decay], (1,), &Device::Cpu)?,
+            Tensor::new(self.params.weight_decay, &Device::Cpu)?,
         );
-        data.insert(
-            "vars".to_string(),
-            Tensor::stack(
-                self.vars
-                    .iter()
-                    .flat_map(|var| {
-                        vec![
-                            var.var.as_tensor(),
-                            var.first_moment.as_tensor(),
-                            var.second_moment.as_tensor(),
-                        ]
-                    })
-                    .collect::<Vec<_>>()
-                    .as_slice(),
-                0,
-            )?,
-        );
+        for (index, var) in self.vars.iter().enumerate() {
+            data.insert(format!("vars.{index}.var"), var.var.as_detached_tensor());
+            data.insert(
+                format!("vars.{index}.first_moment"),
+                var.first_moment.as_detached_tensor(),
+            );
+            data.insert(
+                format!("vars.{index}.second_moment"),
+                var.second_moment.as_detached_tensor(),
+            );
+        }
 
         safetensors::save(&data, path.as_ref())
     }
@@ -190,16 +175,14 @@ impl AdamW {
         self.params.eps = data.get("params.eps").unwrap().to_scalar::<f64>()?;
         self.params.weight_decay = data.get("params.weight_decay").unwrap().to_scalar::<f64>()?;
 
-        let vars = data.get("vars").unwrap();
-        let mut dim_0 = 0;
-        while dim_0 < vars.dims()[0] {
-            let var = &vars.i((dim_0, ..))?;
-            let first_moment = &vars.i((dim_0 + 1, ..))?;
-            let second_moment = &vars.i((dim_0 + 2, ..))?;
-            self.vars[dim_0 / 3].var.set(var)?;
-            self.vars[dim_0 / 3].first_moment.set(first_moment)?;
-            self.vars[dim_0 / 3].second_moment.set(second_moment)?;
-            dim_0 += 3;
+        for (index, var_adamw) in self.vars.iter_mut().enumerate() {
+            let var = data.get(&format!("vars.{index}.var")).unwrap();
+            let first_moment = data.get(&format!("vars.{index}.first_moment")).unwrap();
+            let second_moment = data.get(&format!("vars.{index}.second_moment")).unwrap();
+
+            var_adamw.var.set(var)?;
+            var_adamw.first_moment.set(first_moment)?;
+            var_adamw.second_moment.set(second_moment)?;
         }
 
         Ok(())

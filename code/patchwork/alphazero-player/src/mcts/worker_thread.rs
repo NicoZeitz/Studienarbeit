@@ -189,6 +189,12 @@ impl<
             let value = values[mini_batch_index];
             let corresponding_actions = corresponding_action_ids.pop_front().unwrap();
 
+            let node = self.search_data.batch[batch_index].allocator.get_node_write(node_id);
+            let color = if node.state.is_player_1() { 1.0 } else { -1.0 };
+            drop(node);
+
+            let value = color * value;
+
             Node::expand(
                 node_id,
                 policy,

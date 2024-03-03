@@ -157,10 +157,11 @@ impl<
             PlayerResult::Ok(())
         })?;
 
-        println!(
-            "Iterations: {}",
-            search_data.iterations.load(std::sync::atomic::Ordering::SeqCst)
-        );
+        // TODO:
+        // println!(
+        //     "Iterations: {}",
+        //     search_data.iterations.load(std::sync::atomic::Ordering::SeqCst)
+        // );
 
         // 5. Reset search data
         let SearchData {
@@ -223,7 +224,7 @@ impl<
     /// `Ok(())` if the root node was created successfully, `Err(PatchworkError)` otherwise.
     fn create_root_nodes(&self, games: &[&Patchwork]) -> PlayerResult<Vec<GameState>> {
         let (policies, _values) = self.network.as_ref().unwrap().forward_t(games, self.train)?;
-        let mut policies = candle_nn::ops::softmax(&policies, 1)?.detach()?;
+        let mut policies = candle_nn::ops::softmax(&policies, 1)?.detach();
 
         if self.train {
             let noise = Tensor::from_vec(
@@ -231,7 +232,7 @@ impl<
                 (NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS,),
                 &self.options.device,
             )?
-            .detach()?;
+            .detach();
 
             policies = Tensor::broadcast_add(
                 &Tensor::broadcast_mul(
@@ -240,7 +241,7 @@ impl<
                 )?,
                 &Tensor::broadcast_mul(&Tensor::new(self.dirichlet_epsilon, &self.options.device)?, &noise)?,
             )?
-            .detach()?;
+            .detach();
         }
 
         let (available_actions_tensor, mut corresponding_action_ids) =

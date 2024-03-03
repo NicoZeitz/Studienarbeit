@@ -21,8 +21,8 @@ metal = ["candle-core/metal", "candle-nn/metal"]
 [dependencies]
 arc-swap = "1.6.0"
 boxcar = "0.2.4"
-candle-core = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
-candle-nn = { version = "0.4.0", git = "https://github.com//huggingface/candle.git" }
+candle-core = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
+candle-nn = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
 dashmap = { version = "5.5.3", features = ["inline"] }
 patchwork-core = { path = "../patchwork-core" }
 rand = "0.8.5"
