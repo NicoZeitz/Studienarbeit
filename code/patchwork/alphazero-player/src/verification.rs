@@ -17,15 +17,13 @@ fn main() -> PlayerResult<()> {
         env::var("RUST_BACKTRACE").map_or_else(|_| "1".to_string(), |s| s),
     );
 
-    println!("{:?}", std::mem::size_of::<patchwork_core::Patchwork>());
-
     let trainer = Trainer::new(
         training_directory,
         TrainingArgs {
             number_of_training_iterations: 1000,
             number_of_mcts_iterations: 600,
-            number_of_parallel_games: 4,
-            number_of_self_play_iterations: 120,
+            number_of_parallel_games: 10,
+            number_of_self_play_iterations: 10,
             number_of_epochs: 5,
             // change later
             batch_size: 128,
@@ -33,6 +31,7 @@ fn main() -> PlayerResult<()> {
             ..TrainingArgs::default()
         },
         Device::Cpu,
+        // Device::cuda_if_available(0).unwrap_or(Device::Cpu),
     );
 
     let start_time = std::time::Instant::now();
