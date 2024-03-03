@@ -90,7 +90,11 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
             let current_player = self.encode_current_player(game)?;                          // 1 layer
             let time_board = self.encode_time_board(&game.time_board)?;                      // 1 layer
 
-            Tensor::cat(&[&player_1_quilt_board, &player_2_quilt_board, &current_player, &patches, &time_board], 0)
+            if game.is_player_1() {
+                Tensor::cat(&[&player_1_quilt_board, &player_2_quilt_board, &current_player, &patches, &time_board], 0)
+            } else {
+                Tensor::cat(&[&player_2_quilt_board, &player_1_quilt_board, &current_player, &patches, &time_board], 0)
+            }
         }).collect::<Result<Vec<_>>>()?;
 
         Tensor::stack(&encoded_games, 0)

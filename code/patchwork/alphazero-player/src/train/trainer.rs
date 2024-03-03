@@ -373,7 +373,9 @@ impl Trainer {
 ///
 /// The resulting tensor is a scalar containing the average value over the batch.
 fn multi_target_cross_entropy_loss(input: &Tensor, target: &Tensor) -> candle_core::Result<Tensor> {
-    let input = candle_nn::ops::log_softmax(input, 1)?;
+    const EPSILON: f64 = f32::MIN_POSITIVE as f64;
+
+    let input = candle_nn::ops::log_softmax(input, 1)?.affine(1.0, EPSILON)?;
     let batch_size = target.dims()[0] as f64;
 
     let mask = target.ne(0.0)?;
