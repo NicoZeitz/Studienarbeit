@@ -36,9 +36,9 @@ impl Trainer {
     ///
     /// # Arguments
     ///
-    /// * `device` - The device to use for the trainer.
-    /// * `args` - The arguments to use for training the neural network.
     /// * `training_directory` - The path to the directory to save and load the training data to and from.
+    /// * `args` - The arguments to use for training the neural network.
+    /// * `device` - The device to use.
     pub fn new<P: AsRef<std::path::Path>>(training_directory: P, args: TrainingArgs, device: Device) -> Self {
         Self {
             training_directory: training_directory.as_ref().to_path_buf(),
@@ -49,57 +49,28 @@ impl Trainer {
 
     pub fn learn<Policy: TreePolicy + Default>(&self) -> PlayerResult<()> {
         let (var_map, starting_index) = self.get_var_map()?;
-
-        let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &self.device);
-
-        let alphazero_options = Rc::new(AlphaZeroOptions {
-            device: self.device.clone(),
-            batch_size: NonZeroUsize::new(20 * self.args.batch_size).unwrap(),
-            end_condition: AlphaZeroEndCondition::Iterations {
-                iterations: self.args.number_of_mcts_iterations,
-            },
-            logging: Logging::Disabled,
-            ..Default::default()
-        });
-
-        let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
-        let mut search_tree = DefaultSearchTree::<Policy>::new(
-            false, // Will be set later anyways
-            Default::default(),
-            network,
-            alphazero_options,
-            self.args.dirichlet_alpha,
-            self.args.dirichlet_epsilon,
-        );
         let mut optimizer = self.get_optimizer(&var_map, starting_index)?;
 
         println!("Started training at {starting_index} with {:?}", self.args);
 
-        for _ in 0..self.args.number_of_training_iterations {
+        for iteration in 0..self.args.number_of_training_iterations {
             let mut history = vec![];
 
-            search_tree.set_train(false);
             let iterations = (self.args.number_of_self_play_iterations as f64
                 / self.args.number_of_parallel_games as f64)
                 .ceil() as usize;
             for _ in tqdm(0..iterations).style(tqdm::Style::Block).desc(Some("Self-Play")) {
-                history.extend(self.self_play(&mut search_tree)?);
+                history.extend(self.self_play::<Policy>(&var_map)?);
             }
 
-            search_tree.set_train(true);
             for _ in tqdm(0..self.args.number_of_epochs)
                 .style(tqdm::Style::Block)
                 .desc(Some("Train"))
             {
-                self.train(
-                    &mut history,
-                    search_tree.network.as_ref().unwrap(),
-                    &mut optimizer,
-                    &var_map,
-                )?;
+                self.train(&mut history, &mut optimizer, &var_map)?;
             }
 
-            let index = iterations + starting_index;
+            let index = iteration + starting_index + 1;
             println!(
                 "Finished iteration {index}. Saving weights to {:?}",
                 self.training_directory
@@ -117,11 +88,32 @@ impl Trainer {
         Ok(())
     }
 
-    fn self_play(&self, search_tree: &mut DefaultSearchTree<impl TreePolicy>) -> PlayerResult<Vec<History>> {
+    fn self_play<Policy: TreePolicy + Default>(&self, var_map: &VarMap) -> PlayerResult<Vec<History>> {
         struct PartialHistory {
             state: Patchwork,
             policy: Tensor,
         }
+
+        let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
+        let alphazero_options = Rc::new(AlphaZeroOptions {
+            device: self.device.clone(),
+            parallelization: NonZeroUsize::new((AlphaZeroOptions::default().parallelization.get() - 1).max(1)).unwrap(),
+            batch_size: NonZeroUsize::new(10 * self.args.batch_size).unwrap(),
+            end_condition: AlphaZeroEndCondition::Iterations {
+                iterations: self.args.number_of_mcts_iterations,
+            },
+            logging: Logging::Disabled,
+        });
+
+        let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
+        let mut search_tree = DefaultSearchTree::<Policy>::new(
+            false,
+            Default::default(),
+            network,
+            alphazero_options,
+            self.args.dirichlet_alpha,
+            self.args.dirichlet_epsilon,
+        );
 
         let mut return_history = vec![];
         let mut history = (0..self.args.number_of_parallel_games)
@@ -140,6 +132,7 @@ impl Trainer {
 
             let (available_actions_tensor, mut corresponding_action_ids) =
                 map_games_to_action_tensors(games.iter().collect::<Vec<_>>().as_slice(), &self.device)?;
+            let available_actions_tensor = available_actions_tensor.detach();
 
             let policies = (policies * available_actions_tensor)?;
             let policies_sum = policies.sum_keepdim(1)?;
@@ -152,7 +145,7 @@ impl Trainer {
 
                 history[i].push(PartialHistory {
                     state: game.clone(),
-                    policy: policy.clone().detach(),
+                    policy: policy.clone().detach().to_device(&self.device)?,
                 });
 
                 let temperature_action_probabilities = if history[i].len() >= self.args.temperature_end {
@@ -184,7 +177,6 @@ impl Trainer {
     fn train(
         &self,
         training_set: &mut [History],
-        network: &DefaultPatchZero,
         optimizer: &mut impl Optimizer,
         var_map: &VarMap,
     ) -> PlayerResult<()> {
@@ -195,6 +187,9 @@ impl Trainer {
                 TerminationType::Player2Won => Tensor::new(multiplier * -1.0, device).unwrap(),
             }
         }
+
+        let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
+        let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
 
         training_set.shuffle(&mut thread_rng());
 

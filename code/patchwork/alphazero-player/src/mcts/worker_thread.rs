@@ -135,14 +135,16 @@ impl<
 
         let (available_actions_tensor, mut corresponding_action_ids) =
             map_games_to_action_tensors(&games, &self.search_data.device)?;
+        let available_actions_tensor = available_actions_tensor.detach();
 
         // TODO: diagnostics
         // let start = std::time::Instant::now();
-        let (mut policies, values) = self.search_data.network.forward_t(&games, self.search_data.train)?;
-        // println!("Network forward took {:?}", start.elapsed());
-
+        let (policies, values) = self.search_data.network.forward_t(&games, self.search_data.train)?;
         drop(games);
         drop(nodes);
+
+        let mut policies = policies.detach();
+        let values = values.detach();
 
         policies = candle_nn::ops::softmax(&policies, 1)?;
         policies = (policies * available_actions_tensor)?;
