@@ -60,6 +60,7 @@ dependencies = [
  "patchwork-core",
  "rand",
  "rand_distr",
+ "regex",
  "tqdm",
  "tree-policy",
 ]
@@ -388,8 +389,8 @@ checksum = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
 
 [[package]]
 name = "candle-core"
-version = "0.4.0"
-source = "git+https://github.com//huggingface/candle.git#a83ca2ece05269ad3afd7744e7a5145de891705e"
+version = "0.4.1"
+source = "git+https://github.com//huggingface/candle.git#ca5d727ba2f08e4ac08d4edec3289e29b241df6d"
 dependencies = [
  "accelerate-src",
  "byteorder",
@@ -415,16 +416,16 @@ dependencies = [
 
 [[package]]
 name = "candle-kernels"
-version = "0.4.0"
-source = "git+https://github.com//huggingface/candle.git#a83ca2ece05269ad3afd7744e7a5145de891705e"
+version = "0.4.1"
+source = "git+https://github.com//huggingface/candle.git#ca5d727ba2f08e4ac08d4edec3289e29b241df6d"
 dependencies = [
  "bindgen_cuda",
 ]
 
 [[package]]
 name = "candle-metal-kernels"
-version = "0.4.0"
-source = "git+https://github.com//huggingface/candle.git#a83ca2ece05269ad3afd7744e7a5145de891705e"
+version = "0.4.1"
+source = "git+https://github.com//huggingface/candle.git#ca5d727ba2f08e4ac08d4edec3289e29b241df6d"
 dependencies = [
  "metal",
  "once_cell",
@@ -434,8 +435,8 @@ dependencies = [
 
 [[package]]
 name = "candle-nn"
-version = "0.4.0"
-source = "git+https://github.com//huggingface/candle.git#a83ca2ece05269ad3afd7744e7a5145de891705e"
+version = "0.4.1"
+source = "git+https://github.com//huggingface/candle.git#ca5d727ba2f08e4ac08d4edec3289e29b241df6d"
 dependencies = [
  "accelerate-src",
  "candle-core",
@@ -610,9 +611,9 @@ dependencies = [
 
 [[package]]
 name = "core-foundation"
-version = "0.9.4"
+version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "91e195e091a93c46f7102ec7818a2aa394e1e1771c3ab4825963fa03e45afb8f"
+checksum = "194a7a9e6de53fa55116934067c844d9d749312f75c6f6d0980e8c252f8c2146"
 dependencies = [
  "core-foundation-sys",
  "libc",
@@ -620,15 +621,15 @@ dependencies = [
 
 [[package]]
 name = "core-foundation-sys"
-version = "0.8.6"
+version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
+checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
 
 [[package]]
 name = "core-graphics-types"
-version = "0.1.3"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45390e6114f68f718cc7a830514a96f903cccd70d02a8f6d9f643ac4ba45afaf"
+checksum = "2bb142d41022986c1d8ff29103a1411c8a3dfad3552f87a4f8dc50d61d4f4e33"
 dependencies = [
  "bitflags 1.3.2",
  "core-foundation",

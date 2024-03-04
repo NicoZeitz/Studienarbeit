@@ -21,6 +21,7 @@
     "rust-analyzer.inlayHints.reborrowHints.enable": "never",
     "rust-analyzer.inlayHints.bindingModeHints.enable": false,
     "rust-analyzer.inlayHints.maxLength": 10000,
+    "python.terminal.activateEnvironment": false,
     // Latex
     "latex-workshop.intellisense.includegraphics.preview.enabled": true,
     "emmet.includeLanguages": {
@@ -91,11 +92,13 @@
         "**/**.run.xml": true
     },
     // Spelling
+    "cSpell.language": "en,de",
     "cSpell.words": [
         "Abbildungsverzeichnisses",
         "Absätzen",
         "Abstact",
         "Abstand",
+        "adamw",
         "Algorithmus",
         "alloc",
         "alphazero",
@@ -113,6 +116,7 @@
         "argmax",
         "argpartition",
         "argwhere",
+        "backprop",
         "backpropagate",
         "backpropagated",
         "Backpropagates",
@@ -138,6 +142,7 @@
         "dazwischen",
         "Deque",
         "DHBW",
+        "dirichlet",
         "doctests",
         "Dokument",
         "Dokuments",
@@ -167,6 +172,7 @@
         "Hasher",
         "Hauptteil",
         "Hilfreiches",
+        "Hyperparameters",
         "𝒾's",
         "Inhalt",
         "Inhaltsverzeichnis",
@@ -211,6 +217,7 @@
         "Nummerierungstiefe",
         "nupiok",
         "ohne",
+        "optim",
         "Optim",
         "Paragraphen",
         "passt",
@@ -221,6 +228,7 @@
         "plys",
         "POSIX",
         "powf",
+        "powi",
         "Präambel",
         "Praxisbericht",
         "println",

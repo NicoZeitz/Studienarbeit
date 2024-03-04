@@ -24,14 +24,16 @@ pub struct SearchTree<
     const AMOUNT_RESIDUAL_LAYERS: usize,
     const AMOUNT_FILTERS: usize,
 > {
-    /// Whether the network is in training or evaluation/interference mode
-    pub train: bool,
-    /// The options to use for the search tree.
-    pub options: Rc<AlphaZeroOptions>,
-    /// The dirichlet noise distribution to use for the root node.
-    pub dirichlet_noise: Dirichlet<f32>,
     /// The network to use to evaluate the game states. Moved to Search Data during the search.
-    network: Option<PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>>,
+    pub(crate) network: Option<PatchZero<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>>,
+    /// The options to use for the search tree.
+    options: Rc<AlphaZeroOptions>,
+    /// The dirichlet noise distribution to use for the root node.
+    dirichlet_noise: Dirichlet<f32>,
+    /// The epsilon value for the Dirichlet noise. This is the fraction of the noise to add to the policy.
+    dirichlet_epsilon: f32,
+    /// Whether the network is in training or evaluation/interference mode
+    train: bool,
     /// The policy to select nodes during the selection phase. Moved to Search Data during the search.
     tree_policy: Option<Policy>,
 }
@@ -65,15 +67,16 @@ impl<
         tree_policy: Policy,
         network: PatchZero<{ AMOUNT_PATCH_LAYERS }, { AMOUNT_RESIDUAL_LAYERS }, { AMOUNT_FILTERS }>,
         options: Rc<AlphaZeroOptions>,
+        dirichlet_alpha: f32,
+        dirichlet_epsilon: f32,
     ) -> Self {
-        let dirichlet_noise = Dirichlet::new_with_size(
-            options.dirichlet_alpha,
-            NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS,
-        )
-        .expect("[SearchData::new] Failed to create dirichlet noise distribution");
+        let dirichlet_noise =
+            Dirichlet::new_with_size(dirichlet_alpha, NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS)
+                .expect("[SearchData::new] Failed to create dirichlet noise distribution");
 
         Self {
             train,
+            dirichlet_epsilon,
             dirichlet_noise,
             tree_policy: Some(tree_policy),
             network: Some(network),
@@ -154,10 +157,11 @@ impl<
             PlayerResult::Ok(())
         })?;
 
-        println!(
-            "Iterations: {}",
-            search_data.iterations.load(std::sync::atomic::Ordering::SeqCst)
-        );
+        // TODO:
+        // println!(
+        //     "Iterations: {}",
+        //     search_data.iterations.load(std::sync::atomic::Ordering::SeqCst)
+        // );
 
         // 5. Reset search data
         let SearchData {
@@ -220,7 +224,7 @@ impl<
     /// `Ok(())` if the root node was created successfully, `Err(PatchworkError)` otherwise.
     fn create_root_nodes(&self, games: &[&Patchwork]) -> PlayerResult<Vec<GameState>> {
         let (policies, _values) = self.network.as_ref().unwrap().forward_t(games, self.train)?;
-        let mut policies = candle_nn::ops::softmax(&policies, 1)?.detach()?;
+        let mut policies = candle_nn::ops::softmax(&policies, 1)?.detach();
 
         if self.train {
             let noise = Tensor::from_vec(
@@ -228,19 +232,16 @@ impl<
                 (NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS,),
                 &self.options.device,
             )?
-            .detach()?;
+            .detach();
 
             policies = Tensor::broadcast_add(
                 &Tensor::broadcast_mul(
-                    &Tensor::new(1.0 - self.options.dirichlet_epsilon, &self.options.device)?,
+                    &Tensor::new(1.0 - self.dirichlet_epsilon, &self.options.device)?,
                     &policies,
                 )?,
-                &Tensor::broadcast_mul(
-                    &Tensor::new(self.options.dirichlet_epsilon, &self.options.device)?,
-                    &noise,
-                )?,
+                &Tensor::broadcast_mul(&Tensor::new(self.dirichlet_epsilon, &self.options.device)?, &noise)?,
             )?
-            .detach()?;
+            .detach();
         }
 
         let (available_actions_tensor, mut corresponding_action_ids) =

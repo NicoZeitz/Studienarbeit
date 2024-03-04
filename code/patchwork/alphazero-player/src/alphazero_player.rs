@@ -1,6 +1,6 @@
-use std::{collections::HashMap, rc::Rc};
+use std::rc::Rc;
 
-use candle_core::{safetensors, DType, Device, Tensor};
+use candle_core::{safetensors, DType, Device};
 use candle_nn::VarBuilder;
 use patchwork_core::{ActionId, Patchwork, Player, PlayerResult, TreePolicy};
 use tree_policy::PUCTPolicy;
@@ -8,8 +8,6 @@ use tree_policy::PUCTPolicy;
 use crate::{
     action::map_games_to_action_tensors, mcts::DefaultSearchTree, network::DefaultPatchZero, AlphaZeroOptions,
 };
-
-// TODO: Temperature tau
 
 /// A computer player that uses the `AlphaZero` algorithm to choose an action.
 pub struct AlphaZeroPlayer<Policy: TreePolicy = PUCTPolicy> {
@@ -44,54 +42,18 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         let options = Rc::new(options.unwrap_or_default());
 
         let weights = safetensors::load_buffer(NETWORK_WEIGHTS, &options.device).expect("[AlphaZeroPlayer::new] Failed to load network weights");
-
-        Self::internal_new(
-            Self::format_name(name, options.as_ref(), None),
-            options,
-            weights
-        )
-    }
-
-    /// Creates a new [`AlphaZeroPlayer`] with the given name, options, and network weights file.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the network weights cannot be loaded or the network cannot be created.
-    #[rustfmt::skip]
-    #[must_use]
-    pub fn from_weights_file(
-        name: &str,
-        options: Option<AlphaZeroOptions>,
-        file_path: &std::path::Path,
-    ) -> Self {
-        let options = Rc::new(options.unwrap_or_default());
-
-        let weights = safetensors::load(file_path, &options.device).unwrap_or_else(|_| panic!("[AlphaZeroPlayer::from_weights_file] Failed to load network weights from file {}", file_path.display()));
-
-        Self::internal_new(Self::format_name(name, options.as_ref(), Some(file_path)), options, weights)
-    }
-
-    pub fn get_explorative_action(&mut self, game: &Patchwork, _temperature: f64) -> PlayerResult<ActionId> {
-        // TODO: select with temperature tau τ (AlphaGo Zero paper page 8)
-        self.get_action(game)
-    }
-
-    #[rustfmt::skip]
-    fn internal_new(
-        name: String,
-        options: Rc<AlphaZeroOptions>,
-        weights: HashMap<String, Tensor>,
-    ) -> Self {
         let vb = VarBuilder::from_tensors(weights, DType::F32, &options.device);
         let network = DefaultPatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
 
         Self {
-            name,
+            name:  Self::format_name(name, options.as_ref(), None),
             search_tree: DefaultSearchTree::new(
                 false,
                 Policy::default(),
                 network,
-                Rc::clone(&options)
+                Rc::clone(&options),
+                0.0, // Dummy value as the network is in evaluation mode anyways
+                0.0
             ),
             options,
         }
@@ -99,7 +61,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
 
     fn format_name(name: &str, options: &AlphaZeroOptions, weights_file: Option<&std::path::Path>) -> String {
         format!(
-            "{} [{}|B{}|P{}|α{:.2}|ε{:.2}]{}",
+            "{} [{}|B{}|P{}]{}",
             name,
             if options.device.is_cuda() {
                 "GPU"
@@ -114,8 +76,6 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
             },
             options.batch_size.get(),
             options.parallelization.get(),
-            options.dirichlet_alpha,
-            options.dirichlet_epsilon,
             weights_file.map_or_else(String::new, |weights_file| format!(" ({})", weights_file.display()))
         )
     }
