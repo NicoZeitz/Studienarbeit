@@ -22,9 +22,9 @@ fn main() -> PlayerResult<()> {
         TrainingArgs {
             number_of_training_iterations: 1000,
             number_of_mcts_iterations: 600,
-            number_of_parallel_games: 10,
-            number_of_self_play_iterations: 10,
-            number_of_epochs: 5,
+            number_of_parallel_games: 5,
+            number_of_self_play_iterations: 100,
+            number_of_epochs: 7,
             // change later
             batch_size: 128,
             learning_rate: 0.01,

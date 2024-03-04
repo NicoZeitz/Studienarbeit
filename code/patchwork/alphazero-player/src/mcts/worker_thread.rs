@@ -1,4 +1,7 @@
-use std::sync::{atomic::Ordering, Arc};
+use std::{
+    collections::HashMap,
+    sync::{atomic::Ordering, Arc},
+};
 
 use candle_core::Device;
 use dashmap::DashMap;
@@ -124,11 +127,15 @@ impl<
             return Ok(());
         }
 
+        let evaluation_mini_batch = evaluation_mini_batch
+            .iter()
+            .map(|entry| (*entry.key(), *entry.value()))
+            .collect::<HashMap<_, _>>();
+
         let nodes = evaluation_mini_batch
             .iter()
-            .map(|entry| {
-                let (batch_index, node_id) = *entry.key();
-                self.search_data.batch[batch_index].allocator.get_node_read(node_id)
+            .map(|((batch_index, node_id), _amount)| {
+                self.search_data.batch[*batch_index].allocator.get_node_read(*node_id)
             })
             .collect::<Vec<_>>();
         let games = nodes.iter().map(|node| &node.state).collect::<Vec<_>>();
@@ -183,27 +190,29 @@ impl<
         // }
         // writeln!(file, "]").unwrap();
 
-        for (mini_batch_index, entry) in evaluation_mini_batch.iter().enumerate() {
-            let (batch_index, node_id) = *entry.key();
-            let amount = *entry.value();
-
+        for (mini_batch_index, ((batch_index, node_id), amount)) in evaluation_mini_batch.iter().enumerate() {
             let policy = &policies[mini_batch_index];
             let value = values[mini_batch_index];
             let corresponding_actions = corresponding_action_ids.pop_front().unwrap();
 
-            let node = self.search_data.batch[batch_index].allocator.get_node_write(node_id);
+            let node = self.search_data.batch[*batch_index].allocator.get_node_write(*node_id);
             let color = if node.state.is_player_1() { 1.0 } else { -1.0 };
             drop(node);
 
             let value = color * value;
 
             Node::expand(
-                node_id,
+                *node_id,
                 policy,
                 &corresponding_actions,
-                &self.search_data.batch[batch_index].allocator,
+                &self.search_data.batch[*batch_index].allocator,
             )?;
-            Node::backpropagate(node_id, value, &self.search_data.batch[batch_index].allocator, amount);
+            Node::backpropagate(
+                *node_id,
+                value,
+                &self.search_data.batch[*batch_index].allocator,
+                *amount,
+            );
         }
 
         Ok(())

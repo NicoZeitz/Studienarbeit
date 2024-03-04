@@ -60,7 +60,13 @@ impl Trainer {
                 / self.args.number_of_parallel_games as f64)
                 .ceil() as usize;
             for _ in tqdm(0..iterations).style(tqdm::Style::Block).desc(Some("Self-Play")) {
-                history.extend(self.self_play::<Policy>(&var_map)?);
+                loop {
+                    if let Ok(partial_history) = self.self_play::<Policy>(&var_map) {
+                        history.extend(partial_history);
+                        break;
+                    }
+                    println!("Self-play failed, retrying...");
+                }
             }
 
             for _ in tqdm(0..self.args.number_of_epochs)
@@ -321,6 +327,7 @@ impl Trainer {
             return Ok(optimizer);
         }
 
+        // TODO: get the optimizer to load from a safetensors file
         if starting_epoch == 0 {
             return Ok(optimizer);
         }
