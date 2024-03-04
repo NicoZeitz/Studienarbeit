@@ -104,7 +104,6 @@ impl Trainer {
         let alphazero_options = Rc::new(AlphaZeroOptions {
             device: self.device.clone(),
             parallelization: NonZeroUsize::new((AlphaZeroOptions::default().parallelization.get() - 1).max(1)).unwrap(),
-            batch_size: NonZeroUsize::new(20 * self.args.number_of_parallel_games).unwrap(),
             end_condition: AlphaZeroEndCondition::Iterations {
                 iterations: self.args.number_of_mcts_iterations,
             },
