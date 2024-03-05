@@ -65,5 +65,10 @@ debug = true
 debug-assertions = true
 overflow-checks = true
 
+[profile.fast-release-symbols]
+inherits = "fast-release"
+strip = "none"
+debug = "full"
+
 # [target.'cfg(any(windows, unix))']
 # rustflags = ["-C target-cpu=native"]

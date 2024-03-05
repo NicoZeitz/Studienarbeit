@@ -284,7 +284,7 @@ impl ActionId {
         Self(match masked_natural_action_id {
             NaturalActionId::WALKING_ACTION_ID => {
                 debug_assert!(
-                    !natural_action_id.contains_hidden_information(),
+                    natural_action_id.contains_hidden_information(),
                     "[ActionId::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
                     natural_action_id.as_bits_with_hidden_information()
                 );
@@ -297,7 +297,7 @@ impl ActionId {
             }
             NaturalActionId::PATCH_PLACEMENT_ID_START..=NaturalActionId::PATCH_PLACEMENT_ID_END => {
                 debug_assert!(
-                    !natural_action_id.contains_hidden_information(),
+                    natural_action_id.contains_hidden_information(),
                     "[ActionId::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
                     natural_action_id.as_bits_with_hidden_information()
                 );
