@@ -5,6 +5,7 @@ use std::{
 
 use candle_core::Device;
 use dashmap::DashMap;
+use parking_lot::lock_api::RwLockReadGuard;
 use patchwork_core::{PlayerResult, TreePolicy};
 
 use crate::{
@@ -37,6 +38,7 @@ impl<
     /// # Returns
     ///
     /// `Ok(())` if the iteration was run successfully, `Err(PatchworkError)` otherwise.
+    #[allow(clippy::significant_drop_tightening)]
     pub fn iteration(&self) -> PlayerResult<()> {
         self.search_data.iterations.fetch_add(1, Ordering::Relaxed);
 
@@ -50,7 +52,7 @@ impl<
                     break;
                 }
 
-                drop(node);
+                RwLockReadGuard::unlock_fair(node);
                 node_id = Node::select(node_id, &game_state.allocator, &self.search_data.tree_policy);
             }
 
@@ -64,6 +66,7 @@ impl<
                 drop(node);
                 Node::backpropagate(node_id, value, &game_state.allocator, 1);
             } else {
+                drop(node);
                 // add current node to allow for batch evaluation with the network
                 self.search_data
                     .evaluation_mini_batch
@@ -132,13 +135,17 @@ impl<
             .map(|entry| (*entry.key(), *entry.value()))
             .collect::<HashMap<_, _>>();
 
-        let nodes = evaluation_mini_batch
+        let games = evaluation_mini_batch
             .iter()
             .map(|((batch_index, node_id), _amount)| {
-                self.search_data.batch[*batch_index].allocator.get_node_read(*node_id)
+                self.search_data.batch[*batch_index]
+                    .allocator
+                    .get_node_read(*node_id)
+                    .state
+                    .clone()
             })
             .collect::<Vec<_>>();
-        let games = nodes.iter().map(|node| &node.state).collect::<Vec<_>>();
+        let games = games.iter().collect::<Vec<_>>();
 
         let (available_actions_tensor, mut corresponding_action_ids) =
             map_games_to_action_tensors(&games, &self.search_data.device)?;
@@ -147,8 +154,6 @@ impl<
         // TODO: diagnostics
         // let start = std::time::Instant::now();
         let (policies, values) = self.search_data.network.forward_t(&games, self.search_data.train)?;
-        drop(games);
-        drop(nodes);
 
         let mut policies = policies.detach();
         let values = values.detach();
