@@ -20,11 +20,11 @@ fn main() -> PlayerResult<()> {
     let trainer = Trainer::new(
         training_directory,
         TrainingArgs {
-            number_of_training_iterations: 1000,
+            number_of_training_iterations: 10000,
             number_of_mcts_iterations: 600,
-            number_of_parallel_games: 5,
+            number_of_parallel_games: 1,
             number_of_self_play_iterations: 100,
-            number_of_epochs: 7,
+            number_of_epochs: 10,
             // change later
             batch_size: 128,
             learning_rate: 0.01,

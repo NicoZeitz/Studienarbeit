@@ -103,11 +103,12 @@ impl Trainer {
         let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
         let alphazero_options = Rc::new(AlphaZeroOptions {
             device: self.device.clone(),
-            parallelization: NonZeroUsize::new((AlphaZeroOptions::default().parallelization.get() - 1).max(1)).unwrap(),
+            parallelization: NonZeroUsize::new((AlphaZeroOptions::default_parallelization().get() + 1).max(1)).unwrap(),
             end_condition: AlphaZeroEndCondition::Iterations {
                 iterations: self.args.number_of_mcts_iterations,
             },
             logging: Logging::Disabled,
+            ..AlphaZeroOptions::default()
         });
 
         let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
