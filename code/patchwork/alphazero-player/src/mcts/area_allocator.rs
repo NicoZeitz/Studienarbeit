@@ -1,5 +1,4 @@
-use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-
+use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use patchwork_core::{ActionId, Patchwork};
 
 use crate::mcts::{Node, NodeId};
@@ -53,7 +52,7 @@ impl AreaAllocator {
                 .push(RwLock::new(Node::new(dummy_node_id, game, parent, action_taken, prior))),
         );
 
-        self.nodes[node_id.0].write().unwrap().id = node_id;
+        self.nodes[node_id.0].write().id = node_id;
 
         node_id
     }
@@ -68,7 +67,7 @@ impl AreaAllocator {
     ///
     /// The reference to the node with the given ID.
     pub fn get_node_read(&self, node_id: NodeId) -> RwLockReadGuard<'_, Node> {
-        self.nodes[node_id.0].read().unwrap()
+        self.nodes[node_id.0].read()
     }
 
     /// Get a mutable reference to the node with the given ID.
@@ -81,7 +80,7 @@ impl AreaAllocator {
     ///
     /// The mutable reference to the node with the given ID.
     pub fn get_node_write(&self, node_id: NodeId) -> RwLockWriteGuard<'_, Node> {
-        self.nodes[node_id.0].write().unwrap()
+        self.nodes[node_id.0].write()
     }
 }
 

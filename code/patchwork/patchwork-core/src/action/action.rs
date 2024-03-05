@@ -104,10 +104,11 @@ impl Action {
 
         match natural_action_id.as_bits() {
             NaturalActionId::WALKING_ACTION_ID => {
-                debug_assert!(!natural_action_id.contains_hidden_information(),
-                        "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
-                        natural_action_id.as_bits_with_hidden_information()
-                    );
+                debug_assert!(
+                    natural_action_id.contains_hidden_information(),
+                    "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
+                    natural_action_id.as_bits_with_hidden_information()
+                );
 
                 let starting_index = natural_action_id.get_starting_index();
 
@@ -122,13 +123,13 @@ impl Action {
                     }
                 } else {
                     debug_assert!(
-                        !natural_action_id.is_patch_placement(),
+                        natural_action_id.is_patch_placement(),
                         "[Action::from_natural_action_id] The given natural action id is not a patch placement action ({:064b})",
                         natural_action_id.as_bits_with_hidden_information()
                     );
 
                     debug_assert!(
-                        !natural_action_id.contains_hidden_information(),
+                        natural_action_id.contains_hidden_information(),
                         "[Action::from_natural_action_id] The given natural action id does not contain hidden information ({:064b})",
                         natural_action_id.as_bits_with_hidden_information()
                     );
