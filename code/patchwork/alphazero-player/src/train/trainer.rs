@@ -119,21 +119,23 @@ impl Trainer {
             let mut history = Vec::new();
             let mut index = starting_index + 1;
 
-            // Block until first game is available
-            history.push(receiver.recv()?);
+            // Block at first
+            while history.len() < self.args.batch_size {
+                history.push(receiver.recv()?);
+            }
 
             'outer: loop {
                 loop {
                     match receiver.try_recv() {
                         Ok(finished_game) => {
                             history.push(finished_game);
-                            while history.len() > self.args.training_set_size {
-                                history.remove(0);
-                            }
                         }
                         Err(TryRecvError::Empty) => break,
                         Err(TryRecvError::Disconnected) => break 'outer,
                     }
+                }
+                while history.len() > self.args.training_set_size {
+                    history.remove(0);
                 }
 
                 writeln!(log_file, "Training iteration {index}")?;

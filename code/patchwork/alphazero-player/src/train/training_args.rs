@@ -40,7 +40,7 @@ impl Default for TrainingArgs {
     fn default() -> Self {
         Self {
             c: 2f32.sqrt(),
-            learning_rate: 0.01, // 0.02, 0.002 0.0002 drop after some time
+            learning_rate: 0.002, // 0.02, 0.002 0.0002 drop after some time
             dirichlet_epsilon: 0.25,
             dirichlet_alpha: 0.2,
             temperature: 1.25,
@@ -50,7 +50,7 @@ impl Default for TrainingArgs {
             training_set_size: 500 * 43,
             training_sample_size: 100 * 43,
             number_of_parallel_games: AlphaZeroOptions::default_parallelization().get() - 1,
-            number_of_epochs: 10,
+            number_of_epochs: 4,
             batch_size: 128,
         }
     }
