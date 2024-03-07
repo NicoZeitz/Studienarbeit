@@ -2,11 +2,15 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     num::NonZeroUsize,
-    path::PathBuf,
+    path::{Path, PathBuf},
     rc::Rc,
-    sync::mpsc::{Sender, TryRecvError},
+    sync::{
+        mpsc::{Sender, TryRecvError},
+        Arc,
+    },
 };
 
+use arc_swap::ArcSwap;
 use candle_core::{DType, Device, IndexOp, Tensor};
 use candle_nn::{Optimizer, VarBuilder, VarMap};
 use patchwork_core::{Logging, Patchwork, PlayerResult, TerminationType, TreePolicy};
@@ -30,6 +34,8 @@ pub struct Trainer {
     pub device: Device,
     pub args: TrainingArgs,
     pub training_directory: PathBuf,
+    current_var_map: ArcSwap<VarMap>,
+    starting_index: usize,
 }
 
 struct History {
@@ -46,17 +52,20 @@ impl Trainer {
     /// * `training_directory` - The path to the directory to save and load the training data to and from.
     /// * `args` - The arguments to use for training the neural network.
     /// * `device` - The device to use.
-    pub fn new<P: AsRef<std::path::Path>>(training_directory: P, args: TrainingArgs, device: Device) -> Self {
-        Self {
+    pub fn new<P: AsRef<Path>>(training_directory: P, args: TrainingArgs, device: Device) -> PlayerResult<Self> {
+        let (var_map, starting_index) = get_var_map(training_directory.as_ref())?;
+
+        Ok(Self {
             training_directory: training_directory.as_ref().to_path_buf(),
             args,
             device,
-        }
+            current_var_map: ArcSwap::new(Arc::new(var_map)),
+            starting_index,
+        })
     }
 
     pub fn learn<Policy: TreePolicy + Default + Clone>(&self) -> PlayerResult<()> {
-        let (var_map, starting_index) = self.get_var_map()?;
-        let mut optimizer = self.get_optimizer(&var_map, starting_index)?;
+        let starting_index = self.starting_index;
 
         let log_path = self.training_directory.join(format!("log_{starting_index:04?}.txt"));
         let log_path = log_path.as_path();
@@ -71,6 +80,7 @@ impl Trainer {
                 Vec::with_capacity(self.args.number_of_parallel_games);
             for _ in 0..self.args.number_of_parallel_games {
                 threads.push(s.spawn(|| loop {
+                    let var_map = self.current_var_map.load().clone();
                     let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &self.device);
                     let alphazero_options = Rc::new(AlphaZeroOptions {
                         device: self.device.clone(),
@@ -126,6 +136,9 @@ impl Trainer {
                     }
                 }
 
+                let var_map = self.current_var_map.load().clone();
+
+                let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
                 let mut train_sample = history
                     .choose_multiple(&mut thread_rng(), self.args.training_sample_size)
                     .collect::<Vec<_>>();
@@ -145,6 +158,7 @@ impl Trainer {
                 )?;
                 let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
                 var_map.save(network_weights)?;
+                let _ = self.current_var_map.swap(var_map);
                 index += 1;
             }
 
@@ -230,92 +244,6 @@ impl Trainer {
         }
     }
 
-    // fn self_play<Policy: TreePolicy + Default>(&self, var_map: &VarMap) -> PlayerResult<Vec<History>> {
-    //     struct PartialHistory {
-    //         state: Patchwork,
-    //         policy: Tensor,
-    //     }
-
-    //     let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
-    //     let alphazero_options = Rc::new(AlphaZeroOptions {
-    //         device: self.device.clone(),
-    //         parallelization: NonZeroUsize::new((AlphaZeroOptions::default_parallelization().get() + 1).max(1)).unwrap(),
-    //         end_condition: AlphaZeroEndCondition::Iterations {
-    //             iterations: self.args.number_of_mcts_iterations,
-    //         },
-    //         logging: Logging::Disabled,
-    //         ..AlphaZeroOptions::default()
-    //     });
-
-    //     let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
-    //     let mut search_tree = DefaultSearchTree::<Policy>::new(
-    //         false,
-    //         Default::default(),
-    //         network,
-    //         alphazero_options,
-    //         self.args.dirichlet_alpha,
-    //         self.args.dirichlet_epsilon,
-    //     );
-
-    //     let mut return_history = vec![];
-    //     let mut history = (0..self.args.number_of_parallel_games)
-    //         .map(|_| vec![])
-    //         .collect::<Vec<_>>();
-    //     let mut games = (0..self.args.number_of_parallel_games)
-    //         .map(|_| Patchwork::get_initial_state(None))
-    //         .collect::<Vec<_>>();
-
-    //     let temperature_tensor = Tensor::new(1.0 / self.args.temperature, &self.device)?;
-
-    //     while !games.is_empty() {
-    //         let policies = search_tree
-    //             .search(games.iter().collect::<Vec<_>>().as_slice())?
-    //             .detach();
-
-    //         let (available_actions_tensor, mut corresponding_action_ids) =
-    //             map_games_to_action_tensors(games.iter().collect::<Vec<_>>().as_slice(), &self.device)?;
-    //         let available_actions_tensor = available_actions_tensor.detach();
-
-    //         let policies = (policies * available_actions_tensor)?;
-    //         let policies_sum = policies.sum_keepdim(1)?;
-    //         let policies = policies.broadcast_div(&policies_sum)?;
-
-    //         for i in (0..games.len()).rev() {
-    //             let game = &mut games[i];
-    //             let policy = policies.i((i, ..))?;
-    //             let actions = corresponding_action_ids.pop_back().unwrap();
-
-    //             history[i].push(PartialHistory {
-    //                 state: game.clone(),
-    //                 policy: policy.clone().detach().to_device(&self.device)?,
-    //             });
-
-    //             let temperature_action_probabilities = if history[i].len() >= self.args.temperature_end {
-    //                 policy
-    //             } else {
-    //                 policy.broadcast_pow(&temperature_tensor)?
-    //             };
-    //             let dist = WeightedIndex::new(temperature_action_probabilities.to_vec1::<f32>()?)?;
-
-    //             let action = actions[dist.sample(&mut thread_rng())];
-    //             game.do_action(action, false)?;
-
-    //             if game.is_terminated() {
-    //                 let history = std::mem::take(&mut history[i]);
-    //                 return_history.extend(history.into_iter().map(|partial_history| History {
-    //                     state: partial_history.state,
-    //                     policy: partial_history.policy,
-    //                     outcome: game.get_termination_result().termination,
-    //                 }));
-
-    //                 games.swap_remove(i);
-    //             }
-    //         }
-    //     }
-
-    //     Ok(return_history)
-    // }
-
     fn train(
         &self,
         training_set: &mut [&History],
@@ -396,85 +324,10 @@ impl Trainer {
         }
 
         writeln!(log_file,
-            "\x1B[1A\rPolicy loss: {last_policy_loss}, Value loss: {last_value_loss}, L² loss: {last_regularization_loss}, Total loss: {last_loss}"
+            "Policy loss: {last_policy_loss}, Value loss: {last_value_loss}, L² loss: {last_regularization_loss}, Total loss: {last_loss}"
         )?;
 
         Ok(())
-    }
-
-    fn get_var_map(&self) -> PlayerResult<(VarMap, usize)> {
-        let network_regex = Regex::new(r"network_(?P<epoch>\d{4}).safetensors").unwrap();
-
-        let mut starting_index = 0;
-        let mut network_weights = None;
-
-        for file in fs::read_dir(self.training_directory.as_path())? {
-            let Ok(dir_entry) = file else {
-                continue;
-            };
-
-            let Ok(metadata) = dir_entry.metadata() else {
-                continue;
-            };
-
-            if !metadata.is_file() {
-                continue;
-            }
-
-            let file_name = dir_entry.file_name();
-            let file_name = file_name.to_string_lossy();
-
-            if let Some(captures) = network_regex.captures(&file_name) {
-                let epoch = captures.name("epoch").unwrap().as_str().parse::<usize>().unwrap();
-
-                if epoch < starting_index {
-                    continue;
-                }
-
-                starting_index = epoch;
-                network_weights = Some(dir_entry.path());
-            }
-        }
-        let mut var_map = VarMap::new();
-
-        if let Some(network_weights) = network_weights {
-            var_map.load(network_weights)?;
-        }
-
-        Ok((var_map, starting_index))
-    }
-
-    fn get_optimizer(&self, var_map: &VarMap, starting_epoch: usize) -> PlayerResult<AdamW> {
-        // force consistent ordering for saving and loading
-        let guard = var_map.data().lock().unwrap();
-        let mut all_vars = guard.iter().collect::<Vec<_>>();
-        all_vars.sort_unstable_by(|entry1, entry2| entry1.0.cmp(entry2.0));
-        let all_vars = all_vars.iter().map(|entry| entry.1.clone()).collect::<Vec<_>>();
-        drop(guard);
-
-        let mut optimizer = AdamW::new(
-            all_vars,
-            ParamsAdamW {
-                lr: self.args.learning_rate,
-                ..Default::default()
-            },
-        )?;
-
-        if starting_epoch != 0 {
-            return Ok(optimizer);
-        }
-
-        // TODO: get the optimizer to load from a safetensors file
-        if starting_epoch == 0 {
-            return Ok(optimizer);
-        }
-
-        let file_name = format!("optimizer_{starting_epoch:04}.safetensors");
-        let file = self.training_directory.join(file_name);
-
-        optimizer.load(file)?;
-
-        Ok(optimizer)
     }
 }
 
@@ -526,4 +379,82 @@ fn multi_target_cross_entropy_loss(input: &Tensor, target: &Tensor) -> candle_co
     mask.where_cond(&(input * target)?, &target.zeros_like()?)?
         .sum_all()?
         .affine(-1f64 / batch_size, 0.)
+}
+
+fn get_var_map<P: AsRef<Path>>(training_directory: P) -> PlayerResult<(VarMap, usize)> {
+    let network_regex = Regex::new(r"network_(?P<epoch>\d{4}).safetensors").unwrap();
+
+    let mut starting_index = 0;
+    let mut network_weights = None;
+
+    for file in fs::read_dir(training_directory)? {
+        let Ok(dir_entry) = file else {
+            continue;
+        };
+
+        let Ok(metadata) = dir_entry.metadata() else {
+            continue;
+        };
+
+        if !metadata.is_file() {
+            continue;
+        }
+
+        let file_name = dir_entry.file_name();
+        let file_name = file_name.to_string_lossy();
+
+        if let Some(captures) = network_regex.captures(&file_name) {
+            let epoch = captures.name("epoch").unwrap().as_str().parse::<usize>().unwrap();
+
+            if epoch < starting_index {
+                continue;
+            }
+
+            starting_index = epoch;
+            network_weights = Some(dir_entry.path());
+        }
+    }
+    let mut var_map = VarMap::new();
+
+    if let Some(network_weights) = network_weights {
+        var_map.load(network_weights)?;
+    }
+
+    Ok((var_map, starting_index))
+}
+
+fn get_optimizer(var_map: &VarMap, learning_rate: f64) -> PlayerResult<AdamW> {
+    Ok(AdamW::new(
+        var_map.all_vars(),
+        ParamsAdamW {
+            lr: learning_rate,
+            ..Default::default()
+        },
+    )?)
+
+    // // force consistent ordering for saving and loading
+    // let guard = var_map.data().lock().unwrap();
+    // let mut all_vars = guard.iter().collect::<Vec<_>>();
+    // all_vars.sort_unstable_by(|entry1, entry2| entry1.0.cmp(entry2.0));
+    // let all_vars = all_vars.iter().map(|entry| entry.1.clone()).collect::<Vec<_>>();
+    // drop(guard);
+
+    // let mut optimizer = AdamW::new(
+    //     all_vars,
+    //     ParamsAdamW {
+    //         lr: self.args.learning_rate,
+    //         ..Default::default()
+    //     },
+    // )?;
+
+    // if starting_epoch != 0 {
+    //     return Ok(optimizer);
+    // }
+
+    // let file_name = format!("optimizer_{starting_epoch:04}.safetensors");
+    // let file = self.training_directory.join(file_name);
+
+    // optimizer.load(file)?;
+
+    // Ok(optimizer)
 }
