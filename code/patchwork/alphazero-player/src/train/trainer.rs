@@ -142,14 +142,10 @@ impl Trainer {
 
                 #[allow(clippy::significant_drop_in_scrutinee)]
                 for (name, var) in self.current_var_map.lock().unwrap().data().lock().unwrap().iter() {
-                    writeln!(log_file, "name: {:?}", name)?;
-
                     new_data.insert(
                         name.clone(),
                         candle_core::Var::from_tensor(var.as_detached_tensor().as_ref())?,
                     );
-
-                    writeln!(log_file, "name: {:?}", name)?;
                 }
                 drop(new_data);
 
