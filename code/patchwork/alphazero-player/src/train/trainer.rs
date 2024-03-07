@@ -136,7 +136,11 @@ impl Trainer {
                     }
                 }
 
-                let var_map = self.current_var_map.load().clone();
+                let mut var_map = VarMap::new();
+                #[allow(clippy::significant_drop_in_scrutinee)]
+                for (name, var) in self.current_var_map.load().data().lock().unwrap().iter() {
+                    var_map.set_one(name.clone(), var.as_detached_tensor().clone())?;
+                }
 
                 let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
                 let mut train_sample = history
@@ -158,7 +162,7 @@ impl Trainer {
                 )?;
                 let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
                 var_map.save(network_weights)?;
-                let _ = self.current_var_map.swap(var_map);
+                let _ = self.current_var_map.swap(Arc::new(var_map));
                 index += 1;
             }
 
