@@ -16,7 +16,7 @@ use patchwork_core::{Logging, Patchwork, PlayerResult, TerminationType, TreePoli
 use rand::{seq::SliceRandom, thread_rng};
 use rand_distr::{Distribution, WeightedIndex};
 use regex::Regex;
-use tqdm::{tqdm, Iter};
+use tqdm::tqdm;
 
 use crate::{
     action::map_games_to_action_tensors,
@@ -92,7 +92,7 @@ impl Trainer {
                         ..AlphaZeroOptions::default()
                     });
                     let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
-                    let search_tree = DefaultSearchTree::<Policy>::new(
+                    let mut search_tree = DefaultSearchTree::<Policy>::new(
                         false,
                         Default::default(),
                         network,
@@ -100,6 +100,7 @@ impl Trainer {
                         self.args.dirichlet_alpha,
                         self.args.dirichlet_epsilon,
                     );
+                    search_tree.set_dirichlet_noise(true);
 
                     let sender = sender.clone();
 
@@ -152,35 +153,15 @@ impl Trainer {
                 }
                 drop(new_data);
 
-                let optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
-                let train_sample = history
+                let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
+                let mut train_sample = history
                     .choose_multiple(&mut thread_rng(), self.args.training_sample_size)
                     .collect::<Vec<_>>();
 
-                std::thread::scope(|s| {
-                    let mut threads = Vec::with_capacity(self.args.number_of_epochs);
-                    for _ in 0..self.args.number_of_epochs {
-                        let mut train_sample = train_sample.clone();
-                        let mut optimizer = optimizer.clone();
-                        let var_map = var_map.clone();
-                        let mut log_file = log_file.try_clone().unwrap();
-                        threads.push(
-                            s.spawn(move || self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)),
-                        );
-                    }
-                    for thread in threads
-                        .into_iter()
-                        .tqdm()
-                        .style(tqdm::Style::Block)
-                        .desc(Some("Train"))
-                        .clear(true)
-                    {
-                        thread.join().unwrap()?;
-                    }
-
-                    PlayerResult::Ok(())
-                })?;
-
+                for _ in tqdm(0..self.args.number_of_epochs) {
+                    self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)?;
+                }
+               
                 writeln!(
                     log_file,
                     "Finished iteration {index}. Saving weights to {:?}",
@@ -322,7 +303,9 @@ impl Trainer {
             let policy_targets = Tensor::stack(&policy_targets, 0)?;
             let value_targets = Tensor::stack(&value_targets, 0)?;
 
+            let start_time = std::time::Instant::now();
             let (out_policies, out_values) = network.forward_t(games.iter().collect::<Vec<_>>().as_slice(), true)?;
+            writeln!(log_file, "Forward pass took {:?}", start_time.elapsed())?;
 
             let policy_loss = multi_target_cross_entropy_loss(&out_policies, &policy_targets)?;
             let value_loss = candle_nn::loss::mse(&out_values, &value_targets)?;

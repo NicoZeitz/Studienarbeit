@@ -35,6 +35,8 @@ pub struct SearchTree<
     dirichlet_epsilon: f32,
     /// Whether the network is in training or evaluation/interference mode
     train: bool,
+    /// Whether to apply dirichlet noise to the root node or not
+    apply_dirichlet_noise: bool,
     /// The policy to select nodes during the selection phase. Moved to Search Data during the search.
     tree_policy: Option<Policy>,
 }
@@ -77,6 +79,7 @@ impl<
 
         Self {
             train,
+            apply_dirichlet_noise: false,
             dirichlet_epsilon,
             dirichlet_noise,
             tree_policy: Some(tree_policy),
@@ -96,6 +99,19 @@ impl<
     /// `𝒪(𝟣)`
     pub fn set_train(&mut self, train: bool) {
         self.train = train;
+    }
+
+    /// Sets whether to apply dirichlet noise to the root node or not
+    ///
+    /// # Arguments
+    ///
+    /// * `apply` - Whether to apply dirichlet noise to the root node or not
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    pub fn set_dirichlet_noise(&mut self, apply: bool) {
+        self.apply_dirichlet_noise = apply;
     }
 
     /// Searches for the best action to take in the given game states.
@@ -227,7 +243,7 @@ impl<
         let (policies, _values) = self.network.as_ref().unwrap().forward_t(games, self.train)?;
         let mut policies = candle_nn::ops::softmax(&policies, 1)?.detach();
 
-        if self.train {
+        if self.apply_dirichlet_noise {
             let noise = Tensor::from_vec(
                 self.dirichlet_noise.sample(&mut rand::thread_rng()),
                 (NaturalActionId::AMOUNT_OF_NORMAL_NATURAL_ACTION_IDS,),
