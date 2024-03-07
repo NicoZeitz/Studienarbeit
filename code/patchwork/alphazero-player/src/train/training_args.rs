@@ -46,12 +46,12 @@ impl Default for TrainingArgs {
             temperature: 1.25,
             temperature_end: 35,
             regularization: 5e-5, // 1e-4,
-            number_of_mcts_iterations: 600,
+            number_of_mcts_iterations: 1000,
             training_set_size: 500 * 43,
             training_sample_size: 100 * 43,
             number_of_parallel_games: AlphaZeroOptions::default_parallelization().get() - 1,
-            number_of_epochs: 4,
-            batch_size: 128,
+            number_of_epochs: 5,
+            batch_size: 64,
         }
     }
 }

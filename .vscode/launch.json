@@ -6,6 +6,18 @@
     "configurations": [
         {
             "preLaunchTask": "Build Rust (Debug)",
+            "name": "(Windows) Debug executable 'patchwork alphazero train'",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/code/patchwork/target/debug/alphazero-player-train.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/code/patchwork",
+            "environment": [],
+            "console": "internalConsole"
+        },
+        {
+            "preLaunchTask": "Build Rust (Debug)",
             "name": "(Windows) Debug executable 'patchwork console'",
             "type": "cppvsdbg",
             "request": "launch",
