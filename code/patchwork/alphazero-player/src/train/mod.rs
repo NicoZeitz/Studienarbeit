@@ -1,4 +1,3 @@
-pub mod optimizer;
 mod trainer;
 mod training_args;
 

@@ -11,21 +11,15 @@ use std::{
 };
 
 use candle_core::{DType, Device, IndexOp, Tensor};
-use candle_nn::{Optimizer, VarBuilder, VarMap};
+use candle_nn::{Optimizer, VarBuilder, VarMap, SGD};
 use patchwork_core::{Logging, Patchwork, PlayerResult, TerminationType, TreePolicy};
 use rand::{seq::SliceRandom, thread_rng};
 use rand_distr::{Distribution, WeightedIndex};
 use regex::Regex;
-use tqdm::tqdm;
+use tqdm::{tqdm, Iter};
 
 use crate::{
-    action::map_games_to_action_tensors,
-    mcts::DefaultSearchTree,
-    network::DefaultPatchZero,
-    train::{
-        optimizer::{AdamW, ParamsAdamW},
-        TrainingArgs,
-    },
+    action::map_games_to_action_tensors, mcts::DefaultSearchTree, network::DefaultPatchZero, train::TrainingArgs,
     AlphaZeroEndCondition, AlphaZeroOptions,
 };
 
@@ -79,8 +73,11 @@ impl Trainer {
             let mut threads: Vec<std::thread::ScopedJoinHandle<'_, PlayerResult<()>>> =
                 Vec::with_capacity(self.args.number_of_parallel_games);
             for _ in 0..self.args.number_of_parallel_games {
-                threads.push(s.spawn(|| loop {
-                    let var_map = self.current_var_map.lock().unwrap().clone();
+                let mut log_file = log_file.try_clone().unwrap();
+                let var_map = self.current_var_map.lock().unwrap().clone();
+                let sender = sender.clone();
+
+                threads.push(s.spawn(move || loop {
                     let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &self.device);
                     let alphazero_options = Rc::new(AlphaZeroOptions {
                         device: self.device.clone(),
@@ -103,9 +100,7 @@ impl Trainer {
                     search_tree.set_dirichlet_noise(true);
 
                     let sender = sender.clone();
-
                     if let Err(error) = self.self_play(search_tree, sender) {
-                        let mut log_file = OpenOptions::new().append(true).create(true).open(log_path)?;
                         writeln!(
                             log_file,
                             "Self-play at Thread {:?} failed, retrying...",
@@ -153,15 +148,18 @@ impl Trainer {
                 }
                 drop(new_data);
 
-                let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
                 let mut train_sample = history
                     .choose_multiple(&mut thread_rng(), self.args.training_sample_size)
                     .collect::<Vec<_>>();
 
-                for _ in tqdm(0..self.args.number_of_epochs) {
-                    self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)?;
+                for _ in tqdm(0..self.args.number_of_epochs)
+                    .style(tqdm::Style::Block)
+                    .desc(Some("Train"))
+                    .clear(true)
+                {
+                    self.train(&mut train_sample, &var_map, &log_file)?;
                 }
-               
+
                 writeln!(
                     log_file,
                     "Finished iteration {index}. Saving weights to {:?}",
@@ -256,13 +254,7 @@ impl Trainer {
         }
     }
 
-    fn train(
-        &self,
-        training_set: &mut [&History],
-        optimizer: &mut impl Optimizer,
-        var_map: &VarMap,
-        log_file: &mut fs::File,
-    ) -> PlayerResult<()> {
+    fn train(&self, training_set: &mut [&History], var_map: &VarMap, log_file: &fs::File) -> PlayerResult<()> {
         fn get_value_from_outcome(outcome: TerminationType, is_current_player_1: bool, device: &Device) -> Tensor {
             let multiplier: f32 = if is_current_player_1 { 1.0 } else { -1.0 };
             match outcome {
@@ -276,70 +268,92 @@ impl Trainer {
 
         training_set.shuffle(&mut thread_rng());
 
-        let mut last_loss = 0.0;
-        let mut last_policy_loss = 0.0;
-        let mut last_value_loss = 0.0;
-        let mut last_regularization_loss = 0.0;
+        std::thread::scope(|s| {
+            let mut threads = Vec::with_capacity(training_set.len() / self.args.batch_size + 1);
 
-        for batch in tqdm(training_set.chunks(self.args.batch_size))
-            .style(tqdm::Style::Block)
-            .desc(Some("Batch"))
-            .clear(true)
-        {
-            let (games, policy_targets, value_targets) = batch.iter().fold(
-                (vec![], vec![], vec![]),
-                |(mut games, mut policy_targets, mut value_targets), history| {
-                    let value_target =
-                        get_value_from_outcome(history.outcome, history.state.is_player_1(), &self.device);
+            for batch in training_set.chunks(self.args.batch_size) {
+                let mut log_file = log_file.try_clone().unwrap();
+                let network = network.clone();
+                let mut optimizer = get_optimizer(var_map, self.args.learning_rate)?;
 
-                    games.push(history.state.clone());
-                    policy_targets.push(history.policy.clone());
-                    value_targets.push(value_target);
+                threads.push(s.spawn(move || {
+                    let (games, policy_targets, value_targets) = batch.iter().fold(
+                        (vec![], vec![], vec![]),
+                        |(mut games, mut policy_targets, mut value_targets), history| {
+                            let value_target =
+                                get_value_from_outcome(history.outcome, history.state.is_player_1(), &self.device);
 
-                    (games, policy_targets, value_targets)
-                },
-            );
+                            games.push(history.state.clone());
+                            policy_targets.push(history.policy.clone());
+                            value_targets.push(value_target);
 
-            let policy_targets = Tensor::stack(&policy_targets, 0)?;
-            let value_targets = Tensor::stack(&value_targets, 0)?;
+                            (games, policy_targets, value_targets)
+                        },
+                    );
 
-            let start_time = std::time::Instant::now();
-            let (out_policies, out_values) = network.forward_t(games.iter().collect::<Vec<_>>().as_slice(), true)?;
-            writeln!(log_file, "Forward pass took {:?}", start_time.elapsed())?;
+                    let policy_targets = Tensor::stack(&policy_targets, 0)?;
+                    let value_targets = Tensor::stack(&value_targets, 0)?;
 
-            let policy_loss = multi_target_cross_entropy_loss(&out_policies, &policy_targets)?;
-            let value_loss = candle_nn::loss::mse(&out_values, &value_targets)?;
-            let regularization_loss = Tensor::stack(
-                var_map
-                    .all_vars()
-                    .iter()
-                    .map(|var| var.as_tensor().sqr()?.sum_all())
-                    .collect::<candle_core::Result<Vec<_>>>()?
-                    .as_slice(),
-                0,
-            )?
-            .sum_all()?
-            .affine(self.args.regularization, 0.0)?;
+                    let start_time = std::time::Instant::now();
+                    let (out_policies, out_values) =
+                        network.forward_t(games.iter().collect::<Vec<_>>().as_slice(), true)?;
+                    let end_time = start_time.elapsed();
 
-            last_policy_loss = policy_loss.to_scalar::<f32>()?;
-            last_value_loss = value_loss.to_scalar::<f32>()?;
-            last_regularization_loss = regularization_loss.to_scalar::<f32>()?;
+                    let policy_loss = multi_target_cross_entropy_loss(&out_policies, &policy_targets)?;
+                    let value_loss = candle_nn::loss::mse(&out_values, &value_targets)?;
+                    let regularization_loss = Tensor::stack(
+                        var_map
+                            .all_vars()
+                            .iter()
+                            .map(|var| var.as_tensor().sqr()?.sum_all())
+                            .collect::<candle_core::Result<Vec<_>>>()?
+                            .as_slice(),
+                        0,
+                    )?
+                    .sum_all()?
+                    .affine(self.args.regularization, 0.0)?;
 
-            let loss = (policy_loss + value_loss + regularization_loss)?;
+                    let scalar_policy_loss = policy_loss.to_scalar::<f32>()?;
+                    let scalar_value_loss = value_loss.to_scalar::<f32>()?;
+                    let scalar_regularization_loss = regularization_loss.to_scalar::<f32>()?;
 
-            last_loss = loss.to_scalar::<f32>()?;
+                    let loss = (policy_loss + value_loss + regularization_loss)?;
+                    let scalar_loss = loss.to_scalar::<f32>()?;
 
-            #[allow(clippy::manual_assert)]
-            if !last_loss.is_finite() {
-                panic!("Loss is infinite or NaN (try reducing the learning rate or increasing the batch_size)");
+                    #[allow(clippy::manual_assert)]
+                    if !scalar_loss.is_finite() {
+                        panic!("Loss is infinite or NaN (try reducing the learning rate or increasing the batch_size)");
+                    }
+
+                    let thread_id = std::thread::current().id();
+
+                    writeln!(log_file, "{thread_id:?}: Forward pass took {end_time:?}")?;
+                    writeln!(log_file,
+                        "{thread_id:?} Policy loss: {scalar_policy_loss}, Value loss: {scalar_value_loss}, L² loss: {scalar_regularization_loss}, Total loss: {scalar_loss}"
+                    )?;
+
+                    let start_time = std::time::Instant::now();
+                    optimizer.backward_step(&loss)?;
+                    let end_time = start_time.elapsed();
+
+                    writeln!(log_file, "{thread_id:?}: Backward pass took {end_time:?}")?;
+
+                    PlayerResult::Ok(())
+                }));
             }
 
-            optimizer.backward_step(&loss)?;
-        }
+            for thread in threads
+                .into_iter()
+                .tqdm()
+                .style(tqdm::Style::Block)
+                .desc(Some("Batch"))
+                .clear(true)
+            {
+                thread.join().unwrap()?;
+            }
 
-        writeln!(log_file,
-            "Policy loss: {last_policy_loss}, Value loss: {last_value_loss}, L² loss: {last_regularization_loss}, Total loss: {last_loss}"
-        )?;
+            PlayerResult::Ok(())
+        })?;
 
         Ok(())
     }
@@ -437,38 +451,6 @@ fn get_var_map<P: AsRef<Path>>(training_directory: P) -> PlayerResult<(VarMap, u
     Ok((var_map, starting_index))
 }
 
-fn get_optimizer(var_map: &VarMap, learning_rate: f64) -> PlayerResult<AdamW> {
-    Ok(AdamW::new(
-        var_map.all_vars(),
-        ParamsAdamW {
-            lr: learning_rate,
-            ..Default::default()
-        },
-    )?)
-
-    // // force consistent ordering for saving and loading
-    // let guard = var_map.data().lock().unwrap();
-    // let mut all_vars = guard.iter().collect::<Vec<_>>();
-    // all_vars.sort_unstable_by(|entry1, entry2| entry1.0.cmp(entry2.0));
-    // let all_vars = all_vars.iter().map(|entry| entry.1.clone()).collect::<Vec<_>>();
-    // drop(guard);
-
-    // let mut optimizer = AdamW::new(
-    //     all_vars,
-    //     ParamsAdamW {
-    //         lr: self.args.learning_rate,
-    //         ..Default::default()
-    //     },
-    // )?;
-
-    // if starting_epoch != 0 {
-    //     return Ok(optimizer);
-    // }
-
-    // let file_name = format!("optimizer_{starting_epoch:04}.safetensors");
-    // let file = self.training_directory.join(file_name);
-
-    // optimizer.load(file)?;
-
-    // Ok(optimizer)
+fn get_optimizer(var_map: &VarMap, learning_rate: f64) -> PlayerResult<SGD> {
+    Ok(SGD::new(var_map.all_vars(), learning_rate)?)
 }
