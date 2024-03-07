@@ -25,9 +25,9 @@ linfa = "0.7.0"
 patchwork-core = { path = "../patchwork-core" }
 
 [[bin]]
-name = "evaluator_verification"
+name = "evaluator-verification"
 path = "src/verification.rs"
 
 [[bin]]
-name = "evaluator_train"
+name = "evaluator-train"
 path = "train/main.rs"

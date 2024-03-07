@@ -6,6 +6,7 @@ use crate::network::{
     convolutional_layer::ConvolutionalLayer, policy_head::PolicyHead, resblock::ResBlock, value_head::ValueHead,
 };
 
+#[derive(Debug, Clone)]
 pub struct ResNet<
     const NUMBER_OF_PATCH_LAYERS: usize,
     const NUMBER_OF_RESIDUAL_LAYERS: usize,

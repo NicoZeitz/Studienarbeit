@@ -4,6 +4,7 @@ use patchwork_core::{ScoredTreePolicy, TreePolicyNode};
 /// nodes. The original `AlphaZero` paper used a value of -1 for the FPU (see [AlphaZero paper, and Lc0 v0.19.1](https://lczero.org/blog/2018/12/alphazero-paper-and-lc0-v0191/)).
 /// This means that unvisited nodes are considered as losses. Leela Chess Zero (Lc0) initializes the FPU with the parent
 /// value reduced by a certain amount (0.44) (see [Engine parameters](https://lczero.org/play/flags/)).
+#[derive(Debug, Clone)]
 pub enum FPUStrategy {
     /// Directly initialize the FPU with a constant value.
     Absolute(f64),
@@ -59,6 +60,7 @@ impl Default for FPUStrategy {
 /// - [Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm, S.8](https://arxiv.org/abs/1712.01815)
 /// - [A Simple Alpha(Go) Zero Tutorial](https://web.stanford.edu/~surag/posts/alphazero.html)
 /// - [Multi-armed bandits with episode context](https://link.springer.com/article/10.1007/s10472-011-9258-6)
+#[derive(Debug, Clone)]
 pub struct PUCTPolicy {
     /// The exploration parameter for the UCT policy.
     exploration_constant: f64,

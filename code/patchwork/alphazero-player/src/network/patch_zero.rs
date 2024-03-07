@@ -5,10 +5,9 @@ use patchwork_core::Patchwork;
 use crate::network::{game_encoder::GameEncoder, resnet::ResNet};
 
 /// The neural network that plays patchwork.
-#[allow(dead_code)]
+#[derive(Debug, Clone)]
 pub struct PatchZero<const AMOUNT_PATCH_LAYERS: usize, const AMOUNT_RESIDUAL_LAYERS: usize, const AMOUNT_FILTERS: usize>
 {
-    device: Device,
     encoder: GameEncoder<AMOUNT_PATCH_LAYERS>,
     network: ResNet<AMOUNT_PATCH_LAYERS, AMOUNT_RESIDUAL_LAYERS, AMOUNT_FILTERS>,
 }
@@ -26,18 +25,13 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     /// # Returns
     ///
     /// A new patch zero neural network.
-    #[allow(dead_code)]
     #[allow(clippy::needless_pass_by_value)]
     pub fn new(vb: VarBuilder<'_>, device: Device) -> Result<Self> {
-        let encoder = GameEncoder::<NUMBER_OF_PATCH_LAYERS>::new(vb.pp("encoder"), device.clone())?;
+        let encoder = GameEncoder::<NUMBER_OF_PATCH_LAYERS>::new(vb.pp("encoder"), device)?;
         let network =
             ResNet::<NUMBER_OF_PATCH_LAYERS, NUMBER_OF_RESIDUAL_LAYERS, NUMBER_OF_FILTERS>::new(vb.pp("network"))?;
 
-        Ok(Self {
-            device,
-            encoder,
-            network,
-        })
+        Ok(Self { encoder, network })
     }
 
     /// Forward propagates the neural network.
@@ -54,7 +48,6 @@ impl<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_RESIDUAL_LAYERS: usize
     /// # Errors
     ///
     /// When there is a error inside the neural network.
-    #[allow(dead_code)]
     pub fn forward_t(&self, games: &[&Patchwork], train: bool) -> Result<(Tensor, Tensor)> {
         let stack = self.encoder.encode_state(games)?;
         self.network.forward_t(&stack, train)

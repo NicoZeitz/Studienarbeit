@@ -1,4 +1,11 @@
-use std::{fs, num::NonZeroUsize, path::PathBuf, rc::Rc};
+use std::{
+    fs::{self, OpenOptions},
+    io::Write,
+    num::NonZeroUsize,
+    path::PathBuf,
+    rc::Rc,
+    sync::mpsc::{Sender, TryRecvError},
+};
 
 use candle_core::{DType, Device, IndexOp, Tensor};
 use candle_nn::{Optimizer, VarBuilder, VarMap};
@@ -47,114 +54,159 @@ impl Trainer {
         }
     }
 
-    pub fn learn<Policy: TreePolicy + Default>(&self) -> PlayerResult<()> {
+    pub fn learn<Policy: TreePolicy + Default + Clone>(&self) -> PlayerResult<()> {
         let (var_map, starting_index) = self.get_var_map()?;
         let mut optimizer = self.get_optimizer(&var_map, starting_index)?;
 
-        println!("Started training at {starting_index} with {:?}", self.args);
+        let log_path = self.training_directory.join(format!("log_{starting_index:04?}.txt"));
+        let log_path = log_path.as_path();
 
-        for iteration in 0..self.args.number_of_training_iterations {
-            let mut history = vec![];
+        let mut log_file = OpenOptions::new().append(true).create(true).open(log_path)?;
 
-            let iterations = (self.args.number_of_self_play_iterations as f64
-                / self.args.number_of_parallel_games as f64)
-                .ceil() as usize;
-            for _ in tqdm(0..iterations).style(tqdm::Style::Block).desc(Some("Self-Play")) {
+        writeln!(log_file, "Started training at {starting_index} with {:?}", self.args)?;
+
+        let (sender, receiver) = std::sync::mpsc::channel();
+        std::thread::scope(|s| {
+            let mut threads: Vec<std::thread::ScopedJoinHandle<'_, PlayerResult<()>>> =
+                Vec::with_capacity(self.args.number_of_parallel_games);
+            for _ in 0..self.args.number_of_parallel_games {
+                threads.push(s.spawn(|| loop {
+                    let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &self.device);
+                    let alphazero_options = Rc::new(AlphaZeroOptions {
+                        device: self.device.clone(),
+                        parallelization: NonZeroUsize::new(1).unwrap(),
+                        end_condition: AlphaZeroEndCondition::Iterations {
+                            iterations: self.args.number_of_mcts_iterations,
+                        },
+                        logging: Logging::Disabled,
+                        ..AlphaZeroOptions::default()
+                    });
+                    let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
+                    let search_tree = DefaultSearchTree::<Policy>::new(
+                        false,
+                        Default::default(),
+                        network,
+                        alphazero_options,
+                        self.args.dirichlet_alpha,
+                        self.args.dirichlet_epsilon,
+                    );
+
+                    let sender = sender.clone();
+
+                    if let Err(error) = self.self_play(search_tree, sender) {
+                        let mut log_file = OpenOptions::new().append(true).create(true).open(log_path)?;
+                        writeln!(
+                            log_file,
+                            "Self-play at Thread {:?} failed, retrying...",
+                            std::thread::current().id()
+                        )?;
+                        writeln!(log_file, "{error:?}")?;
+                        continue;
+                    };
+                }));
+            }
+
+            let mut history = Vec::new();
+            let mut index = starting_index + 1;
+
+            // Block until first game is available
+            history.push(receiver.recv()?);
+
+            'outer: loop {
                 loop {
-                    if let Ok(partial_history) = self.self_play::<Policy>(&var_map) {
-                        history.extend(partial_history);
-                        break;
+                    match receiver.try_recv() {
+                        Ok(finished_game) => {
+                            history.push(finished_game);
+                            while history.len() > self.args.training_set_size {
+                                history.remove(0);
+                            }
+                        }
+                        Err(TryRecvError::Empty) => break,
+                        Err(TryRecvError::Disconnected) => break 'outer,
                     }
-                    println!("Self-play failed, retrying...");
                 }
+
+                let mut train_sample = history
+                    .choose_multiple(&mut thread_rng(), self.args.training_sample_size)
+                    .collect::<Vec<_>>();
+
+                for _ in tqdm(0..self.args.number_of_epochs)
+                    .style(tqdm::Style::Block)
+                    .desc(Some(format!("Train {index:?}")))
+                    .clear(true)
+                {
+                    self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)?;
+                }
+
+                writeln!(
+                    log_file,
+                    "Finished iteration {index}. Saving weights to {:?}",
+                    self.training_directory
+                )?;
+                let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
+                var_map.save(network_weights)?;
+                index += 1;
             }
 
-            for _ in tqdm(0..self.args.number_of_epochs)
-                .style(tqdm::Style::Block)
-                .desc(Some("Train"))
-            {
-                self.train(&mut history, &mut optimizer, &var_map)?;
+            for thread in threads {
+                thread.join().unwrap()?;
             }
 
-            let index = iteration + starting_index + 1;
-            println!(
-                "Finished iteration {index}. Saving weights to {:?}",
-                self.training_directory
-            );
-
-            let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
-            let optimizer_weights = self
-                .training_directory
-                .join(format!("optimizer_{index:04}.safetensors"));
-
-            var_map.save(network_weights)?;
-            optimizer.save(optimizer_weights)?;
-        }
-
-        Ok(())
+            Ok(())
+        })
     }
 
-    fn self_play<Policy: TreePolicy + Default>(&self, var_map: &VarMap) -> PlayerResult<Vec<History>> {
+    #[allow(clippy::needless_pass_by_value)]
+    fn self_play<Policy: TreePolicy>(
+        &self,
+        mut search_tree: DefaultSearchTree<Policy>,
+        channel: Sender<History>,
+    ) -> PlayerResult<()> {
         struct PartialHistory {
             state: Patchwork,
             policy: Tensor,
         }
 
-        let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
-        let alphazero_options = Rc::new(AlphaZeroOptions {
-            device: self.device.clone(),
-            parallelization: NonZeroUsize::new((AlphaZeroOptions::default_parallelization().get() + 1).max(1)).unwrap(),
-            end_condition: AlphaZeroEndCondition::Iterations {
-                iterations: self.args.number_of_mcts_iterations,
-            },
-            logging: Logging::Disabled,
-            ..AlphaZeroOptions::default()
-        });
-
-        let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
-        let mut search_tree = DefaultSearchTree::<Policy>::new(
-            false,
-            Default::default(),
-            network,
-            alphazero_options,
-            self.args.dirichlet_alpha,
-            self.args.dirichlet_epsilon,
-        );
-
-        let mut return_history = vec![];
-        let mut history = (0..self.args.number_of_parallel_games)
-            .map(|_| vec![])
-            .collect::<Vec<_>>();
-        let mut games = (0..self.args.number_of_parallel_games)
-            .map(|_| Patchwork::get_initial_state(None))
-            .collect::<Vec<_>>();
-
         let temperature_tensor = Tensor::new(1.0 / self.args.temperature, &self.device)?;
+        let mut iteration = 0;
 
-        while !games.is_empty() {
-            let policies = search_tree
-                .search(games.iter().collect::<Vec<_>>().as_slice())?
-                .detach();
+        loop {
+            iteration += 1;
+            let mut history = vec![];
+            let mut game = Patchwork::get_initial_state(None);
 
-            let (available_actions_tensor, mut corresponding_action_ids) =
-                map_games_to_action_tensors(games.iter().collect::<Vec<_>>().as_slice(), &self.device)?;
-            let available_actions_tensor = available_actions_tensor.detach();
+            for _ in tqdm(0..64)
+                .style(tqdm::Style::Block)
+                .desc(Some(format!(
+                    "Self-Play {:?} G {:05?}",
+                    std::thread::current().id(),
+                    iteration
+                )))
+                .clear(true)
+            {
+                if game.is_terminated() {
+                    continue;
+                }
 
-            let policies = (policies * available_actions_tensor)?;
-            let policies_sum = policies.sum_keepdim(1)?;
-            let policies = policies.broadcast_div(&policies_sum)?;
+                let policies = search_tree.search(&[&game])?.detach();
 
-            for i in (0..games.len()).rev() {
-                let game = &mut games[i];
-                let policy = policies.i((i, ..))?;
+                let (available_actions_tensor, mut corresponding_action_ids) =
+                    map_games_to_action_tensors(&[&game], &self.device)?;
+                let available_actions_tensor = available_actions_tensor.detach();
+
+                let policies = (policies * available_actions_tensor)?;
+                let policies_sum = policies.sum_keepdim(1)?;
+                let policies = policies.broadcast_div(&policies_sum)?;
+
+                let policy = policies.i((0, ..))?;
                 let actions = corresponding_action_ids.pop_back().unwrap();
 
-                history[i].push(PartialHistory {
+                history.push(PartialHistory {
                     state: game.clone(),
                     policy: policy.clone().detach().to_device(&self.device)?,
                 });
 
-                let temperature_action_probabilities = if history[i].len() >= self.args.temperature_end {
+                let temperature_action_probabilities = if history.len() >= self.args.temperature_end {
                     policy
                 } else {
                     policy.broadcast_pow(&temperature_tensor)?
@@ -165,26 +217,111 @@ impl Trainer {
                 game.do_action(action, false)?;
 
                 if game.is_terminated() {
-                    let history = std::mem::take(&mut history[i]);
-                    return_history.extend(history.into_iter().map(|partial_history| History {
-                        state: partial_history.state,
-                        policy: partial_history.policy,
-                        outcome: game.get_termination_result().termination,
-                    }));
-
-                    games.swap_remove(i);
+                    let history = std::mem::take(&mut history);
+                    for partial_history in history {
+                        channel.send(History {
+                            state: partial_history.state,
+                            policy: partial_history.policy,
+                            outcome: game.get_termination_result().termination,
+                        })?;
+                    }
                 }
             }
         }
-
-        Ok(return_history)
     }
+
+    // fn self_play<Policy: TreePolicy + Default>(&self, var_map: &VarMap) -> PlayerResult<Vec<History>> {
+    //     struct PartialHistory {
+    //         state: Patchwork,
+    //         policy: Tensor,
+    //     }
+
+    //     let var_builder = VarBuilder::from_varmap(var_map, DType::F32, &self.device);
+    //     let alphazero_options = Rc::new(AlphaZeroOptions {
+    //         device: self.device.clone(),
+    //         parallelization: NonZeroUsize::new((AlphaZeroOptions::default_parallelization().get() + 1).max(1)).unwrap(),
+    //         end_condition: AlphaZeroEndCondition::Iterations {
+    //             iterations: self.args.number_of_mcts_iterations,
+    //         },
+    //         logging: Logging::Disabled,
+    //         ..AlphaZeroOptions::default()
+    //     });
+
+    //     let network = DefaultPatchZero::new(var_builder, self.device.clone())?;
+    //     let mut search_tree = DefaultSearchTree::<Policy>::new(
+    //         false,
+    //         Default::default(),
+    //         network,
+    //         alphazero_options,
+    //         self.args.dirichlet_alpha,
+    //         self.args.dirichlet_epsilon,
+    //     );
+
+    //     let mut return_history = vec![];
+    //     let mut history = (0..self.args.number_of_parallel_games)
+    //         .map(|_| vec![])
+    //         .collect::<Vec<_>>();
+    //     let mut games = (0..self.args.number_of_parallel_games)
+    //         .map(|_| Patchwork::get_initial_state(None))
+    //         .collect::<Vec<_>>();
+
+    //     let temperature_tensor = Tensor::new(1.0 / self.args.temperature, &self.device)?;
+
+    //     while !games.is_empty() {
+    //         let policies = search_tree
+    //             .search(games.iter().collect::<Vec<_>>().as_slice())?
+    //             .detach();
+
+    //         let (available_actions_tensor, mut corresponding_action_ids) =
+    //             map_games_to_action_tensors(games.iter().collect::<Vec<_>>().as_slice(), &self.device)?;
+    //         let available_actions_tensor = available_actions_tensor.detach();
+
+    //         let policies = (policies * available_actions_tensor)?;
+    //         let policies_sum = policies.sum_keepdim(1)?;
+    //         let policies = policies.broadcast_div(&policies_sum)?;
+
+    //         for i in (0..games.len()).rev() {
+    //             let game = &mut games[i];
+    //             let policy = policies.i((i, ..))?;
+    //             let actions = corresponding_action_ids.pop_back().unwrap();
+
+    //             history[i].push(PartialHistory {
+    //                 state: game.clone(),
+    //                 policy: policy.clone().detach().to_device(&self.device)?,
+    //             });
+
+    //             let temperature_action_probabilities = if history[i].len() >= self.args.temperature_end {
+    //                 policy
+    //             } else {
+    //                 policy.broadcast_pow(&temperature_tensor)?
+    //             };
+    //             let dist = WeightedIndex::new(temperature_action_probabilities.to_vec1::<f32>()?)?;
+
+    //             let action = actions[dist.sample(&mut thread_rng())];
+    //             game.do_action(action, false)?;
+
+    //             if game.is_terminated() {
+    //                 let history = std::mem::take(&mut history[i]);
+    //                 return_history.extend(history.into_iter().map(|partial_history| History {
+    //                     state: partial_history.state,
+    //                     policy: partial_history.policy,
+    //                     outcome: game.get_termination_result().termination,
+    //                 }));
+
+    //                 games.swap_remove(i);
+    //             }
+    //         }
+    //     }
+
+    //     Ok(return_history)
+    // }
 
     fn train(
         &self,
-        training_set: &mut [History],
+        training_set: &mut [&History],
         optimizer: &mut impl Optimizer,
         var_map: &VarMap,
+        log_file: &mut fs::File,
     ) -> PlayerResult<()> {
         fn get_value_from_outcome(outcome: TerminationType, is_current_player_1: bool, device: &Device) -> Tensor {
             let multiplier: f32 = if is_current_player_1 { 1.0 } else { -1.0 };
@@ -258,9 +395,9 @@ impl Trainer {
             optimizer.backward_step(&loss)?;
         }
 
-        println!(
+        writeln!(log_file,
             "\x1B[1A\rPolicy loss: {last_policy_loss}, Value loss: {last_value_loss}, L² loss: {last_regularization_loss}, Total loss: {last_loss}"
-        );
+        )?;
 
         Ok(())
     }
