@@ -40,7 +40,7 @@ impl Default for TrainingArgs {
     fn default() -> Self {
         Self {
             c: 2f32.sqrt(),
-            learning_rate: 0.002, // 0.02, 0.002 0.0002 drop after some time
+            learning_rate: 0.02, // 0.02, 0.002 0.0002 drop after some time
             dirichlet_epsilon: 0.25,
             dirichlet_alpha: 0.2,
             temperature: 1.25,
