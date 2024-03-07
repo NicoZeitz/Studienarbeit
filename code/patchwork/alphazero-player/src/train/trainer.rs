@@ -16,7 +16,7 @@ use patchwork_core::{Logging, Patchwork, PlayerResult, TerminationType, TreePoli
 use rand::{seq::SliceRandom, thread_rng};
 use rand_distr::{Distribution, WeightedIndex};
 use regex::Regex;
-use tqdm::tqdm;
+use tqdm::{tqdm, Iter};
 
 use crate::{
     action::map_games_to_action_tensors,
@@ -63,6 +63,7 @@ impl Trainer {
         })
     }
 
+    #[allow(clippy::too_many_lines)]
     pub fn learn<Policy: TreePolicy + Default + Clone>(&self) -> PlayerResult<()> {
         let starting_index = self.starting_index;
 
@@ -149,18 +150,34 @@ impl Trainer {
                 }
                 drop(new_data);
 
-                let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
-                let mut train_sample = history
+                let optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
+                let train_sample = history
                     .choose_multiple(&mut thread_rng(), self.args.training_sample_size)
                     .collect::<Vec<_>>();
 
-                for _ in tqdm(0..self.args.number_of_epochs)
-                    .style(tqdm::Style::Block)
-                    .desc(Some(format!("Train {index:?}")))
-                    .clear(true)
-                {
-                    self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)?;
-                }
+                std::thread::scope(|s| {
+                    let mut threads = Vec::with_capacity(self.args.number_of_epochs);
+                    for _ in 0..self.args.number_of_epochs {
+                        let mut train_sample = train_sample.clone();
+                        let mut optimizer = optimizer.clone();
+                        let var_map = var_map.clone();
+                        let mut log_file = log_file.try_clone().unwrap();
+                        threads.push(
+                            s.spawn(move || self.train(&mut train_sample, &mut optimizer, &var_map, &mut log_file)),
+                        );
+                    }
+                    for thread in threads
+                        .into_iter()
+                        .tqdm()
+                        .style(tqdm::Style::Block)
+                        .desc(Some("Train"))
+                        .clear(true)
+                    {
+                        thread.join().unwrap()?;
+                    }
+
+                    PlayerResult::Ok(())
+                })?;
 
                 writeln!(
                     log_file,
