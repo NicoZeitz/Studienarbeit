@@ -2,6 +2,7 @@ use candle_core::{error::Result, ModuleT, Tensor};
 use candle_nn::{batch_norm, conv2d, linear, BatchNorm, BatchNormConfig, Conv2d, Conv2dConfig, Linear, VarBuilder};
 use patchwork_core::QuiltBoard;
 
+#[derive(Debug, Clone)]
 pub struct ValueHead<const NUMBER_OF_FILTERS: usize> {
     conv: Conv2d,
     batch_norm: BatchNorm,

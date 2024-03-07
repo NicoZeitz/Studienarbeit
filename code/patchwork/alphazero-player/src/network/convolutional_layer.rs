@@ -1,6 +1,7 @@
 use candle_core::{error::Result, ModuleT, Tensor};
 use candle_nn::{batch_norm, conv2d, BatchNorm, BatchNormConfig, Conv2d, Conv2dConfig, VarBuilder};
 
+#[derive(Debug, Clone)]
 pub struct ConvolutionalLayer<const NUMBER_OF_PATCH_LAYERS: usize, const NUMBER_OF_FILTERS: usize> {
     conv: Conv2d,
     batch_norm: BatchNorm,

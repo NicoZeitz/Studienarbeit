@@ -15,7 +15,7 @@ pub fn main() {
 
     for step in 0..10000 {
         if step % 2 == 0 {
-            let score = model.forward(&state).unsqueeze(0).unwrap();
+            let score = model.forward(&state).unwrap().unsqueeze(0).unwrap();
             let one_tensor = Tensor::from_slice(&[1f32], (1,), &Device::Cpu).unwrap();
             let loss = candle_nn::loss::binary_cross_entropy_with_logit(&score, &one_tensor).unwrap();
             opt.backward_step(&loss).unwrap();
@@ -25,7 +25,7 @@ pub fn main() {
                 loss.to_vec0::<f32>().unwrap()
             );
         } else {
-            let score = model.forward(&state_2).unsqueeze(0).unwrap();
+            let score = model.forward(&state_2).unwrap().unsqueeze(0).unwrap();
             let one_tensor = Tensor::from_slice(&[-1f32], (1,), &Device::Cpu).unwrap();
             let loss = candle_nn::loss::binary_cross_entropy_with_logit(&score, &one_tensor).unwrap();
             opt.backward_step(&loss).unwrap();

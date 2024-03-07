@@ -4,6 +4,7 @@ use candle_nn::{batch_norm, conv2d, BatchNorm, BatchNormConfig, Conv2d, Conv2dCo
 
 use crate::network::squeeze_excitation::SqueezeExcitation;
 
+#[derive(Debug, Clone)]
 pub struct ResBlock {
     convolution_1: Conv2d,
     batch_norm_1: BatchNorm,

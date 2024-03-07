@@ -52,7 +52,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
                 Policy::default(),
                 network,
                 Rc::clone(&options),
-                0.0, // Dummy value as the network is in evaluation mode anyways
+                1.0, // Dummy value as the network is in evaluation mode anyways
                 0.0
             ),
             options,

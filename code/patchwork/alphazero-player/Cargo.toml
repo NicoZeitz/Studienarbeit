@@ -24,7 +24,10 @@ boxcar = "0.2.4"
 candle-core = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
 candle-nn = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
 dashmap = { version = "5.5.3", features = ["inline"] }
-parking_lot = { version = "0.12.1", features = ["deadlock_detection", "hardware-lock-elision"] }
+parking_lot = { version = "0.12.1", features = [
+    "deadlock_detection",
+    "hardware-lock-elision",
+] }
 patchwork-core = { path = "../patchwork-core" }
 rand = "0.8.5"
 rand_distr = "0.4.3"
@@ -33,5 +36,5 @@ tqdm = "0.6.0"
 tree-policy = { path = "../tree-policy" }
 
 [[bin]]
-name = "alphazero-player_verification"
-path = "src/verification.rs"
+name = "alphazero-player-train"
+path = "src/alphazero_train.rs"

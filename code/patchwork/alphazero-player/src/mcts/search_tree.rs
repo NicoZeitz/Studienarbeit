@@ -18,6 +18,7 @@ pub type DefaultSearchTree<Policy> =
     SearchTree<Policy, DEFAULT_AMOUNT_PATCH_LAYERS, DEFAULT_AMOUNT_RESIDUAL_LAYERS, DEFAULT_AMOUNT_FILTERS>;
 
 /// The search tree for the Monte Carlo Tree Search (MCTS) algorithm of the `AlphaZero` Player.
+#[derive(Clone)]
 pub struct SearchTree<
     Policy: TreePolicy,
     const AMOUNT_PATCH_LAYERS: usize,

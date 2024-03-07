@@ -7,6 +7,7 @@ use candle_nn::{conv2d, Conv2d, Conv2dConfig, VarBuilder};
 /// Paper: [Squeeze-and-Excitation Networks](https://arxiv.org/abs/1709.01507)
 ///
 /// Ported from [Pytorch SqueezeExcitation](https://pytorch.org/vision/main/_modules/torchvision/ops/misc.html#SqueezeExcitation)
+#[derive(Debug, Clone)]
 pub struct SqueezeExcitation {
     fc1: Conv2d,
     fc2: Conv2d,

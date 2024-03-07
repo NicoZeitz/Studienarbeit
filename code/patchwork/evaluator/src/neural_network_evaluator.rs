@@ -50,7 +50,7 @@ impl Default for NeuralNetworkEvaluator {
         // Temporary code for creating a NeuralNetworkEvaluator
         // let vm = VarMap::new();
         // let vb = VarBuilder::from_varmap(&vm, DType::F32, &Device::Cpu);
-        // Self::new(vb).unwrap()
+        // Self::new(vb)?
         unimplemented!("[NeuralNetworkEvaluator::default]")
     }
 }
@@ -78,7 +78,7 @@ impl NeuralNetworkEvaluator {
     }
 
     #[allow(clippy::unused_self)]
-    fn get_player_tensor(&self, player: &PlayerState) -> Tensor {
+    fn get_player_tensor(&self, player: &PlayerState) -> Result<Tensor> {
         let mut vec = Vec::with_capacity(84);
 
         for index in 0..QuiltBoard::TILES {
@@ -88,7 +88,7 @@ impl NeuralNetworkEvaluator {
         vec.push(f32::from(player.quilt_board.button_income));
         vec.push(player.button_balance as f32);
 
-        Tensor::from_vec(vec, (84,), &Device::Cpu).unwrap()
+        Tensor::from_vec(vec, (84,), &Device::Cpu)
     }
 
     #[allow(clippy::unused_self)]
@@ -123,55 +123,37 @@ impl NeuralNetworkEvaluator {
         }
     }
 
-    #[must_use]
-    pub fn forward(&self, game: &Patchwork) -> Tensor {
-        let player_1 = self.get_player_tensor(&game.player_1);
-        let player_2 = self.get_player_tensor(&game.player_2);
+    pub fn forward(&self, game: &Patchwork) -> Result<Tensor> {
+        let player_1 = self.get_player_tensor(&game.player_1)?;
+        let player_2 = self.get_player_tensor(&game.player_2)?;
 
         // Do the forward pass for the player linear layers
-        let forwarded = Tensor::stack(&[&player_1, &player_2], 0)
-            .unwrap()
-            .matmul(&self.player_weight.t().unwrap())
-            .unwrap()
-            .broadcast_add(&self.player_bias)
-            .unwrap();
+        let forwarded = Tensor::stack(&[&player_1, &player_2], 0)?
+            .matmul(&self.player_weight.t()?)?
+            .broadcast_add(&self.player_bias)?;
 
-        let forwarded_player_1 = forwarded.i((0, ..)).unwrap().relu().unwrap();
-        let forwarded_player_2 = forwarded.i((1, ..)).unwrap().relu().unwrap();
+        let forwarded_player_1 = forwarded.i((0, ..))?.relu()?;
+        let forwarded_player_2 = forwarded.i((1, ..))?.relu()?;
 
         let special_patch = self.get_special_patch_tensor(game);
         let special_tile = self.get_special_tile_tensor(game);
 
         let input_tensor /* 128×1 */ = if self.is_player_1(game) {
-            Tensor::cat(&[&forwarded_player_1, &forwarded_player_2, &special_patch, &special_tile], 0).unwrap().unsqueeze(0).unwrap()
+            Tensor::cat(&[&forwarded_player_1, &forwarded_player_2, &special_patch, &special_tile], 0)?.unsqueeze(0)?
         }else {
-            Tensor::cat(&[&forwarded_player_2, &forwarded_player_1, &special_patch, &special_tile], 0).unwrap().unsqueeze(0).unwrap()
+            Tensor::cat(&[&forwarded_player_2, &forwarded_player_1, &special_patch, &special_tile], 0)?.unsqueeze(0)?
         };
 
-        let xs = self
-            .linear_layer_1
-            .forward(&input_tensor)
-            .unwrap()
-            .clamp(0f32, 127f32)
-            .unwrap();
+        let xs = self.linear_layer_1.forward(&input_tensor)?.clamp(0f32, 127f32)?;
 
-        self.linear_layer_2
-            .forward(&xs)
-            .unwrap()
-            .squeeze(0)
-            .unwrap()
-            .sum(0)
-            .unwrap()
-            .tanh()
-            .unwrap()
+        self.linear_layer_2.forward(&xs)?.squeeze(0)?.sum(0)?.tanh()
     }
 }
 
 impl StableEvaluator for NeuralNetworkEvaluator {}
 impl Evaluator for NeuralNetworkEvaluator {
     #[rustfmt::skip]
-
     fn evaluate_intermediate_node(&self, game: &Patchwork) -> i32 {
-        (self.forward(game).to_scalar::<f32>().unwrap() * evaluator_constants::POSITIVE_INFINITY as f32) as i32
+        (self.forward(game).unwrap().to_scalar::<f32>().unwrap() * evaluator_constants::POSITIVE_INFINITY as f32) as i32
     }
 }

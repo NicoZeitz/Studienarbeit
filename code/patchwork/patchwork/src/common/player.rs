@@ -4,11 +4,11 @@ use anyhow::Error;
 use patchwork_lib::{
     evaluator::{Evaluator, NeuralNetworkEvaluator, ScoreEvaluator, StaticEvaluator, WinLossEvaluator},
     player::{
-        AlphaZeroPlayer, FailingStrategy, GreedyPlayer, HumanPlayer, LazySMPFeature, Logging, MCTSEndCondition,
-        MCTSOptions, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions, PVSPlayer, Player, RandomOptions,
-        RandomPlayer, Size, TranspositionTableFeature,
+        AlphaZeroEndCondition, AlphaZeroOptions, AlphaZeroPlayer, FailingStrategy, GreedyPlayer, HumanPlayer,
+        LazySMPFeature, Logging, MCTSEndCondition, MCTSOptions, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions,
+        PVSPlayer, Player, RandomOptions, RandomPlayer, Size, TranspositionTableFeature,
     },
-    tree_policy::{PartiallyScoredUCTPolicy, ScoredUCTPolicy, TreePolicy, UCTPolicy},
+    tree_policy::{PUCTPolicy, PartiallyScoredUCTPolicy, ScoredUCTPolicy, TreePolicy, UCTPolicy},
     ActionId, ActionOrderer, Patchwork, TableActionOrderer,
 };
 use regex::Regex;
@@ -135,7 +135,8 @@ pub fn get_player(name: &str, player_position: usize, logging: Logging) -> Resul
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    if let Some(player) = parse_alphazero_player(name, player_position) {
+    let (player_option, logging) = parse_alphazero_player(name, player_position, logging.unwrap());
+    if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
@@ -155,8 +156,9 @@ pub fn get_available_players() -> Vec<String> {
         "pvs",
         "pvs(time: float, ord: table, eval: static|win|score|nn, fail: hard|soft, asp: yes|no, lmr: yes|no, lmp: yes|no, ext: yes|no, tt: enabled|disabled, smp: yes|no)",
         "mcts",
-        "mcts(time: float, iter: uint, tree: reuse|new, root: uint, leaf: uint, policy: uct|partial-score|score, eval: static|win|score|nn)",
+        "mcts(time: float, iter: uint, tree: reuse|new, root: uint, leaf: uint, policy: uct|partial-score|score|puct, eval: static|win|score|nn)",
         "alphazero",
+        "alphazero(time: float, iter: uint, policy: uct|partial-score|score|puct)",
     ]
     .iter()
     .map(|s| (*s).to_string())
@@ -575,7 +577,7 @@ fn parse_mcts_player(
         options.leaf_parallelization = leaf_parallelization;
     }
 
-    if let Some(pol) = Regex::new(r"policy:\s*(?<policy>uct|partial-score|score)")
+    if let Some(pol) = Regex::new(r"policy:\s*(?<policy>uct|partial-score|score|puct)")
         .unwrap()
         .captures(passed_options)
         .and_then(|o| o.name("policy"))
@@ -607,18 +609,92 @@ fn parse_mcts_player(
         ("score", "win") => create_player::<ScoredUCTPolicy, WinLossEvaluator>(player_position, options),
         ("score", "score") => create_player::<ScoredUCTPolicy, ScoreEvaluator>(player_position, options),
         ("score", "nn") => create_player::<ScoredUCTPolicy, NeuralNetworkEvaluator>(player_position, options),
+        ("puct", "static") => create_player::<PUCTPolicy, StaticEvaluator>(player_position, options),
+        ("puct", "win") => create_player::<PUCTPolicy, WinLossEvaluator>(player_position, options),
+        ("puct", "score") => create_player::<PUCTPolicy, ScoreEvaluator>(player_position, options),
+        ("puct", "nn") => create_player::<PUCTPolicy, NeuralNetworkEvaluator>(player_position, options),
         _ => unreachable!(),
     };
 
     (Some(player), None)
 }
 
-fn parse_alphazero_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
+fn parse_alphazero_player(
+    name: &str,
+    player_position: usize,
+    logging: Logging,
+) -> (Option<Box<dyn Player>>, Option<Logging>) {
+    fn create_player<Policy: TreePolicy + Default + 'static>(
+        player_position: usize,
+        options: AlphaZeroOptions,
+    ) -> Box<dyn Player> {
+        Box::new(AlphaZeroPlayer::<Policy>::new(
+            format!("AlphaZero Player {player_position}").as_str(),
+            Some(options),
+        ))
+    }
+
     if name == "alphazero" {
         let player: AlphaZeroPlayer =
             AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}").as_str(), None);
-        return Some(Box::new(player));
+        return (Some(Box::new(player)), None);
     }
 
-    None
+    if !name.starts_with("alphazero") {
+        return (None, Some(logging));
+    }
+
+    let Some(passed_options) = Regex::new(r"alphazero\((?<options>.*)\)")
+        .unwrap()
+        .captures(name)
+        .and_then(|o| o.name("options"))
+        .map(|o| o.as_str())
+    else {
+        return (None, Some(logging));
+    };
+
+    let mut options = AlphaZeroOptions::default();
+    let mut policy = "puct";
+    options.logging = logging;
+
+    // TODO: other options
+
+    if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("time"))
+        .and_then(|o| o.as_str().parse().ok())
+    {
+        options.end_condition = AlphaZeroEndCondition::Time {
+            duration: std::time::Duration::from_secs_f64(time_limit),
+            safety_margin: std::time::Duration::from_millis(100),
+        };
+    } else if let Some(iterations) = Regex::new(r"iter:\s*(?<iter>\d+)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("iter"))
+        .and_then(|o| o.as_str().parse().ok())
+    {
+        options.end_condition = AlphaZeroEndCondition::Iterations { iterations };
+    }
+
+    if let Some(pol) = Regex::new(r"policy:\s*(?<policy>uct|partial-score|score|puct)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("policy"))
+        .map(|o| o.as_str())
+    {
+        policy = pol;
+    }
+
+    #[rustfmt::skip]
+    let player: Box<dyn Player> = match policy {
+        "uct" => create_player::<UCTPolicy>(player_position, options),
+        "partial-score" => create_player::<PartiallyScoredUCTPolicy>(player_position, options),
+        "score" => create_player::<ScoredUCTPolicy>(player_position, options),
+        "puct" => create_player::<PUCTPolicy>(player_position, options),
+        _ => unreachable!(),
+    };
+
+    (Some(player), None)
 }
