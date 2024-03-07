@@ -6,11 +6,10 @@ use std::{
     rc::Rc,
     sync::{
         mpsc::{Sender, TryRecvError},
-        Arc,
+        Arc, Mutex,
     },
 };
 
-use arc_swap::ArcSwap;
 use candle_core::{DType, Device, IndexOp, Tensor};
 use candle_nn::{Optimizer, VarBuilder, VarMap};
 use patchwork_core::{Logging, Patchwork, PlayerResult, TerminationType, TreePolicy};
@@ -34,7 +33,7 @@ pub struct Trainer {
     pub device: Device,
     pub args: TrainingArgs,
     pub training_directory: PathBuf,
-    current_var_map: ArcSwap<VarMap>,
+    current_var_map: Arc<Mutex<VarMap>>,
     starting_index: usize,
 }
 
@@ -59,7 +58,7 @@ impl Trainer {
             training_directory: training_directory.as_ref().to_path_buf(),
             args,
             device,
-            current_var_map: ArcSwap::new(Arc::new(var_map)),
+            current_var_map: Arc::new(Mutex::new(var_map)),
             starting_index,
         })
     }
@@ -80,7 +79,7 @@ impl Trainer {
                 Vec::with_capacity(self.args.number_of_parallel_games);
             for _ in 0..self.args.number_of_parallel_games {
                 threads.push(s.spawn(|| loop {
-                    let var_map = self.current_var_map.load().clone();
+                    let var_map = self.current_var_map.lock().unwrap().clone();
                     let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &self.device);
                     let alphazero_options = Rc::new(AlphaZeroOptions {
                         device: self.device.clone(),
@@ -136,11 +135,23 @@ impl Trainer {
                     }
                 }
 
-                let mut var_map = VarMap::new();
+                writeln!(log_file, "Training iteration {index}")?;
+
+                let var_map = VarMap::new();
+                let mut new_data = var_map.data().lock().unwrap();
+
                 #[allow(clippy::significant_drop_in_scrutinee)]
-                for (name, var) in self.current_var_map.load().data().lock().unwrap().iter() {
-                    var_map.set_one(name.clone(), var.as_detached_tensor().clone())?;
+                for (name, var) in self.current_var_map.lock().unwrap().data().lock().unwrap().iter() {
+                    writeln!(log_file, "name: {:?}", name)?;
+
+                    new_data.insert(
+                        name.clone(),
+                        candle_core::Var::from_tensor(var.as_detached_tensor().as_ref())?,
+                    );
+
+                    writeln!(log_file, "name: {:?}", name)?;
                 }
+                drop(new_data);
 
                 let mut optimizer = get_optimizer(&var_map, self.args.learning_rate)?;
                 let mut train_sample = history
@@ -162,8 +173,9 @@ impl Trainer {
                 )?;
                 let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
                 var_map.save(network_weights)?;
-                let _ = self.current_var_map.swap(Arc::new(var_map));
                 index += 1;
+                let mut mutex = self.current_var_map.lock().unwrap();
+                *mutex = var_map;
             }
 
             for thread in threads {
