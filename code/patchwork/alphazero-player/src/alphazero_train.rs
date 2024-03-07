@@ -21,7 +21,7 @@ fn main() -> PlayerResult<()> {
         training_directory,
         TrainingArgs::default(),
         Device::Cpu, // Device::cuda_if_available(0).unwrap_or(Device::Cpu),
-    );
+    )?;
 
     let start_time = std::time::Instant::now();
     trainer.learn::<PUCTPolicy>()?;
