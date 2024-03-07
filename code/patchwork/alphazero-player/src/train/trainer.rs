@@ -116,7 +116,7 @@ impl Trainer {
             let mut index = starting_index + 1;
 
             // Block at first
-            while history.len() < self.args.batch_size {
+            while history.len() < self.args.training_sample_size {
                 history.push(receiver.recv()?);
             }
 
@@ -134,7 +134,7 @@ impl Trainer {
                     history.remove(0);
                 }
 
-                writeln!(log_file, "Training iteration {index}")?;
+                writeln!(log_file, "Training iteration {index} with history size of {:?}", history.len())?;
 
                 let var_map = VarMap::new();
                 let mut new_data = var_map.data().lock().unwrap();

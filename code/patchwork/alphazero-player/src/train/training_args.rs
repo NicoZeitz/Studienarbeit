@@ -1,4 +1,4 @@
-use crate::AlphaZeroOptions;
+use std::num::NonZeroUsize;
 
 #[rustfmt::skip]
 #[derive(Debug, Clone, PartialEq)]
@@ -48,10 +48,14 @@ impl Default for TrainingArgs {
             regularization: 5e-5, // 1e-4,
             number_of_mcts_iterations: 1000,
             training_set_size: 500 * 43,
-            training_sample_size: 100 * 43,
-            number_of_parallel_games: AlphaZeroOptions::default_parallelization().get() - 1,
+            training_sample_size: 10 * 43,
+            number_of_parallel_games: std::thread::available_parallelism()
+                .ok()
+                .and_then(|n| NonZeroUsize::new(n.get() - 1))
+                .unwrap_or(NonZeroUsize::new(4).unwrap())
+                .get(),
             number_of_epochs: 5,
-            batch_size: 64,
+            batch_size: 128,
         }
     }
 }
