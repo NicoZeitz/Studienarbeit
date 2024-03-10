@@ -394,7 +394,7 @@ games/force_swap/*.bin
 **/datasets/**
 
 **/Praxisbericht.pdf
-/code/patchwork/alphazero-player/training/*
+**/training/*
 /code/patchwork/server/webapp/*
 !/code/patchwork/server/webapp/favicon.ico
 diagnostics*.txt

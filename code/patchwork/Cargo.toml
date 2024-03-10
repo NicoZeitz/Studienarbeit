@@ -14,6 +14,7 @@ members = [
     "analysis/empirical-measurement",
     "analysis/max-button-income",
     "evaluator",
+    "evaluator/evaluator-train",
     "greedy-player",
     "human-player",
     "mcts-player",

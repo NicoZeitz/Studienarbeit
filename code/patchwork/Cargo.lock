@@ -1004,6 +1004,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "evaluator-train"
+version = "1.0.0"
+dependencies = [
+ "boxcar",
+ "candle-core",
+ "candle-nn",
+ "evaluator",
+ "greedy-player",
+ "patchwork-core",
+ "rand",
+ "regex",
+ "tqdm",
+]
+
+[[package]]
 name = "fd-lock"
 version = "4.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

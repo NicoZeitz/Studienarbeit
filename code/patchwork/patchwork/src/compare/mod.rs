@@ -210,11 +210,14 @@ fn compare(
                     std::thread::sleep(std::time::Duration::from_secs(1)); // Wait progress printing
 
                     println!("Panic in thread: {:?}", std::thread::current().id());
-                    if let Some(cause) = cause.downcast_ref::<String>() {
-                        println!("Cause: {cause}");
-                    } else {
-                        println!("Cause: {cause:?}");
-                    }
+                    cause.downcast_ref::<String>().map_or_else(
+                        || {
+                            println!("Cause: {cause:?}");
+                        },
+                        |cause| {
+                            println!("Cause: {cause}");
+                        },
+                    );
                 }
             });
         }
