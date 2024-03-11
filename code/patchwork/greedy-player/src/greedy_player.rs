@@ -20,18 +20,16 @@ impl<Eval: Evaluator + Default> GreedyPlayer<Eval> {
     }
 }
 
-impl<Eval: Evaluator + Default> Default for GreedyPlayer<Eval> {
-    fn default() -> Self {
-        Self::new("Greedy Player".to_string())
-    }
-}
-
-impl<Eval: Evaluator> Player for GreedyPlayer<Eval> {
-    fn name(&self) -> &str {
-        &self.name
+impl<Eval: Evaluator> GreedyPlayer<Eval> {
+    /// Creates a new [`GreedyPlayer`] with the given name and evaluator.
+    pub fn new_with_evaluator(name: impl Into<String>, evaluator: Eval) -> Self {
+        Self {
+            name: name.into(),
+            evaluator,
+        }
     }
 
-    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
+    pub fn get_action(&self, game: &Patchwork) -> PlayerResult<ActionId> {
         let mut game = game.clone();
         let valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
 
@@ -64,5 +62,21 @@ impl<Eval: Evaluator> Player for GreedyPlayer<Eval> {
         }
 
         Ok(chosen_action)
+    }
+}
+
+impl<Eval: Evaluator + Default> Default for GreedyPlayer<Eval> {
+    fn default() -> Self {
+        Self::new("Greedy Player".to_string())
+    }
+}
+
+impl<Eval: Evaluator> Player for GreedyPlayer<Eval> {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
+        Self::get_action(self, game)
     }
 }

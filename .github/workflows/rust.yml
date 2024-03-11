@@ -5,11 +5,11 @@ on:
             - main
         paths:
             - code/patchwork/**
-    pull_request:
-        branches:
-            - main
-        paths:
-            - code/patchwork/**
+    # pull_request:
+    #     branches:
+    #         - main
+    #     paths:
+    #         - code/patchwork/**
 
 jobs:
     check:
