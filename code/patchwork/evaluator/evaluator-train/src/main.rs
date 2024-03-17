@@ -18,7 +18,7 @@ pub fn main() -> PlayerResult<()> {
         env::var("RUST_BACKTRACE").map_or_else(|_| "1".to_string(), |s| s),
     );
 
-    let trainer = Trainer::new(training_directory, TrainingArgs::default());
+    let mut trainer = Trainer::new(training_directory, TrainingArgs::default());
 
     trainer.learn()?;
 

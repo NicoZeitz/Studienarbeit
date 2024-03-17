@@ -111,7 +111,6 @@ impl StaticEvaluator {
     }
 
     #[allow(clippy::unused_self)]
-
     fn get_button_income_score(&self, button_income: f64, time_board: &TimeBoard, position: u8) -> f64 {
         let amount_button_income_triggers_left = time_board.get_amount_button_income_trigger_in_range(
             ((position + 1).min(TimeBoard::MAX_POSITION) as usize)..(TimeBoard::MAX_POSITION + 1) as usize,

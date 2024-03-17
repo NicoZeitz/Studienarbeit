@@ -37,3 +37,4 @@ evaluator = { path = "../../evaluator" }
 boxcar = "0.2.4"
 tqdm = "0.6.0"
 rand = "0.8.5"
+rand_distr = "0.4.3"

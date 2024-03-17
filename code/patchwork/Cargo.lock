@@ -998,9 +998,11 @@ version = "1.0.0"
 dependencies = [
  "candle-core",
  "candle-nn",
+ "criterion",
  "lazy_static",
  "linfa",
  "patchwork-core",
+ "rand",
 ]
 
 [[package]]
@@ -1014,6 +1016,7 @@ dependencies = [
  "greedy-player",
  "patchwork-core",
  "rand",
+ "rand_distr",
  "regex",
  "tqdm",
 ]

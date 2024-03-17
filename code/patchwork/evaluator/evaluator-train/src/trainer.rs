@@ -9,8 +9,10 @@ use candle_core::{DType, Device, Tensor};
 use candle_nn::{Optimizer, VarBuilder, VarMap, SGD};
 use evaluator::{NeuralNetworkEvaluator, StaticEvaluator};
 use greedy_player::GreedyPlayer;
-use patchwork_core::{evaluator_constants, Evaluator, Patchwork, PlayerResult, Termination, TerminationType};
+use patchwork_core::{evaluator_constants, ActionId, Evaluator, Patchwork, PlayerResult, Termination, TerminationType};
 use rand::seq::SliceRandom;
+use rand::thread_rng;
+use rand_distr::{Distribution, WeightedIndex};
 use regex::Regex;
 use tqdm::{refresh, tqdm};
 
@@ -19,6 +21,7 @@ use crate::training_args::TrainingArgs;
 pub struct Trainer {
     pub args: TrainingArgs,
     pub training_directory: PathBuf,
+    pub last_eval_percentage: f64,
 }
 
 pub struct History {
@@ -26,20 +29,71 @@ pub struct History {
     pub termination: Termination,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct RandomizedGreedyPlayer<Eval: Evaluator = StaticEvaluator> {
+    pub temperature: f64,
+    pub evaluator: Eval,
+}
+
+impl<Eval: Evaluator> RandomizedGreedyPlayer<Eval> {
+    pub const fn new_with_evaluator(temperature: f64, evaluator: Eval) -> Self {
+        Self { temperature, evaluator }
+    }
+
+    fn get_action(&self, game: &Patchwork) -> PlayerResult<ActionId> {
+        let mut game = game.clone();
+        let valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
+        let color = if game.is_player_1() { 1 } else { -1 };
+
+        let action_probabilities = valid_actions
+            .iter()
+            .map(|action| {
+                game.do_action(*action, false)?;
+                let evaluation = self.evaluator.evaluate_node(&game);
+                game.undo_action(*action, false)?;
+
+                Ok(
+                    f64::from(color * evaluation + evaluator_constants::POSITIVE_INFINITY + 1)
+                        / f64::from(2 * evaluator_constants::POSITIVE_INFINITY),
+                )
+            })
+            .collect::<PlayerResult<Vec<_>>>()?;
+
+        let sum = action_probabilities.iter().sum::<f64>();
+        let action_probabilities = action_probabilities
+            .iter()
+            .map(|x| x / sum)
+            .map(|x| x.powf(1.0 / self.temperature))
+            .collect::<Vec<_>>();
+
+        let dist = WeightedIndex::new(action_probabilities)?;
+        let action = valid_actions[dist.sample(&mut thread_rng())];
+
+        Ok(action)
+    }
+}
+
 impl Trainer {
     pub fn new<P: AsRef<Path>>(training_directory: P, args: TrainingArgs) -> Self {
         Self {
             training_directory: training_directory.as_ref().to_path_buf(),
             args,
+            last_eval_percentage: f64::NAN,
         }
     }
 
-    pub fn learn(&self) -> PlayerResult<()> {
+    pub fn learn(&mut self) -> PlayerResult<()> {
         let mut iteration = 0;
         let mut network_improvements = 0;
 
-        let (_, starting_index) = get_var_map(&self.training_directory)?;
+        let (var_map, starting_index) = get_var_map(&self.training_directory)?;
         println!("Starting at index {starting_index:?}");
+
+        let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
+        let network = NeuralNetworkEvaluator::new(var_builder)?;
+        self.evaluate_network(network);
+        drop(var_map);
+        let mut history = vec![];
 
         loop {
             // play games
@@ -48,7 +102,12 @@ impl Trainer {
                 self.args.number_of_games
             );
             let start_time = std::time::Instant::now();
-            let mut history = self.self_play()?;
+
+            // retain only 2x amount self play games
+            // history.shuffle(&mut rand::thread_rng());
+            // history.truncate(self.args.number_of_games.get() * 2 * 43);
+            history.clear();
+            history.extend(self.play()?);
             history.shuffle(&mut rand::thread_rng());
 
             // train network
@@ -60,7 +119,7 @@ impl Trainer {
 
             iteration += 1;
 
-            if self.evaluate_network(new_network.clone())? {
+            if self.evaluate_network(new_network.clone()) {
                 // save network and use as new best
                 let index = starting_index + 1;
                 let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
@@ -70,8 +129,9 @@ impl Trainer {
                     "[{network_improvements:?}/{iteration:?}]: New network won. Saving network to {network_weights:?}"
                 );
                 var_map.save(&network_weights)?;
+                history.clear();
 
-                self.compare_against_other(new_network);
+                // self.compare_against_other(new_network);
             } else {
                 // discard network
                 println!("[{network_improvements:?}/{iteration:?}]: New network lost. Discarding network");
@@ -84,7 +144,7 @@ impl Trainer {
         }
     }
 
-    pub fn self_play(&self) -> PlayerResult<Vec<History>> {
+    pub fn play(&self) -> PlayerResult<Vec<History>> {
         let (var_map, _) = get_var_map(&self.training_directory)?;
         let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
         let network = NeuralNetworkEvaluator::new(var_builder)?;
@@ -92,7 +152,8 @@ impl Trainer {
         let history = boxcar::vec![];
         let game_counter = AtomicUsize::new(0);
         let number_of_games = self.args.number_of_games.get();
-        let player = GreedyPlayer::new_with_evaluator("greedy_player".to_string(), network);
+        let neural_net_player = RandomizedGreedyPlayer::new_with_evaluator(self.args.temperature, network);
+        let greedy_player = GreedyPlayer::new_with_evaluator("Greedy", StaticEvaluator);
 
         std::thread::scope(|s| {
             let mut threads = Vec::with_capacity(self.args.parallelization.get() - 1);
@@ -105,7 +166,12 @@ impl Trainer {
                         loop {
                             states.push(state.clone());
 
-                            let action = player.get_action(&state).expect("Failed to get action");
+                            let action = if state.is_player_1() {
+                                neural_net_player.get_action(&state).expect("Failed to get action")
+                            } else {
+                                greedy_player.get_action(&state).expect("Failed to get action")
+                            };
+
                             state.do_action(action, false).expect("Failed to do action");
 
                             if state.is_terminated() {
@@ -136,7 +202,12 @@ impl Trainer {
                 loop {
                     states.push(state.clone());
 
-                    let action = player.get_action(&state).expect("Failed to get action");
+                    let action = if state.is_player_1() {
+                        neural_net_player.get_action(&state).expect("Failed to get action")
+                    } else {
+                        greedy_player.get_action(&state).expect("Failed to get action")
+                    };
+
                     state.do_action(action, false).expect("Failed to do action");
 
                     if state.is_terminated() {
@@ -174,6 +245,11 @@ impl Trainer {
         let mut loss_sum = 0.0;
         let mut iterations = 0;
 
+        let history = history
+            .iter()
+            .filter(|state| state.state.is_player_1())
+            .collect::<Vec<_>>();
+
         for _ in tqdm(0..self.args.epochs)
             .style(tqdm::Style::Block)
             .desc(Some("Epoch"))
@@ -190,7 +266,19 @@ impl Trainer {
                 for game in batch {
                     let network_eval = network.forward(&game.state)?;
                     values.push(network_eval.clone());
+                    values.push(network_eval.clone());
                     // values.push(network_eval);
+
+                    // Move towards expected result
+                    let mut probability: f32 = 0.0;
+                    for _ in 0..1000 {
+                        match game.state.random_rollout().get_termination_result().termination {
+                            TerminationType::Player1Won => probability += 1.0,
+                            TerminationType::Player2Won => {}
+                        }
+                    }
+                    probability /= 1000.0;
+                    targets.push(Tensor::new(probability, &Device::Cpu)?);
 
                     // // Move to static eval
                     // let target = (StaticEvaluator.evaluate_node(&game.state) as f32
@@ -231,26 +319,37 @@ impl Trainer {
         Ok((var_map, starting_index, network))
     }
 
-    pub fn evaluate_network(&self, new_network: NeuralNetworkEvaluator) -> PlayerResult<bool> {
+    pub fn evaluate_network(&mut self, new_network: NeuralNetworkEvaluator) -> bool {
         // load current best network
-        let (var_map, _) = get_var_map(&self.training_directory)?;
-        let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
-        let old_network = NeuralNetworkEvaluator::new(var_builder)?;
+        // let (var_map, _) = get_var_map(&self.training_directory)?;
+        // let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
+        // let old_network = NeuralNetworkEvaluator::new(var_builder)?;
 
         let player_1 = GreedyPlayer::new_with_evaluator("1", new_network);
-        let player_2 = GreedyPlayer::new_with_evaluator("2", old_network);
+        // let player_2 = GreedyPlayer::new_with_evaluator("2", old_network);
+        let player_2 = GreedyPlayer::new_with_evaluator("2", StaticEvaluator);
 
         let percentage = self.compare_players(&player_1, &player_2, self.args.evaluation_games);
 
-        Ok(percentage >= self.args.evaluation_percentage)
+        if self.last_eval_percentage.is_nan() {
+            self.last_eval_percentage = percentage;
+            return false;
+        }
+
+        if percentage >= self.last_eval_percentage {
+            self.last_eval_percentage = percentage;
+            true
+        } else {
+            false
+        }
     }
 
-    pub fn compare_against_other(&self, network: NeuralNetworkEvaluator) {
-        let player_1 = GreedyPlayer::new_with_evaluator("1", network);
-        let player_2 = GreedyPlayer::<StaticEvaluator>::new("2");
+    // pub fn compare_against_other(&self, network: NeuralNetworkEvaluator) {
+    //     let player_1 = GreedyPlayer::new_with_evaluator("1", network);
+    //     let player_2 = GreedyPlayer::<StaticEvaluator>::new("2");
 
-        self.compare_players(&player_1, &player_2, self.args.comparison_games);
-    }
+    //     self.compare_players(&player_1, &player_2, self.args.comparison_games);
+    // }
 
     fn compare_players<Eval1: Evaluator, Eval2: Evaluator>(
         &self,

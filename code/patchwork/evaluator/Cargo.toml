@@ -23,3 +23,11 @@ candle-nn = { version = "0.4.1", git = "https://github.com//huggingface/candle.g
 lazy_static = "1.4.0"
 linfa = "0.7.0"
 patchwork-core = { path = "../patchwork-core" }
+
+[dev-dependencies]
+criterion = { version = "0.4" }
+rand = "0.8.5"
+
+[[bench]]
+name = "performance"
+harness = false

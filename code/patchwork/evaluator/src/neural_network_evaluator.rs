@@ -9,29 +9,30 @@ use lazy_static::lazy_static;
 /// # Network Architecture
 ///
 /// ```text
-///                  ┌───────────── 32 bit float ─────────────┐
+///                  ┌───────────────── 32 bit float ─────────────────┐
 ///                          ⬐ σ=ReLU
 ///         ┌─       ◯ ─── ┌──┐-_
 ///         │  81×QB ⋮⋮ ─── │  │  ‾─ ◯ ⎺⎻⎼⎽_ ⬐ σ=ReLU ⬐ σ=ReLU
-/// Current │        ◯ ─── │F │ ─── ⋮ ⋱  ⋰ ┌──┐ ─── ┌──┐-_
-/// Player  │  Pos   ◯ ─── │ C│ 63× ⋮ ⋰  ⋱ │  │ ⋱⋰  │  │‾─_
-/// (84)    │  BI    ◯ ─── │  │ _⎽- ◯ ──── │  │ ⋰⋱  │  │‾─_⟍
-///         └─ BB    ◯ ─── └──┘‾      ‾‾── │  │ ⋱⋰  │  │-_‾‾─_
-///         ┌─       ◯ ─── ┌──┐-_     __── │F │ ⋰⋱  │F │ 32×  ⟍
-///         │  81×QB ⋮⋮ ─── │  │  ‾─ ◯ ──── │ C│ 32× │ C│ ────── ◯ ─ σ(tanh) ⭢ Evaluation
-/// Other   │        ◯ ─── │F │ ─── ⋮ ⋱  ⋰ │  │ ⋱⋰  │  │⎼⎻⎺_─‾ ⟋
-/// Player  │  Pos   ◯ ─── │ C│ 63× ⋮ ⋰  ⋱ │  │ ⋰⋱  │  │─‾__─‾
-/// (84)    │  BI    ◯ ─── │  │ _⎽- ◯ ──── │  │ ⋱⋰  │  │‾_─‾╱
-///         └─ BB    ◯ ─── └──┘‾      ‾‾── │  │ ⋰⋱  │  │_─‾
-/// Flags   ┌─ SP    ◯ ──────────── ◯ ──‾_ └──┘ ─── └──┘-‾
+/// Current │        ◯ ─── │F │ ─── ⋮ ⋱  ⋰ ┌──┐ ─── ┌──┐ ─── ┌──┐-_
+/// Player  │  Pos   ◯ ─── │ C│ 63× ⋮ ⋰  ⋱ │  │ ⋱⋰  │  │ ⋱⋰  │  │‾─_
+/// (84)    │  BI    ◯ ─── │  │ _⎽- ◯ ──── │  │ ⋰⋱  │  │ ⋰⋱  │  │‾─_⟍
+///         └─ BB    ◯ ─── └──┘‾      ‾‾── │  │ ⋱⋰  │  │ ⋱⋰  │  │-_‾‾─_
+///         ┌─       ◯ ─── ┌──┐-_     __── │F │ ⋰⋱  │F │ ⋰⋱  │F │ 64×  ⟍
+///         │  81×QB ⋮⋮ ─── │  │  ‾─ ◯ ──── │ C│ 64× │ C│ 64× │ C│ ────── ◯ ─ σ(tanh) ⭢ Evaluation
+/// Other   │        ◯ ─── │F │ ─── ⋮ ⋱  ⋰ │  │ ⋱⋰  │  │ ⋱⋰  │  │⎼⎻⎺_─‾ ⟋
+/// Player  │  Pos   ◯ ─── │ C│ 63× ⋮ ⋰  ⋱ │  │ ⋰⋱  │  │ ⋰⋱  │  │─‾__─‾
+/// (84)    │  BI    ◯ ─── │  │ _⎽- ◯ ──── │  │ ⋱⋰  │  │ ⋱⋰  │  │‾_─‾╱
+///         └─ BB    ◯ ─── └──┘‾      ‾‾── │  │ ⋰⋱  │  │ ⋰⋱  │  │_─‾
+/// Flags   ┌─ SP    ◯ ──────────── ◯ ──‾_ └──┘ ─── └──┘ ─── └──┘-‾
 /// (2)     └─ ST    ◯ ──────────── ◯ ⎼⎻⎺
-///         2×84+2=170        2×63+2=128    32       32
+///         2×84+2=170        2×63+2=128    64       64
 ///       input features      parameters  params   params
 /// ```
 #[derive(Debug, Clone)]
 pub struct NeuralNetworkEvaluator {
     linear_layer_1: Linear,
     linear_layer_2: Linear,
+    linear_layer_3: Linear,
     player_weight: Tensor,
     player_bias: Tensor,
 }
@@ -71,10 +72,11 @@ impl NeuralNetworkEvaluator {
             up: 0.1111111111111111,  //  1/9
         })?;
 
-        let linear_layer_1 = candle_nn::linear(128, 32, vb.pp("linear_1"))?;
-        let linear_layer_2 = candle_nn::linear(32, 1, vb.pp("linear_2"))?;
+        let linear_layer_1 = candle_nn::linear(128, 64, vb.pp("linear_1"))?;
+        let linear_layer_2 = candle_nn::linear(64, 64, vb.pp("linear_2"))?;
+        let linear_layer_3 = candle_nn::linear(64, 1, vb.pp("linear_3"))?;
 
-        Ok(Self { linear_layer_1, linear_layer_2, player_weight, player_bias })
+        Ok(Self { linear_layer_1, linear_layer_2, linear_layer_3, player_weight, player_bias })
     }
 
     #[allow(clippy::unused_self)]
@@ -130,10 +132,11 @@ impl NeuralNetworkEvaluator {
         // Do the forward pass for the player linear layers
         let forwarded = Tensor::stack(&[&player_1, &player_2], 0)?
             .matmul(&self.player_weight.t()?)?
-            .broadcast_add(&self.player_bias)?;
+            .broadcast_add(&self.player_bias)?
+            .relu()?;
 
-        let forwarded_player_1 = forwarded.i((0, ..))?.relu()?;
-        let forwarded_player_2 = forwarded.i((1, ..))?.relu()?;
+        let forwarded_player_1 = forwarded.i((0, ..))?;
+        let forwarded_player_2 = forwarded.i((1, ..))?;
 
         let special_patch = self.get_special_patch_tensor(game);
         let special_tile = self.get_special_tile_tensor(game);
@@ -144,9 +147,10 @@ impl NeuralNetworkEvaluator {
             Tensor::cat(&[&forwarded_player_2, &forwarded_player_1, &special_patch, &special_tile], 0)?.unsqueeze(0)?
         };
 
-        let xs = self.linear_layer_1.forward(&input_tensor)?.clamp(0f32, 127f32)?;
+        let xs = self.linear_layer_1.forward(&input_tensor)?.relu()?;
+        let xs = self.linear_layer_2.forward(&xs)?.relu()?;
 
-        self.linear_layer_2.forward(&xs)?.squeeze(0)?.sum(0)?.tanh()
+        self.linear_layer_3.forward(&xs)?.squeeze(0)?.sum(0)?.tanh()
     }
 }
 

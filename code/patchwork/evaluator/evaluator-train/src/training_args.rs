@@ -12,12 +12,12 @@ pub struct TrainingArgs {
     pub batch_size: usize,
     /// Number of evaluation games to play for determining if a new network is better than the old one
     pub evaluation_games: usize,
-    /// The percentage to determine if a new network is better than the old one
+    /// The percentage to determine if a new network is better than the old one against greedy player
     pub evaluation_percentage: f64,
     /// The learning rate for the optimizer
     pub learning_rate: f64,
-    /// The amount of games to play against the handcrafted evaluator for comparison.
-    pub comparison_games: usize,
+    /// The temperature to use for action selection during self-play
+    pub temperature: f64,
 }
 
 impl Default for TrainingArgs {
@@ -28,14 +28,15 @@ impl Default for TrainingArgs {
             .unwrap_or_else(|| NonZeroUsize::new(1).unwrap());
 
         Self {
-            number_of_games: NonZeroUsize::new(10_000).unwrap(),
+            number_of_games: NonZeroUsize::new(1_000).unwrap(),
             parallelization,
-            epochs: 5,
+            epochs: 3,
             batch_size: 128,
-            evaluation_games: 200,
-            evaluation_percentage: 0.55,
-            learning_rate: 0.05,
-            comparison_games: 100,
+            evaluation_games: 400,
+            learning_rate: 0.01,
+            temperature: 1.0,
+            // unused
+            evaluation_percentage: 0.51,
         }
     }
 }
