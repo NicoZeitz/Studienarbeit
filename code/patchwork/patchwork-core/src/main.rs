@@ -243,17 +243,19 @@ fn brute_force() {
                                                             continue;
                                                         }
 
-                                                        for valid_action in valid_actions {
-                                                            current_action[13] = valid_action;
-                                                            let mut board = board.clone();
-                                                            board.do_action(valid_action);
-
-                                                            // TODO: record solution
-
-                                                            println!("Found solution!");
-                                                            println!("Transforms: {current_action:?}");
-                                                            return;
+                                                        if valid_actions.is_empty() {
+                                                            continue;
                                                         }
+
+                                                        let valid_action = valid_actions[0];
+
+                                                        current_action[13] = valid_action;
+                                                        let mut board = board.clone();
+                                                        board.do_action(valid_action);
+
+                                                        println!("Found solution!");
+                                                        println!("Transforms: {current_action:?}");
+                                                        return;
                                                     }
                                                 }
                                             }
