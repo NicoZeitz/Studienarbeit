@@ -8,19 +8,18 @@
     titlepage,               % Titlepage-Umgebung anstatt \maketitle
     headsepline,             % horizontale Linie unter Kolumnentitel
     abstract,                % Überschrift einschalten, Abstract muss in {abstract}-Umgebung stehen
-    draft,                   % TODO:FINAL_COMPILATION Remove or change to final [final or draft]
+    final,                   % TODO:FINAL_COMPILATION Remove or change to final [final or draft]
 ]{scrreprt}                  % Verwendung von KOMA-Report
-\pdfcompresslevel=0 % TODO:FINAL_COMPILATION Remove
-\pdfobjcompresslevel=0 % TODO:FINAL_COMPILATION Remove
+\pdfcompresslevel=0          % TODO:FINAL_COMPILATION Remove
+\pdfobjcompresslevel=0       % TODO:FINAL_COMPILATION Remove
 
 \usepackage[T1]{fontenc}     % Ausgabe von westeuropäischen Zeichen (auch Umlaute)
-\usepackage{alphabeta}        % Griechische Buchstaben
-% \usepackage[mathletters]{ucs} % Mathematische Zeichen für UTF8
+\usepackage{alphabeta}       % Griechische Buchstaben
 \usepackage[utf8]{inputenc}  % UTF8 Encoding einschalten
 \usepackage[ngerman]{babel}  % Neue deutsche Rechtschreibung
 \usepackage{microtype}       % Trennung von Wörtern wird besser umgesetzt
 \usepackage{lmodern}         % Nicht-gerasterte Schriftarten (bei MikTeX erforderlich)
-\usepackage{graphicx}        % Einbinden von Grafiken erlauben
+\usepackage[draft]{graphicx} % Einbinden von Grafiken erlauben % TODO:FINAL_COMPILATION Remove or change to final [final or draft]
 \usepackage{wrapfig}         % Grafiken fließend im Text
 \usepackage{setspace}        % Zeilenabstand \singlespacing, \onehalfspaceing, \doublespacing
 \usepackage[
@@ -28,10 +27,10 @@
     left=2.7cm, right=2.5cm,
     top=2.5cm,  bottom=2.5cm,
     includeheadfoot,
-    showframe=true, % TODO:FINAL_COMPILATION Remove
+    showframe=false,             % TODO:FINAL_COMPILATION Remove
 ]{geometry}                      % Seitenlayout einstellen
 \usepackage{scrlayer-scrpage}    % Gestaltung von Fuß- und Kopfzeilen
-\KOMAoptions{draft=false}
+\KOMAoptions{draft=false}        % TODO:FINAL_COMPILATION Change to false
 \usepackage{acronym}             % Abkürzungen, Abkürzungsverzeichnis
 \usepackage{titletoc}            % Anpassungen am Inhaltsverzeichnis
 \contentsmargin{0.75cm}          % Abstand im Inhaltsverzeichnis zw. Punkt und Seitenzahl
