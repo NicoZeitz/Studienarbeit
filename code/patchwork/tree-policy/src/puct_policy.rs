@@ -124,6 +124,7 @@ impl PUCTPolicy {
 
         let res = f64::from(child.wins_for(parent_player)) / child_visit_count;
 
+        #[cfg(debug_assertions)]
         if res.is_infinite() {
             println!(
                 "Infinite exploitation: wins: {}, visit count: {} or {} = {} or {}",

@@ -5,24 +5,40 @@ import * as Separator from '@radix-ui/react-separator';
 import PopupSettings from '../PopupSettings/PopupSettings';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+    PlayerSettings,
+    playerSettings,
+} from '../PopupSettings/playerSettings.ts';
+import { PlayerIds } from '../../player/playerIds.ts';
 
 export interface PlayerSelectorProps {
     label: string;
-    player: 1 | 2;
+    playerNumber: 1 | 2;
+    player: {
+        selectedPlayer: null | string;
+        settings: PlayerSettings;
+    };
 }
 
-type PlayerIds =
-    | 'Mensch'
-    | 'KI-Random'
-    | 'KI-Greedy'
-    | 'KI-Minimax'
-    | 'KI-PVS'
-    | 'KI-MCTS'
-    | 'KI-AlphaZero';
+export type SettingsState = {
+    [id in keyof typeof playerSettings]: {
+        [id: string]: string | number | boolean | undefined;
+    };
+};
 
 export default function PlayerSelector(props: PlayerSelectorProps) {
-    const selectId = `player-${props.player}-select`;
-    const [player, setPlayer] = useState<PlayerIds>('Mensch');
+    const [player, setPlayer] = useState<PlayerIds | null>(null);
+    const [settingsState, setSettingsState] = useState<SettingsState>({
+        Mensch: {},
+        'KI-Random': {},
+        'KI-Greedy': {},
+        'KI-Minimax': {},
+        'KI-PVS': {},
+        'KI-MCTS': {},
+        'KI-AlphaZero': {},
+    });
+
+    const selectId = `player-${props.playerNumber}-select`;
 
     return (
         <div className="flex flex-col">
@@ -31,6 +47,7 @@ export default function PlayerSelector(props: PlayerSelectorProps) {
             </label>
             <div className="flex gap-2 rounded-lg p-3 shadow-lg">
                 <Select.Root
+                    required
                     onValueChange={(player) => setPlayer(player as PlayerIds)}
                 >
                     <Select.Trigger
@@ -38,7 +55,7 @@ export default function PlayerSelector(props: PlayerSelectorProps) {
                         id={selectId}
                     >
                         <Select.Value
-                            placeholder={`Spieler ${props.player} wählen`}
+                            placeholder={`Spieler ${props.playerNumber} wählen`}
                         />
                         <Select.Icon className="text-black">
                             <CaretDown size={32} weight="duotone" />
@@ -92,7 +109,7 @@ export default function PlayerSelector(props: PlayerSelectorProps) {
                 />
 
                 <Popover.Root>
-                    <Popover.Trigger asChild>
+                    <Popover.Trigger disabled={player === null}>
                         <GearSix size={32} weight="duotone" />
                     </Popover.Trigger>
                     <AnimatePresence>
@@ -109,7 +126,12 @@ export default function PlayerSelector(props: PlayerSelectorProps) {
                                     transition={{ duration: 0.15 }}
                                     exit={{ opacity: 0 }}
                                 >
-                                    <PopupSettings selectedPlayer={player} />
+                                    <PopupSettings
+                                        playerType={player!}
+                                        player={props.playerNumber}
+                                        settingsState={settingsState}
+                                        setSettingsState={setSettingsState}
+                                    />
                                     <Popover.Arrow className="fill-white" />
                                 </motion.div>
                             </Popover.Content>

@@ -7,6 +7,8 @@
 % ---- Präambel mit Angaben zum Dokument
 \input{Inhalt/00_Latex/praeambel}
 
+% \includeonly{chapters/02_grundlagen}
+
 % ---- Elektronische Version oder Gedruckte Version?
 % ---- Unterschied: Die elektronische Version enthält keinen Platzhalter für die Unterschrift
 \usepackage{ifthen}
@@ -99,7 +101,6 @@
 \lstlistoflistings                      % Erzeugen des Listenverzeichnisses
 \setcounter{savepage}{\value{page}}
 
-
 % ---- Inhalt der Arbeit
 \cleardoublepage
 \pagenumbering{arabic}                  % Arabische Seitenzahlen für den Hauptteil
@@ -108,6 +109,7 @@
 \renewcommand*{\chapterpagestyle}{scrheadings}
 \pagestyle{scrheadings}
 \onehalfspacing
+
 \include{chapters/01_einleitung}
 \include{chapters/02_grundlagen}
 \include{chapters/03_analyse}
@@ -129,7 +131,7 @@
 \appendix
 \clearpage
 \pagenumbering{Roman}  % römische Seitenzahlen für Anhang
-\include{chapters/A_anhang.tex}
+% \include{chapters/A_anhang}
 
 \newpage
 \end{document}

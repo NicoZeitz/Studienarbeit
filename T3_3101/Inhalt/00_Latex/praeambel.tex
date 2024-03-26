@@ -8,7 +8,11 @@
     titlepage,               % Titlepage-Umgebung anstatt \maketitle
     headsepline,             % horizontale Linie unter Kolumnentitel
     abstract,                % Überschrift einschalten, Abstract muss in {abstract}-Umgebung stehen
+    draft,                   % TODO:FINAL_COMPILATION Remove or change to final [final or draft]
 ]{scrreprt}                  % Verwendung von KOMA-Report
+\pdfcompresslevel=0 % TODO:FINAL_COMPILATION Remove
+\pdfobjcompresslevel=0 % TODO:FINAL_COMPILATION Remove
+
 \usepackage[utf8]{inputenc}  % UTF8 Encoding einschalten
 \usepackage[ngerman]{babel}  % Neue deutsche Rechtschreibung
 \usepackage[T1]{fontenc}     % Ausgabe von westeuropäischen Zeichen (auch Umlaute)
@@ -21,7 +25,8 @@
     %showframe,                % Ränder anzeigen lassen
     left=2.7cm, right=2.5cm,
     top=2.5cm,  bottom=2.5cm,
-    includeheadfoot
+    includeheadfoot,
+    showframe=true, % TODO:FINAL_COMPILATION Remove
 ]{geometry}                      % Seitenlayout einstellen
 \usepackage{scrlayer-scrpage}    % Gestaltung von Fuß- und Kopfzeilen
 \usepackage{acronym}             % Abkürzungen, Abkürzungsverzeichnis
