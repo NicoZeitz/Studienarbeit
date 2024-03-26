@@ -1,4 +1,5 @@
 \section{Lösungsprogramm für Optimierungsproblem}
+\label{anhang:section-integer-linear-program}
 
 % somewhere\mambaforge\share\jupyter\nbconvert\templates\hide_header
 % jupyter nbconvert --to pdf --LatexPreprocessor.title="" --LatexPreprocessor.date="" .\integer_linear_programming_cvxpy.ipynb --template hide_header
@@ -199,8 +200,8 @@ Summary
 (CVXPY) 05:01:32 PM: Compilation took 9.297e-01 seconds
 (CVXPY) 05:01:32 PM: Solver (including time spent in interface) took
 4.494e+01 seconds
-Problem status: 'optimal', Value: 84.0
-SolverStats(solver\_name='GLPK\_MI', solve\_time=None, setup\_time=None,
+Problem status: \PYZsq{}optimal\PYZsq{}, Value: 84.0
+SolverStats(solver\_name=\PYZsq{}GLPK\_MI\PYZsq{}, solve\_time=None, setup\_time=None,
 num\_iters=None, extra\_stats=None)
 Solver took 46.063112500007264s
 \end{Verbatim}
@@ -239,6 +240,10 @@ Solver took 46.063112500007264s
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [7]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{7}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [8]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [9]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Y\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{Y}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z = }\PY{l+s+si}{\PYZob{}}\PY{n}{z}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
@@ -249,12 +254,16 @@ Solver took 46.063112500007264s
     \end{Verbatim}
 \end{tcolorbox}
 
+\vspace*{-0.25cm}
+
 % documentclass 11pt font sizes
 % \fontsize{6}{6.12}\selectfont % tiny
-\fontsize{8}{8.5}\selectfont % scriptsize
-% \fontsize{9}[10.8]\selectfont % footnotesize
+% \fontsize{8}{8.5}\selectfont % scriptsize
+% \fontsize{9}{10.8}\selectfont % footnotesize
 % \fontsize{10}{12}\selectfont % small
-% \fontsize{10.95}{113.6}\selectfont % normalsize
+% \fontsize{10.95}{13.6}\selectfont % normalsize
+
+\fontsize{8.75}{10.5}\selectfont % footnotesize
 
 \begin{Verbatim}[commandchars=\\\{\}]
 Value = 84.0
@@ -269,9 +278,9 @@ Value = 84.0
    Cost     = -54.0
    Walk     = 7.0
 patches             = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
-patches area        = [5. 6. 4. 6. 5. 6. 6. 6. 5. 4. 7. 4. 6. 6.] (sum = 76.0)
-patches time cost   = [4. 6. 6. 1. 3. 2. 2. 5. 4. 2. 4. 2. 6. 3.] (sum = 50.0)
-patches button cost = [10.  8.  7.  2.  2.  1.  7.  1.  5.  4.  1.  3.  3.] (sum = 54.0)
+patches area        = [5 6 4 6 5 6 6 6 5 4 7 4 6 6] (sum = 76.0)
+patches time cost   = [4 6 6 1 3 2 2 5 4 2 4 2 6 3] (sum = 50.0)
+patches button cost = [10  8  7  2  2  1  7  1  5  4  1  3  3] (sum = 54.0)
 patches [1]         = [17 32]
 patches [2]         = [17 30 32]
 patches [3]         = [ 4 17 30 32]
@@ -283,7 +292,7 @@ patches [8]         = [ 1  3  4  6 10 11 12 17 19 20 26 30 32]
 patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
 \end{Verbatim}
 
-\vspace*{-0.5cm}
+\vspace*{-1cm}
 
 \fontsize{10}{12}\selectfont % small
 

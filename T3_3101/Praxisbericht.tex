@@ -110,9 +110,18 @@
 \pagestyle{scrheadings}
 \onehalfspacing
 
+% INCLUDE A SINGLE CHAPTER WITH ALL IMAGES LIKE THIS
+% {
+%     \setkeys{Gin}{draft=false}
+%     \include{chapters/01_einleitung}
+% }
+
 \include{chapters/01_einleitung}
 \include{chapters/02_grundlagen}
-\include{chapters/03_analyse}
+{
+    \setkeys{Gin}{draft=false}
+    \include{chapters/03_analyse}
+}
 \include{chapters/04_modellierung}
 \include{chapters/05_erstellung}
 \include{chapters/06_umsetzung}
