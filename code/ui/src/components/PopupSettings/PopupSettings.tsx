@@ -2,144 +2,84 @@ import * as Slider from '@radix-ui/react-slider';
 import * as Switch from '@radix-ui/react-switch';
 import * as Select from '@radix-ui/react-select';
 import React from 'react';
-import { useState } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
+import { playerSettings } from './playerSettings.ts';
+import type { SettingsState } from '../PlayerSelector/PlayerSelector.tsx';
 
 export interface PopupSettingsProps {
-    selectedPlayer: keyof typeof settings;
+    player: 1 | 2;
+    playerType: keyof typeof playerSettings;
+    settingsState: SettingsState;
+    setSettingsState: React.Dispatch<React.SetStateAction<SettingsState>>;
 }
 
-const settings = {
-    Mensch: [{ name: 'Name', type: 'Text-Input' }],
-    'KI-Random': [
-        { name: 'Name', type: 'Text-Input' },
-        {
-            name: 'Seed',
-            type: 'Number-Input',
-            min: 0,
-            max: 1000,
-            defaultValue: (Math.random() * 1000 + 1) | 0,
-        },
-    ],
-    'KI-Greedy': [
-        { name: 'Name', type: 'Text-Input' },
-        {
-            name: 'Evaluierer',
-            type: 'Select',
-            options: [
-                { value: 'Statischer Evaluierer', id: 'static' },
-                { value: 'Zufallsspiel', id: 'win' },
-                { value: 'Bewertetes Zufallsspiel', id: 'score' },
-                { value: 'Neuronales Netz', id: 'nn' },
-            ],
-        },
-    ],
-    'KI-Minimax': [
-        { name: 'Name', type: 'Text-Input' },
-        { name: 'Tiefe', type: 'Number-Input', min: 1, max: 20 },
-        { name: 'Flickenzüge', type: 'Number-Input', min: 1, max: 10 },
-    ],
-    'KI-PVS': [
-        { name: 'Name', type: 'Text-Input' },
-        { name: 'Zugzeit in Sekunden', type: 'Number-Input', min: 1, max: 60 },
-        {
-            name: 'Evaluierer',
-            type: 'Select',
-            options: [
-                { value: 'Statischer Evaluierer', id: 'static' },
-                { value: 'Zufallsspiel', id: 'win' },
-                { value: 'Bewertetes Zufallsspiel', id: 'score' },
-                { value: 'Neuronales Netz', id: 'nn' },
-            ],
-        },
-        {
-            name: 'Failing strategy',
-            type: 'Select',
-            options: [
-                { value: 'Soft', id: 'soft' },
-                { value: 'Hard', id: 'hard' },
-            ],
-        },
-        { name: 'Aspiration window', type: 'Checkbox', defaultValue: false },
-        { name: 'Late Move Reduction', type: 'Checkbox', defaultValue: true },
-        { name: 'Late Move Pruning', type: 'Checkbox', defaultValue: false },
-        { name: 'Transposition Table', type: 'Checkbox', defaultValue: false },
-        { name: 'Lazy-SMP', type: 'Checkbox', defaultValue: false },
-    ],
-    'KI-MCTS': [
-        { name: 'Name', type: 'Text-Input' },
-        { name: 'Zugzeit in Sekunden', type: 'Number-Input', min: 1, max: 60 },
-        { name: 'Baum wiederverwenden', type: 'Checkbox', defaultValue: false },
-        {
-            name: 'Wurzeln parallelisieren',
-            type: 'Checkbox',
-            defaultValue: false,
-        },
-        {
-            name: 'Blätter parallelisieren',
-            type: 'Checkbox',
-            defaultValue: false,
-        },
-        {
-            name: 'Tree Policy',
-            type: 'Select',
-            options: [
-                { value: 'UCT', id: 'uct' },
-                { value: 'Partial Score', id: 'partial-score' },
-                { value: 'Score', id: 'score' },
-            ],
-        },
-        {
-            name: 'Evaluierer',
-            type: 'Select',
-            options: [
-                { value: 'Statischer Evaluierer', id: 'static' },
-                { value: 'Zufallsspiel', id: 'win' },
-                { value: 'Bewertetes Zufallsspiel', id: 'score' },
-                { value: 'Neuronales Netz', id: 'nn' },
-            ],
-        },
-    ],
-    'KI-AlphaZero': [{ name: 'Name', type: 'Text-Input' }],
-} as const satisfies { name: string; type: string; defaultValue?: string };
-
 export default function PopupSettings(props: PopupSettingsProps) {
-    const currentSettings = settings[props.selectedPlayer];
-
     return (
         <div>
             <h1 className="mb-2 font-bold">Einstellungen</h1>
             <div className="grid grid-cols-[minmax(0,1fr)_30ch] place-items-end gap-x-4 gap-y-2">
-                {currentSettings.map((setting, index) => {
-                    let id = 'test';
+                {playerSettings[props.playerType].map((setting) => {
+                    const id = `${setting.id}-${props.player}`;
+                    const value =
+                        props.settingsState[props.playerType][setting.id] ??
+                        (
+                            setting as {
+                                defaultValue:
+                                    | string
+                                    | number
+                                    | boolean
+                                    | undefined;
+                            }
+                        ).defaultValue;
+                    const callback = (value: string | number | boolean) =>
+                        props.setSettingsState((state) => ({
+                            ...state,
+                            [props.playerType]: {
+                                ...state[props.playerType],
+                                [setting.id]: value,
+                            },
+                        }));
+
                     return (
-                        <React.Fragment key={index}>
+                        <React.Fragment key={id}>
                             <label
                                 htmlFor={id}
-                                className="place-self-start"
-                                style={{ alignSelf: 'center' }}
+                                className="place-self-start self-center"
                             >
                                 {setting.name}
                             </label>
-                            {setting.type === 'Text-Input' && <TextInput />}
+                            {setting.type === 'Text-Input' && (
+                                <TextInput
+                                    id={id}
+                                    value={value as string | undefined}
+                                    onValueChanged={callback}
+                                />
+                            )}
                             {setting.type === 'Number-Input' && (
                                 <NumberInput
                                     id={id}
                                     max={setting.max}
                                     min={setting.min}
-                                    defaultValue={setting.defaultValue}
+                                    value={
+                                        (value as number | undefined) ??
+                                        setting.min
+                                    }
+                                    onValueChanged={callback}
                                 />
                             )}
                             {setting.type === 'Select' && (
                                 <SelectWrapper
                                     id={id}
+                                    value={value as string | undefined}
                                     options={setting.options}
+                                    onValueChanged={callback}
                                 />
                             )}
                             {setting.type === 'Checkbox' && (
                                 <Checkbox
-                                    defaultValue={setting.defaultValue}
                                     id={id}
+                                    value={value as boolean | undefined}
+                                    onCheckedChange={callback}
                                 />
                             )}
                         </React.Fragment>
@@ -150,10 +90,16 @@ export default function PopupSettings(props: PopupSettingsProps) {
     );
 }
 
-function Checkbox(props: { defaultValue?: boolean; id: string }) {
+function Checkbox(props: {
+    id: string;
+    value: boolean | undefined;
+    onCheckedChange: (checked: boolean) => void;
+}) {
     return (
         <Switch.Root
-            defaultChecked={props.defaultValue ?? false}
+            defaultChecked={props.value ?? false}
+            checked={props.value ?? false}
+            onCheckedChange={props.onCheckedChange}
             className="relative aspect-[1.75/1] h-full rounded-full bg-gray-200 outline outline-1 outline-gray-200 data-[state=checked]:bg-[#68eb5d]"
             id={props.id}
         >
@@ -164,16 +110,20 @@ function Checkbox(props: { defaultValue?: boolean; id: string }) {
 
 function SelectWrapper(props: {
     id: string;
-    defaultValue: string;
+    value: string | undefined;
     options: Array<{ value: string; id: string }>;
+    onValueChanged: (valueId: string) => void;
 }) {
     return (
-        <Select.Root>
+        <Select.Root
+            onValueChange={(value) => props.onValueChanged(value)}
+            value={props.value}
+        >
             <Select.Trigger
                 className="flex w-full items-center justify-between  data-[placeholder]:text-red-500"
                 id={props.id}
             >
-                <Select.Value defaultValue={props.defaultValue} />
+                <Select.Value defaultValue={props.value} />
                 <Select.Icon className="text-black">
                     <CaretDown size={32} weight="duotone" />
                 </Select.Icon>
@@ -197,22 +147,22 @@ function SelectWrapper(props: {
 }
 
 function NumberInput(props: {
+    id: string;
+    value: number;
     min: number;
     max: number;
-    defaultValue?: number;
-    id: string;
+    onValueChanged: (value: number) => void;
 }) {
-    let [value, setValue] = useState(props.defaultValue ?? props.min);
     return (
         <div className="flex h-full w-full gap-3">
             <Slider.Root
                 className="relative flex h-full w-full touch-none select-none items-center"
-                defaultValue={[props.defaultValue ?? props.min]}
+                defaultValue={[props.value]}
                 max={props.max}
                 min={props.min}
-                value={[value]}
+                value={[props.value]}
                 step={1}
-                onValueChange={(value) => setValue(value[0])}
+                onValueChange={(value) => props.onValueChanged(value[0])}
             >
                 <Slider.Track className="relative h-[3px] grow rounded-full bg-gray-200">
                     <Slider.Range className="absolute h-full rounded-full bg-[#68eb5d]" />
@@ -226,23 +176,29 @@ function NumberInput(props: {
                 max={props.max}
                 min={props.min}
                 className="w-[7ch] rounded-md bg-gray-200 p-1 text-center"
-                value={value}
+                value={props.value}
                 onChange={(event) =>
-                    setValue(event.currentTarget.valueAsNumber)
+                    props.onValueChanged(event.currentTarget.valueAsNumber)
                 }
             ></input>
         </div>
     );
 }
 
-function TextInput(props: { defaultValue?: string; id: string }) {
+function TextInput(props: {
+    id: string;
+    value: string | undefined;
+    onValueChanged: (value: string) => void;
+}) {
     return (
         <input
             type="text"
             id={props.id}
+            onChange={(event) =>
+                props.onValueChanged(event.currentTarget.value)
+            }
             className="w-full rounded-md bg-gray-200 p-1 outline-gray-200"
-        >
-            {props.defaultValue}
-        </input>
+            value={props.value ?? ''}
+        />
     );
 }

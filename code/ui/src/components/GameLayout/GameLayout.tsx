@@ -5,7 +5,7 @@ import { createContext } from 'react';
 import Patch from '../Patch/Patch.tsx';
 import { motion } from 'framer-motion';
 
-export interface GameLayoutProps { }
+export interface GameLayoutProps {}
 
 export const StateContext = createContext<PatchworkState>(null!);
 
@@ -60,7 +60,7 @@ export default function GameLayout(props: GameLayoutProps) {
                             />
                             <Patch
                                 patch={
-                                    state.patches.filter((p) => p.id === 10)[0]
+                                    state.patches.filter((p) => p.id === 0)[0]
                                 }
                                 rotation={0}
                                 flipped={false}
@@ -82,7 +82,7 @@ export default function GameLayout(props: GameLayoutProps) {
                     initial={{ translateY: 100 }}
                     animate={{ translateY: 0 }}
                     transition={{ duration: 0.75 }}
-                    className="flex justify-between fixed left-0 right-0 bottom-0 items-end"
+                    className="fixed bottom-0 left-0 right-0 flex items-end justify-between"
                 >
                     <motion.div
                         initial={{ translateX: -100 }}

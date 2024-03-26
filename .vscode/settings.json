@@ -22,14 +22,6 @@
     "rust-analyzer.inlayHints.bindingModeHints.enable": false,
     "rust-analyzer.inlayHints.maxLength": 10000,
     "python.terminal.activateEnvironment": false,
-    // Latex
-    "latex-workshop.intellisense.includegraphics.preview.enabled": true,
-    "emmet.includeLanguages": {
-        "tex": "html",
-        "latex": "html",
-        "typescriptreact": "html",
-        "javascriptreact": "html"
-    },
     // Other
     "notebook.output.textLineLimit": 500,
     "notebook.output.scrolling": true,
@@ -45,6 +37,15 @@
         "package.json": "package-lock.json, yarn.lock, tsconfig.*.json, tsconfig-*.json, tscondif.tsbuildinfo, tailwind.config.js, vite.config.ts, postcss.config.js, tsconfig.json, .eslintrc.js",
         ".env": ".env.example"
     },
+    // Latex
+    "latex-workshop.intellisense.includegraphics.preview.enabled": true,
+    "emmet.includeLanguages": {
+        "tex": "html",
+        "latex": "html",
+        "typescriptreact": "html",
+        "javascriptreact": "html"
+    },
+    // Files
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -157,12 +158,14 @@
         "Erklärung",
         "erlaubt",
         "Erzeugen",
+        "Evaluierer",
         "evcxr",
         "explorative",
         "ƎUИИ",
         "falsch",
         "Fassung",
         "Fastpath",
+        "Flickenzüge",
         "fürs",
         "Gedruckte",
         "gewünscht",
