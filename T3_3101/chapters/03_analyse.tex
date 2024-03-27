@@ -189,42 +189,44 @@ Dabei ist eine $+1$ für die Aktion \enquote{Vorrücken des Zeitsteins und Knöp
 
 Um die maximale Anzahl an Platzierungsmöglichkeiten festzulegen, muss zuerst betrachtet werden, auf wie viele Arten ein Flicken auf die Ablagedecke gelegt werden kann. Die Operationen, welche vor dem Platzieren auf einen Flicken angewendet werden können, sind Drehungen und Spiegelungen, wodurch die Flicken identisch zur Diedergruppe $D_4$ sind. Die Gruppe besteht aus 8 Elementen \cite[S. 33]{2015.AbstractAlgebra}, was somit gleichzeigt die maximale Anzahl an Transformationen für ein Flicken ist. Jedoch muss beachtet werden, dass die Flicken die maximale Anzahl nicht erreichen müssen. Zum Beispiel existiert ein $2\times2$ Flicken, welcher im Sinne der Diedergruppe 8 Ausprägungen besitzt, jedoch auf der Ablagedecke mit allen Drehungen und Spiegelungen immer genau dieselben Felder bedeckt. Für die maximale Platzierungsanzahl ist aber nur relevant, dass ein Flicken existiert, welcher bei allen 8 Transformationen eine andere Anordnung aufweist. Dieser Flicken existiert und ist in Abbildung \ref{fig:diedergruppe} dargestellt.
 
-\vspace*{-0.325cm}
+\pagebreak
+
+\vspace*{-0.85cm}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.885\textwidth]{res/pictures/dihedral-group.png}
-    \vspace*{-0.225cm}
+    \includegraphics[width=0.835\textwidth]{res/pictures/dihedral-group.png}
+    \vspace*{-0.23cm}
     \caption{Flicken mit 8 verschiedenen Transformationen}
     \label{fig:diedergruppe}
-    \vspace*{-0.1cm}
+    \vspace*{-0.22cm}
 \end{figure}
 
 Weiterhin gibt es verschiedene Möglichkeiten den transformierten Flicken auf den $9\times9$ Felder großen Ablageplan zu legen. Die Möglichkeiten lassen sich dabei einfach wie in Term \ref{eqn:ablagefeld-platzierungen} in Abhängigkeit von der Breite und Höhe des Flickens sowie der Anzahl der unterschiedlichen Transformationen berechnen.
 
-\vspace*{-0.15cm}
+\vspace*{-0.28cm}
 \vspace*{-0.4cm}
 \begin{equation}
     \label{eqn:ablagefeld-platzierungen}
     \left( 9 - \text{Höhe}  + 1 \right) \cdot
     \left( 9 - \text{Breite} + 1 \right) \cdot
     \left\lvert\, \text{Transformationen} \,\right\rvert
-    \vspace*{-0.15cm}
+    \vspace*{-0.28cm}
 \end{equation}
 
 Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dargestellten $3\times 2$ großen Flicken beträgt somit $\left( 9 - 3 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 8 = 448$. Jedoch muss für die Platzierungsmöglichkeiten beachtet werden, dass sich die Anzahl reduziert, je größer ein Flicken ist. Somit muss für alle Flicken, dessen Höhe $\le 3$ und Breite $\le 2$ ist \textemdash{} wobei mindestens eine der beiden Ungleichungen strikt (also $<$) sein muss \textemdash{} überprüft werden, ob mehr Platzierungsmöglichkeiten bestehen als bei dem Flicken von \ref{fig:diedergruppe}. Es existieren nur 3 Flicken dieser Art, welche in Tabelle \ref{tabelle:kleine-flicken} dargestellt sind. Jeder dieser Flicken weißt dabei durch die geringere Anzahl an verschiedenen Transformationsmöglichkeiten insgesamt weniger Platzierungsmöglichkeiten auf als der Flicken in \ref{fig:diedergruppe}.
 
-\vspace*{-0.05cm}
+\vspace*{-0.35cm}
 \begin{table}[!ht]
     \centering
     \begin{tabular}[t]{c|c|c|c}
-        \raisebox{0pt}[0.35ex][0.35ex]{Flicken} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/00-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/09-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/21-front.png}} \\ \hline
-        \makecell{Platzierungs-                                                                                                                                                                                                                                                                                                                       \\möglichkeiten} & $9 \cdot 8 \cdot 2 = 144$                                                                      & $8 \cdot 8 \cdot 1 = 64$                                                                       & $8 \cdot 8 \cdot 4 = 256$                                                                      \\ \hline
+        \raisebox{0pt}[0.35ex][0.35ex]{Flicken} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/00-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/09-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/21-front.png}} \\ \hline
+        \makecell{Platzierungs-                                                                                                                                                                                                                                                                                                                       \\möglichkeiten} & $9 \cdot 8 \cdot 2 = 144$                                                                      & $8 \cdot 8 \cdot 1 = 64$                                                                       & $8 \cdot 8 \cdot 4 = 256$                                                                      \\
     \end{tabular}
-    \vspace{5pt}
+    \vspace{2pt}
     \caption{Platzierungsmöglichkeiten der kleineren Flicken}
     \label{tabelle:kleine-flicken}
 \end{table}
-\vspace*{-3.5cm}
+\vspace*{-4.5cm}
 
 \pagebreak
 
@@ -305,13 +307,219 @@ Jedoch betragen die benötigten Zeitkosten bei dieser Anordnung $66$, wodurch di
     \frac{\text{Knopfeinkommen}}{\text{Felder}\, \cdot\, \text{Zeitkosten}}
 \end{equation}
 
-Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei $30$ Knöpfe und die benötigte Zeit beträgt $58$. Auf dem Zeitplan selbst, existieren nur $54$ Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar.
+Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei $30$ Knöpfe und die benötigte Zeit beträgt $58$. Auf dem Zeitplan selbst, existieren nur $54$ Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar. Eine obere Schranke für das Knopfeinkommen durch den Ablageplan im gesamten Spiel ist somit die Anzahl der Knopf-Wertungen auf dem Zeitplan ($9$) multipliziert mit dem maximalen Knopfeinkommen pro Knopf-Wertung ($30$) $= 270$.
 
-TODO:
+Der Spieler bekommt bei der Wertung am Ende nur Punkte abgezogen, wenn nicht alle Felder auf seinem Ablageplan bedeckt sind. Es gibt mehrere Möglichkeiten solch einen vollen Ablageplan im Spielverlauf zu erhalten (ein Beispiel hierfür ist in Anhang \ref{anhang:section-ablageplan-81} zu sehen). Somit kann für eine Obergrenze bei der Wertung mit einem Punktabzug von 0 gerechnet werden. Zusammen mit dem Ablageplan von \ref{fig:quilt-board-real-max-button-income} würde sich somit mit $5 + 7 + 30 \cdot 9 - 0 = \boldsymbol{282}$ eine neue Obergrenze für die maximale Wertung eines Spielers ergeben.
+
+Nun kann sich der minimal erreichbaren Wertung eines Spielers zugewendet werden. Eine sehr einfache Untergrenze für die minimale Wertung eines Spielers ist $-162$, \dash ein leerer Ablageplan und 0 Knöpfe im Knopfvorrat. Diese Wertung kann jedoch offensichtlich nicht erreicht werden, da die einzige Möglichkeit Knöpfe aus dem Vorrat abzugeben gleichzeitig darin besteht, den Ablageplan zu füllen und jeder Spieler mit mindestens 5 Knöpfen startet.
+
+Aus der einfachen Abschätzung lässt sich leicht erkennen, dass jeder Spieler mit einer Wertung von $5 - 2 * 81 = -157$ startet. Nun kann für jede Aktion eine Value-Funktion $V_{\alpha}\left(A\right)$ definiert werden, die aufzeigt, wie sich dieser Startwert durch die Aktion ändert. Um die minimale Wertung am Ende zu erreichen, muss nun die Summe aller im Spiel getätigten Aktionen wie in \ref{eqn:patch-value-minimize-objective} minimiert werden.
+
+\begin{align}
+    \label{eqn:patch-value-minimize-objective}
+    \operatorname{minimiere} \sum V\left(A\right)
+\end{align}
+
+Die Value-Funktion für \enquote{Vorrücken und Knöpfe erhalten} ist für ein Feld immer Konstant $V(Walk) = 1$, \dash jede Vorrücken-Aktion erhöht zwangsweise das Endergebnis um 1.
+
+Auch für die Aktion \enquote{Flicken nehmen und einfügen} lässt sich die Value-Funktion definieren. Diese hängt von mehreren Faktoren ab. Zuerst wird die Endwertung für jedes bedeckte Feld um 2 erhöht. Weiterhin wird die Endwertung um die Knopfkosten des Flickens verringert. Zuletzt muss noch das Knopfeinkommen auf die Wertung addiert werden. Dieses hängt dabei von einem Parameter $\alpha$ ab, was die Anzahl der noch ausstehenden Knopf-Wertungen auf dem Zeitplan darstellt. Da sich die letzte Knopf-Wertung direkt vor dem Ziel befindet, ist $\alpha$ immer größer gleich 1.Die Value-Funktion für Flicken ist in Gleichung \ref{eqn:patch-value-for-min-value} abgebildet.
+
+\vspace*{-0.2cm}
+\begin{align}
+    \label{eqn:patch-value-for-min-value}
+    V_{\alpha}\left(F\right) = 2 \cdot Felder_F - \text{Knopfkosten}_F + \text{Knopfeinkommen}_F \cdot \alpha
+    \intertext{\begin{flushright} \vspace*{-1.25cm} wobei $\alpha \ge 1$ die Anzahl der noch ausstehenden Knopf-Wertungen ist \end{flushright}} \vspace*{-1cm} \notag
+\end{align}
+\vspace*{-2.2cm}
+
+\begin{wrapfigure}{r}{0.21\textwidth}
+    \vspace*{-0.5cm}
+    \centering
+    \includegraphics[width=0.2\textwidth]{res/pictures/assets/04-front.png}
+    \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \caption[Flicken mit $V_1\left(F\right) = -2$]{\unskip}
+    Flicken mit $V_1\left(F\right) = -2$
+    \label{fig:negative-value-patch}
+    \vspace*{-0.375cm}
+\end{wrapfigure}
+
+Nach Einsetzen aller Flicken in die Value-Funktion ergeben sich für alle Flicken und alle $\alpha > 1$ im Vergleich zu der Laufen-Aktion Werte größer gleicht 1. Somit sind alle \enquote{Flicken nehmen und einfügen} Aktionen vor der vorletzten Knopf-Wertung äquivalent oder öfters der Fall besser als \enquote{Vorrücken und Knöpfe erhalten}. Für $\alpha = 1$ gibt es für den Vergleich $ V_1\left(F\right) - V\left(Walk\right)$ insgesamt 6 Flicken mit dem Ergebnis $\le 0$. Somit kann kurz vor dem Ziel ein Flicken gekauft werden, mit dem Resultat, dass das Endergebnis schlechter ausfällt als nur zu laufen. Da die Summe der Zeitkosten von je 2 dieser 6 Flicken größer als 6 ist, kann jedoch nur genau einer dieser Flicken gekauft werden. Dabei muss darauf geachtet werden, dass auf dem Zeitplan auch genauso viele Felder gelaufen werden, wie der Flicken vorgibt und keine Zeitkosten mit in das Ziel genommen werden. Der in Abbildung \ref{fig:negative-value-patch} dargestellte Flicken besitzt als einziger der Sechs eine Value-Funktion von $-2$ bei $\alpha = 1$ und minimiert somit die Endwertung.
+
+Für Spezialflicken ist die Value-Funktion Konstant $V\left(\text{Spezialflicken}\right) = 2$, da immer genau ein Feld auf dem Ablageplan befüllt wird. Da sich die Wertung somit durch einen Spezialflicken erhöhen würde, sollten für die minimale Wertung keine Spezialflicken eingesammelt werden.
+
+Um nun die minimale Wertung am Ende zu erhalten kann ein Spieler also 47-mal hintereinander laufen und zuletzt den in \ref{fig:negative-value-patch} dargestellten Flicken kaufen. Dadurch ergibt sich für die minimale Wertung am Ende des Spiels eine Wertung von $5 - 2 \cdot 81 + 47 - 7 + 2 \cdot 4 + 3 = -106$ Punkten. Im Gegensatz dazu bringt ein Spielverlauf, bei dem ein Spieler nur läuft eine Endwertung ovn $-104$ Punkten.
+
+\subsection*{Maximale Wertung als Optimierungsproblem}
+
+Mit der Schätzung für die maximale Wertung eines Spielers im vorherigen Abschnitt gibt es einige Probleme.
+
+lässt sich als \acf{ILP} Optimierungsproblem formulieren
+
+\pagebreak
+
+\textbf{Konstanten}
+
+\renewcommand{\arraystretch}{0.6666}
+
+\begin{addmargin}[1em]{0em}
+    Knopfkosten der Flicken (\emph{cost}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            c = \begin{bmatrix}
+                2 & 10 & 5 & 8 & 7 & 4 & 2 & 2 & 2 & 6 & 2 & 1 & 7 & 10 & 4 & 7 & 1 & 5 & 10 & 4 & 1 & 1 & 1 & 3 & 2 & 2 & 3 & 7 & 3 & 5 & 3 & 3 & 0
+            \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}_0^{33} &
+        \end{align*}
+    \end{fleqn}
+    Zeitkosten der Flicken (\emph{time}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            t = \begin{bmatrix}
+                1 & 4 & 3 & 6 & 6 & 2 & 1 & 3 & 2 & 5 & 3 & 2 & 2 & 5 & 6 & 4 & 5 & 4 & 3 & 2 & 4 & 3 & 2 & 1 & 2 & 2 & 2 & 1 & 3 & 5 & 6 & 4 & 3
+            \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{33}
+        \end{align*}
+    \end{fleqn}
+    Knopfeinkommen der Flicken (\emph{profit}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            p = \begin{bmatrix}
+                0 & 3 & 1 & 3 & 3 & 0 & 0 & 0 & 0 & 2 & 1 & 0 & 2 & 3 & 2 & 2 & 1 & 2 & 2 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 2 & 2 & 1 & 1
+            \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}_0^{33}
+        \end{align*}
+    \end{fleqn}
+    Fläche der Flicken (\emph{area}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            a = \begin{bmatrix}
+                2 & 5 & 8 & 6 & 4 & 6 & 6 & 7 & 5 & 4 & 5 & 6 & 6 & 6 & 4 & 6 & 6 & 5 & 5 & 4 & 7 & 3 & 5 & 3 & 4 & 3 & 4 & 5 & 4 & 5 & 6 & 5 & 6
+            \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{33}
+        \end{align*}
+    \end{fleqn}
+    Felder vor den Knopf-Wertungen \vspace*{-10pt} % 0 - 53
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            b = \begin{bmatrix}
+                4 & 10 & 16 & 22 & 28 & 34 & 40 & 46 & 52
+            \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{9}
+        \end{align*}
+    \end{fleqn}
+\end{addmargin}
+
+\textbf{Variablen}
+
+\begin{align*}
+    X &= \begin{bmatrix}
+        x_{1,1} & \dots & x_{1,9}\\
+        \vdots & \ddots & \vdots \\
+        x_{33,1} & \dots & x_{33,9}
+    \end{bmatrix} & X &\in \{0,1\}^{33 \times 9} \\
+    Y &= \begin{bmatrix}
+        y_{1,1} & \dots & y_{1,9}\\
+        \vdots & \ddots & \vdots \\
+        y_{33,1} & \dots & y_{33,9}
+    \end{bmatrix} & Y &\in \{0,1\}^{33 \times 9} \\
+    z &= \begin{bmatrix}
+        z_1 & \dots & z_{33}
+    \end{bmatrix}^\mathsf{T} & z &\in \{0,1\}^{33} \\
+    \psi &= \begin{bmatrix}
+        \psi_1 & \dots & \psi_9
+    \end{bmatrix}^\mathsf{T} & \psi &\in \mathbb{N}_0^{9} \text{ insbesondere } \psi_i \ge 0 \\
+    \xi &= \begin{bmatrix}
+        \xi_1 & \dots & \xi_8
+    \end{bmatrix}^\mathsf{T} & \xi &\in \mathbb{N}_0^{8} \text{ insbesondere } \xi_i \ge 0 \\\\
+    \lambda && \lambda & \in \{0,1\} \\
+\end{align*}
 
 
 
-54
+\textbf{Zielfunktion}
+
+\begin{align*}
+    \smash{\displaystyle{\maximize_{X,Y,\lambda,\psi}}}\qquad & 5 \tag{\text{Startknöpfe}} \\
+    & + 7 \tag{\text{Sonderplättchen}}\\
+    & - 2 \cdot 81 \tag{\text{Ablageplanabzug}} \\
+    & + p^\mathsf{T}X\vec{1} \tag{\text{Knopfeinkommen maximieren}} \\
+    & + 2 \cdot \left(\lambda\cdot 81 + (1 - \lambda) \cdot a^\mathsf{T}X\vec{e_9}\right) \tag{\text{Fläche maximieren}} \\
+    & - c^\mathsf{T}X\vec{e_9} \tag{\text{Kosten minimieren}} \\
+    & + \psi^\mathsf{T}\vec{1} \tag{\text{Laufen einberechnen}} \\
+    \intertext{\hspace{7cm} wobei $\vec{1}$ der Vektor bestehend aus Einsen ist \newline \hspace*{7.3cm} und $\vec{e_i}$ ein kanonischer Einheitsvektor ist.}
+\end{align*}
+
+\textbf{Nebenbedingungen}
+
+\begin{addmargin}[1em]{0em}
+    Fläche muss kleiner gleich $81$ sein. Keine weitere Optimierung ab $76$ gefüllten Feldern nötig, da Spezialflicken gelegt werden können.
+\end{addmargin}
+\begin{align*}
+   a^\mathsf{T}X\vec{e_9} &\le 81 &\\
+   a^\mathsf{T}X\vec{e_9} - 76 + 1 &\le 1000 \cdot \lambda \qquad \text{ bzw. } & a^\mathsf{T}X\vec{e_9} - 76 < 1000 \cdot \lambda \hspace*{1.25cm} \\
+   76 \lambda &\le a^\mathsf{T}X\vec{e_9}\\
+\intertext{\begin{addmargin}[1em]{0em}
+Zeitkosten müssen kleiner gleich $52$ sein, wobei ab $52$ noch genau ein weiterer Flicken gekauft werden kann.
+\end{addmargin}}
+    t^\mathsf{T}(X\vec{e_9} - z) + \psi^\mathsf{T}\vec{1} &\le 52 &\\
+    z^\mathsf{T}\vec{1} &\le 1 &\\
+    z_i &\le X_{i,9} - X_{i,8} & i=1,\dots,33\\
+\intertext{\begin{addmargin}[1em]{0em}
+Bis zu jeder Knopf-Wertung nur so viele Flicken kaufen, wie durch die Zeitkosten erlaubt ist.
+\end{addmargin}}
+    \left(X\vec{e_1}\ \phantom{ - X\vec{e}_{j-1} } - Y\vec{e_1} \right)^\mathsf{T}t + \psi_1 &\le b_1 \\
+    \ \xi_{j-1} + \left(X\vec{e_j} - X\vec{e}_{j-1} - Y\vec{e_j} \right)^\mathsf{T}t + \psi_j &\le b_j & j=2,\dots,9\\
+    b_j &\le \xi_j &j=1,\dots,8\\
+    t^\mathsf{T}X\vec{e_1} + \psi_1 &\le \xi_1 \\
+    \xi_{j-1} + t^\mathsf{T}\left(X\vec{e_j} - X\vec{e}_{j-1}\right) + \psi_j &\le \xi_j &j=2,\dots,8\\
+    \left(Y\vec{e_j}\right)^\mathsf{T}\vec{1} &\le 1 & j=1,\dots,9 \\
+    Y_{i,j} &\le X_{i,j} & i=1,\dots,33\quad j=1\phantom{,\dots,9} \\
+    Y_{i,j} &\le X_{i,j} - X_{i,j-1} & i=1,\dots,33\quad j=2,\dots,9 \\
+\intertext{\begin{addmargin}[1em]{0em}
+Knopfvorrat muss größer gleich $0$ vor allen Knopf-Wertungen sein sein.
+\end{addmargin}}
+    5 + \sum_{k=1}^{j-1}\left( p^\mathsf{T}X\vec{e_k} + \psi_k \right) &\ge c^\mathsf{T}X\vec{e_j} & j=1,\dots,9\\
+\intertext{\begin{addmargin}[1em]{0em}
+Und eine weitere Bedingungen, um abzusichern, dass Flicken die früher genommen wurden auch später noch existieren. Weiterhin die korrekte bereichnung von $\psi$ dem Laufen.
+\end{addmargin}}
+    X_{i,j} &\le X_{i,j+1} & i=1,\dots,33\quad j=1,\dots,8 \\
+    \psi_j &\ge b_j - t^\mathsf{T}X\vec{e_j} &j=1,\dots,9 \\
+\intertext{\begin{addmargin}[1em]{0em}
+    Omega.
+    \end{addmargin}}
+    \omega_i &\le X_{i,9} & i=1,\dots,33 \\
+    \omega^\mathsf{T}\vec{1} &\le 33 \cdot \lambda \\
+    X_{i,9} + \lambda - 1 &\le \omega_i & i=1,\dots,33 \\
+\end{align*}
+
+
+
+\begin{align*}
+    \smash{\displaystyle{\maximize_{X,Y,\lambda,\psi}}}\qquad & 5 +7 - 2 \cdot 81 + p^\mathsf{T}X\vec{1}  \\
+    & + 2 \cdot 81 \cdot \lambda \\
+    & + 2 \cdot a^\mathsf{T}X\vec{e_9} \\
+    & + 2 a^\mathsf{T}\omega \\
+    & - c^\mathsf{T}X\vec{e_9} + \psi^\mathsf{T}\vec{1}  \\
+\end{align*}
+
+\renewcommand{\arraystretch}{1}
+
+\pagebreak
+
 
 \subsection*{Betrachtung der Spiel-Komplexität}
 
@@ -390,7 +598,7 @@ Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfüg
 
 Mit den empirischen Daten lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
 
-\vspace*{-1cm}
+% \vspace*{-1cm}
 \begin{align}
     \label{eqn:gtc-patchwork-branch-estimation}
     \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
