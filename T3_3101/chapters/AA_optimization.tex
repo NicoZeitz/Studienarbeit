@@ -43,7 +43,6 @@
     \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{X} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{Y} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-\PY{n}{z} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(} \PY{l+m+mi}{33}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{ψ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{9}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{ξ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{8}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{λ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{1}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
@@ -90,11 +89,6 @@
     \PY{l+m+mi}{76} \PY{o}{*} \PY{n}{λ} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,}
 
     \PY{c+c1}{\PYZsh{} Time Constraints}
-    \PY{n}{time} \PY{o}{@} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{z}\PY{p}{)} \PY{o}{+} \PY{n}{ψ} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{52}\PY{p}{,}
-    \PY{n}{z} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{z}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
-
-    \PY{c+c1}{\PYZsh{} Button Income Constraints}
     \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
 \PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time}
         \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)}
@@ -246,7 +240,6 @@ Solver took 46.063112500007264s
     \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Y\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{Y}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z = }\PY{l+s+si}{\PYZob{}}\PY{n}{z}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ψ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ψ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ξ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ξ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{λ = }\PY{l+s+si}{\PYZob{}}\PY{n}{λ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
@@ -292,7 +285,7 @@ patches [8]         = [ 1  3  4  6 10 11 12 17 19 20 26 30 32]
 patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
 \end{Verbatim}
 
-\vspace*{-1cm}
+% \vspace*{-1cm}
 
 \fontsize{10}{12}\selectfont % small
 
@@ -321,9 +314,6 @@ patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
-        \end{bmatrix} \\
-        z &= \begin{bmatrix}
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0
         \end{bmatrix} \\
         ψ &= \begin{bmatrix}
             \color{gray} 0 & 2 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 4
