@@ -91,7 +91,7 @@ impl Trainer {
 
         let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
         let network = NeuralNetworkEvaluator::new(var_builder)?;
-        self.evaluate_network(network);
+        self.evaluate_network(network, 5); // evaluate the current network with more accuracy
         drop(var_map);
         let mut history = vec![];
 
@@ -119,14 +119,15 @@ impl Trainer {
 
             iteration += 1;
 
-            if self.evaluate_network(new_network.clone()) {
+            if self.evaluate_network(new_network.clone(), 1) {
                 // save network and use as new best
                 let index = starting_index + 1;
                 let network_weights = self.training_directory.join(format!("network_{index:04}.safetensors"));
 
                 network_improvements += 1;
                 println!(
-                    "[{network_improvements:?}/{iteration:?}]: New network won. Saving network to {network_weights:?}"
+                    "[{network_improvements:?}/{iteration:?}]: New network won. Saving network to {network_weights:?} (last eval: {:?})",
+                    self.last_eval_percentage
                 );
                 var_map.save(&network_weights)?;
                 history.clear();
@@ -134,7 +135,10 @@ impl Trainer {
                 // self.compare_against_other(new_network);
             } else {
                 // discard network
-                println!("[{network_improvements:?}/{iteration:?}]: New network lost. Discarding network");
+                println!(
+                    "[{network_improvements:?}/{iteration:?}]: New network lost. Discarding network (last eval: {:?})",
+                    self.last_eval_percentage
+                );
             }
 
             println!(
@@ -319,7 +323,7 @@ impl Trainer {
         Ok((var_map, starting_index, network))
     }
 
-    pub fn evaluate_network(&mut self, new_network: NeuralNetworkEvaluator) -> bool {
+    pub fn evaluate_network(&mut self, new_network: NeuralNetworkEvaluator, multiplier: usize) -> bool {
         // load current best network
         // let (var_map, _) = get_var_map(&self.training_directory)?;
         // let var_builder = VarBuilder::from_varmap(&var_map, DType::F32, &Device::Cpu);
@@ -329,7 +333,7 @@ impl Trainer {
         // let player_2 = GreedyPlayer::new_with_evaluator("2", old_network);
         let player_2 = GreedyPlayer::new_with_evaluator("2", StaticEvaluator);
 
-        let percentage = self.compare_players(&player_1, &player_2, self.args.evaluation_games);
+        let percentage = self.compare_players(&player_1, &player_2, self.args.evaluation_games * multiplier);
 
         if self.last_eval_percentage.is_nan() {
             self.last_eval_percentage = percentage;
