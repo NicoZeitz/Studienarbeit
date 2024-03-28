@@ -1,0 +1,342 @@
+\section{Lösungsprogramm für Optimierungsproblem}
+
+% somewhere\mambaforge\share\jupyter\nbconvert\templates\hide_header
+% jupyter nbconvert --to pdf --LatexPreprocessor.title="" --LatexPreprocessor.date="" .\integer_linear_programming_cvxpy.ipynb --template hide_header
+% jupyter nbconvert --to latex --LatexPreprocessor.title="" --LatexPreprocessor.date="" .\integer_linear_programming_cvxpy.ipynb --template hide_header
+% latexmk .\integer_linear_programming_cvxpy.tex
+
+% change font to fit with Jupyter notebook convert export
+\renewcommand{\encodingdefault}{OT1}
+\renewcommand{\rmdefault}{cmr}
+\renewcommand{\sfdefault}{cmss}
+\renewcommand{\ttdefault}{cmtt}
+\fontfamily{cmr}\selectfont
+\fontsize{10.95}{13.6}\selectfont
+\linespread{0.9}\selectfont
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{1}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{cvxpy} \PY{k}{as} \PY{n+nn}{cp}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{from} \PY{n+nn}{timeit} \PY{k+kn}{import} \PY{n}{default\PYZus{}timer} \PY{k}{as} \PY{n}{timer}
+\PY{k+kn}{from} \PY{n+nn}{itertools} \PY{k+kn}{import} \PY{n}{product}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{2}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{cost} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\fontsize{9}{10}\selectfont\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{0}\fontsize{11}{13}\selectfont\PY{p}{]}\PY{p}{)}
+\PY{n}{time} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\fontsize{9}{10}\selectfont\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{3}\fontsize{11}{13}\selectfont\PY{p}{]}\PY{p}{)}
+\PY{n}{profit} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\fontsize{9}{10}\selectfont\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\fontsize{11}{13}\selectfont\PY{p}{]}\PY{p}{)}
+\PY{n}{area} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\fontsize{9}{10}\selectfont\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\fontsize{11}{13}\selectfont\PY{p}{]}\PY{p}{)}
+\PY{n}{button\PYZus{}income} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{16}\PY{p}{,} \PY{l+m+mi}{22}\PY{p}{,} \PY{l+m+mi}{28}\PY{p}{,} \PY{l+m+mi}{34}\PY{p}{,} \PY{l+m+mi}{40}\PY{p}{,} \PY{l+m+mi}{46}\PY{p}{,} \PY{l+m+mi}{52}\PY{p}{]}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\fontsize{10.95}{13.6}\selectfont
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{3}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{Y} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{z} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(} \PY{l+m+mi}{33}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{ψ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{9}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{ξ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{8}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{λ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{1}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{ω} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(} \PY{l+m+mi}{33}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{4}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{col}\PY{p}{(}\PY{n}{matrix}\PY{p}{,} \PY{n}{col}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{idx}\PY{p}{(}\PY{n}{matrix}\PY{p}{,} \PY{n}{axis1}\PY{p}{,} \PY{n}{axis2}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{axis2} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+        \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{axis1} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}
+
+    \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{axis1} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{axis2} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{range\PYZus{}index}\PY{p}{(}\PY{n}{matrix}\PY{p}{,} \PY{n}{start}\PY{p}{,} \PY{n}{end}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{start} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{:}\PY{n}{end}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{vec}\PY{p}{(}\PY{n}{number}\PY{p}{,} \PY{n}{amount}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{repeat}\PY{p}{(}\PY{n}{number}\PY{p}{,} \PY{n}{amount}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{irange}\PY{p}{(}\PY{n}{start}\PY{p}{,} \PY{n}{end}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n+nb}{range}\PY{p}{(}\PY{n}{start}\PY{p}{,} \PY{n}{end} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\pagebreak
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{5}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{constraints} \PY{o}{=} \PY{p}{[}
+    \PY{c+c1}{\PYZsh{} Variable Constraints}
+    \PY{n}{ψ} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,}
+    \PY{n}{ξ} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Area Constraints}
+    \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{81}\PY{p}{,}
+    \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{76} \PY{o}{+} \PY{l+m+mi}{1} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1000} \PY{o}{*} \PY{n}{λ}\PY{p}{,}
+    \PY{l+m+mi}{76} \PY{o}{*} \PY{n}{λ} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Time Constraints}
+    \PY{n}{time} \PY{o}{@} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{z}\PY{p}{)} \PY{o}{+} \PY{n}{ψ} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{52}\PY{p}{,}
+    \PY{n}{z} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{z}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Button Income Constraints}
+    \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time}
+        \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)}
+        \PY{k}{for}  \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+    \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{time} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{time} \PY{o}{@} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Button Balance >= 0 Constraints}
+\PY{o}{*}\PY{p}{(}  \PY{l+m+mi}{5} \PY{o}{+} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{profit} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+    \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{cost} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Further Constraints}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+        \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{time} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Omega Multiplication}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+    \PY{n}{ω} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{33} \PY{o}{*} \PY{n}{λ}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{+} \PY{n}{λ} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{p}{]}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\pagebreak
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{6}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{objective} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Maximize}\PY{p}{(}
+    \PY{o}{+} \PY{l+m+mi}{5}
+    \PY{o}{+} \PY{l+m+mi}{7}
+    \PY{o}{\PYZhy{}} \PY{l+m+mi}{81} \PY{o}{*} \PY{l+m+mi}{2}
+    \PY{o}{+} \PY{n}{profit} \PY{o}{@} \PY{n}{X} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}
+    \PY{o}{+} \PY{l+m+mi}{2} \PY{o}{*} \PY{l+m+mi}{81} \PY{o}{*} \PY{n}{λ}
+    \PY{o}{+} \PY{l+m+mi}{2} \PY{o}{*} \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}
+    \PY{o}{\PYZhy{}} \PY{l+m+mi}{2} \PY{o}{*} \PY{n}{area} \PY{o}{@} \PY{n}{ω}
+    \PY{o}{\PYZhy{}} \PY{n}{cost} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}
+    \PY{o}{+} \PY{n}{ψ} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}
+\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{7}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{problem} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Problem}\PY{p}{(}\PY{n}{objective}\PY{p}{,} \PY{n}{constraints}\PY{p}{)}
+
+\PY{n}{start} \PY{o}{=} \PY{n}{timer}\PY{p}{(}\PY{p}{)}
+\PY{n}{result} \PY{o}{=} \PY{n}{problem}\PY{o}{.}\PY{n}{solve}\PY{p}{(}\PY{n}{verbose}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{end} \PY{o}{=} \PY{n}{timer}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Problem status: }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{problem}\PY{o}{.}\PY{n}{status}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{, Value: }\PY{l+s+si}{\PYZob{}}\PY{n}{result}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{problem}\PY{o}{.}\PY{n}{solver\PYZus{}stats}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Solver took }\PY{l+s+si}{\PYZob{}}\PY{n}{end}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{+w}{ }\PY{n}{start}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+===============================================================================
+CVXPY
+v1.4.2
+===============================================================================
+(CVXPY) 05:00:46 PM: Your problem has 678 variables, 720 constraints, and
+0 parameters.
+(CVXPY) 05:00:46 PM: It is compliant with the following grammars: DCP,
+DQCP
+(CVXPY) 05:00:46 PM: (If you need to solve this problem multiple times,
+but with different data, consider using parameters.)
+(CVXPY) 05:00:46 PM: CVXPY will first compile your problem; then, it will
+invoke a numerical solver to obtain a solution.
+(CVXPY) 05:00:46 PM: Your problem is compiled with the CPP
+canonicalization backend.
+-------------------------------------------------------------------------------
+Compilation
+-------------------------------------------------------------------------------
+(CVXPY) 05:00:46 PM: Compiling problem (target solver=GLPK\_MI).
+(CVXPY) 05:00:46 PM: Reduction chain: FlipObjective -> Dcp2Cone ->
+CvxAttr2Constr -> ConeMatrixStuffing -> GLPK\_MI
+(CVXPY) 05:00:46 PM: Applying reduction FlipObjective
+(CVXPY) 05:00:46 PM: Applying reduction Dcp2Cone
+(CVXPY) 05:00:46 PM: Applying reduction CvxAttr2Constr
+(CVXPY) 05:00:46 PM: Applying reduction ConeMatrixStuffing
+(CVXPY) 05:00:47 PM: Applying reduction GLPK\_MI
+(CVXPY) 05:00:47 PM: Finished problem compilation (took 9.297e-01
+seconds).
+-------------------------------------------------------------------------------
+Numerical solver
+-------------------------------------------------------------------------------
+(CVXPY) 05:00:47 PM: Invoking solver GLPK\_MI  to obtain a solution.
+-------------------------------------------------------------------------------
+Summary
+-------------------------------------------------------------------------------
+(CVXPY) 05:01:32 PM: Problem status: optimal
+(CVXPY) 05:01:32 PM: Optimal value: 8.400e+01
+(CVXPY) 05:01:32 PM: Compilation took 9.297e-01 seconds
+(CVXPY) 05:01:32 PM: Solver (including time spent in interface) took
+4.494e+01 seconds
+Problem status: 'optimal', Value: 84.0
+SolverStats(solver\_name='GLPK\_MI', solve\_time=None, setup\_time=None,
+num\_iters=None, extra\_stats=None)
+Solver took 46.063112500007264s
+\end{Verbatim}
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+    \prompt{In}{incolor}{8}{\boxspacing}
+    \begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Value = }\PY{l+s+si}{\PYZob{}}\PY{n}{result}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Start    = }\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{5}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   SpecTile = }\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{7}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Profit   = }\PY{l+s+si}{\PYZob{}}\PY{n}{profit}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Std Area = }\PY{l+s+si}{\PYZob{}}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{l+m+mi}{81}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{;}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Area     = }\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{l+m+mi}{81}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{λ}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{item}\PY{p}{(}\PY{p}{)}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{area}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{+w}{ }\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{area}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{ω}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{       Area1    = }\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{l+m+mi}{81}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{λ}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{item}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{       Area2    = }\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{area}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{       Area3    = }\PY{l+s+si}{\PYZob{}}\PY{o}{\PYZhy{}}\PY{+w}{ }\PY{l+m+mi}{2}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{area}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{ω}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Cost     = }\PY{l+s+si}{\PYZob{}}\PY{o}{\PYZhy{}}\PY{+w}{ }\PY{n}{cost}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{   Walk     = }\PY{l+s+si}{\PYZob{}}\PY{n}{ψ}\PY{o}{.}\PY{n}{value}\PY{+w}{ }\PY{o}{@}\PY{+w}{ }\PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{area\PYZus{}cost} \PY{o}{=} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{*} \PY{n}{area}\PY{p}{;}
+\PY{n}{time\PYZus{}cost} \PY{o}{=} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{*} \PY{n}{time}\PY{p}{;}
+\PY{n}{button\PYZus{}cost} \PY{o}{=} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{*} \PY{n}{cost}\PY{p}{;}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches             = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches area        = }\PY{l+s+si}{\PYZob{}}\PY{n}{area\PYZus{}cost}\PY{p}{[}\PY{n}{area\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}
+    \PY{l+s+s2}{ (sum = }\PY{l+s+si}{\PYZob{}}\PY{n}{area\PYZus{}cost}\PY{p}{[}\PY{n}{area\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches time cost   = }\PY{l+s+si}{\PYZob{}}\PY{n}{time\PYZus{}cost}\PY{p}{[}\PY{n}{time\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}
+    \PY{l+s+s2}{ (sum = }\PY{l+s+si}{\PYZob{}}\PY{n}{time\PYZus{}cost}\PY{p}{[}\PY{n}{time\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches button cost = }\PY{l+s+si}{\PYZob{}}\PY{n}{button\PYZus{}cost}\PY{p}{[}\PY{n}{button\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}
+    \PY{l+s+s2}{ (sum = }\PY{l+s+si}{\PYZob{}}\PY{n}{button\PYZus{}cost}\PY{p}{[}\PY{n}{button\PYZus{}cost}\PY{+w}{ }\PY{o}{\PYZgt{}}\PY{+w}{ }\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [1]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [2]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [3]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [4]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [5]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [6]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [7]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{7}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [8]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{patches [9]         = }\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{argwhere}\PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{p}{,}\PY{+w}{ }\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Y\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{Y}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z = }\PY{l+s+si}{\PYZob{}}\PY{n}{z}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ψ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ψ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ξ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ξ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{λ = }\PY{l+s+si}{\PYZob{}}\PY{n}{λ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ω = }\PY{l+s+si}{\PYZob{}}\PY{n}{ω}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \end{Verbatim}
+\end{tcolorbox}
+
+% documentclass 11pt font sizes
+% \fontsize{6}{6.12}\selectfont % tiny
+\fontsize{8}{8.5}\selectfont % scriptsize
+% \fontsize{9}[10.8]\selectfont % footnotesize
+% \fontsize{10}{12}\selectfont % small
+% \fontsize{10.95}{113.6}\selectfont % normalsize
+
+\begin{Verbatim}[commandchars=\\\{\}]
+Value = 84.0
+   Start    = 5
+   SpecTile = 7
+   Profit   = 119.0
+   Std Area = -162
+   Area     = 162.0
+      Area1    = 162.0
+      Area2    = 152.0
+      Area3    = -152.0
+   Cost     = -54.0
+   Walk     = 7.0
+patches             = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
+patches area        = [5. 6. 4. 6. 5. 6. 6. 6. 5. 4. 7. 4. 6. 6.] (sum = 76.0)
+patches time cost   = [4. 6. 6. 1. 3. 2. 2. 5. 4. 2. 4. 2. 6. 3.] (sum = 50.0)
+patches button cost = [10.  8.  7.  2.  2.  1.  7.  1.  5.  4.  1.  3.  3.] (sum = 54.0)
+patches [1]         = [17 32]
+patches [2]         = [17 30 32]
+patches [3]         = [ 4 17 30 32]
+patches [4]         = [ 3  4 17 30 32]
+patches [5]         = [ 1  3  4 17 30 32]
+patches [6]         = [ 1  3  4 10 12 17 30 32]
+patches [7]         = [ 1  3  4 10 12 17 19 20 26 30 32]
+patches [8]         = [ 1  3  4  6 10 11 12 17 19 20 26 30 32]
+patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
+\end{Verbatim}
+
+\vspace*{-0.5cm}
+
+\fontsize{10}{12}\selectfont % small
+
+{
+    \definecolor{gray}{HTML}{9da6a3}
+    \setlength\arraycolsep{1.5pt}
+    \begin{align*}
+        X^\mathsf{T} &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+        \end{bmatrix} \\
+        Y^\mathsf{T} &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+        \end{bmatrix} \\
+        z &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0
+        \end{bmatrix} \\
+        ψ &= \begin{bmatrix}
+            \color{gray} 0 & 2 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 4
+        \end{bmatrix} \\
+        ξ &= \begin{bmatrix}
+            7 & 15 & 21 & 27 & 31 & 36 & 44 & 48
+        \end{bmatrix} \\
+        λ &= 1 \\
+        ω &= \begin{bmatrix}
+            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1
+        \end{bmatrix} \\
+    \end{align*}
+    \definecolor{gray}{HTML}{949698}
+}
+
+% change font back to normal
+\renewcommand{\encodingdefault}{T1}
+\renewcommand{\rmdefault}{lmr}
+\renewcommand{\sfdefault}{lmss}
+\renewcommand{\ttdefault}{lmtt}
+\fontfamily{lmr}\selectfont
+\fontsize{12}{14.5pt}\selectfont
+\linespread{1}\selectfont
+
+\pagebreak

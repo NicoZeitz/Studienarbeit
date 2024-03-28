@@ -433,18 +433,6 @@ lazy_static! {
         ),
         patch(
             id: 12,
-            button_cost: 10,
-            time_cost: 5,
-            button_income: 3,
-            tiles:[
-                [1,1],
-                [1,1],
-                [0,1],
-                [0,1],
-            ]
-        ),
-        patch(
-            id: 13,
             button_cost: 7,
             time_cost: 2,
             button_income: 2,
@@ -453,6 +441,18 @@ lazy_static! {
                 [0,1,0],
                 [0,1,0],
                 [1,1,1]
+            ]
+        ),
+        patch(
+            id: 13,
+            button_cost: 10,
+            time_cost: 5,
+            button_income: 3,
+            tiles:[
+                [1,1],
+                [1,1],
+                [0,1],
+                [0,1],
             ]
         ),
         patch(

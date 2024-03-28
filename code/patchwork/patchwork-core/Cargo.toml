@@ -31,3 +31,7 @@ bincode = "1.3.3"
 [[bench]]
 name = "performance"
 harness = false
+
+[[bin]]
+name = "patchwork-playground"
+path = "src/main.rs"
