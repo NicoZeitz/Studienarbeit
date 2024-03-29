@@ -44,6 +44,7 @@
 \PY{n}{X} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{Y} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{33}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,} \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{ψ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{9}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{φ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{9}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{ξ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{8}\PY{p}{,}     \PY{n}{integer}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{λ} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(}  \PY{l+m+mi}{1}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \PY{n}{ω} \PY{o}{=} \PY{n}{cp}\PY{o}{.}\PY{n}{Variable}\PY{p}{(} \PY{l+m+mi}{33}\PY{p}{,}     \PY{n}{boolean}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
@@ -61,9 +62,6 @@
         \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{axis1} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}
 
     \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{axis1} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{axis2} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{]}
-
-\PY{k}{def} \PY{n+nf}{range\PYZus{}index}\PY{p}{(}\PY{n}{matrix}\PY{p}{,} \PY{n}{start}\PY{p}{,} \PY{n}{end}\PY{p}{)}\PY{p}{:}
-    \PY{k}{return} \PY{n}{matrix}\PY{p}{[}\PY{n}{start} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{:}\PY{n}{end}\PY{p}{]}
 
 \PY{k}{def} \PY{n+nf}{vec}\PY{p}{(}\PY{n}{number}\PY{p}{,} \PY{n}{amount}\PY{p}{)}\PY{p}{:}
     \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{repeat}\PY{p}{(}\PY{n}{number}\PY{p}{,} \PY{n}{amount}\PY{p}{)}
@@ -89,33 +87,43 @@
     \PY{l+m+mi}{76} \PY{o}{*} \PY{n}{λ} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{area} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}\PY{p}{,}
 
     \PY{c+c1}{\PYZsh{} Time Constraints}
-    \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{-} \PY{n}{idx}\PY{p}{(}\PY{n}{φ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+        \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
 \PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)}\PY{p}{)} \PY{o}{@} \PY{n}{time}
-        \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)}
-        \PY{k}{for}  \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+        \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{-} \PY{n}{idx}\PY{p}{(}\PY{n}{φ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)}
+                                                      \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Y Constraints}
+\PY{o}{*}\PY{p}{(}  \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1}                       \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}                     \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+                          \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Xi Constraints}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{1}            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
     \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{time} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
 \PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{time} \PY{o}{@} \PY{p}{(}\PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)}
-        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ξ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
-        \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+                                                      \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+
+    \PY{c+c1}{\PYZsh{} Phi Constraints}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{φ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)}                            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{φ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{+} \PY{n}{col}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{1}           \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
 
     \PY{c+c1}{\PYZsh{} Button Balance >= 0 Constraints}
-\PY{o}{*}\PY{p}{(}  \PY{l+m+mi}{5} \PY{o}{+} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{profit} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o}{+} \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
-    \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{cost} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{l+m+mi}{5} \PY{o}{+} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{profit} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{j}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+      \PY{o}{+} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{k}\PY{p}{)}          \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{j}\PY{p}{)}\PY{p}{)}
+    \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{cost} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)}                               \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
 
     \PY{c+c1}{\PYZsh{} Further Constraints}
 \PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
-        \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+                          \PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{product}\PY{p}{(}\PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}\PY{p}{,} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
 \PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ψ}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{button\PYZus{}income}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{time} \PY{o}{@} \PY{n}{col}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{j}\PY{p}{)}
-        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+                                                      \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
 
     \PY{c+c1}{\PYZsh{} Omega Multiplication}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}                        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
     \PY{n}{ω} \PY{o}{@} \PY{n}{vec}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{33} \PY{o}{*} \PY{n}{λ}\PY{p}{,}
-\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{+} \PY{n}{λ} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
+\PY{o}{*}\PY{p}{(}  \PY{n}{idx}\PY{p}{(}\PY{n}{ω}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{idx}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)} \PY{o}{+} \PY{n}{λ} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}                \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{irange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{33}\PY{p}{)}  \PY{p}{)}\PY{p}{,}
 \PY{p}{]}
     \end{Verbatim}
 \end{tcolorbox}
@@ -156,49 +164,59 @@
 
 \begin{Verbatim}[commandchars=\\\{\}]
 ===============================================================================
-CVXPY
-v1.4.2
+                                     CVXPY
+                                     v1.4.2
 ===============================================================================
-(CVXPY) 05:00:46 PM: Your problem has 678 variables, 720 constraints, and
+(CVXPY) 02:15:59 PM: Your problem has 654 variables, 703 constraints, and
 0 parameters.
-(CVXPY) 05:00:46 PM: It is compliant with the following grammars: DCP,
+(CVXPY) 02:15:59 PM: It is compliant with the following grammars: DCP,
 DQCP
-(CVXPY) 05:00:46 PM: (If you need to solve this problem multiple times,
+(CVXPY) 02:15:59 PM: (If you need to solve this problem multiple times,
 but with different data, consider using parameters.)
-(CVXPY) 05:00:46 PM: CVXPY will first compile your problem; then, it will
+(CVXPY) 02:15:59 PM: CVXPY will first compile your problem; then, it will
 invoke a numerical solver to obtain a solution.
-(CVXPY) 05:00:46 PM: Your problem is compiled with the CPP
+(CVXPY) 02:15:59 PM: Your problem is compiled with the CPP
 canonicalization backend.
 -------------------------------------------------------------------------------
-Compilation
+                                  Compilation
 -------------------------------------------------------------------------------
-(CVXPY) 05:00:46 PM: Compiling problem (target solver=GLPK\_MI).
-(CVXPY) 05:00:46 PM: Reduction chain: FlipObjective -> Dcp2Cone ->
+(CVXPY) 02:15:59 PM: Compiling problem (target solver=GLPK\_MI).
+(CVXPY) 02:15:59 PM: Reduction chain: FlipObjective -> Dcp2Cone ->
 CvxAttr2Constr -> ConeMatrixStuffing -> GLPK\_MI
-(CVXPY) 05:00:46 PM: Applying reduction FlipObjective
-(CVXPY) 05:00:46 PM: Applying reduction Dcp2Cone
-(CVXPY) 05:00:46 PM: Applying reduction CvxAttr2Constr
-(CVXPY) 05:00:46 PM: Applying reduction ConeMatrixStuffing
-(CVXPY) 05:00:47 PM: Applying reduction GLPK\_MI
-(CVXPY) 05:00:47 PM: Finished problem compilation (took 9.297e-01
-seconds).
+(CVXPY) 02:15:59 PM: Applying reduction FlipObjective
+(CVXPY) 02:15:59 PM: Applying reduction Dcp2Cone
+(CVXPY) 02:15:59 PM: Applying reduction CvxAttr2Constr
+(CVXPY) 02:15:59 PM: Applying reduction ConeMatrixStuffing
+(CVXPY) 02:15:59 PM: Applying reduction GLPK\_MI
+(CVXPY) 02:15:59 PM: Finished problem compilation (took 5.169e-01 seconds).
 -------------------------------------------------------------------------------
-Numerical solver
+                                Numerical solver
 -------------------------------------------------------------------------------
-(CVXPY) 05:00:47 PM: Invoking solver GLPK\_MI  to obtain a solution.
+(CVXPY) 02:15:59 PM: Invoking solver GLPK\_MI  to obtain a solution.
 -------------------------------------------------------------------------------
-Summary
+                                    Summary
 -------------------------------------------------------------------------------
-(CVXPY) 05:01:32 PM: Problem status: optimal
-(CVXPY) 05:01:32 PM: Optimal value: 8.400e+01
-(CVXPY) 05:01:32 PM: Compilation took 9.297e-01 seconds
-(CVXPY) 05:01:32 PM: Solver (including time spent in interface) took
-4.494e+01 seconds
-Problem status: \PYZsq{}optimal\PYZsq{}, Value: 84.0
-SolverStats(solver\_name=\PYZsq{}GLPK\_MI\PYZsq{}, solve\_time=None, setup\_time=None,
+(CVXPY) 02:16:24 PM: Problem status: optimal
+(CVXPY) 02:16:24 PM: Optimal value: 8.500e+01
+(CVXPY) 02:16:24 PM: Compilation took 5.169e-01 seconds
+(CVXPY) 02:16:24 PM: Solver (including time spent in interface) took 2.478e+01 seconds
+Problem status: \PYZsq{}optimal\PYZsq{}, Value: 85.0
+SolverStats(solver_name=\PYZsq{}GLPK\_MI\PYZsq{}, solve_time=None, setup\_time=None,
 num\_iters=None, extra\_stats=None)
-Solver took 46.063112500007264s
+Solver took 25.41495120000036s
 \end{Verbatim}
+% 0: obj =   0.000000000e+00 inf =   3.150e+01 (9)
+% 81: obj =  -5.228030303e+01 inf =   3.886e-16 (0)
+% *   566: obj =  -2.391027199e+02 inf =   9.934e-14 (0) 2
+% +   566: mip =     not found yet >=              -inf        (1; 0)
+% Solution found by heuristic: -233
+% Solution found by heuristic: -234
+% + 33907: mip =  -2.340000000e+02 >=  -2.370000000e+02   1.3% (1034; 1006)
+% Solution found by heuristic: -235
+% + 64343: mip =  -2.350000000e+02 >=  -2.360000000e+02   0.4% (1042; 3253)
+% + 97210: mip =  -2.350000000e+02 >=  -2.360000000e+02   0.4% (703; 4968)
+% +129213: mip =  -2.350000000e+02 >=  -2.360000000e+02   0.4% (391; 6880)
+% +161044: mip =  -2.350000000e+02 >=     tree is empty   0.0% (0; 9395)
 
 \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
     \prompt{In}{incolor}{8}{\boxspacing}
@@ -241,6 +259,7 @@ Solver took 46.063112500007264s
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{X\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{X}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Y\PYZca{}T =}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{Y}\PY{o}{.}\PY{n}{value}\PY{o}{.}\PY{n}{T}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ψ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ψ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{φ = }\PY{l+s+si}{\PYZob{}}\PY{n}{φ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ξ = }\PY{l+s+si}{\PYZob{}}\PY{n}{ξ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{λ = }\PY{l+s+si}{\PYZob{}}\PY{n}{λ}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ω = }\PY{l+s+si}{\PYZob{}}\PY{n}{ω}\PY{o}{.}\PY{n}{value}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
@@ -259,33 +278,33 @@ Solver took 46.063112500007264s
 \fontsize{8.75}{10.5}\selectfont % footnotesize
 
 \begin{Verbatim}[commandchars=\\\{\}]
-Value = 84.0
+Value = 85.0
    Start    = 5
    SpecTile = 7
-   Profit   = 119.0
+   Profit   = 109.0
    Std Area = -162
    Area     = 162.0
       Area1    = 162.0
       Area2    = 152.0
       Area3    = -152.0
-   Cost     = -54.0
-   Walk     = 7.0
-patches             = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
-patches area        = [5 6 4 6 5 6 6 6 5 4 7 4 6 6] (sum = 76.0)
-patches time cost   = [4 6 6 1 3 2 2 5 4 2 4 2 6 3] (sum = 50.0)
-patches button cost = [10  8  7  2  2  1  7  1  5  4  1  3  3] (sum = 54.0)
+   Cost     = -45.0
+   Walk     = 9.0
+patches             = [ 3  4  6 10 11 12 16 17 19 20 22 26 30 32]
+patches area        = [6 4 6 5 6 6 6 5 4 7 5 4 6 6] (sum = 76.0)
+patches time cost   = [6 6 1 3 2 2 5 4 2 4 2 2 6 3] (sum = 48.0)
+patches button cost = [8 7 2 2 1 7 1 5 4 1 1 3 3] (sum = 45.0)
 patches [1]         = [17 32]
-patches [2]         = [17 30 32]
-patches [3]         = [ 4 17 30 32]
-patches [4]         = [ 3  4 17 30 32]
-patches [5]         = [ 1  3  4 17 30 32]
-patches [6]         = [ 1  3  4 10 12 17 30 32]
-patches [7]         = [ 1  3  4 10 12 17 19 20 26 30 32]
-patches [8]         = [ 1  3  4  6 10 11 12 17 19 20 26 30 32]
-patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
+patches [2]         = [10 17 20 32]
+patches [3]         = [ 4 10 17 20 32]
+patches [4]         = [ 4 10 12 17 20 32]
+patches [5]         = [ 3  4 10 12 17 20 26 32]
+patches [6]         = [ 3  4 10 12 17 19 20 26 30 32]
+patches [7]         = [ 3  4 10 12 17 19 20 22 26 30 32]
+patches [8]         = [ 3  4 10 11 12 17 19 20 22 26 30 32]
+patches [9]         = [ 3  4  6 10 11 12 16 17 19 20 22 26 30 32]
 \end{Verbatim}
 
-% \vspace*{-1cm}
+\vspace*{-0.75cm}
 
 \fontsize{10}{12}\selectfont % small
 
@@ -295,39 +314,43 @@ patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
     \begin{align*}
         X^\mathsf{T} &= \begin{bmatrix}
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
         \end{bmatrix} \\
         Y^\mathsf{T} &= \begin{bmatrix}
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
-            \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
-            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 \\
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 \\
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
             \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
         \end{bmatrix} \\
-        ψ &= \begin{bmatrix}
-            \color{gray} 0 & 2 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 4
-        \end{bmatrix} \\
-        ξ &= \begin{bmatrix}
-            7 & 15 & 21 & 27 & 31 & 36 & 44 & 48
-        \end{bmatrix} \\
+        \psi &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & 2 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 3 & 4 \\
+        \end{bmatrix}^\mathsf{T} \\
+        \phi &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 \\
+        \end{bmatrix}^\mathsf{T} \\
+        \xi &= \begin{bmatrix}
+            7 & 14 & 22 & 24 & 32 & 40 & 42 & 47 \\
+        \end{bmatrix}^\mathsf{T} \\
         λ &= 1 \\
-        ω &= \begin{bmatrix}
-            \color{gray} 0 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1
-        \end{bmatrix} \\
+        \omega &= \begin{bmatrix}
+            \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & 1 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & \color{gray} 0 & \color{gray} 0 & 1 & \color{gray} 0 & 1 \\
+        \end{bmatrix}^\mathsf{T} \\
     \end{align*}
     \definecolor{gray}{HTML}{949698}
 }
+
 
 % change font back to normal
 \renewcommand{\encodingdefault}{T1}
@@ -338,6 +361,6 @@ patches [9]         = [ 1  3  4  6 10 11 12 16 17 19 20 26 30 32]
 \fontsize{12}{14.5pt}\selectfont
 \linespread{1}\selectfont
 
-\vspace*{-1cm}
+\vspace*{-2.5cm}
 
 \pagebreak
