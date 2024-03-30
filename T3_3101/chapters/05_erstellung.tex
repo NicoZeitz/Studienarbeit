@@ -8,6 +8,20 @@ TODO:
 
 TODO:
 
+\begin{itemize}
+    \item generelle Player struktur
+    \item TODO: add greedy player as another base comparision
+\end{itemize}
+
+\lstinputlisting[
+    label={code:random-player},
+    caption={Definition des RandomPlayers},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/random-player.rs}
+
+
 \section{Ansatz B: Minimax-Algorithmus}
 \label{section:erstellung-ansatz-b}
 
@@ -30,7 +44,21 @@ TODO:
 
 TODO:
 
+\begin{itemize}
+    \item Normaler MCTS
+    \item UCT (Upper Confidence Bound for Trees)
+    \item Parallel (Root und Leaf)
+    \item Tree Reuse
+    \item Evaluator (WinLoss, Score) -> In Eval genauer betrachten
+\end{itemize}
+
 \section{Ansatz D: AlphaZero}
 \label{section:erstellung-ansatz-d}
 
 TODO:
+
+\begin{itemize}
+    \item Grafik von der Netzwerkarchitektur
+    \item Parallelization with Virtual Loss
+    \item Training-Loop
+\end{itemize}
