@@ -53,15 +53,16 @@ impl StaticEvaluator {
     /// # Returns
     ///
     /// The evaluation of the game state for the given player.
-    fn evaluate_state_for_player(&self, game: &Patchwork, player: u8) -> f64 {
+    #[must_use]
+    pub fn evaluate_state_for_player(&self, game: &Patchwork, player: u8) -> f64 {
         let player_state = game.get_player(player);
         let quilt_board = &player_state.quilt_board;
         let percentage_played = f64::from(player_state.get_position()) / f64::from(TimeBoard::MAX_POSITION);
 
         let end_score = f64::from(game.get_score(player));
         let position_score = f64::from(TimeBoard::MAX_POSITION - player_state.get_position());
-        let board_score = f64::from(self.get_board_score(quilt_board));
-        let button_income_score = self.get_button_income_score(
+        let board_score = f64::from(get_board_score(quilt_board));
+        let button_income_score = get_button_income_score(
             f64::from(quilt_board.button_income),
             &game.time_board,
             player_state.get_position(),
@@ -74,128 +75,50 @@ impl StaticEvaluator {
             (end_score * 2.0).mul_add(percentage_played, position_score),
         ) + button_income_score
     }
+}
 
-    #[rustfmt::skip]
-    #[allow(clippy::unused_self)]
-    fn get_board_score(&self, quilt_board: &QuiltBoard) -> i32 {
-        let mut board = Self::BOARD;
-        for row in 1..=QuiltBoard::ROWS {
-            for col in 1..=QuiltBoard::COLUMNS {
-                board[row as usize + 1][col as usize + 1] = quilt_board.get(row, col);
-            }
+#[rustfmt::skip]
+#[allow(clippy::unused_self)]
+fn get_board_score(quilt_board: &QuiltBoard) -> i32 {
+    let mut board = StaticEvaluator::BOARD;
+    for row in 1..=QuiltBoard::ROWS {
+        for col in 1..=QuiltBoard::COLUMNS {
+            board[row as usize + 1][col as usize + 1] = quilt_board.get(row, col);
         }
-
-        let mut board_score = i32::from(QuiltBoard::TILES) * 9;
-
-        for row in 1..=(QuiltBoard::ROWS as usize) {
-            for col in 1..=(QuiltBoard::COLUMNS as usize) {
-                if !board[row][col] {
-                    board_score -= 9;
-                    continue;
-                }
-
-                // Moore neighborhood
-                board_score -= i32::from(!board[row + 1][col + 1]);
-                board_score -= i32::from(!board[row + 1][col    ]);
-                board_score -= i32::from(!board[row + 1][col - 1]);
-                board_score -= i32::from(!board[row    ][col + 1]);
-                board_score -= i32::from(!board[row    ][col    ]);
-                board_score -= i32::from(!board[row    ][col - 1]);
-                board_score -= i32::from(!board[row - 1][col + 1]);
-                board_score -= i32::from(!board[row - 1][col    ]);
-                board_score -= i32::from(!board[row - 1][col - 1]);
-            }
-        }
-
-        board_score
     }
 
-    #[allow(clippy::unused_self)]
-    fn get_button_income_score(&self, button_income: f64, time_board: &TimeBoard, position: u8) -> f64 {
-        let amount_button_income_triggers_left = time_board.get_amount_button_income_trigger_in_range(
-            ((position + 1).min(TimeBoard::MAX_POSITION) as usize)..(TimeBoard::MAX_POSITION + 1) as usize,
-        );
-        let amount_button_income_triggers_passed =
-            TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS as i32 - amount_button_income_triggers_left as i32;
+    let mut board_score = i32::from(QuiltBoard::TILES) * 9;
 
-        // f(x) = 8exp(ln(1/8) * x / 8)
-        8.0 * ((f64::from(amount_button_income_triggers_passed) / 8.0).ln() / 8.0).exp() * button_income
-    }
-
-    #[allow(dead_code)]
-    #[allow(clippy::unused_self)]
-    fn get_free_single_tiles_score(&self, quilt_board: &QuiltBoard) -> f64 {
-        let mut free_single_tiles_score = 0.0;
-
-        for row in 1..=QuiltBoard::ROWS {
-            for col in 1..=QuiltBoard::COLUMNS {
-                if quilt_board.get(row, col) {
-                    continue;
-                }
-
-                let mut is_free_single_tile = true;
-
-                // Moore neighborhood
-                is_free_single_tile &= !quilt_board.get(row + 1, col + 1);
-                is_free_single_tile &= !quilt_board.get(row + 1, col);
-                is_free_single_tile &= !quilt_board.get(row + 1, col - 1);
-                is_free_single_tile &= !quilt_board.get(row, col + 1);
-                is_free_single_tile &= !quilt_board.get(row, col - 1);
-                is_free_single_tile &= !quilt_board.get(row - 1, col + 1);
-                is_free_single_tile &= !quilt_board.get(row - 1, col);
-                is_free_single_tile &= !quilt_board.get(row - 1, col - 1);
-
-                free_single_tiles_score += usize::from(is_free_single_tile) as f64;
+    for row in 1..=(QuiltBoard::ROWS as usize) {
+        for col in 1..=(QuiltBoard::COLUMNS as usize) {
+            if !board[row][col] {
+                board_score -= 9;
+                continue;
             }
-        }
 
-        free_single_tiles_score
+            // Moore neighborhood
+            board_score -= i32::from(!board[row + 1][col + 1]);
+            board_score -= i32::from(!board[row + 1][col    ]);
+            board_score -= i32::from(!board[row + 1][col - 1]);
+            board_score -= i32::from(!board[row    ][col + 1]);
+            board_score -= i32::from(!board[row    ][col    ]);
+            board_score -= i32::from(!board[row    ][col - 1]);
+            board_score -= i32::from(!board[row - 1][col + 1]);
+            board_score -= i32::from(!board[row - 1][col    ]);
+            board_score -= i32::from(!board[row - 1][col - 1]);
+        }
     }
 
-    /// Counts the amount of spaces per region and rewards bigger regions more
-    #[allow(dead_code)]
-    #[allow(clippy::unused_self)]
-    fn get_free_region_score(&self, quilt_board: &QuiltBoard) -> f64 {
-        let mut free_region_score = 0.0;
+    board_score
+}
 
-        let mut visited = [[false; QuiltBoard::COLUMNS as usize]; QuiltBoard::ROWS as usize];
+fn get_button_income_score(button_income: f64, time_board: &TimeBoard, position: u8) -> f64 {
+    let amount_button_income_triggers_left = time_board.get_amount_button_income_trigger_in_range(
+        ((position + 1).min(TimeBoard::MAX_POSITION) as usize)..(TimeBoard::MAX_POSITION + 1) as usize,
+    );
+    let amount_button_income_triggers_passed =
+        TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS as i32 - amount_button_income_triggers_left as i32;
 
-        for row in 0..QuiltBoard::ROWS {
-            for col in 0..QuiltBoard::COLUMNS {
-                if visited[row as usize][col as usize] || quilt_board.get(row, col) {
-                    continue;
-                }
-
-                let mut region_size = 0;
-                let mut stack = vec![(row, col)];
-
-                while let Some((row, col)) = stack.pop() {
-                    // overflow will wrap around
-                    if row >= QuiltBoard::ROWS || col >= QuiltBoard::COLUMNS {
-                        continue;
-                    }
-
-                    if visited[row as usize][col as usize] || quilt_board.get(row, col) {
-                        continue;
-                    }
-
-                    visited[row as usize][col as usize] = true;
-                    region_size += 1;
-
-                    stack.push((row + 1, col + 1));
-                    stack.push((row + 1, col));
-                    stack.push((row + 1, col - 1));
-                    stack.push((row, col + 1));
-                    stack.push((row, col - 1));
-                    stack.push((row - 1, col + 1));
-                    stack.push((row - 1, col));
-                    stack.push((row - 1, col - 1));
-                }
-
-                free_region_score += 81.0 / f64::from(region_size);
-            }
-        }
-
-        free_region_score
-    }
+    // f(x) = 8exp(ln(1/8) * x / 8)
+    8.0 * ((f64::from(amount_button_income_triggers_passed) / 8.0).ln() / 8.0).exp() * button_income
 }

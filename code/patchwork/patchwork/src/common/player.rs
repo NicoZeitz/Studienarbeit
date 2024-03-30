@@ -174,14 +174,11 @@ fn parse_human_player(name: &str, player_position: usize) -> Option<Box<dyn Play
         return None;
     }
 
-    let Some(passed_options) = Regex::new(r"human\((?<options>.*)\)")
+    let passed_options = Regex::new(r"human\((?<options>.*)\)")
         .unwrap()
         .captures(name)
         .and_then(|o| o.name("options"))
-        .map(|o| o.as_str())
-    else {
-        return None;
-    };
+        .map(|o| o.as_str())?;
 
     let default_name = format!("Human Player {player_position}");
     let name = Regex::new(r"name:\s*(?<name>\w+)")
@@ -205,14 +202,11 @@ fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
         return None;
     }
 
-    let Some(passed_options) = Regex::new(r"random\((?<options>.*)\)")
+    let passed_options = Regex::new(r"random\((?<options>.*)\)")
         .unwrap()
         .captures(name)
         .and_then(|o| o.name("options"))
-        .map(|o| o.as_str())
-    else {
-        return None;
-    };
+        .map(|o| o.as_str())?;
 
     let mut options = RandomOptions::default();
 
@@ -245,14 +239,11 @@ fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
         return None;
     }
 
-    let Some(passed_options) = Regex::new(r"greedy\((?<options>.*)\)")
+    let passed_options = Regex::new(r"greedy\((?<options>.*)\)")
         .unwrap()
         .captures(name)
         .and_then(|o| o.name("options"))
-        .map(|o| o.as_str())
-    else {
-        return None;
-    };
+        .map(|o| o.as_str())?;
 
     let mut evaluator = "static";
 
@@ -288,14 +279,11 @@ fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Pl
         return None;
     }
 
-    let Some(passed_options) = Regex::new(r"minimax\((?<options>.*)\)")
+    let passed_options = Regex::new(r"minimax\((?<options>.*)\)")
         .unwrap()
         .captures(name)
         .and_then(|o| o.name("options"))
-        .map(|o| o.as_str())
-    else {
-        return None;
-    };
+        .map(|o| o.as_str())?;
 
     let mut options = MinimaxOptions::default();
 

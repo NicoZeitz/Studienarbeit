@@ -542,7 +542,7 @@ fn get_action_to_store(
 
         let (row, column) = QuiltBoard::flip_horizontally_then_rotate_row_and_column(row, column, rotation, flip);
 
-        let Some(patch_transformation_index) = apply_patch_rotation(
+        let patch_transformation_index = apply_patch_rotation(
             patch_id,
             row,
             column,
@@ -550,9 +550,7 @@ fn get_action_to_store(
             transformation.flipped(),
             rotation,
             flip,
-        ) else {
-            return None;
-        };
+        )?;
 
         Some(ActionId::patch_placement(
             patch_id,

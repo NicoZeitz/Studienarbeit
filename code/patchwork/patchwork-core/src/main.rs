@@ -18,7 +18,7 @@ fn main() {
     //     ActionId::from_bits(58953),
     // ];
 
-    let patch_ids = [ 1,  3,  4,  6, 10, 11, 12, 16, 17, 20, 22, 26, 30, 32];
+    let patch_ids = [1, 3, 4, 6, 10, 11, 12, 16, 17, 20 ,22, 26, 30, 32];
 
     let action_ids = brute_force(patch_ids);
     verify(action_ids);
