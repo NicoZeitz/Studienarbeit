@@ -40,10 +40,41 @@ TODO:
     \item \textbf{Spielbaumkomplexität}: TODO:
 \end{itemize}
 
+\pagebreak
+
 \section{Lineare Programmierung}
 \label{chapter:lineare-programmierung}
 
-TODO:
+Lineare Programmierung, auch als Lineare Optimierung bezeichnet, ist ein Teilbereich der mathematischen Optimierung, der sich mit der Minimierung oder Maximierung einer Zielfunktion befasst \cite{2024.MathWorksLP}. Besonders ist hierbei, dass sowohl die Zielfunktion als auch alle Nebenbedingungen linear bezüglich der Optimierungsvariable $x$ sind. Lineare Programme werden im Normalfall in der Standardform, die in \ref{eqn:linear-programming} dargestellt ist, angegeben \cite[S. 6]{2023.ConvexOptimization}.
+
+\begin{align}
+    \label{eqn:linear-programming}
+    \minimize_{x} & \quad c^\mathsf{T} x \\
+    \text{unter den Nebenbedingungen} & \quad Ax \leq b & x \in \mathbb{R}^{n}, A \in \mathbb{R}^{m\times n}, b \in \mathbb{R}^{m} \notag
+\end{align}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    \vspace*{-0.75cm}
+    \includegraphics[width=0.38\textwidth]{res/pictures/linear-programming.png}
+    \caption[Grafische Lineare Optimierung]{\unskip}
+    Grafische Lineare Optimierung
+    \label{fig:linear-programming}
+    \vspace*{-0.75cm}
+\end{wrapfigure}
+
+Grafisch betrachtet ist die lineare Programmierung die Suche in einem zulässigen Suchbereich in Richtung der Zielfunktion. Dieser Suchbereich wird dabei durch die Ungleichungen so eingeschränkt, dass ein Polyeder entsteht \cite[S. 31]{2023.ConvexOptimization}. Dieser grafische Zusammenhang ist in Abbildung \ref{fig:linear-programming} visualisiert.
+
+Für lineare Optimierungsprobleme gibt es kein direktes analytisches Lösungsverfahren, jedoch existieren verschiedene Algorithmen, die das Problem in polynomialer Zeit lösen können \cite[S. 6]{2023.ConvexOptimization}. Die Algorithmen teilen sich dabei in zwei größere Klassen auf:
+
+\begin{itemize}
+    \item \emph{Active-Set-Methoden}: Verfahren, bei denen Ungleichungen, die mit Gleichheit gelten, als aktiv betrachtet werden und in das Optimierungsproblem aufgenommen werden \cite[S. 243]{2023.OptimizationLectureNotes}. Solange Ungleichungen strikt gelten, werden sie also in einem Optimierungsschritt nicht betrachtet. Ein Beispiel hierfür ist das Simplex-Verfahren \cite[S. 248]{2023.OptimizationLectureNotes}.
+    \item \emph{Innere-Punkt-Verfahren}: Verfahren, bei denen sich der optimalen Lösung vom Innerem des zulässigem Bereichs iterativ angenähert wird. \cite[S. 261]{2023.InteriorPoint}
+\end{itemize}
+
+Es gibt verschiedene Programme zur Lösung linearer Optimierungsprobleme. Diese Programme ermöglichen es, das Problem in der oben gezeigten Standardform einzugeben. Das Umformulieren von linearen Optimierungsproblemen in dieser Standardform ist immer möglich und kann oft auch automatisch übernommen werden, wie beispielsweise mit der Python-Bibliothek CVXPY \cite[S. 1]{2016.CVXPY}.
+
+Eine Variation von Linearer Programmierung ist \ac{ILP}, bei dem gefordert wird, dass es sich bei den Optimierungsvariablen $x$ um ganze Zahlen $\mathbb{Z}^{n}$ handelt. Im Gegensatz zum ursprünglichem Problem ist \ac{ILP} NP-vollständig, was das Erstellen effizienter Algorithmen erschwert \cite[S. 173]{2002.MathProgramming}. Lineare Optimierungsprobleme mit sowohl kontinuierlichen als auch diskreten ganzzahligen Variablen werden als \ac{MILP} bezeichnet.
 
 \section{Minimax-Algorithmus}
 \label{chapter:minimax-algorithmus}
