@@ -1,4 +1,10 @@
-use std::sync::{atomic::AtomicBool, Arc};
+use std::{
+    cell::RefCell,
+    hash::{DefaultHasher, Hash, Hasher},
+    io::Write,
+    rc::Rc,
+    sync::{atomic::AtomicBool, Arc},
+};
 
 use action_orderer::{ActionList, ActionOrderer, TableActionOrderer};
 use evaluator::StaticEvaluator;
@@ -10,6 +16,132 @@ use patchwork_core::{
 use transposition_table::{EvaluationType, TranspositionTable};
 
 use crate::{pvs_options::FailingStrategy, PVSOptions, SearchStatistics, TranspositionTableFeature};
+
+pub struct SearchRecorderNode {
+    pub state: Patchwork,
+    pub value: Option<i32>,
+    pub alpha: Option<i32>,
+    pub beta: Option<i32>,
+    pub description: Option<String>,
+    pub children: Vec<Rc<RefCell<SearchRecorderNode>>>,
+}
+
+pub struct SearchRecorder {
+    pub index: usize,
+    pub root: Option<Rc<RefCell<SearchRecorderNode>>>,
+    pub current_nodes: Vec<Rc<RefCell<SearchRecorderNode>>>,
+}
+
+impl SearchRecorder {
+    pub fn new() -> Self {
+        Self {
+            index: 1,
+            root: None,
+            current_nodes: vec![],
+        }
+    }
+
+    pub fn push_state(&mut self, state: Patchwork) {
+        return;
+
+        let node = Rc::new(RefCell::new(SearchRecorderNode {
+            state,
+            value: None,
+            alpha: None,
+            beta: None,
+            description: None,
+            children: vec![],
+        }));
+
+        if self.current_nodes.is_empty() {
+            self.root = Some(Rc::clone(&node));
+        } else {
+            let last_node = self.current_nodes.last().unwrap();
+            RefCell::borrow_mut(last_node).children.push(Rc::clone(&node));
+        }
+        self.current_nodes.push(node);
+    }
+
+    pub fn pop_state_with_value(&mut self, value: i32, alpha: i32, beta: i32, description: &str) {
+        return;
+
+        let last_node = self.current_nodes.pop().unwrap();
+        RefCell::borrow_mut(&last_node).value = Some(value);
+        RefCell::borrow_mut(&last_node).alpha = Some(alpha);
+        RefCell::borrow_mut(&last_node).beta = Some(beta);
+        RefCell::borrow_mut(&last_node).description = Some(description.to_string());
+    }
+
+    pub fn print_to_file(&mut self) {
+        return;
+
+        let file = std::fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(format!("search_tree_{:04}.txt", self.index))
+            .unwrap();
+
+        self.index += 1;
+
+        let mut writer = std::io::BufWriter::new(file);
+        self.print_to_file_recursive(&self.root, 0, &mut writer);3
+    }
+
+    #[allow(clippy::only_used_in_recursion)]
+    fn print_to_file_recursive(
+        &self,
+        node: &Option<Rc<RefCell<SearchRecorderNode>>>,
+        depth: usize,
+        writer: &mut std::io::BufWriter<std::fs::File>,
+    ) {
+        if let Some(node) = node {
+            let node = RefCell::borrow(node);
+
+            let padding = "    ".repeat(depth);
+
+            writeln!(
+                writer,
+                "{padding}Value: {:4?}, Text: {:?}, Alpha: {:?}, Beta: {:?}, Depth: {depth:?}, Player: {:?}, State: {:?}",
+                node.value.unwrap(),
+                node.description.as_ref().unwrap(),
+                node.alpha.unwrap(),
+                node.beta.unwrap(),
+                node.state.get_current_player(),
+                node.state
+            )
+            .unwrap();
+
+            for i in 0..node.children.len() {
+                let child = &node.children[i];
+
+                if i < node.children.len() - 1 {
+                    let mut hasher = DefaultHasher::new();
+                    RefCell::borrow(child).state.hash(&mut hasher);
+                    let hash1 = hasher.finish();
+
+                    let next_child = &node.children[i + 1];
+
+                    let mut hasher = DefaultHasher::new();
+                    RefCell::borrow(next_child).state.hash(&mut hasher);
+                    let hash2 = hasher.finish();
+
+                    if hash1 == hash2 {
+                        continue;
+                    }
+                }
+
+                self.print_to_file_recursive(&Some(Rc::clone(child)), depth + 1, writer);
+            }
+        }
+    }
+}
+
+impl Default for SearchRecorder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 /// A computer player that uses the Principal Variation Search (PVS) algorithm to choose an action.
 ///
@@ -48,6 +180,7 @@ pub struct PVSPlayer<Orderer: ActionOrderer = TableActionOrderer, Eval: Evaluato
     best_evaluation: Option<i32>,
     /// Whether the search has been canceled.
     search_canceled: Arc<AtomicBool>,
+    search_recorder: SearchRecorder,
 }
 
 impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orderer, Eval> {
@@ -72,6 +205,7 @@ impl<Orderer: ActionOrderer + Default, Eval: Evaluator + Default> PVSPlayer<Orde
             best_action: None,
             best_evaluation: None,
             search_canceled: Arc::new(AtomicBool::new(false)),
+            search_recorder: SearchRecorder::default(),
         }
     }
 }
@@ -192,6 +326,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
         // [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening) loop
         while depth < Self::MAX_DEPTH {
+            self.search_recorder.print_to_file();
+
             let evaluation = self.principal_variation_search(game, 0, depth, alpha, beta, 0)?;
 
             if self.search_canceled.load(std::sync::atomic::Ordering::SeqCst) {
@@ -287,7 +423,11 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         beta: i32,
         num_extensions: usize,
     ) -> PlayerResult<i32> {
+        self.search_recorder.push_state(game.clone());
+
         if self.search_canceled.load(std::sync::atomic::Ordering::Acquire) {
+            self.search_recorder
+                .pop_state_with_value(0, alpha, beta, "Search Cancelled");
             return Ok(0);
         }
 
@@ -302,12 +442,17 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     self.best_action = Some(table_action);
                     self.best_evaluation = Some(table_evaluation);
                 }
+                self.search_recorder
+                    .pop_state_with_value(table_evaluation, alpha, beta, "Transposition Table Hit");
                 return Ok(table_evaluation);
             }
         }
 
         if depth == 0 || game.is_terminated() {
-            return self.evaluation(game);
+            let evaluation = self.evaluation(game)?;
+            self.search_recorder
+                .pop_state_with_value(evaluation, alpha, beta, "Evaluation");
+            return Ok(evaluation);
         }
 
         self.statistics.increment_nodes_searched();
@@ -341,7 +486,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
         let mut best_action = ActionId::null();
         let mut alpha = alpha;
         let mut evaluation_bound = EvaluationType::UpperBound;
-        let should_late_move_prune = depth >= Self::LMP_DEPTH_LIMIT && self.options.features.late_move_pruning;
+        let should_late_move_prune = ply_from_root >= Self::LMP_DEPTH_LIMIT && self.options.features.late_move_pruning;
 
         for i in 0..action_list.len() {
             let action = if should_late_move_prune && i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS {
@@ -397,7 +542,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 // Code adapted from https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html
                 // Search Extensions are not applied to the reduced depth search
                 let mut needs_full_search = true;
-                if extension == 0 && i >= Self::LMR_AMOUNT_FULL_DEPTH_ACTIONS && depth >= Self::LMR_DEPTH_LIMIT {
+                if extension == 0 && i >= Self::LMR_AMOUNT_FULL_DEPTH_ACTIONS && ply_from_root >= Self::LMR_DEPTH_LIMIT
+                {
                     self.statistics.increment_late_move_reductions();
 
                     let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
@@ -432,6 +578,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             game.undo_action(action, true)?;
 
             if self.search_canceled.load(std::sync::atomic::Ordering::Acquire) {
+                self.search_recorder
+                    .pop_state_with_value(0, alpha, beta, "Search Cancelled");
                 return Ok(0);
             }
 
@@ -441,8 +589,12 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 self.store_transposition_table(game, depth, beta, EvaluationType::LowerBound, action);
 
                 return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
+                    self.search_recorder
+                        .pop_state_with_value(evaluation, alpha, beta, "FailSoft Evaluation");
                     evaluation // Fail-soft beta-cutoff
                 } else {
+                    self.search_recorder
+                        .pop_state_with_value(beta, alpha, beta, "Beta Cutoff");
                     beta // Fail-hard beta-cutoff
                 });
             }
@@ -475,6 +627,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             self.best_evaluation = Some(alpha);
         }
 
+        self.search_recorder
+            .pop_state_with_value(alpha, alpha, beta, "Normal Alpha");
         Ok(alpha)
     }
 
@@ -483,14 +637,21 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// fail-hard zero window search, returns either `beta-1` or `beta`
     /// only takes the beta parameter because `alpha == beta - 1`
     fn zero_window_search(&mut self, game: &mut Patchwork, depth: usize, beta: i32) -> PlayerResult<i32> {
+        self.search_recorder.push_state(game.clone());
+
         // Return if the search has been canceled
         if self.search_canceled.load(std::sync::atomic::Ordering::Acquire) {
+            self.search_recorder
+                .pop_state_with_value(0, beta - 1, beta, "Search Cancelled (ZWS)");
             return Ok(0);
         }
 
         // Return evaluation if the game is over or we reached the maximum depth
         if depth == 0 || game.is_terminated() {
-            return self.evaluation(game);
+            let evaluation = self.evaluation(game)?;
+            self.search_recorder
+                .pop_state_with_value(evaluation, beta - 1, beta, "Evaluation (ZWS)");
+            return Ok(evaluation);
         }
 
         // Collect statistics
@@ -510,12 +671,18 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
             if evaluation >= beta {
                 return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
+                    self.search_recorder
+                        .pop_state_with_value(evaluation, beta - 1, beta, "FailSoft Evaluation (ZWS)");
                     evaluation // Fail-soft beta-cutoff
                 } else {
+                    self.search_recorder
+                        .pop_state_with_value(beta, beta - 1, beta, "Beta Cutoff (ZWS)");
                     beta // Fail-hard beta-cutoff
                 });
             }
         }
+        self.search_recorder
+            .pop_state_with_value(beta - 1, beta - 1, beta, "Normal Alpha/Beta (ZWS)");
         Ok(beta - 1) // fail-hard, return alpha
     }
 

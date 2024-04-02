@@ -27,7 +27,7 @@
     "notebook.output.scrolling": true,
     "notebook.output.wordWrap": false,
     "notebook.formatOnSave.enabled": true,
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "explorer.fileNesting.patterns": {
         "Cargo.toml": "clippy.toml, rust-toolchain.toml, rustfmt.toml, Cargo.lock",
         "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.spec.ts",
@@ -36,6 +36,9 @@
         "*.tsx": "${capture}.ts",
         "package.json": "package-lock.json, yarn.lock, tsconfig.*.json, tsconfig-*.json, tscondif.tsbuildinfo, tailwind.config.js, vite.config.ts, postcss.config.js, tsconfig.json, .eslintrc.js",
         ".env": ".env.example"
+    },
+    "[tex]": {
+        "editor.formatOnSave": false
     },
     // Latex
     // "latex-workshop.latex.autoBuild.run": "never",

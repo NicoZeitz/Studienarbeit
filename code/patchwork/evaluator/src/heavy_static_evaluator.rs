@@ -1,4 +1,4 @@
-use patchwork_core::{Evaluator, Patchwork, QuiltBoard, StableEvaluator, TimeBoard};
+use patchwork_core::{Evaluator, Patchwork, QuiltBoard, StableEvaluator};
 
 use crate::StaticEvaluator;
 

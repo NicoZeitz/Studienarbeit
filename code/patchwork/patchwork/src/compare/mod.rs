@@ -209,6 +209,8 @@ fn compare(
                     iterations_done.store(u32::MAX, Ordering::SeqCst);
                     std::thread::sleep(std::time::Duration::from_secs(1)); // Wait progress printing
 
+                    println!("\n\n\n\n\n");
+
                     println!("Panic in thread: {:?}", std::thread::current().id());
                     cause.downcast_ref::<String>().map_or_else(
                         || {
@@ -218,6 +220,8 @@ fn compare(
                             println!("Cause: {cause}");
                         },
                     );
+
+                    println!("\n\n\n\n\n");
                 }
             });
         }
