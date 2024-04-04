@@ -32,5 +32,6 @@ pub async fn web_handler(uri: Uri) -> impl IntoResponse {
 }
 
 #[derive(RustEmbed)]
-#[folder = "webapp/"]
+// #[folder = "webapp/"] // TODO: change
+#[folder = "src/api/"]
 struct Asset;

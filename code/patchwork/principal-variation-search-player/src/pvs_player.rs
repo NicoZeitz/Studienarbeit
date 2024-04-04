@@ -85,7 +85,7 @@ impl SearchRecorder {
         self.index += 1;
 
         let mut writer = std::io::BufWriter::new(file);
-        self.print_to_file_recursive(&self.root, 0, &mut writer);3
+        self.print_to_file_recursive(&self.root, 0, &mut writer, "");
     }
 
     #[allow(clippy::only_used_in_recursion)]
@@ -94,11 +94,10 @@ impl SearchRecorder {
         node: &Option<Rc<RefCell<SearchRecorderNode>>>,
         depth: usize,
         writer: &mut std::io::BufWriter<std::fs::File>,
+        padding: &str,
     ) {
         if let Some(node) = node {
             let node = RefCell::borrow(node);
-
-            let padding = "    ".repeat(depth);
 
             writeln!(
                 writer,
@@ -127,11 +126,22 @@ impl SearchRecorder {
                     let hash2 = hasher.finish();
 
                     if hash1 == hash2 {
+                        self.print_to_file_recursive(
+                            &Some(Rc::clone(child)),
+                            depth + 1,
+                            writer,
+                            format!("{padding}    ↓   ").as_str(),
+                        );
                         continue;
                     }
                 }
 
-                self.print_to_file_recursive(&Some(Rc::clone(child)), depth + 1, writer);
+                self.print_to_file_recursive(
+                    &Some(Rc::clone(child)),
+                    depth + 1,
+                    writer,
+                    format!("{padding}    ").as_str(),
+                );
             }
         }
     }
@@ -267,13 +277,13 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// by LMR. After these amount of actions the LMR is applied.
     pub const LMR_AMOUNT_FULL_DEPTH_ACTIONS: usize = 3;
     /// The maximum depth at which LMR will be applied.
-    pub const LMR_DEPTH_LIMIT: usize = 2;
+    pub const LMR_DEPTH_LIMIT: usize = 1;
 
     /// The amount of actions that are for sure not pruned by LMP. After these
     /// amount of actions the LMP is applied.
     pub const LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 5;
     /// The maximum depth at which LMP will be applied.
-    pub const LMP_DEPTH_LIMIT: usize = 2;
+    pub const LMP_DEPTH_LIMIT: usize = 1; // BUG: PVS PLAYER plays worse if this is enabled. Why?
     /// The maximum amount of search extensions that can be applied.
     pub const MAX_SEARCH_EXTENSIONS: usize = 16; // Can probably never be reached
 
@@ -548,7 +558,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                     let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
                     // Search this move with reduced depth
-                    evaluation = -self.zero_window_search(game, depth - 1 - lmr_depth_reduction, -alpha)?;
+                    evaluation =
+                        -self.zero_window_search(game, ply_from_root + 1, depth - 1 - lmr_depth_reduction, -alpha)?;
                     needs_full_search = evaluation > alpha;
                 }
 
@@ -556,6 +567,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     // [Null Window](https://www.chessprogramming.org/Null_Window) search
                     evaluation = -self.zero_window_search(
                         game,
+                        ply_from_root + 1,
                         depth - 1, // do not apply search extensions in zws
                         -alpha,
                     )?;
@@ -636,33 +648,85 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     ///
     /// fail-hard zero window search, returns either `beta-1` or `beta`
     /// only takes the beta parameter because `alpha == beta - 1`
-    fn zero_window_search(&mut self, game: &mut Patchwork, depth: usize, beta: i32) -> PlayerResult<i32> {
+    fn zero_window_search(
+        &mut self,
+        game: &mut Patchwork,
+        ply_from_root: usize,
+        depth: usize,
+        beta: i32,
+    ) -> PlayerResult<i32> {
+        let alpha = beta - 1;
+
         self.search_recorder.push_state(game.clone());
 
         // Return if the search has been canceled
         if self.search_canceled.load(std::sync::atomic::Ordering::Acquire) {
             self.search_recorder
-                .pop_state_with_value(0, beta - 1, beta, "Search Cancelled (ZWS)");
+                .pop_state_with_value(0, alpha, beta, "Search Cancelled (ZWS)");
             return Ok(0);
+        }
+
+        if let Some(ref mut transposition_table) = self.transposition_table {
+            if let Some((_table_action, table_evaluation)) =
+                transposition_table.probe_hash_entry(game, alpha, beta, depth)
+            {
+                self.search_recorder.pop_state_with_value(
+                    table_evaluation,
+                    alpha,
+                    beta,
+                    "Transposition Table Hit (ZWS)",
+                );
+                return Ok(table_evaluation);
+            }
         }
 
         // Return evaluation if the game is over or we reached the maximum depth
         if depth == 0 || game.is_terminated() {
             let evaluation = self.evaluation(game)?;
             self.search_recorder
-                .pop_state_with_value(evaluation, beta - 1, beta, "Evaluation (ZWS)");
+                .pop_state_with_value(evaluation, alpha, beta, "Evaluation (ZWS)");
             return Ok(evaluation);
         }
 
         // Collect statistics
         self.statistics.increment_nodes_searched();
 
-        let actions = game.get_valid_actions();
-        for action in actions {
+        let mut actions = game.get_valid_actions();
+
+        let pv_action = self.get_pv_action(game, ply_from_root);
+
+        let mut scores = vec![0.0; actions.len()];
+        let mut action_list = ActionList::new(&mut actions, &mut scores);
+        let mut lmp_flags = if self.options.features.late_move_pruning {
+            LMPFlags::initialize_from(&action_list)
+        } else {
+            LMPFlags::fake()
+        };
+
+        self.action_orderer
+            .score_actions(&mut action_list, pv_action, ply_from_root);
+
+        let mut is_pv_node = true;
+        let should_late_move_prune = ply_from_root >= Self::LMP_DEPTH_LIMIT && self.options.features.late_move_pruning;
+
+        for i in 0..action_list.len() {
+            let action = if should_late_move_prune && i >= Self::LMP_AMOUNT_NON_PRUNED_ACTIONS {
+                let Some(action) = lmp_flags.get_next_missing() else {
+                    self.statistics.increment_late_move_pruning();
+                    break;
+                };
+                action
+            } else {
+                self.action_orderer.pick_action(&mut action_list, i)
+            };
+
+            lmp_flags.set_action_type_done(action);
+
             game.do_action(action, true)?;
 
             let evaluation = -self.zero_window_search(
                 game,
+                ply_from_root + 1,
                 depth - 1, // do not apply search extensions in zws
                 1 - beta,
             )?;
@@ -670,20 +734,24 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             game.undo_action(action, true)?;
 
             if evaluation >= beta {
+                self.statistics.increment_fail_high(is_pv_node);
+
                 return Ok(if self.options.features.failing_strategy == FailingStrategy::FailSoft {
                     self.search_recorder
-                        .pop_state_with_value(evaluation, beta - 1, beta, "FailSoft Evaluation (ZWS)");
+                        .pop_state_with_value(evaluation, alpha, beta, "FailSoft Evaluation (ZWS)");
                     evaluation // Fail-soft beta-cutoff
                 } else {
                     self.search_recorder
-                        .pop_state_with_value(beta, beta - 1, beta, "Beta Cutoff (ZWS)");
+                        .pop_state_with_value(beta, alpha, beta, "Beta Cutoff (ZWS)");
                     beta // Fail-hard beta-cutoff
                 });
             }
+
+            is_pv_node = false;
         }
         self.search_recorder
-            .pop_state_with_value(beta - 1, beta - 1, beta, "Normal Alpha/Beta (ZWS)");
-        Ok(beta - 1) // fail-hard, return alpha
+            .pop_state_with_value(alpha, alpha, beta, "Normal Alpha/Beta (ZWS)");
+        Ok(alpha) // fail-hard, return alpha
     }
 
     /// Extends the depth of the search in certain interesting cases
@@ -1067,6 +1135,7 @@ impl LMPFlags {
         let mut highest_patch_2_score = f64::NEG_INFINITY;
         let mut highest_patch_3_score = f64::NEG_INFINITY;
 
+        // TODO: we do not want to go thought the whole list
         for i in 0..action_list.len() {
             let action = action_list.get_action(i);
             let score = action_list.get_score(i);
