@@ -31,37 +31,72 @@ Die Spieltheorie stellt einen theoretischen Ansatz dar, um Situationen zwischen 
 
 Jede Menge von Zuständen, bei denen das Ergebnis von den Handlungen von einer bestimmten Anzahl von Entscheidungsträgern abhängig ist, ist ein \emph{Spiel} \cite{2024.GameTheory}. Die an einem Spiel teilnehmenden Entscheidungsträger werden als \emph{Spieler} bezeichnet. Das Spiel unterliegt bestimmten \emph{Regeln}, die die Spieler einhalten müssen \cite[S. 1]{2014.GameTheoryThroughExamples}. Auf Basis dieser Regeln ist ein \emph{Zustand} nun eine Situation, in der Spieler \emph{Entscheidungen} treffen. Durch das Treffen einer Entscheidung, werden \emph{Aktionen} ausgeführt, welche einen neuen Zustand erzeugen \cite[S. 1]{2014.GameTheoryThroughExamples}. Jeder Zustand kann für einen Spieler mit einem \emph{Wert} beschrieben werden. Die Differenz dieser Werte zwischen dem vorherigem Zustand und dem neuem Zustand wird als \emph{Auszahlung} der Aktion bezeichnet \cite{2024.GameTheory}. Hat eine Aktion also eine positive Auszahlung für einen Spieler, so befindet sich dieser Spieler nach dem Treffen der Entscheidung in einer besseren Situation als zuvor. Zusätzlich zu den normalen Zuständen, gibt es Situationen, in denen das Spiel endet, sogenannte \emph{Endzustand} \cite[S. 53]{2014.GameTheoryThroughExamples}. Weiterhin beginnt jedes Spiel in einem \emph{Startzustand} \cite[S. 53]{2014.GameTheoryThroughExamples}.
 
-Spiele können nach mehreren Kriterien charakterisiert werden. Ein Spiel ist \emph{kooperativ}, wenn die Spieler gemeinsam versuchen auf das gleiche Ziel hinzuarbeiten und \emph{kompetitiv} andernfalls, \dash die Spieler verfolgen nicht das gleiche Ziel \cite{2018.CooperativeGames}. Ein \emph{sequenzielles} bzw. \emph{zugbasiertes} Spiel ist ein rundenbasiertes Spiel, wo die Spieler nacheinander ziehen \cite[S. 251]{2018.SequentialGame}. \emph{Strategiespiele} erfordern die langfristige Planung des Vorgehens, um in dem Spiel erfolgreich zu sein. Diese Spiele zeichnen sich meist auch dadurch aus, dass keine oder kaum Zufallselemente im Spiel vorkommen. Generell sind Zufallsprozesse in Spielen aber erlaubt. Außerdem existieren Spiele mit \emph{perfekter Information}, bei denen alle Spieler zu jedem Zeitpunkt während des Spiels Zugriff auf alle Informationen haben, die zu dem derzeitigen Zustand geführt haben und diesen Zustand vollständig charakterisieren \cite[S. 156]{1194.SearchAndAiInGames}. Des Weiteren gibt es den Begriff der \emph{vollkommenen Information}, der aussagt, dass allen Spielern alle Spielregeln und auch möglichen Spielzüge bekannt sind \cite[S. 1]{AlgorithmsAlphaBetaPruning}.
+Spiele können nach mehreren Kriterien charakterisiert werden. Ein Spiel ist \emph{kooperativ}, wenn die Spieler gemeinsam versuchen auf das gleiche Ziel hinzuarbeiten und \emph{kompetitiv} andernfalls, \dash die Spieler verfolgen nicht das gleiche Ziel \cite{2018.CooperativeGames}. Ein \emph{sequenzielles} bzw. \emph{zugbasiertes} Spiel ist ein rundenbasiertes Spiel, wo die Spieler nacheinander ziehen \cite[S. 251]{2018.SequentialGame}. \emph{Strategiespiele} erfordern die langfristige Planung des Vorgehens, um in dem Spiel erfolgreich zu sein. Diese Spiele zeichnen sich meist auch dadurch aus, dass keine oder kaum Zufallselemente im Spiel vorkommen. Generell sind Zufallsprozesse in Spielen aber erlaubt. Außerdem existieren Spiele mit \emph{perfekter Information}, bei denen alle Spieler zu jedem Zeitpunkt während des Spiels Zugriff auf alle Informationen haben, die zu dem derzeitigen Zustand geführt haben und diesen Zustand vollständig charakterisieren \cite[S. 156]{1194.SearchAndAiInGames}. Des Weiteren gibt es den Begriff der \emph{vollkommenen Information}, der aussagt, dass allen Spielern alle Spielregeln und auch möglichen Spielzüge bekannt sind \cite[S. 1]{2017.AlphaBeta}.
 
 Bei Spielen mit perfekter Information ohne vollkommene Information ist zwar der Zustand des Spiels für alle Spieler bekannt, aber ein Spieler kann möglicherweise eine Aktion ausführen, von der die anderen Spieler vorher nicht wussten, dass sie möglich ist. Dahingegen sind alle Aktionen bei Spielen mit vollkommener Information aber ohne perfekte Information bekannt, aber der derzeitige Zustand nicht für alle Spieler komplett ersichtlich. \emph{Nullsummenspiele} sind solche Spiele, bei denen der Verlust des Wertes bei einem Spieler gleich dem Gewinn des Wertes bei einem anderem Spieler entspricht \cite{2022.ZeroSumGame}. Somit ergibt sich als Endergebnis für den Gesamtwert eine Nullsumme.
 
-Auch die Konvergenz von Spielen wird in der Spieltheorie betrachtet. Eine Aktion von Zustand $A$ nach Zustand $B$ ist eine umwandelnde Aktion, wenn in einem Spiel, das von Zustand $B$ ausgeht keine Konfiguration von Spielteilen auftreten kann, welche in einem Spiel hätte auftreten können, welches zur Konfiguration von Spielteilen in Zustand $A$ geführt hätte \cite[S. 157]{1194.SearchAndAiInGames}. Nimmt man zum Beispiel ein Spiel, bei dem das Ziel ist, alle Felder auf einem Spielbrett auszufüllen, so ist jede Aktion, die ein weiteres Feld ausfüllt, eine konvergierende Aktion, falls es keine Aktionen gibt, die Felder wieder entleeren. Teilt man nun alle Zustände in die verschiedenen Zustandsklassen ein, beispielsweise die Anzahl von ausgefüllten Feldern auf dem Spielbrett, so lässt sich ein gerichteter Graph definieren, deren Knoten durch die umwandelnden Aktionen verbunden werden. Ein Spiel konvertiert genau dann gegen einen Endzustand, wenn für alle Kanten von der Klasse $A$ nach $B$ mehr Knoten in $A$ existieren als in $B$, \dash immer weniger mögliche Zustände im späteren Verlauf des Spiels existieren. Das Spiel divergiert, falls das Gegenteil der Fall ist, also im späteren Verlauf immer mehr mögliche Zustände existieren. Es ist auch möglich, dass keiner der beiden Fälle auftritt. Die Konvergenz von Spielen ist in Abbildung \ref{TODO:} visualisiert.
+Auch die Konvergenz von Spielen wird in der Spieltheorie betrachtet. Eine Aktion von Zustand $A$ nach Zustand $B$ ist eine umwandelnde Aktion, wenn in einem Spiel, das von Zustand $B$ ausgeht keine Konfiguration von Spielteilen auftreten kann, welche in einem Spiel hätte auftreten können, welches zur Konfiguration von Spielteilen in Zustand $A$ geführt hätte \cite[S. 157]{1194.SearchAndAiInGames}. Nimmt man zum Beispiel ein Spiel, bei dem das Ziel ist, alle Felder auf einem Spielbrett auszufüllen, so ist jede Aktion, die ein weiteres Feld ausfüllt, eine konvergierende Aktion, falls es keine Aktionen gibt, die Felder wieder entleeren. Teilt man nun alle Zustände in die verschiedenen Zustandsklassen ein, beispielsweise die Anzahl von ausgefüllten Feldern auf dem Spielbrett, so lässt sich ein gerichteter Graph definieren, deren Knoten durch die umwandelnden Aktionen verbunden werden. Ein Spiel konvertiert genau dann gegen einen Endzustand, wenn für alle Kanten von der Klasse $A$ nach $B$ mehr Knoten in $A$ existieren als in $B$, \dash immer weniger mögliche Zustände im späteren Verlauf des Spiels existieren \cite[S. 157]{1194.SearchAndAiInGames}. Das Spiel divergiert, falls das Gegenteil der Fall ist, also im späteren Verlauf immer mehr mögliche Zustände existieren \cite[S. 157]{1194.SearchAndAiInGames}. Es ist auch möglich, dass keiner der beiden Fälle auftritt. Die Konvergenz und Divergenz von Spielen ist in den Abbildungen \ref{fig:spieltheorie-konvergenz} und \ref{fig:spieltheorie-divergenz} visualisiert.
 
-\subsection{Spielbaum und Entscheidungsbaum}
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.385\textwidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{res/pictures/game-theory-convergence.pdf}
+        \captionof{figure}{Konvergenz in der Spieltheorie}
+        \label{fig:spieltheorie-konvergenz}
+    \end{minipage}
+    \hspace*{0.5cm}
+    % \hfill
+    \begin{minipage}{.385\textwidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{res/pictures/game-theory-divergence.pdf}
+        \captionof{figure}{Divergenz in der Spieltheorie}
+        \label{fig:spieltheorie-divergenz}
+    \end{minipage}
+\end{figure}
 
-TODO: Spielbaum, Entscheidungsbaum
+\subsection{Spielbaum}
+
+Bei sequenziellen Spielen kann die Struktur des Spiels einschließlich aller Informationen über mögliche Spielverläufe, zeitliche Verläufe der einzelnen Züge der Spieler sowie der Spielzustände zu jedem Zeitpunkt durch einen Spielbaum erfasst werden \cite[S. 13]{2005.SpieltheorieEinführung}.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \centering
+    % \vspace*{-0.25cm}
+    \includegraphics[width=0.37\textwidth]{res/pictures/game-tree.pdf}
+    \caption{Spielbaum}
+    \label{fig:spielbaum}
+    \vspace*{0.5cm}
+\end{wrapfigure}
+
+Ein beispielhafter Spielbaum ist in Abbildung \ref{fig:spielbaum} abgebildet. Die einzelnen Knoten des Baums repräsentieren die verschiedenen Zustände des Spiels. Der Wurzelknoten ist der Startzustand. Jedem Knoten ist ein Spieler zugeordnet (in der Abbildung durch die Farbfüllung des Knotens gekennzeichnet). Dieser Spieler kann in dem Zustand aus mehreren Aktionen ($\mathcal{A}$ und $\mathcal{B}$) auswählen, was den Kanten des Baums entspricht. Diese Baumstruktur wiederholt sich, bis das Spiel zu einem Endzustand kommt, welches die schwarz ausgefüllten Knoten in der Abbildung sind. \cite[S. 54]{2014.GameTheoryThroughExamples}
+
+Die Erstellung von Computergegnern basiert in der Regel auf den Spielbäumen. Um optimale Entscheidungen zu treffen, werden verschiedene Spielbaumsuchalgorithmen verwendet, um den Baum zu durchlaufen, verschiedene Positionen zu analysieren und somit die Auswirkungen von Aktionen zu bewerten. Aufgrund der Komplexität vieler Spieler wird dabei oft nur ein Teil des Spielbaums durchsucht, wie beispielsweise bei der »\hyperref[chapter:minimax-algorithmus]{\alpha-\beta-Suche}«, welche den Suchbaum bis zu einer bestimmten Tiefe untersucht. \cite[S. 15]{1194.SearchAndAiInGames}
 
 \subsection{Spielkomplexität}
 
 Die kombinatorische Spieltheorie ist ein Teilbereich der Spieltheorie, der sich mit der Analyse von \emph{zugbasierten} Spielen mit \emph{perfekter Information} befasst. Der Bereich beschäftigt sich mit der Entwicklung verschiedener theoretischer Methoden zur Betrachtung der Spiele. Dazu gehören unter anderem mehrere verschiedene Beschreibungen für die Komplexität von Spielen. Nachfolgend sind drei wesentliche Begriffe für Komplexität in der kombinatorischen Spieltheorie:
 
+\pagebreak
+
 \begin{itemize}
-    \item \textbf{Zustandsraum-Komplexität}: Die Anzahl der legal erreichbaren Spielpositionen ausgehend von der Ausgangsposition des Spiels. \cite[S. 299]{2002.GamesSolved}
-    \item \textbf{Spielbaumgröße}: TODO:
-    \item \textbf{Spielbaumkomplexität}: TODO:
+    \item \textbf{Zustandsraum-Komplexität ($\text{\acsp{SSC}}$)}: Die Anzahl der legal erreichbaren Spielpositionen ausgehend von der Ausgangsposition des Spiels. \cite[S. 106]{2007.SolvingGames}
+    \item \vspace*{-0.2cm} \textbf{Spielbaumgröße ($\text{\acsp{GTS}}$)}: Die Anzahl der möglichen Spielverläufe ausgehend vom Start des Spiels \cite[S. 1]{2019.GameTreeComplexityEstimation}. Entspricht somit der Anzahl der Blattknoten im Spielbaum.
+    \item \vspace*{-0.2cm} \textbf{Spielbaumkomplexität ($\text{\acsp{GTC}}$)}: Diese Komplexität ist definiert als die Anzahl der Blattknoten im Lösungs-Suchbaum des Startzustandes. Der Lösungs-Suchbaum eines Knotens $N$ ist der Spielbaum in voller Breite mit einer Tiefe, die der Lösungstiefe von $N$ entspricht. Die Lösungstiefe von $N$ ist die minimale Tiefe einer ausreichenden Suche mit voller Breite um den spieltheoretischen Wert von $N$ zu bestimmen. \cite[S. 299]{2002.GamesSolved}
 \end{itemize}
 
-\pagebreak
+\vspace*{-0.2cm}
+\vspace*{-0.15cm}
 
 \section{Lineare Programmierung}
 \label{chapter:lineare-programmierung}
 
 Lineare Programmierung, auch als Lineare Optimierung bezeichnet, ist ein Teilbereich der mathematischen Optimierung, der sich mit der Minimierung oder Maximierung einer Zielfunktion befasst \cite{2024.MathWorksLP}. Besonders ist hierbei, dass sowohl die Zielfunktion als auch alle Nebenbedingungen linear bezüglich der Optimierungsvariable $x$ sind. Lineare Programme werden im Normalfall in der Standardform, die in \ref{eqn:linear-programming} dargestellt ist, angegeben \cite[S. 6]{2023.ConvexOptimization}.
 
+\vspace*{-0.2cm}
 \begin{align}
     \label{eqn:linear-programming}
-    \minimize_{x}                     & \quad c^\mathsf{T} x                                                                                   \\
-    \text{unter den Nebenbedingungen} & \quad Ax \leq b      & x \in \mathbb{R}^{n}, A \in \mathbb{R}^{m\times n}, b \in \mathbb{R}^{m} \notag
+    \minimize_{x}                     & \quad c^\mathsf{T} x                                                                                                    \\
+    \text{unter den Nebenbedingungen} & \quad Ax \leq b      & x \in \mathbb{R}^{n}, A \in \mathbb{R}^{m\times n}, b \in \mathbb{R}^{m} \vspace*{-0.2cm} \notag
 \end{align}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -74,9 +109,9 @@ Lineare Programmierung, auch als Lineare Optimierung bezeichnet, ist ein Teilber
     \vspace*{-0.75cm}
 \end{wrapfigure}
 
-Grafisch betrachtet ist die lineare Programmierung die Suche in einem zulässigen Suchbereich in Richtung der Zielfunktion. Dieser Suchbereich wird dabei durch die Ungleichungen so eingeschränkt, dass ein Polyeder entsteht \cite[S. 31]{2023.ConvexOptimization}. Dieser grafische Zusammenhang ist in Abbildung \ref{fig:linear-programming} visualisiert.
+Grafisch betrachtet ist die lineare Programmierung die Suche in einem zulässigen Suchbereich in Richtung der Zielfunktion. Dieser Suchbereich wird dabei durch die Ungleichungen so eingeschränkt, dass ein Polyeder entsteht \cite[S. 31]{2023.ConvexOptimization}. Dieser grafische Zusammenhang ist in Abbildung \ref{fig:linear-programming} visualisiert. Für lineare Optimierungsprobleme gibt es kein direktes analytisches Lösungsverfahren, jedoch existieren verschiedene Algorithmen, die das Problem in polynomialer Zeit lösen können \cite[S. 6]{2023.ConvexOptimization}.
 
-Für lineare Optimierungsprobleme gibt es kein direktes analytisches Lösungsverfahren, jedoch existieren verschiedene Algorithmen, die das Problem in polynomialer Zeit lösen können \cite[S. 6]{2023.ConvexOptimization}. Die Algorithmen teilen sich dabei in zwei größere Klassen auf:
+Die Algorithmen teilen sich dabei in zwei größere Klassen auf:
 
 \begin{itemize}
     \item \emph{Active-Set-Methoden}: Verfahren, bei denen Ungleichungen, die mit Gleichheit gelten, als aktiv betrachtet werden und in das Optimierungsproblem aufgenommen werden \cite[S. 243]{2023.OptimizationLectureNotes}. Solange Ungleichungen strikt gelten, werden sie also in einem Optimierungsschritt nicht betrachtet. Ein Beispiel hierfür ist das Simplex-Verfahren \cite[S. 248]{2023.OptimizationLectureNotes}.
