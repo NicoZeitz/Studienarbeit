@@ -125,7 +125,9 @@ Eine Variation von Linearer Programmierung ist \ac{ILP}, bei dem gefordert wird,
 \section{Minimax-Algorithmus}
 \label{chapter:minimax-algorithmus}
 
-Suchalgorithmen beachten jede derzeit zur Verfügung stehende Aktion, anschließend jede Aktion, die auf die vorherige Aktion folgen kann und immer so weiter. Das Ziel eines solchen Suchalgorithmus ist das Finden von Endzuständen, welche die vorher gegebenen Zielkonditionen erfüllen. Wird ein solcher Zustand gefunden, so sind die Aktionen bekannt, welche zum Erreichen des Zielzustands passieren werden müssen. In einem kompetitiven Spiel, bei dem ein Gegner beteiligt ist und ein anderes, reziprokes Ziel als der Spieler hat, kann selbst bei Findung eines Zielzustandes nicht davon ausgegangen werden, dass der Gegner die zum Ziel führenden benötigten Aktionen nicht tätigt. In einem klassischen Spiel mit Sieg, Unentschieden und Niederlage ist es das Ziel des Gegners den Spielzustand in Richtung seines Sieges zu lenken oder ein Unentschieden zu lenken, keinesfalls jedoch in den Zielzustand des Spielers. Suchalgorithmen können in diesen Fall allerdings auch Lösungen finden, sie müssen nur um Taktiken erweitert werden, um die Aktionen des Gegners mitzubeachten. \cite{AlgorithmsMinimax}
+Suchalgorithmen beachten jede derzeit zur Verfügung stehende Aktion, anschließend jede Aktion, die auf die vorherige Aktion folgen kann und immer so weiter. Das Ziel eines solchen Suchalgorithmus ist das Finden von Endzuständen, welche die vorher gegebenen Zielkonditionen erfüllen. Wird ein solcher Zustand gefunden, so sind die Aktionen bekannt, welche zum Erreichen des Zielzustands passieren werden müssen. In einem kompetitiven Spiel, bei dem ein Gegner beteiligt ist und ein anderes, reziprokes Ziel als der Spieler hat, kann selbst bei Findung eines Zielzustandes nicht davon ausgegangen werden, dass der Gegner die zum Ziel führenden benötigten Aktionen nicht tätigt. 
+
+In einem klassischen Spiel mit Sieg, Unentschieden und Niederlage ist es das Ziel des Gegners den Spielzustand in Richtung seines Sieges zu lenken oder ein Unentschieden zu lenken, keinesfalls jedoch in den Zielzustand des Spielers. Suchalgorithmen können in diesen Fall allerdings auch Lösungen finden, sie müssen nur um Taktiken erweitert werden, um die Aktionen des Gegners mitzubeachten. \cite{AlgorithmsMinimax}
 
 Für Spiele mit zwei Spielern ist der Minimax-Algorithmus eine solche Taktik, welcher den Fakt ausnutzt, dass die zwei Spieler genau gegensätzliche Ziele haben, wodurch der Algorithmus dann Voraussagungen über zukünftige Spielstände macht und die Gewinnchancen für einen Spieler optimiert. Die Theorie hinter dem Algorithmus besagt, dass der Gegner versuchen wird den Wert zu minimieren, welchen der Algorithmus maximieren will. Daraus lässt sich schließen, dass der Algorithmus immer den die Aktion oder Pfad im Spielbaum nehmen sollte, bei dem der Gegner die geringste Minimierung bewirken kann. In einem idealen Fall kann der Algorithmus mit beliebig viel Speicherplatz und beliebig viel Zeit alle Endzustände des Spiels und somit den gesamten Spielbaum berechnen, um anschließend von unten nach oben den gewinnbringenden Pfad zu finden. \cite{AlgorithmsMinimax}
 
@@ -146,32 +148,35 @@ Alpha-Beta-Pruning ist eine Optimierung für den Minimax-Algorithmus, um die Anz
 
 Der Minimax-Algorithmus, im Anhang Algorithmus \ref{algo:minimax}, wird für die optimierte Variante mit Alpha-Beta-Pruning um die zwei namensgebenden Eingabeparameter $\alpha$ und $\beta$ erweitert und ist unter Algorithmus \ref{algo:minimax-alpha-beta} zu sehen. Wie der Standardalorithmus läuft die Variante mit Alpha-Beta-Pruning mit rekusiver Tiefensuche durch den Spielbaum und berechnet im Anschluss den optimalen Weg für einen Spieler.
 
+\refstepcounter{lstlisting}
+\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode vom Minimax-Algorithmus mit Alpha-Beta-Pruning}
+
 \begin{algorithm}
     \caption{Pseudocode vom Minimax-Algorithmus mit Alpha-Beta-Pruning}
     \label{algo:minimax-alpha-beta}
     \begin{algorithmic}[1]
         \Function{alphabeta}{node $n, \alpha, \beta$}
-        \If{$n$ is a terminal node}
-        \State \Return value of $n$
-        \ElsIf{$n$ is a maximizer node}
-        \For{each child node $c$ of $n$}
-        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-        \State $\alpha \gets \max(\alpha, value)$
-        \If{$\alpha \geq \beta$}
-        \State \textbf{break}
-        \EndIf
-        \EndFor
-        \State \Return $\alpha$
-        \ElsIf{$n$ is a minimizer node}
-        \For{each child node $c$ of $n$}
-        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-        \State $\beta \gets \min(\beta, value)$
-        \If{$\beta \leq \alpha$}
-        \State \textbf{break}
-        \EndIf
-        \EndFor
-        \State \Return $\beta$
-        \EndIf
+            \If{$n$ is a terminal node}
+                \State \Return value of $n$
+            \ElsIf{$n$ is a maximizer node}
+                \For{each child node $c$ of $n$}
+                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+                    \State $\alpha \gets \max(\alpha, value)$
+                    \If{$\alpha \geq \beta$}
+                        \State \textbf{break}
+                    \EndIf
+                \EndFor
+                \State \Return $\alpha$
+            \ElsIf{$n$ is a minimizer node}
+                \For{each child node $c$ of $n$}
+                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+                    \State $\beta \gets \min(\beta, value)$
+                    \If{$\beta \leq \alpha$}
+                        \State \textbf{break}
+                    \EndIf
+                \EndFor
+                \State \Return $\beta$
+            \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
