@@ -2,3 +2,31 @@
 \label{anhang:chapter-quellcode}
 
 \input{chapters/AA_optimization}
+
+\section{Minimax-Alogrithmus}
+
+\begin{algorithm}
+    \caption{Pseudocode vom Minimax-Algorithmus}
+    \label{algo:minimax}
+    \begin{algorithmic}[1]
+        \Function{minimax}{node $n$}
+        \If{$n$ is a terminal node}
+        \State \Return value of $n$
+        \ElsIf{$n$ is a maximizer node}
+        \State $maxValue \gets -\infty$
+        \For{each child node $c$ of $n$}
+        \State $value \gets \Call{minimax}{$c$}$
+        \State $maxValue \gets \max(maxValue, value)$
+        \EndFor
+        \State \Return $maxValue$
+        \ElsIf{$n$ is a minimizer node}
+        \State $minValue \gets +\infty$
+        \For{each child node $c$ of $n$}
+        \State $value \gets \Call{minimax}{$c$}$
+        \State $minValue \gets \min(minValue, value)$
+        \EndFor
+        \State \Return $minValue$
+        \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}

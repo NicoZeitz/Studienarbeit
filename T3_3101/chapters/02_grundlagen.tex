@@ -125,9 +125,85 @@ Eine Variation von Linearer Programmierung ist \ac{ILP}, bei dem gefordert wird,
 \section{Minimax-Algorithmus}
 \label{chapter:minimax-algorithmus}
 
-TODO:
+Suchalgorithmen beachten jede derzeit zur Verfügung stehende Aktion, anschließend jede Aktion, die auf die vorherige Aktion folgen kann und immer so weiter. Das Ziel eines solchen Suchalgorithmus ist das Finden von Endzuständen, welche die vorher gegebenen Zielkonditionen erfüllen. Wird ein solcher Zustand gefunden, so sind die Aktionen bekannt, welche zum Erreichen des Zielzustands passieren werden müssen. In einem kompetitiven Spiel, bei dem ein Gegner beteiligt ist und ein anderes, reziprokes Ziel als der Spieler hat, kann selbst bei Findung eines Zielzustandes nicht davon ausgegangen werden, dass der Gegner die zum Ziel führenden benötigten Aktionen nicht tätigt. In einem klassischen Spiel mit Sieg, Unentschieden und Niederlage ist es das Ziel des Gegners den Spielzustand in Richtung seines Sieges zu lenken oder ein Unentschieden zu lenken, keinesfalls jedoch in den Zielzustand des Spielers. Suchalgorithmen können in diesen Fall allerdings auch Lösungen finden, sie müssen nur um Taktiken erweitert werden, um die Aktionen des Gegners mitzubeachten. \cite{AlgorithmsMinimax}
 
-Hier haben wir mehr
+Für Spiele mit zwei Spielern ist der Minimax-Algorithmus eine solche Taktik, welcher den Fakt ausnutzt, dass die zwei Spieler genau gegensätzliche Ziele haben, wodurch der Algorithmus dann Voraussagungen über zukünftige Spielstände macht und die Gewinnchancen für einen Spieler optimiert. Die Theorie hinter dem Algorithmus besagt, dass der Gegner versuchen wird den Wert zu minimieren, welchen der Algorithmus maximieren will. Daraus lässt sich schließen, dass der Algorithmus immer den die Aktion oder Pfad im Spielbaum nehmen sollte, bei dem der Gegner die geringste Minimierung bewirken kann. In einem idealen Fall kann der Algorithmus mit beliebig viel Speicherplatz und beliebig viel Zeit alle Endzustände des Spiels und somit den gesamten Spielbaum berechnen, um anschließend von unten nach oben den gewinnbringenden Pfad zu finden. \cite{AlgorithmsMinimax}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/minimax-tree.pdf}
+    \caption{Spielbaum von Minimax-Algorithmus}
+    \label{fig:minimax-tree}
+\end{figure}
+
+In der Abbildung \ref{fig:minimax-tree} ist ein Spielbaum eines Spiels zwischen dem Minimax-Algorithmus und dem Gegner abgebildet. Das Ziel des Algorithmus ist am Ende des Spiels eine möglichst hohe Zahl zu erreichen, während der Gegner eine möglichst geringe Zahl erreichen will. Der Algorithmus startet mit seiner Evaluierung des Baums unten bei den Endzustandsknoten H und I. Der darüber liegende Knoten D ist ein Knoten einer Maximierungsstufe, da der Algorithmus hier den weiteren Spielverlauf durch seine Auswahl des folgenden Knoten bestimmen kann. Hier muss demnach der größte Wert ausgewählt werden, damit der Algorithmus den Pfad für den eigenen Sieg finden kann. Der ausgewählte Wert wird für den Maximierungsknoten D übernommen. Anschließend werden die Knoten J und K verglichen und der größere Wert 9 im Maximierungsknoten E gespeichert. Jetzt liegen beiden benötigten Werte für den die Evaluierung des Knoten B vor. Da allerdings der Gegner hier am Spielzug ist und sein Ziel eine möglichst kleine Zahl ist, wird der minimale Wert von den Knoten D und E gesucht. Dementsprechend wird in den Minimierungsknoten B der Wert 3 gespeichert. Die Minimierungs- und Maximierungsschichten wiederholen sich immer abwechselnd im Spielbaum, da die beiden Spieler jeweils abwechselnd ihre Spielzüge ziehen können. Im Startzustandsknoten ist folglich der Minimax-Algorithmus am Zug, der bereits die eine Hälfte des Spielbaums evaluiert hat und dem Algorithmus eine Endwertung von 3 sichert, wenn der Gegner jeweils seine besten Züge macht. Die Evaluierung der zweiten Hälfte des Spielbaums und des Knotens C passiert auf gleiche Weise wie zuvor. Nun liegt fast der gesamte Spielbaum vor und der Algorithmus kann seinen Startzug bestimmen. Dadurch befindet sich der Spielzustand in einer Maximierungsschicht, weshalb von den Knoten B und C, der Knoten B mit dem höheren Wert 3 ausgewählt wird. Das Spiel wird demnach voraussichtlich die Knoten A, B, D durchlaufen und mit dem Knoten I enden.
+
+Ein Problem des normale Minimax-Algorithmus ist leicht erkannt: Der Algorithmus kann bei nicht-trivialen Spielen auf Grund von Zeit- und oder Speicherbeschränkungen nicht bis zu den Endzuständen des Spielbaums vordringen und kann somit keine Zwischenknoten und optimale Spielpfade evaluieren. Abhilfe schaffen in diesem Fall Heuristiken, welche den Spielzustand der künstlich gewählten Zwischenknoten abschätzen, wobei der Erfolg dieses Algorithmus dann hauptsächlich von der Korrektheit der Heuristiken abhängig ist. \cite{AlgorithmsMinimax}
+
+\subsection{Alpha-Beta-Pruning}
+
+Alpha-Beta-Pruning ist eine Optimierung für den Minimax-Algorithmus, um die Anzahl an zu evaluierenden Knoten des Spielbaums zu minimieren. Die Bestimmung der korrekten Algorithmus-Entscheidung kann nämlich auch ohne die Evaluierung von jedem Knoten im Spielbaum bestimmt werden, indem die Optimierung nur Spielbaumzweige eliminiert, die keinen Einfluss auf die Entscheidung des Minimax-Algorithmus haben. \cite{AlgorithmsAlphaBetaPruning}
+
+Der Minimax-Algorithmus, im Anhang Algorithmus \ref{algo:minimax}, wird für die optimierte Variante mit Alpha-Beta-Pruning um die zwei namensgebenden Eingabeparameter $\alpha$ und $\beta$ erweitert und ist unter Algorithmus \ref{algo:minimax-alpha-beta} zu sehen. Wie der Standardalorithmus läuft die Variante mit Alpha-Beta-Pruning mit rekusiver Tiefensuche durch den Spielbaum und berechnet im Anschluss den optimalen Weg für einen Spieler.
+
+\begin{algorithm}
+    \caption{Pseudocode vom Minimax-Algorithmus mit Alpha-Beta-Pruning}
+    \label{algo:minimax-alpha-beta}
+    \begin{algorithmic}[1]
+        \Function{alphabeta}{node $n, \alpha, \beta$}
+        \If{$n$ is a terminal node}
+        \State \Return value of $n$
+        \ElsIf{$n$ is a maximizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\alpha \gets \max(\alpha, value)$
+        \If{$\alpha \geq \beta$}
+        \State \textbf{break}
+        \EndIf
+        \EndFor
+        \State \Return $\alpha$
+        \ElsIf{$n$ is a minimizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\beta \gets \min(\beta, value)$
+        \If{$\beta \leq \alpha$}
+        \State \textbf{break}
+        \EndIf
+        \EndFor
+        \State \Return $\beta$
+        \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Die Eingabeparameter sind der Startknoten $n$, $\alpha$, welcher der beste Wert ist, den der maximierende Spieler bisher erreicht hat und $\beta$, welcher der beste Wert ist, den der minimierende Spieler bisher erreicht hat. Beim ersten Aufruf müssen die Werte $\alpha$ auf $-\infty$ und $\beta$ auf $+\infty$ gesetzt werden, was die jeweils schlechtesten Werte für die Spieler sind, damit jeder bessere Wert gewertet wird. Der Minimax-Algorithmus mit Alpha-Beta-Pruning funktionert wie folgt:
+
+\begin{enumerate}
+    \item Wenn der Knoten $n$ ein Endknoten ist, wird der Wert dieses Knotens zurückgegeben
+    \item Wenn der Knoten $n$ ein Maximierungsknoten ist, werden alle Kinderknoten durchlaufen, um den besten Zug zu finden.
+          \begin{enumerate}
+              \item Bestimmung des Wertes des Kindknotens $c$ durch rekursiven Selbstaufruf
+              \item Aktualisierung von $\alpha$, falls der Wert von $c$ größer ist.
+              \item Falls $\alpha \geq \beta$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da der Gegner einen besseren Zug durch andere Pfadwahl nicht zulassen würde.
+              \item Zurückgeben von $\alpha$, was der maximale Endwert bei optimaler Spielablauf von $n$ ist.
+          \end{enumerate}
+    \item Wenn der Knoten $n$ ein Minimierungsknoten ist, werden alle Kinderknoten durchlaufen, um den besten Zug für den Gegner zu finden.
+          \begin{enumerate}
+              \item Bestimmung des Wertes des Kindknotens $c$ durch rekursiven Selbstaufruf
+              \item Aktualisierung von $\beta$, falls der Wert von $c$ kleiner ist.
+              \item Falls $\beta \leq \alpha$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da kein besserer Zug für den Gegner möglich ist, als der Zug, welcher schon vom maximierenden Spieler  gefunden wurde.
+              \item Zurückgeben von $\beta$, was der minimale Endwert bei optimalem Spielablauf von $n$ ist.
+          \end{enumerate}
+\end{enumerate}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/minimax-tree-with-a-b-pruning.pdf}
+    \caption{Spielbaum von Minimax-Algorithmus mit Alpha-Beta-Pruning}
+    \label{fig:minimax-a-b-tree}
+\end{figure}
+
+Wenn mit dieser optimierten Variante des Minimax-Algorithmus das gleiche, vorher abgebildete Spiel nocheinmal wiederholt wird, ist der Spielbaum kleiner, in Abbildung \ref{fig:minimax-a-b-tree} zu sehen, aber der optimale Spielablauf der Knoten A, B, D und I wird trotzdem gefunden. Am Maximierungsknoten E muss der zweite Kindknoten K nicht evaluiert werden, da am Minimierungsknoten B der Kindknoten D mit Wert 3 ausgewählt wird, weil der Kindknoten E den höheren Wert 6, bei Auswahl von Auswahl von J annehmen könnte. Am Minimierungsknoten C muss der zweite Kindknoten G und die folgenden Knoten nicht evaluiert werden, da dem Maximierungsknoten A im Vergleich zum geringen Wert $-2$ von C schon der höhere Wert 3 von Knoten B zur Auswahl steht. In beiden Fällen kann ein \enquote{Pruning}, dt. Beschneidung, der Zweige des Spielbaum ohne Einfluss auf die Suche nach dem optimalen Spielverlauf stattfinden. Im schlechtesten Fall sind die Zweige nach Werten aufsteigend sortiert, sodass der Algorithmus wie der Minimax-Algorithmus handelt und eine Laufzeitkomplexität von $\mathcal{O}(w^{d})$. $w$ bezeichnet den durchschnittlichen Verzweigungsfaktor und $d$ die Tiefe des Spielbaums, wobei der Verzweigungsfaktor beschreibt die maximale Anzahl an Kindknoten eines Knoten. Im besten Fall sind die Spielzüge absteigend geordnet, also genau umgekehrt zum schlechtesten Fall, wodurch der erste evaluierte Kindknoten den besten Wert liefert und die Laufzeitkomplexität innerhalb von $\mathcal{O}\left(w^{\lfloor d/2\rfloor}\right)$ liegt. Für den durchschnittlichen Fall ergibt sich eine Komplexität von $\mathcal{O}\left(w^{3d/4}\right)$, was besonders bei umfangreichen Berechnungen diesem Algorithmus einen signifikanten Vorteil bringt. \cite[S. 3 ff.]{2017.AlphaBeta}
 
 \section{Monte Carlo Tree Search}
 \label{chapter:monte-carlo-tree-search}
