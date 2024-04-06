@@ -1,11 +1,11 @@
 \chapter{Modellierung von Patchwork als Computerprogramm}
 \label{chapter:modellierung-von-patchwork-als-computerprogramm}
 
-TODO:
+TODO: Erst generelle Architektur, Programmiersprache usw. hier auch generelle speicherung (spieler, Sonderplättchen, zeitplan, ...)
 
 \begin{itemize}
     \item Aufbau des Spielfeldes
-    \item Speicherung der Quilt Boards
+    \item Speicherung der Quilt Boards (Row-Major)
     \item Speicherung des Time Boards
     \item Speicherung der Patchliste
     \item Umsetzung von Zügen
@@ -13,3 +13,75 @@ TODO:
     \item Abstraction von Player Interface
     \item Evaluator, Move Orderer, Tree Policy (wahrscheinlich später)
 \end{itemize}
+
+TODO: Zeitplan einfaches Array mit Bitflags
+
+Besondere extra:
+
+\section{Aufbau des Ablageplans}
+
+TODO:
+
+\begin{figure}[!ht]
+    \centering
+    \rlap{{\color{white}\acf{LSB} \acf{MSB}}} \vspace*{-\baselineskip}
+    \includegraphics[width=\textwidth]{res/pictures/quilt-board-storage.pdf}
+    \caption{Zeilenweise Anordnung der Felder des Ablageplans}
+    \label{fig:quilt-board-storage}
+\end{figure}
+
+\section{Modellierung der Aktionen}
+
+TODO: Action, ActionId/SurrogateActionId, NaturalActionId
+
+\lstinputlisting[
+    label={code:action},
+    caption={Definition des Tagged-Union \code{Action}},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/action.rs}
+
+\begin{itemize}
+    \item \code{Action} als Tagged-Union
+    \item \code{ActionId} bzw. \code{SurrogateActionId} als \ac{u32}
+    \item \code{NaturalActionId} als TODO: 2028
+\end{itemize}
+
+\section{Flicken und Zugmöglichkeiten}
+
+\acs{u128}
+
+\pagebreak
+
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tabular}{|l|c|c|l|}
+            \hline
+            \multicolumn{1}{|c|}{Methode}                                                 & Zeit      & $\mathcal{O}$-Kalkül        & \multicolumn{1}{|c|}{Bemerkungen}                  \\ \hline
+            \code{game.get\_initial\_state}                                               & $TODO:ms$ & $\mathcal{O}\left(n\right)$ & $n$ aufgrund Mischen der Flicken                   \\  \hline
+            \code{game.get\_valid\_actions}                                               & $TODO:ms$ & $\mathcal{O}\left(n\right)$ & $3\times$Aufruf von Ablageplan Aktionen generieren \\  \hline
+            \code{game.get\_random\_action}                                               & $TODO:ms$ & $\mathcal{O}\left(n\right)$ & Aufruf von \code{get\_valid\_actions}              \\  \hline
+            \code{game.get\_do\_action}                                                   & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{game.get\_undo\_action}                                                 & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{game.clone}                                                             & $TODO:ms$ & $\mathcal{O}\left(1\right)$ & $\hat{=}$ \code{memcpy}                            \\  \hline
+            \code{game.is\_terminated}                                                    & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            {\footnotesize \code{action\_id.from\_natural\_action\_id} }                  & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            {\footnotesize \code{natural\_action\_id.from\_surrogate\_action\_id} }       & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{patch\_manager.get\_patch}                                              & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{patch\_manager.get\_special\_patch}                                     & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{patch\_manager.get\_transformation}                                     & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{player.get\_position}                                                   & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{quilt\_board.is\_full}                                                  & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.is\_special\_tile\_condition\_reached} }    & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{quilt\_board.do\_action}                                                & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{quilt\_board.undo\_action}                                              & $TODO:ms$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_patch} }          & $TODO:ms$ & $\mathcal{O}\left(n\right)$ &                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_special\_patch} } & $TODO:ms$ & $\mathcal{O}\left(n\right)$ &                                                    \\  \hline
+            \code{time\_board.???}                                                        & $TODO:ms$ & $\mathcal{O}\left(?\right)$ &                                                    \\  \hline
+            Getter\textendash{} und Setter\textendash{}Methoden                           & $\diagup$ & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+        \end{tabular}}
+    \vspace{3pt}
+    \caption{Übersicht über die verfügbaren Methoden in der Patchwork\textendash{}Implementierung}
+    \label{tabelle:patchwork-methods}
+\end{table}

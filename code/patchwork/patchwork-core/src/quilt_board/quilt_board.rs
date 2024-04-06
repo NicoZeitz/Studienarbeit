@@ -113,7 +113,8 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝟣)`
     #[rustfmt::skip]
-    #[must_use]    pub const fn is_special_tile_condition_reached(&self) -> bool {
+    #[must_use]
+    pub const fn is_special_tile_condition_reached(&self) -> bool {
         const BOARD_1X1: u128 = 0b0_0001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_u128;
         const BOARD_1X2: u128 = 0b0_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_1111_1110_u128;
         const BOARD_1X3: u128 = 0b0_0111_1111_0011_1111_1001_1111_1100_1111_1110_0111_1111_0011_1111_1001_1111_1100_u128;
@@ -380,7 +381,6 @@ impl QuiltBoard {
     ///
     /// `𝒪(𝑛)` where `n` is the amount of transformations for the given patch.
     #[must_use]
-
     pub fn get_valid_actions_for_patch(
         &self,
         patch: &'static Patch,
@@ -417,7 +417,7 @@ impl QuiltBoard {
     /// `𝒪(𝑛)` where `n` is the amount of tiles on the quilt board.
     #[must_use]
     pub fn get_valid_actions_for_special_patch(&self) -> Vec<ActionId> {
-        let mut valid_actions = vec![];
+        let mut valid_actions: Vec<ActionId> = vec![];
         for index in 0..Self::TILES {
             if (self.tiles >> index) & 1 > 0 {
                 continue;
