@@ -125,7 +125,7 @@ Eine Variation von Linearer Programmierung ist \ac{ILP}, bei dem gefordert wird,
 \section{Minimax-Algorithmus}
 \label{chapter:minimax-algorithmus}
 
-Suchalgorithmen beachten jede derzeit zur Verfügung stehende Aktion, anschließend jede Aktion, die auf die vorherige Aktion folgen kann und immer so weiter. Das Ziel eines solchen Suchalgorithmus ist das Finden von Endzuständen, welche die vorher gegebenen Zielkonditionen erfüllen. Wird ein solcher Zustand gefunden, so sind die Aktionen bekannt, welche zum Erreichen des Zielzustands passieren werden müssen. In einem kompetitiven Spiel, bei dem ein Gegner beteiligt ist und ein anderes, reziprokes Ziel als der Spieler hat, kann selbst bei Findung eines Zielzustandes nicht davon ausgegangen werden, dass der Gegner die zum Ziel führenden benötigten Aktionen nicht tätigt. 
+Suchalgorithmen beachten jede derzeit zur Verfügung stehende Aktion, anschließend jede Aktion, die auf die vorherige Aktion folgen kann und immer so weiter. Das Ziel eines solchen Suchalgorithmus ist das Finden von Endzuständen, welche die vorher gegebenen Zielkonditionen erfüllen. Wird ein solcher Zustand gefunden, so sind die Aktionen bekannt, welche zum Erreichen des Zielzustands passieren werden müssen. In einem kompetitiven Spiel, bei dem ein Gegner beteiligt ist und ein anderes, reziprokes Ziel als der Spieler hat, kann selbst bei Findung eines Zielzustandes nicht davon ausgegangen werden, dass der Gegner die zum Ziel führenden benötigten Aktionen nicht tätigt.
 
 In einem klassischen Spiel mit Sieg, Unentschieden und Niederlage ist es das Ziel des Gegners den Spielzustand in Richtung seines Sieges zu lenken oder ein Unentschieden zu lenken, keinesfalls jedoch in den Zielzustand des Spielers. Suchalgorithmen können in diesen Fall allerdings auch Lösungen finden, sie müssen nur um Taktiken erweitert werden, um die Aktionen des Gegners mitzubeachten. \cite{AlgorithmsMinimax}
 
@@ -156,27 +156,27 @@ Der Minimax-Algorithmus, im Anhang Algorithmus \ref{algo:minimax}, wird für die
     \label{algo:minimax-alpha-beta}
     \begin{algorithmic}[1]
         \Function{alphabeta}{node $n, \alpha, \beta$}
-            \If{$n$ is a terminal node}
-                \State \Return value of $n$
-            \ElsIf{$n$ is a maximizer node}
-                \For{each child node $c$ of $n$}
-                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-                    \State $\alpha \gets \max(\alpha, value)$
-                    \If{$\alpha \geq \beta$}
-                        \State \textbf{break}
-                    \EndIf
-                \EndFor
-                \State \Return $\alpha$
-            \ElsIf{$n$ is a minimizer node}
-                \For{each child node $c$ of $n$}
-                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-                    \State $\beta \gets \min(\beta, value)$
-                    \If{$\beta \leq \alpha$}
-                        \State \textbf{break}
-                    \EndIf
-                \EndFor
-                \State \Return $\beta$
-            \EndIf
+        \If{$n$ is a terminal node}
+        \State \Return value of $n$
+        \ElsIf{$n$ is a maximizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\alpha \gets \max(\alpha, value)$
+        \If{$\alpha \geq \beta$}
+        \State \textbf{break}
+        \EndIf
+        \EndFor
+        \State \Return $\alpha$
+        \ElsIf{$n$ is a minimizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\beta \gets \min(\beta, value)$
+        \If{$\beta \leq \alpha$}
+        \State \textbf{break}
+        \EndIf
+        \EndFor
+        \State \Return $\beta$
+        \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -243,7 +243,9 @@ Ein entscheidender Vorteil von \ac{MCTS} ist, dass keine statische Evaluierungsf
 \section{AlphaZero}
 \label{chapter:alphazero}
 
-TODO:
+AlphaZero ist ein erstmals am 5. Dezember 2017 veröffentlichtes Computerprogramm von Google Deepmind \cite{2017.AlphaZero}. Das Programm ist ein genereller Algorithmus zum Erstellen von Computergegnern in zugbasierten Spielen und kombiniert dabei \ac{MCTS} mit einem neuronalen Netzwerk. Ein untrainiertes neuronale Netzwerk lernt ein beliebiges Spiel durch Spielen von Millionen von Spielen gegen sich selbst mit Hilfe von bestärkendem Lernen, also einen Prozess, bei dem gute Aktionen belohnt werden. Zu Beginn spielt das Netzwerk völlig zufällig, aber mit der Zeit lernt AlphaZero aus seinen Siegen und Niederlagen und passt die Parameter seines neuronalen Netzwerkes entsprechend an, um mit höherer Wahrscheinlichkeit in der Zukunft bessere Züge zu spielen. Der Suchalgorithmus \ac{MCTS} wird verwendet, um die vielversprechendsten Züge im Spiel auszuwählen, da AlphaZero bei jedem Zug nur einen Bruchteil der Spielpositionen analysiert. Während traditionelle Schachengines wie Stockfish Millionen von Spielzügen durchsuchen müssen, reicht bei AlphaZero das Durchsuchen von tausenden Spielzügen zur Entscheidungsfindung aus. Im Spiel Schach übertraf AlphaZero die beste handgebaute Schachengine Stockfish nach 4 Stunden Training, in Shogi übertraf AlphaZero die Engine Elmo nach 2 Stunden Training und schlug AlphaGo, einer der Vorgänger von AlphaZero und die Engine, die einen der stärksten Go-Spieler Lee Sedol 2016 besiegte, nach 30 Stunden Training. Vor allem beeindruckt AlphaZero auch durch seinen einzigartigen Spielstil. Der Algorithmus kennt nur die Spielregeln des Spiels und benötigt kein Domänenwissen, um auf einem übermenschlichen Level Spiele zu spielen. Uneingeschränkt durch konventionelles Wissen über ein Spiel, entwickelt AlphaZero eigene Strategien und Ideen, die teilweise über Jahrhunderte zum Beispiel in der Schachstrategie übersehen wurden. \cite{2018.AlphaZero}
+
+Da bei großen Spielen wie Schach und Go die gründliche Spielzugsuche unerreichbar ist, muss der Suchraum verkleinert werden. AlphaZero setzt dies durch zwei generelle Prinzipien um: Die Tiefensuche wird durch Positionsevaluierung reduziert, die durch eine Wertfunktion das Ergebnis der Spielposition approximiert. Zweitens wird die Breite der Suche reduziert, indem Aktionen aus einer Strategie $\pi(a|s)$ ausgewählt werden, wobei $\pi(a|s)$ eine Wahrscheinlichkeitsverteilung über alle möglichen Züge $a$ in der Spielposition $s$ ist. \cite{2016.AlphaGoPaper}
 
 \section{Interaktive Systeme}
 \label{chapter:interaktive-systeme}
