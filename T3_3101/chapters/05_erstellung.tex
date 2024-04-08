@@ -58,7 +58,102 @@ TODO:
 TODO:
 
 \begin{itemize}
-    \item Grafik von der Netzwerkarchitektur
+    \item Änderungen Gegenüber MCTS / Generelle Funktionsweise
+    \item Kodierung des Spielzustandes
+    \item Netzwerk-Architektur
     \item Parallelization with Virtual Loss
     \item Training-Loop
 \end{itemize}
+
+\subsubsection*{Kodierung des Spielzustandes}
+
+\begin{figure}[!ht]
+    \centering
+    \vspace*{-1.75cm}
+    \includegraphics[width=\textwidth]{res/pictures/patch-zero-state.pdf}
+    \caption{Zustandskodierung von PatchZero}
+    \label{fig:patch-zero-state}
+\end{figure}
+
+TODO: LSTM Bild
+
+\pagebreak
+
+\subsubsection*{Netzwerk-Architektur}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/patch-zero-architecture.pdf}
+    \caption{Architektur von PatchZero}
+    \label{fig:patch-zero-architecture}
+\end{figure}
+
+TODO:
+
+\begin{wrapfigure}{r}{0.25\textwidth}
+    \includegraphics[width=0.2\textwidth]{res/pictures/conv-block.pdf}
+    % \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \centering
+    \caption[Convolutional Block]{\unskip}
+    Convolutional Block
+    \label{fig:conv-block}
+\end{wrapfigure}
+
+TODO:
+
+\begin{wrapfigure}{l}{0.3\textwidth}
+    \includegraphics[width=0.25\textwidth]{res/pictures/res-block.pdf}
+    % \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \centering
+    \caption[Residual Block]{\unskip}
+    Residual Block
+    \label{fig:resblock}
+\end{wrapfigure}
+
+TODO:
+
+\begin{wrapfigure}{r}{0.35\textwidth}
+    \centering
+    \includegraphics[width=0.3\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
+    % \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \caption[Squeeze \& Excitation Block]{\unskip}
+    Squeeze \& Excitation Block
+    \label{fig:squeeze-and-excitation-block}
+\end{wrapfigure}
+
+TODO:
+
+\pagebreak
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{res/pictures/value-and-policy-head.pdf}
+    \\
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \captionof{figure}[Value Head von PatchZero]{\unskip}
+        Value Head von PatchZero
+        \label{fig:value-head}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \captionof{figure}[Policy Head von PatchZero]{\unskip}
+        Policy Head von PatchZero
+        \label{fig:policy-head}
+    \end{minipage}
+\end{figure}
+
+TODO:

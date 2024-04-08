@@ -359,7 +359,7 @@ Die Schätzung im vorherigen Abschnitt für die maximale Wertung eines Spielers 
 
 \textbf{Konstanten}
 
-Nachfolgend fünf für die maximalen Wertung in Patchwork relevante Konstanten. Die ersten vier Konstanten bilden dabei für jeden Flicken in Patchwork genau einen Wert ab. Als bijektive Abbildung zwischen Flicken und Spalte wird dabei die Tabelle in Anhang \ref{anhang:section-patchwork-patches} verwendet.
+Nachfolgend fünf für die maximalen Wertung in Patchwork relevante Konstanten. Die ersten vier Konstanten bilden dabei für jeden Flicken in Patchwork genau einen Wert ab. Als bijektive Abbildung zwischen Flicken und Zeile wird dabei die Tabelle in Anhang \ref{anhang:section-patchwork-patches} verwendet.
 
 \renewcommand{\arraystretch}{0.6666}
 
@@ -777,7 +777,7 @@ Weiterhin ist für ein perfektes Spiel eines Spielers neben dem Glück, dass die
 
 \section{Auswertung empirischer Daten}
 
-Um die vorangegangenen Komplexitätsbetrachtungen genauer einordnen zu können und um gleichzeitig eine realistischere Betrachtung von Patchwork zu erhalten, werden 10 Millionen Spiele von Patchwork aufgenommen und ausgewertet. Dabei treten 2 Computer gegeneinander an, welche für ihren Zug immer eine zufällige Aktion aus allen möglichen Aktionen auswählen (siehe Kapitel \ref{section:erstellung-ansatz-a}). So sollten die 10 Millionen Spiele eine möglichst unverzerrte Datenverteilung enthalten, bei der keine bestimmte Spielkonfiguration bevorzugt wird.
+Um die vorangegangenen Betrachtungen genauer einordnen zu können und um gleichzeitig eine realistischere Betrachtung von Patchwork zu erhalten, werden 10 Millionen Spiele von Patchwork aufgenommen und ausgewertet. Dabei treten 2 Computer gegeneinander an, welche für ihren Zug immer eine zufällige Aktion aus allen möglichen Aktionen auswählen (siehe Kapitel \ref{section:erstellung-ansatz-a}). So sollten die 10 Millionen Spiele eine möglichst unverzerrte Datenverteilung enthalten, bei der keine bestimmte Spielkonfiguration bevorzugt wird.
 
 % MEAN: 42.8176
 % MEDIAN: 43.0
@@ -804,14 +804,15 @@ Die durchschnittliche Spiellänge, gemessen in \hyperref[text:ply]{\emph{Plys}},
 % VAR: 22351.213723901034
 % STDEV: 149.50322312211543
 \begin{wrapfigure}{r}{0.55\textwidth}
-    \vspace*{-0.75cm}
+    % \vspace*{-0.75cm}
     \centering
     \includegraphics[width=0.549\textwidth]{res/pictures/plots/available_actions.pdf}
-    % \vspace{-10pt}
+    \vspace{-7pt}
     \caption[Verteilung der verfügbare Aktionen]{\unskip}
     Verteilung der verfügbare Aktionen
     \label{fig:plot-available-actions-10-million}
-    \vspace*{-0.85cm}
+    \vspace{-7pt}
+    % \vspace*{-0.85cm}
 \end{wrapfigure}
 
 Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief. Im Diagramm sind dabei keine Aktionen für das Platzieren von Spezialflicken aufgenommen und die Aktionen sind in einer logarithmischen Skala dargestellt. Es existieren deutlich mehr Aktionen mit weniger Möglichkeiten und die durchschnittliche Anzahl an verfügbaren Aktionen liegt bei ${\approx}83{,}66$. Diese rechtsschiefe lässt sich auch leicht erklären: Sobald ein Flicken zu viele Knöpfe kostet oder auf dem Ablageplan keinen Platz findet, fallen auf einen Schlag ungefähr $\sfrac{1}{3}$ der Aktionen weg. Weiterhin fallen immer mehr Platzierungsmöglichkeiten weg, je voller der Ablageplan eines Spielers ist.
