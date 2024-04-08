@@ -79,11 +79,11 @@ Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enq
 
 \section{Spieltheoretische Analyse}
 
-Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettspiel. Außerdem ist Patchwork ein Spiel mit \emph{perfekter Information}, \dash dass beide Spieler zu jeder Zeit genau wissen, was der andere Spieler getan hat und wie der jetzige Zustand des Spiels ist. Des Weiteren ist Patchwork ein \emph{Strategiespiel}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \emph{Nullsummenspiel}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels.
+Patchwork ist ein \hyperref[text:game-theory-sequenziell]{\emph{sequentielles}}, \hyperref[text:game-theory-kompetitiv]{\emph{kompetitives}} 2\textendash{}Spieler\textendash{}Brettspiel. Außerdem ist Patchwork ein Spiel mit \hyperref[text:game-theory-perfekte-information]{\emph{perfekter}} sowie \hyperref[text:game-theory-vollkommene-information]{\emph{vollkommener Information}}.Des Weiteren ist Patchwork ein \hyperref[text:game-theory-strategiespiel]{\emph{Strategiespiel}}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \hyperref[text:game-theory-nullsummenspiel]{\emph{Nullsummenspiel}}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels. Da der Ablageplan immer nur weiter befüllt werden kann bzw. die Zeitsteine immer nur vorrücken können und es dafür immer weniger Möglichkeiten gibt, \hyperref[text:game-theory-konvergenz]{\emph{konvergiert}} Patchwork, was automatisch auch bedeutet, dass die Spiellänge begrenzt ist.
 
 \subsection*{Anzahl der möglichen Startpositionen}
 
-Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000$ Möglichkeiten. Somit gibt es $\approx 2{,}6 \cdot 10^{35}$ mögliche Startpositionen.
+Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnung aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000$ Möglichkeiten. Somit gibt es $\approx 2{,}6 \cdot 10^{35}$ mögliche Startpositionen.
 
 \subsection*{Isomorphie der Zeitpläne}
 
@@ -819,18 +819,86 @@ Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfüg
 
 \section{Betrachtung der Spiel-Komplexität}
 
-TODO:
+Nachdem nun einige Betrachtungen zu konkreten Wertungen, Aktionen und Spielverläufen von Patchwork gemacht sowie empirische Daten analysiert wurden, wird nachfolgend die spieltheoretische Komplexität untersucht, um eine genauere Vorstellung über die Komplexität von Patchwork im Vergleich zu anderen Spielen zu erhalten.
 
-% \subsubsection*{Zustandsraum-Komplexität}
+\subsubsection*{Zustandsraum-Komplexität}
 
-TODO:
+Eine Spieler kann im Spiel aus maximal $3 \cdot 448 + 1 = 1345$ Aktionen wählen und das längste Patchwork-Spiel geht 63 \hyperref[text:ply]{\emph{Plys}}. Somit lässt sich eine einfache obere Schätzung für die Zustandsraum-Komplexität formulieren:
 
-% \subsubsection*{Spielbaumgröße}
+% \vspace*{-1cm}
+\begin{align}
+    \label{eqn:ssc-patchwork-easy}
+    \text{\acsp{SSC}}(Patchwork) & \approx 1345^{63} \approx 1{,}28677884782552 \cdot 10^{197}
+\end{align}
 
-TODO:
+Diese Schätzung geht davon aus, dass von der Initialposition immer alle Aktionen möglich sind, das längste Spiel erreicht wird und das der Zustandsraum nach jeder Aktion einzigartig im Vergleich zu allen anderen Zuständen im gesamten Spielbaum ist. Obwohl diese Annahmen sehr unrealistisch sind, werden bei der Komplexitätsbetrachtung oft solche Vereinfachungen zugelassen, die auch nichtexistierende Zustände mitzählen, da dadurch leichter Obergrenzen gefunden werden können. Dadurch, dass jeder Zustand als einzigartig angenommen wird, ist \ref{eqn:ssc-patchwork-easy} auch gleichzeitig eine Obergrenze für die Anzahl der Knoten im Spielbaum, sowie der Anzahl der Blattknoten im Spielbaum / Spielbaumgröße. Somit dürfen alle nachfolgenden Komplexitätsbetrachtungen diese Zahl nicht überschreiten.
+
+Für den Zustandsraum lässt sich auch eine genauere Schätzung verfassen. Ein Spieler besitzt einen Ablageplan mit $81$ Feldern. Diese Felder können immer genau 2 Zustände besitzen, also $2^{81}$. Hinzu kommen $54$ mögliche Positionen, Knopfeinkommen auf dem Ablageplan von $0$ bis $30$ inklusive sowie $184$ Möglichkeiten für die Anzahl der Knöpfe im Knopfvorrat ($\left[-106,\dots,77\right]$). Alle diese Werte wurden zuvor in diesem Kapitel erläutert. Da 2 Spieler existieren, müssen alle diese Werte hoch $2$ genommen werden. Weiterhin gibt es 3 Möglichkeiten für die Vergabe des $7\times 7$ Sonderplättchen (nicht vergeben, Spieler 1 und Spieler 2). Somit ergibt sich als Schätzung für den Zustandsraum von Patchwork:
+
+\begin{align}
+    \label{eqn:ssc-patchwork}
+    \text{\acsp{SSC}}(Patchwork) & \approx \left(2^{81} \cdot 54 \cdot 31 \cdot 184\right)^{2}\cdot 3 \approx 1{,}66 \cdot 10^{60}
+\end{align}
+
+Somit ist es wahrscheinlich, dass es in Patchwork mehr Möglichkeiten für die Platzierung von Flicken, Zeitsteinen und Knöpfen gibt, als Positionen in Schach. Hierfür wurde von S. Chinchalkar eine Obergrenze von $1{,}78\cdot 10^{46}$ berechnet \cite[S. 182]{1996.ChessPositions}. Jedoch ist anzumerken, dass gedrehte und gespiegelte Versionen des Ablageplans als mehrere verschiedene Zustände gelten, obwohl sich dadurch die Komplexität des Spiels nicht vergrößert.
+
+\subsubsection*{Komplexitätstheoretischer Rechenaufwand}
+
+Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
+
+Oft wird der komplexitätstheoretische Rechenaufwand für Spiele so verallgemeinert, dass die Entwicklung der $\mathcal{O}$-Notation mit beliebig großen Spielfeldern betrachtet wird. Da in dieser Arbeit aber nur Computergegner für das originale Patchwork-Spiel umgesetzt werden, wird dies an dieser Stelle nicht genauer betrachtet.
+
+\subsubsection*{Spielbaumkomplexität}
+
+Mit den empirischen Daten aus dem vorherigem Abschnitt lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
+
+% \vspace*{-1cm}
+\begin{align}
+    \label{eqn:gtc-patchwork-branch-estimation}
+    \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
+    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                         \\
+    \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
+\end{align}
+
+Die in \ref{eqn:gtc-patchwork-branch-estimation} resultierende Schätzung von $2{,}08 \cdot 10^{82}$ ist dabei jedoch wahrscheinlich zu groß. Der Median der verfügbaren Aktionen beträgt im Gegensatz zum Durchschnitt bei den empirischen Daten nur $11$. Durch einzelne Zustände mit sehr vielen verfügbaren Aktionen wird der Durchschnitt angehoben, obwohl in den meisten Zuständen nur eine oder wenige Aktionen möglich sind.
+
+\subsubsection*{Spielbaumgröße}
+
+Für die Größe des Spielbaums lässt sich nach A. und D. Yong eine recht genaue Schätzung finden. Dazu wird ein Spiel mit $N$ \hyperref[text:ply]{\emph{Plys}} gespielt, wobei die einzelnen Aktionen mittels einer Gleichverteilung ausgewählt werden. In jedem \hyperref[text:ply]{\emph{Ply}} $i$ werden dabei die Anzahl der möglichen Aktionen $c_i(g)$ gespeichert. Aus der Multiplikation all dieser Verzweigungen ergibt sich die Zufallsvariable $X(g)$ als Schätzung für die Größe des Spielbaums. Um nun eine möglichst akkurate Schätzung zu erhalten, wird dieser Prozess in vielen unabhängigen Durchläufen wiederholt und der Mittelwert wie in Formel \ref{eqn:gts-patchwork-avg-estimation} gebildet. Mit $n \to \infty$ nähert sich diese Schätzung immer mehr der tatsächlichen Größe des Spielbaums an. \cite{2019.GameTreeComplexityEstimation}
+
+\begin{equation}
+    \label{eqn:gts-patchwork-avg-estimation}
+    \begin{aligned}
+        X(g)                         & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
+        \text{\acsp{GTS}}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
+                                     & \approx 1{,}68 \cdot 10^{38}
+    \end{aligned}
+\end{equation}
+
+Als unabhängige Stichproben der Zufallsvariable $X$ können die aufgenommenen 10 Millionen Spiele eingesetzt werden. Somit ergibt sich eine Schätzung der Spielbaumgröße von $1{,}68 \cdot 10^{38}$.
+
+Die Spielbaumkomplexität ist definiert als die Anzahl der Blattknoten im Lösungs-Suchbaum des Startzustandes. Da dieser Lösungs-Suchbaum immer ein Teilbaum des gesamten Spielbaums ist, gilt immer:
+
+\begin{equation}
+    \label{eqn:gts-greater-equal-gtc}
+    \begin{aligned}
+        \forall \mathcal{G} \in \text{Spiele}:\quad \text{\acsp{GTS}}(\mathcal{G}) \geq \text{\acsp{GTC}}(\mathcal{G})
+    \end{aligned}
+\end{equation}
+
+Somit kann \textendash{} wenn es sich bei \ref{eqn:gts-patchwork-avg-estimation} um eine genügend genaue Schätzung handelt \textendash{} angenommen werden, dass die tatsächliche Spielbaumkomplexität von Patchwork auch unterhalb der $1{,}68 \cdot 10^{38}$ liegt. Diese Schätzung ist höher als die Komplexität von \emph{TicTacToe} mit $255168$ \cite{2024.TicTacToe} oder von \emph{Vier gewinnt} mit $8{,}34 \cdot 10^{28}$ \cite[S. 3]{2019.GameTreeComplexityEstimation} aber geringer als beispielsweise \emph{Othello} mit $6{,}47 \cdot 10^{54}$ \cite[S. 4]{2019.GameTreeComplexityEstimation}. Diese Vergleichswerte für andere Spiele legen nahe, dass Patchwork sich eher der Klasse der komplexeren Spiele zuordnen lässt, sich dabei jedoch eher im unteren Spektrum einordnet. Dieser Umstand wird auch deutlich, wenn man die einfache Schätzung der Spielbaumkomplexität in \ref{eqn:gtc-patchwork-branch-estimation} mit einer äquivalenten Schätzung für Schach mit $10^{120}$ von Shannon vergleicht \cite[S. 4]{1950.ChessShannon}. Patchwork ist zwar insgesamt weniger komplex, jedoch immer noch viel zu komplex als dass das gesamte Spielgeschehen vorhergesehen werden kann oder Brute-Force-Algorithmen alles vorausberechnen können. Das wird vor allem dadurch ersichtlich, wenn man die Spielbaumkomplexität mit der großen Zustandsraum-Komplexität kombiniert. Patchwork lässt sich zusammen mit anderen Spielen in einem 2-dimensionalen-Koordinatensystem mit den Achsen $\log_{10} \log_{10} \text{Zustandsraum-Komplexität}$ und $ \log_{10} \log_{10} \text{Spielbaumkomplexität}$ plotten (Abbildung \ref{fig:game-complexity-coordinate-system})\footnote{Die Komplexitätswerte der anderen Spiele sind dabei von Quelle \cite[S. 300]{2002.GamesSolved} übernommen}. Dabei reiht sich Patchwork zusammen mit Schach oder Hex ein.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{res/pictures/game-complexity-coordinate-system.pdf}
+    \caption{Patchwork in der doppelten Dichotomie des Spielraums}
+    \label{fig:game-complexity-coordinate-system}
+\end{figure}
+
+\vfill
+\vspace*{100cm}
 
 % sum k=1 to n of P(n, k) = n! / (n-k)! = 36! / (36-k)! = 36! / (36-36)! = 36! / 0! = 36!
-
 
 % import math
 % result = 0
@@ -852,36 +920,3 @@ TODO:
 % (2) * 1!
 % (3) * 1!
 % ()  * 0!
-
-% TODO: hyperreferencen für Komplexitätsparameter (e.g. Spielbaumkomplexität) in Formelsammlung einfügen
-
-Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
-
-Eine Schätzung für die Spielbaumkomplexität wird im nachfolgenden Abschnitt vorgenommen.
-
-% \subsection*{Schätzung der Spielbaumkomplexität}
-
-Mit den empirischen Daten lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
-
-% \vspace*{-1cm}
-\begin{align}
-    \label{eqn:gtc-patchwork-branch-estimation}
-    \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
-    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                         \\
-    \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
-\end{align}
-
-Die in \ref{eqn:gtc-patchwork-branch-estimation} resultierende Schätzung von $2{,}08 \cdot 10^{82}$ ist dabei jedoch wahrscheinlich zu groß. Der Median der verfügbaren Aktionen beträgt im Gegensatz zum Durchschnitt nur $11$. Durch einzelne Zustände mit sehr vielen verfügbaren Aktionen wird der Durschnitt angehoben, obwohl in den meisten Zuständen nur eine oder wenige Aktionen möglich sind.
-
-Eine weitere genauere Schätzung für die Komplexität des Spielbaums kann nach A. und D. Yong gefunden werden. Dazu wird ein Spiel mit $N$ \hyperref[text:ply]{\emph{Plys}} gespielt, wobei die einzelnen Aktionen mittels einer Gleichverteilung ausgewählt werden. In jedem \hyperref[text:ply]{\emph{Ply}} $i$ werden dabei die Anzahl der möglichen Aktionen $c_i(g)$ gespeichert. Aus der Multiplikation all dieser Verzweigungen ergibt sich die Zufallsvariable $X(g)$ als Schätzung für die Komplexität des Spielbaums. Um nun eine möglichst akkurate Schätzung zu erhalten, wird dieser Prozess in vielen unabhängigen Durchläufen wiederholt und der Mittelwert wie in Formel \ref{eqn:gtc-patchwork-avg-estimation} gebildet. Mit $n \to \infty$ nähert sich diese Schätzung immer mehr der tatsächlichen Komplexität des Spielbaums an. \cite{2019.GameTreeComplexityEstimation}
-
-\begin{equation}
-    \label{eqn:gtc-patchwork-avg-estimation}
-    \begin{aligned}
-        X(g)                         & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
-        \text{\acsp{GTC}}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
-                                     & \approx 1{,}68 \cdot 10^{38}
-    \end{aligned}
-\end{equation}
-
-Als unabhängige Stichproben der Zufallsvariable $X$ können die aufgenommenen 10 Millionen Spiele eingesetzt werden. Somit ergibt sich eine Schätzung der Spielbaumkomplexität von $1{,}68 \cdot 10^{38}$.

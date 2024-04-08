@@ -302,6 +302,7 @@
         "werkzeug",
         "Winlibs",
         "xoring",
+        "xoshiro",
         "Xoshiro",
         "zobrist",
         "zwischen"

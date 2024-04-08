@@ -22,13 +22,19 @@ impl PlayerState {
     /// The starting amount of buttons for a player.
     pub const STARTING_BUTTON_BALANCE: i32 = 5;
 
-    /// Creates a new [`PlayerState`] with the default values.
+    /// Creates a new [`PlayerState`] with the given values.
+    ///
+    /// # Arguments
+    ///
+    /// * `position` - The position of the player
+    /// * `button_balance` - The button balance of the player
+    /// * `quilt_board` - The quilt board of the player
     #[must_use]
-    pub const fn new() -> Self {
+    pub const fn new(position: u8, button_balance: i32, quilt_board: QuiltBoard) -> Self {
         Self {
-            position: 0,
-            button_balance: Self::STARTING_BUTTON_BALANCE,
-            quilt_board: QuiltBoard::new(),
+            position,
+            button_balance,
+            quilt_board,
         }
     }
 
@@ -50,7 +56,11 @@ impl PlayerState {
 
 impl Default for PlayerState {
     fn default() -> Self {
-        Self::new()
+        Self {
+            position: 0,
+            button_balance: Self::STARTING_BUTTON_BALANCE,
+            quilt_board: QuiltBoard::new(),
+        }
     }
 }
 
