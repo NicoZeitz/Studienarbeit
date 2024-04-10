@@ -24,8 +24,8 @@ impl QuiltBoard {
     pub const COLUMNS: u8 = 9;
     /// The amount of tiles on the quilt board
     pub const TILES: u8 = Self::ROWS * Self::COLUMNS;
-    /// The amount of buttons a full board generates.
-    pub const FULL_BOARD_BUTTON_INCOME: i32 = 7;
+    /// The amount of buttons a 7x7 board generates.
+    pub const BOARD_EXTRA_BUTTON_INCOME: i32 = 7;
 
     // ─────────────────────────────────────────────── UTILITY FUNCTIONS ───────────────────────────────────────────────
 

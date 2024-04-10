@@ -101,13 +101,13 @@ impl SearchRecorder {
 
             writeln!(
                 writer,
-                "{padding}Value: {:4?}, Text: {:?}, Alpha: {:?}, Beta: {:?}, Depth: {depth:?}, Player: {:?}, State: {:?}",
+                "{padding}Value: {:4?}, Text: {:?}, Alpha: {:?}, Beta: {:?}, Depth: {depth:?}, Player: {:?}", // , State: {:?}",
                 node.value.unwrap(),
                 node.description.as_ref().unwrap(),
                 node.alpha.unwrap(),
                 node.beta.unwrap(),
                 node.state.get_current_player(),
-                node.state
+                // node.state
             )
             .unwrap();
 
@@ -264,7 +264,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> Player for PVSPlayer<Orderer, Eval
             // do the search
             let result = self.search(&mut game);
 
-            // force stop the timer thread if the search canceled itself
+            // force stop the timer thread if the search cancelled itself
             self.search_canceled.store(true, std::sync::atomic::Ordering::Release);
 
             result
@@ -300,7 +300,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
     /// Starting value for beta (upper bound)
     pub const STARTING_BETA: i32 = 60;
     /// Minimum delta for aspiration windows
-    pub const MINIMUM_DELTA: i32 = 1;
+    pub const MINIMUM_DELTA: i32 = 3;
 
     /// The minimum bound for alpha. Ensures that the minimum alpha value is
     /// less than the minimum evaluation to avoid a fail-low with the maximum
@@ -336,13 +336,19 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
         // [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening) loop
         while depth < Self::MAX_DEPTH {
-            self.search_recorder.print_to_file();
+            let best_action = self.best_action;
+            let best_evaluation = self.best_evaluation;
 
             let evaluation = self.principal_variation_search(game, 0, depth, alpha, beta, 0)?;
+            self.search_recorder.print_to_file();
 
             if self.search_canceled.load(std::sync::atomic::Ordering::SeqCst) {
+                self.best_action = best_action;
+                self.best_evaluation = best_evaluation;
                 break;
             }
+
+            let _ = self.write_statistics(game, depth); // ignore errors
 
             // TODO: we fail too often
             // [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows) with exponential backoff
@@ -362,6 +368,8 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 beta = (alpha + beta) / 2; // adjust beta towards alpha
                 alpha = (evaluation - delta).min(Self::MIN_ALPHA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY); // use same exponential backoff as in [Stockfish](https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp#L429C17-L429C36)
+                self.best_action = best_action;
+                self.best_evaluation = best_evaluation;
                 self.statistics.increment_aspiration_window_fail_low();
                 continue;
             } else if evaluation >= beta {
@@ -375,11 +383,13 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                 beta = (evaluation + delta).min(Self::MAX_BETA_BOUND);
                 delta = (delta + delta / 3).min(evaluator_constants::POSITIVE_INFINITY);
+                self.best_action = best_action;
+                self.best_evaluation = best_evaluation;
                 self.statistics.increment_aspiration_window_fail_high();
                 continue;
             }
 
-            let _ = self.write_statistics(game, depth); // ignore errors
+            // let _ = self.write_statistics(game, depth); // ignore errors
 
             if self.best_evaluation == Some(evaluator_constants::POSITIVE_INFINITY) {
                 // We found a winning game, so we can stop searching
@@ -390,8 +400,13 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             if self.options.features.aspiration_window {
                 // Evaluation is within the aspiration window,
                 // so we can move on to the next depth with a window set around the eval
+                if let Some(eval) = self.best_evaluation {
+                    delta = (Self::MINIMUM_DELTA + eval.abs() / 10).min(evaluator_constants::POSITIVE_INFINITY);
+                // TODO: use avg of root node scores like in Stockfish `delta = Value(9) + int(avg) * avg / 14847;`
+                } else {
+                    delta = Self::MINIMUM_DELTA;
+                }
 
-                delta = Self::MINIMUM_DELTA; // TODO: use avg of root node scores like in Stockfish `delta = Value(9) + int(avg) * avg / 14847;`
                 alpha = evaluation - delta;
                 beta = evaluation + delta;
             }
@@ -448,7 +463,6 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 transposition_table.probe_hash_entry(game, alpha, beta, depth)
             {
                 if ply_from_root == 0 {
-                    // TODO: split phantom and null moves
                     self.best_action = Some(table_action);
                     self.best_evaluation = Some(table_evaluation);
                 }
@@ -558,8 +572,12 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
 
                     let lmr_depth_reduction = if depth >= 6 { depth / 3 } else { 1 };
                     // Search this move with reduced depth
-                    evaluation =
-                        -self.zero_window_search(game, ply_from_root + 1, depth - 1 - lmr_depth_reduction, -alpha)?;
+                    evaluation = -self.zero_window_search(
+                        game,
+                        ply_from_root + 1,
+                        (depth - 1).saturating_sub(lmr_depth_reduction),
+                        -alpha,
+                    )?;
                     needs_full_search = evaluation > alpha;
                 }
 

@@ -252,7 +252,6 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝟣)`
     #[allow(clippy::if_same_then_else)]
-
     pub fn store_evaluation(
         &mut self,
         game: &Patchwork,
@@ -391,20 +390,23 @@ impl TranspositionTable {
 
         for _ in 0..depth {
             if let Some(action) = self.probe_pv_move(&current_game) {
-                let action_2 = action;
-                let game_2 = current_game.clone();
+                if action.is_null() {
+                    break;
+                }
+
+                let game_clone = current_game.clone();
 
                 let result = current_game.do_action(action, true);
                 if result.is_err() {
-                    let hash = self.zobrist_hash.hash(&game_2);
+                    let hash = self.zobrist_hash.hash(&game_clone);
                     let index = (hash % self.entries.len() as u64) as usize;
                     let data = self.entries[index].data;
                     let (table_depth, table_evaluation, table_evaluation_type, _) = Entry::unpack_data(data);
 
                     // TODO: remove prints
                     println!("──────────────────────────────────────────────────────────────────────────────");
-                    println!("game: {game_2:?}");
-                    println!("action: {action_2:?}");
+                    println!("game: {game_clone:?}");
+                    println!("action: {action:?}");
                     println!("table_depth: {table_depth:?}");
                     println!("table_evaluation: {table_evaluation:?}");
                     println!("table_evaluation_type: {table_evaluation_type:?}");

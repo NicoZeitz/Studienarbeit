@@ -20,7 +20,15 @@ Besondere extra:
 
 \section{Aufbau des Ablageplans}
 
-TODO:
+\lstinputlisting[
+    label={code:quilt-board-definition},
+    caption={Definition der QuiltBoard-Struktur},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/quilt-board-definition.rs}
+
+Der Ablageplan eines Spielers wird durch die in Quellcode \ref{code:quilt-board-definition} definierte Struktur \code{QuiltBoard} modelliert. Dabei existieren nur 2 Attribute. Zuerst wird das Knopfeinkommen mit \code{button\_income} gespeichert, was durch die auf dem Ablageplan liegenden Flicken beim Passieren einer Knopf-Wertung generiert wird. Das zweite Attribut \code{tiles} dient dazu, den Status der einzelnen Felder auf dem Ablageplan zu speichern. Der Ablageplan besteht aus 81 Feldern, die in 9 Zeilen und 9 Spalten angeordnet sind, und für die jeweils gespeichert werden muss, ob das Feld belegt ist oder nicht. Da alle Abfragen bezüglich Status der Felder so schnell wie möglich sein sollen, kommt hier anstatt eines üblichen 2-dimensionalen Arrays eine \ac{u128} zum Einsatz. Da nur zwei Zustände existieren, kann für jedes Feld ein Bit verwendet werden. Weiterhin werden alle Felder des Ablageplans zeilenweise wie in Abbildung \ref{fig:quilt-board-storage} in einer Ganzzahl nacheinander abgelegt.
 
 \begin{figure}[!ht]
     \centering
@@ -29,6 +37,10 @@ TODO:
     \caption{Zeilenweise Anordnung der Felder des Ablageplans}
     \label{fig:quilt-board-storage}
 \end{figure}
+
+Da der Ablageplan 81 Felder umfasst, muss $2^7=128$ Bit als Ganzzahldatentyp verwendet werden. Dieser wird von Rust nativ unterstützt und für 64 Bit Rechner in mehrere Operationen kompiliert. Die oberen Bits der Zahl sind dabei immer auf 0 gesetzt. Durch die effiziente Speicherung des Ablageplans in einem \ac{u128}, können Abfragen bezüglich Befüllung oder Überlagerung von Feldern in konstanter Zeit durch Bitmasken und Bitoperationen durchgeführt werden. Als Beispiel lässt sich hier die Methode zum Überprüfen der notwendigen Bedingung zur Erhaltung des $7\times 7$ Sonderplättchen anführen (Anhang \ref{code:quilt-board-special-tile-condition}).
+
+Besonders anzumerken ist, dass die Flicken und ihre Transformationen, wie sie auf dem Ablageplan liegen, nicht gespeichert werden. Da einige Computergegner wie beispielsweise der \ac{MCTS}-Spieler den Spielstand sehr oft kopieren müssen und die genaue Position der Flicken für die Generierung und Ausführung von Aktionen nicht benötigt wird, würde diese Extrainformation nur zu unnötig erhöhtem Speicherverbrauch führen.
 
 \section{Modellierung der Aktionen}
 
