@@ -1,22 +1,21 @@
-\chapter{Modellierung von Patchwork als Computerprogramm}
+\chapter[Modellierung als Computerprogramm]{Modellierung von Patchwork als Computerprogramm}
 \label{chapter:modellierung-von-patchwork-als-computerprogramm}
 
-TODO: Erst generelle Architektur, Programmiersprache usw. hier auch generelle speicherung (spieler, Sonderplättchen, zeitplan, ...)
+Ein wesentlicher Schritt in der Entwicklung von Computerspielengines besteht in der Modellierung und Umsetzung des Spiels als Computerprogramm. Da Engines in der Regel darauf basieren mehrere zehntausende von Aktionen vorrausschauen \cite{2018.AlphaZero}, muss die zugrundeliegende Implementierung so effizient wie möglich sein. Eine erste prototypische Implementierung von Patchwork in Python führte zu Zuggenerierungszeiten von ca. $100\acs{ms}$, was in 10 Sekunden aber gerade mal die Analyse von 100 möglichen Zügen bedeutet. Aus diesem Grund wird Patchwork mit der Programmiersprache \emph{Rust} \cite{2014.Rust} umgesetzt. Rust hat Performance als ein Hauptziel und zeichnet sich durch eine schnelle und speichereffiziente Ausführung aus \cite{2024.Rust}. Zusammen mit weiteren Effizienzoptimierungen führt dies zu Ausführungszeiten im Mirkosekundenbereich (Tabelle \ref{tabelle:patchwork-methods}).
 
-\begin{itemize}
-    \item Aufbau des Spielfeldes
-    \item Speicherung der Quilt Boards (Row-Major)
-    \item Speicherung des Time Boards
-    \item Speicherung der Patchliste
-    \item Umsetzung von Zügen
-    \item Effizienzoptimierungen (u128, vorberechnete Transformationen, ...)
-    \item Abstraction von Player Interface
-    \item Evaluator, Move Orderer, Tree Policy (wahrscheinlich später)
-\end{itemize}
+\lstinputlisting[
+    label={code:patchwork-state},
+    caption={Patchwork-Zustand},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/patchwork-state.rs}
 
-TODO: Zeitplan einfaches Array mit Bitflags
+Der gesamte Zustand von Patchwork wird zu jeder Zeit durch die in Codeausschnitt \ref{code:patchwork-state} dargestellte Struktur \code{Patchwork} repräsentiert. Alle noch verfügbaren Flicken werden in \code{patches} in der Reihenfolge gespeichert, wie sie vor der Spielfigur liegen. Der \code{turn\_type} zeigt an, ob es sich bei den derzeit verfügbaren Aktionen um eine normale Aktion handelt oder ob ein Spezialflicken gelegt werden muss. Der derzeitige Spieler, der Inhaber des $7\times 7$ Sonderplättchens und der Spieler, welcher als erstes das Ziel erreicht hat, werden im Bitfeld \code{status\_flags} festgehalten, sofern vorhanden. Letzteres ist relevant, um bei einem beendeten Spiel mit gleicher Punktzahl den Gewinner identifizieren zu können.
 
-Besondere extra:
+Der Zeitplan wird mittels der \code{TimeBoard}-Struktur modelliert. Diese hält intern nur ein einfache \ac{u8}-Array der Länge 54. Bei jedem Eintrag des Arrays handelt es sich wiederrum um ein Bitfeld. Dieses kann signalisieren, ob sich Spieler 1 und 2, ein Knopfeinkommen oder ein Spezialflicken auf ihrem Feld befindet. Knopfeinkommen und Spezialflicken befinden sich im originalen Spiel zwischen 2 Feldern. Im Array werden sie einfach in dem Feld nach ihrer Originalposition gespeichert. Sobald solch ein Feld von einem Spieler erreich wird, tritt der Effekt ein, was zu gleichem Verhalten wie im Brettspiel führt.
+
+Zuletzt existiert für jeden Spieler noch ein Zustand in der Patchwork-Struktur. Der Zustand jeden Spielers setzt sich dabei aus 3 Komponenten zusammen. Zuerst wird hier auch die Position des Spielers gespeichert, um Zugriff in konstanter Zeit zu ermöglichen. Weiterhin wird der derzeitig verfügbare Knopfvorrat des Spielers gespeichert. Zuletzt wird noch auf eine weitere Struktur, das \code{QuiltBoard}, verwiesen.
 
 \section{Aufbau des Ablageplans}
 
@@ -27,8 +26,12 @@ Besondere extra:
     language=Rust,
     firstline=0,
 ]{res/code/quilt-board-definition.rs}
+\vspace*{-0.3cm}
 
-Der Ablageplan eines Spielers wird durch die in Quellcode \ref{code:quilt-board-definition} definierte Struktur \code{QuiltBoard} modelliert. Dabei existieren nur 2 Attribute. Zuerst wird das Knopfeinkommen mit \code{button\_income} gespeichert, was durch die auf dem Ablageplan liegenden Flicken beim Passieren einer Knopf-Wertung generiert wird. Das zweite Attribut \code{tiles} dient dazu, den Status der einzelnen Felder auf dem Ablageplan zu speichern. Der Ablageplan besteht aus 81 Feldern, die in 9 Zeilen und 9 Spalten angeordnet sind, und für die jeweils gespeichert werden muss, ob das Feld belegt ist oder nicht. Da alle Abfragen bezüglich Status der Felder so schnell wie möglich sein sollen, kommt hier anstatt eines üblichen 2-dimensionalen Arrays eine \ac{u128} zum Einsatz. Da nur zwei Zustände existieren, kann für jedes Feld ein Bit verwendet werden. Weiterhin werden alle Felder des Ablageplans zeilenweise wie in Abbildung \ref{fig:quilt-board-storage} in einer Ganzzahl nacheinander abgelegt.
+Die in Codeausschnitt \ref{code:quilt-board-definition} definierte Struktur \code{QuiltBoard} modelliert den Ablageplan eines Spielers. Dabei existieren nur 2 Attribute. Zuerst wird das Knopfeinkommen mit \code{button\_income} gespeichert, was durch die auf dem Ablageplan liegenden Flicken beim Passieren einer Knopf-Wertung generiert wird. Das zweite Attribut \code{tiles} dient dazu, den Status der einzelnen Felder auf dem Ablageplan zu speichern. Der Ablageplan besteht aus 81 Feldern, die in 9 Zeilen und 9 Spalten angeordnet sind, und für die jeweils gespeichert werden muss, ob das Feld belegt ist oder nicht. Da alle Abfragen bezüglich Status der Felder so schnell wie möglich sein sollen, kommt hier anstatt eines üblichen 2-dimensionalen Arrays eine \ac{u128} zum Einsatz. Da nur zwei Zustände existieren, kann für jedes Feld ein Bit verwendet werden. Weiterhin werden alle Felder des Ablageplans zeilenweise wie in Abbildung \ref{fig:quilt-board-storage} in einer Ganzzahl nacheinander abgelegt.
+
+\vspace*{-5cm}
+\pagebreak
 
 \begin{figure}[!ht]
     \centering
@@ -46,6 +49,14 @@ Besonders anzumerken ist, dass die Flicken und ihre Transformationen, wie sie au
 
 TODO: Action, ActionId/SurrogateActionId, NaturalActionId
 
+\begin{itemize}
+    \item \code{Action} als Tagged-Union
+    \item \code{ActionId} bzw. \code{SurrogateActionId} als \ac{u32}
+    \item \code{NaturalActionId} als TODO: 2028
+\end{itemize}
+
+TODO:
+
 \lstinputlisting[
     label={code:action},
     caption={Definition des Tagged-Union \code{Action}},
@@ -53,12 +64,6 @@ TODO: Action, ActionId/SurrogateActionId, NaturalActionId
     language=Rust,
     firstline=0,
 ]{res/code/action.rs}
-
-\begin{itemize}
-    \item \code{Action} als Tagged-Union
-    \item \code{ActionId} bzw. \code{SurrogateActionId} als \ac{u32}
-    \item \code{NaturalActionId} als TODO: 2028
-\end{itemize}
 
 \section{Flicken und Zugmöglichkeiten}
 
@@ -98,3 +103,14 @@ TODO: Action, ActionId/SurrogateActionId, NaturalActionId
 \end{table}
 
 TODO: Hier fehlt noch der Anhang + Verweis für Benchmark
+
+\begin{itemize}
+    \item Aufbau des Spielfeldes
+    \item Speicherung der Quilt Boards (Row-Major)
+    \item Speicherung des Time Boards
+    \item Speicherung der Patchliste
+    \item Umsetzung von Zügen
+    \item Effizienzoptimierungen (u128, vorberechnete Transformationen, ...)
+    \item Abstraction von Player Interface
+    \item Evaluator, Move Orderer, Tree Policy (wahrscheinlich später)
+\end{itemize}
