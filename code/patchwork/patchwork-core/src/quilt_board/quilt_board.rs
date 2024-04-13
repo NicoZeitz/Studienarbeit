@@ -86,6 +86,28 @@ impl QuiltBoard {
         }
     }
 
+    /// Creates a new [`QuiltBoard`] from the given bits.
+    ///
+    /// # Arguments
+    ///
+    /// * `bits` - the bits which to use to fill the quilt board
+    ///
+    /// # Returns
+    ///
+    /// A new [`QuiltBoard`] which has the given bits set.
+    ///
+    /// # Complexity
+    ///
+    /// `𝒪(𝟣)`
+    #[inline]
+    #[must_use]
+    pub const fn from_bits(bits: u128) -> Self {
+        Self {
+            tiles: bits,
+            button_income: 0,
+        }
+    }
+
     /// Whether the board is full.
     ///
     /// # Returns

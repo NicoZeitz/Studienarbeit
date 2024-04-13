@@ -110,7 +110,8 @@ impl PatchManager {
     /// `𝒪(𝟣)`
     #[inline]
     #[rustfmt::skip]
-    #[must_use]    pub fn get_transformation(patch_id: u8, patch_transformation_index: u16) -> &'static PatchTransformation {
+    #[must_use]
+    pub fn get_transformation(patch_id: u8, patch_transformation_index: u16) -> &'static PatchTransformation {
         let transformations = Self::get_transformations(patch_id);
 
         debug_assert!((patch_transformation_index as usize) < transformations.len(), "[PatchManager::get_transformations] Invalid patch transformation index");

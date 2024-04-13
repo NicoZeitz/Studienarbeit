@@ -1,0 +1,16 @@
+[package]
+name = "action-ordering"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+readme.workspace = true
+
+[dependencies]
+patchwork-core = { path = "../../patchwork-core" }
+action-orderer = { path = "../../action-orderer" }
+
+[lints]
+workspace = true

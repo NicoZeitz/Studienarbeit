@@ -21,7 +21,11 @@ TODO:
     firstline=0,
 ]{res/code/random-player.rs}
 
-\section{Ansatz B: Principal-Variation-Search}
+\section{Ansatz B: Greedy-Algorithmus}
+
+TODO: auch Evaluator
+
+\section{Ansatz C: Principal-Variation-Search}
 \label{section:erstellung-ansatz-b}
 
 Verwendung von Negamax Algorithmus (hier phantom moves) (aufruf mit -)
@@ -29,6 +33,53 @@ Erweiterung des Alpha-Beta (ref) Generelle struktur Principal Variation search
 Iterative Deepening
 
 \ac{PVS}
+
+\subsection{Aktionen-Anordnung}
+
+TODO:
+\cite{2022.MoveOrdering}
+Anordnung nicht Sortieren -> Warum überhaupt anordnen und warum nicht sortieren?
+-> insertion sort??
+Wie gemacht? -> Table mit linearer Interpolation based timeboard position
+heatmap generierung erläutern
+heatmaps erläutern und warum sinnvoll erscheint
+müsste eigentlich symmetrisch sein
+
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.11\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{res/pictures/assets/17-front.png}
+    \end{minipage}
+    \begin{minipage}{.78\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{res/pictures/plots/17-action-ordering.pdf}
+    \end{minipage}
+    \begin{minipage}{.11\textwidth}
+        \hfill
+    \end{minipage}
+    \captionof{figure}{Heatmap des Flicken 17}
+    \label{fig:action-ordering-patch-17}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \begin{minipage}{.11\textwidth}
+        \centering
+        \includegraphics[width=0.667\linewidth]{res/pictures/assets/21-front.png}
+    \end{minipage}
+    \begin{minipage}{.78\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{res/pictures/plots/21-action-ordering.pdf}
+    \end{minipage}
+    \begin{minipage}{.11\textwidth}
+        \hfill
+    \end{minipage}
+    \captionof{figure}{Heatmap des Flicken 21}
+    \label{fig:action-ordering-patch-21}
+\end{figure}
+
+TODO:
 
 \subsection{Transposition Table und Zobrist Hashing}
 
@@ -38,18 +89,17 @@ TODO:
 
 TODO:
 
-\subsection{Sucherweiterungen}
+\cite{2003.AspirationWindows}
+\cite{2024.StockfishBackoff}
 
-TODO:
+\subsection{Suchselektivität}
 
-\subsection{Aktionen-Anordnung}
+TODO: Sucherweiterungen, Late Move Reduction und Pruning
+Selektivität = Shannon Type B Suche \cite{1950.ChessShannon} im Gegensatz zu Type-A (Brute-Force)
 
-TODO:
 
-\subsection{Late Move Reduction und Pruning}
-
-\ac{LMR}
-\ac{LMP}
+\ac{LMR} \cite{2007.LMR}
+\ac{LMP} \cite{2023.StockfishTerminology}
 
 TODO:
 
@@ -59,7 +109,7 @@ TODO:
 
 TODO:
 
-\section{Ansatz C: Monte Carlo Tree Search}
+\section{Ansatz D: Monte Carlo Tree Search}
 \label{section:erstellung-ansatz-c}
 
 TODO:
@@ -72,7 +122,7 @@ TODO:
     \item Evaluator (WinLoss, Score) -> In Eval genauer betrachten
 \end{itemize}
 
-\section{Ansatz D: AlphaZero}
+\section{Ansatz E: AlphaZero}
 \label{section:erstellung-ansatz-d}
 
 TODO:
@@ -100,6 +150,10 @@ TODO: LSTM Bild
 \pagebreak
 
 \subsubsection*{Netzwerk-Architektur}
+
+\cite{2018.Lc0AlphaZero}
+\cite{2019.SqueezeandExcitation}
+\cite{2020.Lc0NetworkTopology}
 
 \begin{figure}[!ht]
     \centering

@@ -19,6 +19,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "action-ordering"
+version = "1.0.0"
+dependencies = [
+ "action-orderer",
+ "patchwork-core",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

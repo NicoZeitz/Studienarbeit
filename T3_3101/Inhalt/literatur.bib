@@ -94,6 +94,7 @@
   journal   = {Proseminar Theoretische Informatik Sommersemester 2017},
   publisher = {Freie Universität Berlin},
   author    = {Hartmann, Maria},
+  address   = {Berlin, Deutschland},
   year      = 2017,
   month     = 5
 }
@@ -237,6 +238,7 @@
   pages   = {42--60}
 }
 
+% https://vision.unipv.it/IA1/ProgrammingaComputerforPlayingChess.pdf
 @article{1950.ChessShannon,
   title     = {XXII. Programming a computer for playing chess},
   author    = {Shannon, Claude E},
@@ -350,8 +352,8 @@
   journal   = {Nature},
   publisher = {Springer Science and Business Media LLC},
   author    = {Silver,  David and Huang,  Aja and Maddison,  Chris J. and Guez,  Arthur and Sifre,  Laurent and van den Driessche,  George and Schrittwieser,  Julian and Antonoglou,  Ioannis and Panneershelvam,  Veda and Lanctot,  Marc and Dieleman,  Sander and Grewe,  Dominik and Nham,  John and Kalchbrenner,  Nal and Sutskever,  Ilya and Lillicrap,  Timothy and Leach,  Madeleine and Kavukcuoglu,  Koray and Graepel,  Thore and Hassabis,  Demis},
-  year      = {2016},
-  month     = jan,
+  year      = 2016,
+  month     = 1,
   pages     = {484–489}
 }
 
@@ -360,8 +362,8 @@
   author       = {David Silver and Thomas Hubert and Julian Schrittwieser and Demis Hassabis},
   publisher    = {Google Deepmind},
   year         = {2018},
-  month        = dec,
-  address      = {o. O.},
+  month        = 12,
+  address      = {o.O.},
   urldate      = {2024-04-08},
   howpublished = {\url{https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/}},
   language     = {en}
@@ -433,7 +435,7 @@
   language     = {en}
 }
 
-% Jahreszahl sus 🧐 War ich das? 🤔
+% Jahreszahl sus 🧐 War ich das? 🤔 - Fabian
 @misc{2014.DiscussionSpecialPatch,
   title        = {Can't put 1x1 patch? What happens | BoardGameGeek},
   author       = {Kobiela, Grzegorz and Liu, Jack and others},
@@ -517,7 +519,8 @@
   year          = {2019},
   eprint        = {1901.11161},
   archiveprefix = {arXiv},
-  primaryclass  = {math.HO}
+  primaryclass  = {math.HO},
+  doi           = {10.48550/arXiv.1901.11161}
 }
 
 @inproceedings{2008.ParallelMCTS,
@@ -561,8 +564,6 @@
   booktitle = {2013 IEEE Conference on Computational Inteligence in Games (CIG)},
   title     = {Monte-Carlo Tree Search and minimax hybrids},
   year      = {2013},
-  volume    = {},
-  number    = {},
   pages     = {1-8},
   keywords  = {Games;Monte Carlo methods;Backpropagation;Planning;Convergence;Propagation losses;Game theory},
   doi       = {10.1109/CIG.2013.6633630}
@@ -583,6 +584,7 @@
   title        = {The rust language},
   author       = {Matsakis, Nicholas D and Klock II, Felix S},
   booktitle    = {ACM SIGAda Ada Letters},
+  address      = {o.O.},
   volume       = {34},
   number       = {3},
   pages        = {103--104},
@@ -602,17 +604,191 @@
   language     = {en}
 }
 
+@book{2000.Gamma,
+  title     = {Design patterns: Elements of reusable object-oriented software},
+  author    = {Gamma, Erich and Johnson, Ralph and Helm, Richard and Vlissides,
+               John and Fowler, Martin},
+  publisher = {Pearson Education},
+  month     = 9,
+  year      = 2000,
+  address   = {Philadelphia, PA},
+  language  = {en}
+}
+
+@book{2023.RustBook,
+  title     = {The rust programming language: 2nd edition},
+  author    = {Klabnik, Steve and Nichols, Carol},
+  publisher = {No Starch Press},
+  month     = 2,
+  year      = 2023,
+  address   = {San Francisco, CA},
+  language  = {en}
+}
+@incollection{2018.CriterionAnalysis,
+  booktitle = {Criterion.rs Documentation},
+  title     = {Analysis Process},
+  author    = {Heisler, Brook},
+  address   = {Saskatoon, Canada},
+  year      = 2018,
+  month     = 1,
+  day       = 14,
+  url       = {https://bheisler.github.io/criterion.rs/book/analysis.html},
+  urldate   = {2024-04-13}
+}
+
+@incollection{2019.CriterionOutput,
+  booktitle = {Criterion.rs Documentation},
+  title     = {Command-Line Output},
+  author    = {Heisler, Brook},
+  address   = {Saskatoon, Canada},
+  year      = 2019,
+  month     = 8,
+  day       = 11,
+  url       = {https://bheisler.github.io/criterion.rs/book/user_guide/command_line_output.html},
+  urldate   = {2024-04-13}
+}
+
+
 % ====================================== Computerspielengines ======================================
 % ============================================= Greedy =============================================
+% TODO: Quelle für statische Evaluierung
 
 % =================================== Principal Variation Search ===================================
+@misc{2022.MoveOrdering,
+  title        = {How move ordering works},
+  journal      = {Creating the Rustic chess engine},
+  author       = {Vanthoor, Marcel},
+  location     = {Netherlands},
+  address      = {o.O.},
+  language     = {en},
+  year         = 2022,
+  month        = 2,
+  day          = 25,
+  howpublished = {\url{https://rustic-chess.org/search/ordering/how.html}},
+  urldate      = {2024-04-13}
+}
+
+@misc{2024.StockfishBackoff,
+  title        = {Stockfish/src/search.cpp at master · official-stockfish/Stockfish},
+  author       = {J, Muzhen and VandeVondele, Joost and others},
+  address      = {o.O.},
+  year         = {o.J.},
+  publisher    = {{Stockfish}},
+  editor       = {{Stockfish}},
+  institution  = {{Stockfish}},
+  howpublished = {\url{https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp\#L348-L365}},
+  urldate      = {2024-04-13},
+  language     = {en}
+}
+
+% Negamax: https://web.archive.org/web/20041020203547/http://www.brucemo.com/compchess/programming/minmax.htm
+% Alpha Beta abhängig von Suchorder: https://web.archive.org/web/20041020181521/http://www.brucemo.com/compchess/programming/alphabeta.htm
+% Principal Variation Search: https://web.archive.org/web/20041021002134/http://www.brucemo.com/compchess/programming/pvs.htm
+
+@misc{2003.AspirationWindows,
+  title        = {Aspiration Windows},
+  author       = {Moreland, Bruce},
+  howpublished = {\url{https://web.archive.org/web/20071031095918/http://www.brucemo.com/compchess/programming/aspiration.htm}},
+  year         = 2003,
+  address      = {o.O.},
+  month        = 1,
+  day          = 24,
+  language     = {en},
+  urldate      = {2024-04-13},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
+
+% https://disservin.github.io/stockfish-docs/stockfish-wiki/Terminology.html
+% Github names to normal: https://github.com/official-stockfish/Stockfish/blob/master/AUTHORS
+@misc{2023.StockfishTerminology,
+  title        = {Terminology},
+  author       = {A, Max and VandeVondele, Joost and J, Muzhen and others},
+  howpublished = {\url{https://github.com/official-stockfish/Stockfish/wiki/Terminology}},
+  year         = 2023,
+  address      = {o.O.},
+  month        = 7,
+  day          = 1,
+  language     = {en},
+  urldate      = {2024-04-15}
+}
+
+@misc{2007.LMR,
+  title        = {An Introduction to Late Move Reductions},
+  author       = {Romstad, Tord},
+  howpublished = {\url{https://web.archive.org/web/20150212051846/http://www.glaurungchess.com/lmr.html}},
+  year         = 2007,
+  address      = {o.O.},
+  language     = {en},
+  urldate      = {2024-04-15},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
 
 % ============================================== MCTS ==============================================
 
 % =========================================== AlphaZero  ===========================================
+@misc{2018.Lc0AlphaZero,
+  title        = {AlphaZero paper, and Lc0 v0.19.1},
+  author       = {crem},
+  publisher    = {Leela Chess Zero},
+  address      = {o.O.},
+  year         = 2018,
+  month        = 12,
+  day          = 7,
+  howpublished = {\url{https://lczero.org/blog/2018/12/alphazero-paper-and-lc0-v0191}},
+  language     = {en},
+  urldate      = {2024-04-13}
+}
+
+@misc{2020.Lc0NetworkTopology,
+  title        = {Neural network topology},
+  author       = {Lyashuk, Alexander and Bhattacharjea, Raj},
+  publisher    = {Leela Chess Zero},
+  address      = {o.O.},
+  year         = 2020,
+  month        = 11,
+  day          = 29,
+  howpublished = {\url{https://lczero.org/dev/backend/nn}},
+  language     = {en},
+  urldate      = {2024-04-13}
+}
+
+@misc{2019.SqueezeandExcitation,
+  title         = {Squeeze-and-Excitation Networks},
+  author        = {Jie Hu and Li Shen and Samuel Albanie and Gang Sun and Enhua Wu},
+  year          = {2019},
+  eprint        = {1709.01507},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CV},
+  howpublished  = {\url{https://arxiv.org/abs/1709.01507}},
+  urldate       = {2024-04-13},
+  doi           = {10.48550/arXiv.1709.01507}
+}
 
 % ======================================= Benutzeroberfläche =======================================
 
 % =========================================== Evaluation ===========================================
+@misc{2022.Glicko2,
+  url          = {http://www.glicko.net/glicko/glicko2.pdf},
+  year         = 2022,
+  month        = 3,
+  day          = 22,
+  author       = {Glickman, Mark E.},
+  title        = {Example of the Glicko-2 system},
+  publisher    = {Boston University},
+  language     = {en},
+  howpublished = {\url{http://www.glicko.net/glicko/glicko2.pdf}},
+  urldate      = {2024-04-10}
+}
+
+@misc{2024.ChessRatingSystems,
+  title        = {Chess rating systems},
+  author       = {o.A.},
+  publisher    = {Lichess},
+  address      = {o.O.},
+  howpublished = {\url{https://lichess.org/page/rating-systems}},
+  year         = {o.J.},
+  urldate      = {2024-04-10},
+  language     = {en}
+}
 
 % ============================================= Fazit  =============================================

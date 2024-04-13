@@ -65,20 +65,54 @@ TODO:
     firstline=0,
 ]{res/code/action.rs}
 
-\section{Flicken und Zugmöglichkeiten}
+\section{Flicken}
 
-\acs{u128}
+Die Speicherung der Flicken im Computerprogramm ist aufwendiger. Der \code{PatchManager} übernimmt die Verwaltung der Flicken und stellt eine zentrale Zugriffmöglichkeit auf alle Flicken in der gesamten Applikation dar. So kann über den PatchManager beispielsweise die zufällige initiale Flickenreihenfolge zum Spielstart generiert werden oder ein Index auf dem Zeitplan zu einem konkretem Spezialflicken bidirektional zugeordnet werden. Um sicherzustellen, dass es immer nur genau eine Instanz des PatchManagers existiert, wird dabei das Entwurfsmuster Singleton implementiert \cite[S. 127]{2000.Gamma}.
 
-\pagebreak
+Ein Flicken wird im Code als Patch bezeichnet und besteht aus einem eindeutigen Identifizierter, Knopf- und Zeitkosten sowie Knopfeinkommen. Der PatchManager speichert alle Patches in einem Array und erlaubt den Zugriff auf diese. Neben diesen einfachen Patch-Strukturen erlaubt der PatchManager aber auch noch Zugriff auf die sogenannten PatchTransformationen für jeden Flicken. Da der Ablageplan als eine einzige 81-bit lange Zahl abgespeichert ist, sind das Erkennen von Überlappungen und das Legen von Flicken in konstanter Zeit durch Und- sowie Oder-Bitoperationen möglich. Dafür muss nur für jeden Flicken und jede Platzierungsmöglichkeit die passende Zahl nach der gleichen Anordnung wie beim Ablageplan generiert werden. Die Erzeugung solch einer Zahl zur Laufzeit dauert jedoch im Vergleich zu anderen Operationen viel zu lange. Da die Anzahl der Flicken und ihrer Platzierungsmöglichkeiten aber begrenzt sind, kann für jeden Flicken bereits jede Mögliche Platzierungslage als \ac{u128} vorausberechnet werden. Der PatchManager hält dann alle diese vorausberechneten Transformationen in einer Liste. Eine Transformation besteht dabei neben der vorausberechneten Zahl noch aus dem genauen Platzierungsort mit Zeile, Spalte und der Transformation (Drehung sowie Spiegelung). Zuletzt speichert der PatchManager noch die genauen Felder der Flicken als $m\times n$-Matrix zu Darstellungszwecken. Alle drei Datentypen sind auch in Codeauschnitt \ref{code:patch} dargestellt.
+
+\lstinputlisting[
+    label={code:patch},
+    caption={\code{PatchManager}, \code{Patch} und \code{PatchTransformation}},
+    captionpos=b,
+    language=Rust,
+    escapeinside={<*}{*>},
+    firstline=0,
+]{res/code/patch.rs}
+\begin{tikzpicture}[
+        remember picture,
+        overlay
+    ]
+    \draw[->] (pic cs:patch-line-2-first) ++(-0.25cm,.5ex) -| ++(-1cm,-2.6cm);
+    \draw[->] (pic cs:patch-line-4-end) ++(0,-1ex) -| ++(0,-1.1cm);
+\end{tikzpicture}
+\vspace*{-1cm}
+
+Für die Generierung aller Flicken werden funktionsähnliche Prozedurale Makros von Rust verwendet. Diese erlauben zu Kompilierungszeit das Entgegennehmen von Tokens und generieren aus diesen validen Rust Code \cite[S. 673]{2023.RustBook}. Um die Flicken zu erzeugen, wird das Makro \code{generate\_patches!} verwendet, welches eine eigengeschriebene Funktion ist, von Rust zur Kompilierungszeit aufgerufen wird und alle Flicken, Transformationen und Felder erzeugt. So können alle Flicken ergonomisch wie in \code{code:patch-macro} definiert werden. Das Makro berechnet dann alle Werte und fügt sie in die passenden Attribute im PatchManager ein, sodass am Ende ein vollständig befüllter PatchManager mit allen Flicken zurückgegeben wird. So kann während der Laufzeit mittels Indices auf die statisch in die Applikation eingebetteten Werte zugegriffen werden.
+
+\lstinputlisting[
+    label={code:patch-macro},
+    caption={Definition eines Flicken mittels Makro},
+    captionpos=b,
+    language=Rust,
+    escapeinside={<*}{*>},
+    firstline=0,
+]{res/code/patch-macro.rs}
+
+\section{Zugmöglichkeiten}
+
+TODO:
+\cite{2018.CriterionAnalysis}
+\cite{2019.CriterionOutput}
 
 \begin{table}[H]
     \centering
     \resizebox{\textwidth}{!}{\begin{tabular}{|l|r|c|l|}
             \hline
             \multicolumn{1}{|c|}{Methode}                                                 & \multicolumn{1}{|c|}{Zeit}      & $\mathcal{O}$-Kalkül        & \multicolumn{1}{|c|}{Bemerkungen}                  \\ \hline
-            \code{game.get\_initial\_state}                                               & $472{,}11\,\acs{ns}$            & $\mathcal{O}\left(n\right)$ & $n$ aufgrund Mischen der Flicken                   \\  \hline
-            \code{game.get\_valid\_actions}                                               & $8{,}91\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & $3\times$Aufruf von Ablageplan Aktionen generieren \\  \hline
-            \code{game.get\_random\_action}                                               & $9{,}22\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & Aufruf von \code{get\_valid\_actions}              \\  \hline
+            \code{game.get\_initial\_state}                                               & $472{,}11\,\acs{ns}$            & $\mathcal{O}\left(n\right)$ & {\footnotesize $n$ aufgrund Mischen der Flicken }                  \\  \hline
+            \code{game.get\_valid\_actions}                                               & $8{,}91\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & {\footnotesize $3\times$Aufruf von Ablageplan Aktionen generieren} \\  \hline
+            \code{game.get\_random\_action}                                               & $9{,}22\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & {\footnotesize Aufruf von \code{get\_valid\_actions} }              \\  \hline
             \code{game.do\_action}                                                        & $280{,}00\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
             \code{game.undo\_action}                                                      & $286{,}78\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
             \code{game.clone}                                                             & $1{,}36\,\acs{us}$              & $\mathcal{O}\left(1\right)$ & $\hat{=}$ \code{memcpy}                            \\  \hline
@@ -98,7 +132,7 @@ TODO:
             Getter\textendash{} und Setter\textendash{}Methoden                           & \multicolumn{1}{|c|}{$\diagup$} & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
         \end{tabular}}
     \vspace{3pt}
-    \caption{Übersicht über die verfügbaren Methoden in der Patchwork\textendash{}Implementierung}
+    \caption[Verfügbaren Methoden der Patchwork\textendash{}Implementierung]{Übersicht über die verfügbaren Methoden in der Patchwork\textendash{}Implementierung}
     \label{tabelle:patchwork-methods}
 \end{table}
 

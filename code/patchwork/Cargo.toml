@@ -28,7 +28,7 @@ members = [
     "server",
     "transposition-table",
     "tree-policy",
-    "upi", "optimizing-player",
+    "upi", "optimizing-player", "analysis/action-ordering",
 ]
 
 [workspace.lints.rust]

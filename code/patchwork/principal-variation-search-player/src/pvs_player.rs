@@ -163,7 +163,7 @@ impl Default for SearchRecorder {
 /// - [Aspiration Windows](https://www.chessprogramming.org/Aspiration_Windows)
 /// - [Transposition Table](https://www.chessprogramming.org/Transposition_Table)
 /// - [Late Move Reductions (LMR)](https://www.chessprogramming.org/Late_Move_Reductions)
-/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/pages/Terminology.html#late-move-pruning)
+/// - [Late Move Pruning](https://disservin.github.io/stockfish-docs/stockfish-wiki/Terminology.html#late-move-pruning)
 /// - [Search Extension](https://www.chessprogramming.org/Extensions) - Win-seeking search extensions for special patch placements
 /// - [Move Ordering](https://www.chessprogramming.org/Move_Ordering)
 ///     - With PV-Action via Transposition Table
@@ -544,6 +544,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             let previous_special_tile_condition_reached = game.is_special_tile_condition_reached();
 
             game.do_action(action, true)?;
+            let next_depth = if action.is_phantom() { depth } else { depth - 1 };
 
             // Extend the depth of the search in certain interesting cases (special patch placement)
             let extension = self.get_search_extension(game, num_extensions, previous_special_tile_condition_reached);
@@ -554,7 +555,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                 evaluation = -self.principal_variation_search(
                     game,
                     ply_from_root + 1,
-                    depth - 1 + extension,
+                    next_depth + extension,
                     -beta,
                     -alpha,
                     num_extensions + extension,
@@ -575,7 +576,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     evaluation = -self.zero_window_search(
                         game,
                         ply_from_root + 1,
-                        (depth - 1).saturating_sub(lmr_depth_reduction),
+                        next_depth.saturating_sub(lmr_depth_reduction),
                         -alpha,
                     )?;
                     needs_full_search = evaluation > alpha;
@@ -586,7 +587,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                     evaluation = -self.zero_window_search(
                         game,
                         ply_from_root + 1,
-                        depth - 1, // do not apply search extensions in zws
+                        next_depth, // do not apply search extensions in zws
                         -alpha,
                     )?;
 
@@ -596,7 +597,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
                         evaluation = -self.principal_variation_search(
                             game,
                             ply_from_root + 1,
-                            depth - 1 + extension,
+                            next_depth + extension,
                             -beta,
                             -alpha,
                             num_extensions + extension,
@@ -745,7 +746,7 @@ impl<Orderer: ActionOrderer, Eval: Evaluator> PVSPlayer<Orderer, Eval> {
             let evaluation = -self.zero_window_search(
                 game,
                 ply_from_root + 1,
-                depth - 1, // do not apply search extensions in zws
+                if action.is_phantom() { depth } else { depth - 1 }, // do not apply search extensions in zws
                 1 - beta,
             )?;
 
