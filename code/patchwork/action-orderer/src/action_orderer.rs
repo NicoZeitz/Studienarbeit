@@ -1,4 +1,4 @@
-use patchwork_core::ActionId;
+use patchwork_core::{ActionId, Patchwork};
 
 use crate::ActionList;
 
@@ -8,6 +8,7 @@ pub trait ActionOrderer {
     ///
     /// # Arguments
     ///
+    /// * `game` - The game to score the actions for.
     /// * `actions` - The actions to score.
     /// * `pv_action` - The principal variation action.
     /// * `current_ply` - The current ply.
@@ -16,25 +17,27 @@ pub trait ActionOrderer {
     ///
     /// `𝒪(𝑚 · 𝑛)` where `n` is the amount of actions and `𝒪(𝑚)` is the complexity of the `score_action` function
     /// which is usually `𝒪(𝟣)`.
-    fn score_actions(&self, actions: &mut ActionList<'_>, pv_action: Option<ActionId>, current_ply: usize) {
+    fn score_actions(
+        &self,
+        game: &Patchwork,
+        actions: &mut ActionList<'_>,
+        pv_action: Option<ActionId>,
+        current_ply: usize,
+    ) {
         for i in 0..actions.len() {
-            actions.scores[i] = self.score_action(actions.get_action(i), pv_action, current_ply);
+            actions.scores[i] = self.score_action(game, actions.get_action(i), pv_action, current_ply);
         }
 
         #[cfg(debug_assertions)]
         if let Some(pv_action) = pv_action {
             let (highest_score_index, highest_score) =
-                actions
-                    .scores
-                    .iter()
-                    .enumerate()
-                    .fold((0, f64::NEG_INFINITY), |accumulator, (index, score)| {
-                        if *score > accumulator.1 {
-                            (index, *score)
-                        } else {
-                            accumulator
-                        }
-                    });
+                actions.scores.iter().enumerate().fold((0, f64::NEG_INFINITY), |accumulator, (index, score)| {
+                    if *score > accumulator.1 {
+                        (index, *score)
+                    } else {
+                        accumulator
+                    }
+                });
 
             let highest_action = actions.get_action(highest_score_index);
             let Some(pv_action_index) = actions.actions.iter().position(|action| *action == pv_action) else {
@@ -64,6 +67,7 @@ pub trait ActionOrderer {
     ///
     /// # Arguments
     ///
+    /// * `game` - The game to score the action for.
     /// * `action` - The action to score.
     /// * `pv_action` - The principal variation action.
     /// * `current_ply` - The current ply.
@@ -75,7 +79,8 @@ pub trait ActionOrderer {
     /// # Complexity
     ///
     /// Should be implemented in `𝒪(𝟣)`.
-    fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64;
+    #[must_use]
+    fn score_action(&self, game: &Patchwork, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64;
 
     /// Picks the best action from the given actions. The given actions are ordered in place.
     ///

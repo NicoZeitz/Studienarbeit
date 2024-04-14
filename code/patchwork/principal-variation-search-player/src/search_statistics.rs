@@ -1,6 +1,6 @@
 /// The statistics of a search.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct SearchStatistics {
+pub struct SearchStatistics<const ACTIVE: bool> {
     /// The number of nodes searched in the previous iteration.
     pub nodes_searched_previous_iteration: usize,
     /// The number of nodes searched.
@@ -27,11 +27,13 @@ pub struct SearchStatistics {
     pub special_tile_extensions: usize,
     /// The number of times late move reductions were performed.
     pub late_move_reductions: usize,
+    /// The number of times late move reductions were performed and failed.
+    pub late_move_reduction_fails: usize,
     /// The number of times late move pruning was performed.
     pub late_move_pruning: usize,
 }
 
-impl Default for SearchStatistics {
+impl<const ACTIVE: bool> Default for SearchStatistics<ACTIVE> {
     fn default() -> Self {
         Self {
             nodes_searched_previous_iteration: 0,
@@ -47,14 +49,18 @@ impl Default for SearchStatistics {
             special_patch_extensions: 0,
             special_tile_extensions: 0,
             late_move_reductions: 0,
+            late_move_reduction_fails: 0,
             late_move_pruning: 0,
         }
     }
 }
 
-impl SearchStatistics {
+impl<const ACTIVE: bool> SearchStatistics<ACTIVE> {
     #[inline]
     pub fn reset(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.nodes_searched_previous_iteration = 0;
         self.nodes_searched = 0;
         self.leaf_nodes_searched = 0;
@@ -68,6 +74,7 @@ impl SearchStatistics {
         self.special_patch_extensions = 0;
         self.special_tile_extensions = 0;
         self.late_move_reductions = 0;
+        self.late_move_reduction_fails = 0;
         self.late_move_pruning = 0;
     }
 
@@ -85,12 +92,16 @@ impl SearchStatistics {
     /// * The number of times the zero window search failed.
     /// * The number of times a special patch extension was made.
     /// * The number of times late move reductions were performed.
+    /// * The number of times late move reductions were performed and failed.
     /// * The number of times late move pruning was performed.
     ///
     /// Sets:
     /// * The number of nodes searched in the previous iteration to the number of nodes searched.
     #[inline]
     pub fn reset_iterative_deepening_iteration(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.nodes_searched_previous_iteration = self.nodes_searched;
         self.nodes_searched = 0;
         self.leaf_nodes_searched = 0;
@@ -104,18 +115,25 @@ impl SearchStatistics {
         self.special_patch_extensions = 0;
         self.special_tile_extensions = 0;
         self.late_move_reductions = 0;
+        self.late_move_reduction_fails = 0;
         self.late_move_pruning = 0;
     }
 
     /// Increments the number of nodes searched.
     #[inline]
     pub fn increment_nodes_searched(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.nodes_searched += 1;
     }
 
     /// Increments the number of leaf nodes searched.
     #[inline]
     pub fn increment_leaf_nodes_searched(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.leaf_nodes_searched += 1;
     }
 
@@ -126,6 +144,9 @@ impl SearchStatistics {
     /// * `first` - Whether the search failed high on the first / pv node.
     #[inline]
     pub fn increment_fail_high(&mut self, first: bool) {
+        if !ACTIVE {
+            return;
+        }
         if first {
             self.fail_high_first += 1;
         }
@@ -135,48 +156,82 @@ impl SearchStatistics {
     /// Increments the number of times the aspiration window failed low.
     #[inline]
     pub fn increment_aspiration_window_fail_low(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.aspiration_window_fail_low += 1;
     }
 
     /// Increments the number of times the aspiration window failed high.
     #[inline]
     pub fn increment_aspiration_window_fail_high(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.aspiration_window_fail_high += 1;
     }
 
     /// Increments the number of times the zero window search was performed.
     #[inline]
     pub fn increment_zero_window_search(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.zero_window_search += 1;
     }
+
     /// Increments the number of times the zero window search failed.
     #[inline]
     pub fn increment_zero_window_search_fail(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.zero_window_search_fail += 1;
     }
 
     /// Increments the number of times a special patch extension was made.
     #[inline]
     pub fn increment_special_patch_extensions(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.special_patch_extensions += 1;
     }
 
     /// Increments the number of times a special tile extension was made.
     #[inline]
     pub fn increment_special_tile_extensions(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.special_tile_extensions += 1;
     }
 
     /// Increments the number of times late move reductions were performed.
     #[inline]
     pub fn increment_late_move_reductions(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.late_move_reductions += 1;
     }
 
     // Increment the number of times late move reductions were performed.
     #[inline]
     pub fn increment_late_move_pruning(&mut self) {
+        if !ACTIVE {
+            return;
+        }
         self.late_move_pruning += 1;
+    }
+
+    /// Increments the number of times late move reductions were performed and failed.
+    #[inline]
+    pub fn increment_late_move_reduction_fails(&mut self) {
+        if !ACTIVE {
+            return;
+        }
+        self.late_move_reduction_fails += 1;
     }
 
     /// Returns the rate of failing zero window searches in relation to the number of zero window searches.
@@ -188,5 +243,16 @@ impl SearchStatistics {
         }
 
         self.zero_window_search_fail as f64 / self.zero_window_search as f64
+    }
+
+    /// Return the rate of failing late move reduction searches in relation to the number of late move reduction searches.
+    #[inline]
+    #[must_use]
+    pub fn late_move_reduction_fail_rate(&self) -> f64 {
+        if self.late_move_reductions == 0 {
+            return 0.0;
+        }
+
+        self.late_move_reduction_fails as f64 / self.late_move_reductions as f64
     }
 }

@@ -1,0 +1,17 @@
+// 'd' for disabled, 'e' for enabled, 's' for symmetry enabled
+pub const DEFAULT_TRANSPOSITION_TABLE_SYMMETRY_TYPE: char = 's';
+pub const DEFAULT_SOFT_FAILING_STRATEGY: bool = false;
+pub const DEFAULT_ENABLE_LATE_MOVE_REDUCTIONS: bool = true;
+pub const DEFAULT_ENABLE_LATE_MOVE_PRUNING: bool = true;
+pub const DEFAULT_ENABLE_ASPIRATION_WINDOWS: bool = true;
+pub const DEFAULT_ENABLE_SEARCH_EXTENSIONS: bool = true;
+pub const DEFAULT_ENABLE_SEARCH_STATISTICS: bool = true;
+pub const DEFAULT_LMR_AMOUNT_FULL_DEPTH_ACTIONS: usize = 40; // 5
+pub const DEFAULT_LMR_APPLY_AFTER_PLYS: usize = 0; // 0
+pub const DEFAULT_LMP_AMOUNT_NON_PRUNED_ACTIONS: usize = 1; // 10
+pub const DEFAULT_LMP_APPLY_AFTER_PLYS: usize = 1; // 2
+pub const DEFAULT_LMP_AMOUNT_OF_ACTIONS_PER_PATCH: usize = 3; // 1
+pub const DEFAULT_MAX_SEARCH_EXTENSIONS: usize = 4;
+pub const DEFAULT_ASPIRATION_WINDOWS_STARTING_ALPHA: i32 = -60;
+pub const DEFAULT_ASPIRATION_WINDOWS_STARTING_BETA: i32 = 60;
+pub const DEFAULT_ASPIRATION_WINDOWS_MINIMUM_DELTA: i32 = 40;

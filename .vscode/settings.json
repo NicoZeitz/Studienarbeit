@@ -6,7 +6,7 @@
     },
     // "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
-        "editor.inlayHints.enabled": "on"
+        "editor.inlayHints.enabled": "off"
     },
     "rust-analyzer.checkOnSave": true,
     "rust-analyzer.lens.implementations.enable": false,
@@ -121,6 +121,7 @@
         "argmax",
         "argpartition",
         "argwhere",
+        "ascii",
         "backprop",
         "backpropagate",
         "backpropagated",
@@ -176,8 +177,11 @@
         "Gedruckte",
         "gewünscht",
         "gibibytes",
+        "glicko",
+        "Glicko",
         "haben",
         "happends",
+        "hasher",
         "Hasher",
         "Hauptteil",
         "Hilfreiches",
@@ -244,6 +248,7 @@
         "println",
         "puct",
         "PUCT",
+        "readline",
         "Readline",
         "readyok",
         "realloc",

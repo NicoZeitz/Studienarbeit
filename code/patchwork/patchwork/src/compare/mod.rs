@@ -1,5 +1,6 @@
 use std::{
-    io::Write,
+    fs::OpenOptions,
+    io::{BufWriter, Write},
     panic,
     sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering},
 };
@@ -33,6 +34,12 @@ struct CmdArgs {
     update: u64,
     #[arg(long = "parallel", short = 'p')]
     parallel: Option<usize>,
+}
+
+struct RecordedGame {
+    pub player_1_name: String,
+    pub player_2_name: String,
+    pub result: TerminationType,
 }
 
 pub fn handle_compare(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow::Result<()> {
@@ -125,8 +132,11 @@ fn compare(
 
     print!("\n\n\n\n\n");
 
+    let mut recorded_games = vec![];
     let iterations_done = AtomicU32::new(0);
     std::thread::scope(|s| {
+        let mut handles = vec![];
+
         for _ in 0..parallelization {
             let iterations = iterations as u32;
             let iterations_done = &iterations_done;
@@ -144,10 +154,11 @@ fn compare(
             let wins_player_2 = &wins_player_2;
             let player_1_str = player_1.get_construct_name();
             let player_2_str = player_2.get_construct_name();
-            s.spawn(move || {
+            handles.push(s.spawn(move || {
                 let panic_result = panic::catch_unwind(move || {
-                    let mut player_1 = get_player(player_1_str, 1, Logging::Disabled).unwrap();
-                    let mut player_2 = get_player(player_2_str, 2, Logging::Disabled).unwrap();
+                    let mut recorded_games = vec![];
+                    let mut player_1 = get_player(player_1_str, Logging::Disabled).unwrap();
+                    let mut player_2 = get_player(player_2_str, Logging::Disabled).unwrap();
 
                     'outer: while iterations_done.load(Ordering::Acquire) < iterations {
                         let mut state = Patchwork::get_initial_state(None);
@@ -192,6 +203,12 @@ fn compare(
                                     }
                                 }
 
+                                recorded_games.push(RecordedGame {
+                                    player_1_name: player_1.name().to_string(),
+                                    player_2_name: player_2.name().to_string(),
+                                    result: termination.termination,
+                                });
+
                                 max_player_1_score.fetch_max(termination.player_1_score, Ordering::Relaxed);
                                 max_player_2_score.fetch_max(termination.player_2_score, Ordering::Relaxed);
                                 min_player_1_score.fetch_min(termination.player_1_score, Ordering::Relaxed);
@@ -203,27 +220,33 @@ fn compare(
                             }
                         }
                     }
+
+                    recorded_games
                 });
 
-                if let Err(cause) = panic_result {
-                    iterations_done.store(u32::MAX, Ordering::SeqCst);
-                    std::thread::sleep(std::time::Duration::from_secs(1)); // Wait progress printing
+                match panic_result {
+                    Ok(recorded_games) => recorded_games,
+                    Err(cause) => {
+                        iterations_done.store(u32::MAX, Ordering::SeqCst);
+                        std::thread::sleep(std::time::Duration::from_secs(1)); // Wait progress printing
 
-                    println!("\n\n\n\n\n");
+                        println!("\n\n\n\n\n");
 
-                    println!("Panic in thread: {:?}", std::thread::current().id());
-                    cause.downcast_ref::<String>().map_or_else(
-                        || {
-                            println!("Cause: {cause:?}");
-                        },
-                        |cause| {
-                            println!("Cause: {cause}");
-                        },
-                    );
+                        println!("Panic in thread: {:?}", std::thread::current().id());
+                        cause.downcast_ref::<String>().map_or_else(
+                            || {
+                                println!("Cause: {cause:?}");
+                            },
+                            |cause| {
+                                println!("Cause: {cause}");
+                            },
+                        );
 
-                    println!("\n\n\n\n\n");
+                        println!("\n\n\n\n\n");
+                        vec![]
+                    }
                 }
-            });
+            }));
         }
         loop {
             let iterations_done = iterations_done.load(Ordering::Relaxed) as usize;
@@ -250,6 +273,14 @@ fn compare(
             )?;
             std::thread::sleep(update);
         }
+
+        for handle in handles {
+            match handle.join() {
+                Ok(games) => recorded_games.extend(games),
+                Err(_) => {}
+            }
+        }
+
         anyhow::Result::<()>::Ok(())
     })?;
 
@@ -273,6 +304,23 @@ fn compare(
         player_1.name(),
         player_2.name(),
     )?;
+
+    let output = OpenOptions::new().append(true).create(true).open("compare.txt")?;
+    let mut writer = BufWriter::new(output);
+    for game in recorded_games {
+        // Write Portable Game Notation (PGN)
+        writeln!(
+            writer,
+            "Game:\n[White \"{}\"]\n[Black \"{}\"]\n[Result \"{}\"]\n\n",
+            game.player_1_name,
+            game.player_2_name,
+            match game.result {
+                TerminationType::Player1Won => "1-0",
+                TerminationType::Player2Won => "0-1",
+            }
+        )?;
+    }
+
     Ok(())
 }
 
@@ -328,9 +376,9 @@ fn print_progress(
     if iteration == 0 {
         println!(
             "{} {} {}  ",
-            player_1_name,
+            &player_1_name.chars().take(30).collect::<String>(),
             "█".repeat(progress_bar_length),
-            player_2_name,
+            &player_2_name.chars().take(30).collect::<String>(),
         );
     } else {
         let progress_player_1 = (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;

@@ -17,12 +17,12 @@ where
                 let state = Patchwork::get_initial_state(Some(GameOptions { seed }));
                 let actions = state.get_valid_actions();
                 let scores = vec![0.0; actions.len()];
-                (actions, scores)
+                (state, actions, scores)
             },
-            |(mut actions, mut scores)| {
+            |(state, mut actions, mut scores)| {
                 let mut action_list: ActionList<'_> = ActionList::new(&mut actions, &mut scores);
                 let table_action_orderer = T::default();
-                black_box(table_action_orderer.score_actions(&mut action_list, None, 42));
+                black_box(table_action_orderer.score_actions(&state, &mut action_list, None, 42));
             },
         );
     });

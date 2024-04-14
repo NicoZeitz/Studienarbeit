@@ -11,6 +11,7 @@ resolver = "2"
 members = [
     "action-orderer",
     "alphazero-player",
+    "analysis/action-ordering",
     "analysis/empirical-measurement",
     "analysis/max-button-income",
     "evaluator",
@@ -28,7 +29,7 @@ members = [
     "server",
     "transposition-table",
     "tree-policy",
-    "upi", "optimizing-player", "analysis/action-ordering",
+    "upi", "analysis/elo",
 ]
 
 [workspace.lints.rust]

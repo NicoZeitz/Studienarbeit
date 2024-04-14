@@ -1,0 +1,4200 @@
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: win)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: win)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "RandomPlayer"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "GreedyPlayer(eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "0-1"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "GreedyPlayer(eval: static)"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+

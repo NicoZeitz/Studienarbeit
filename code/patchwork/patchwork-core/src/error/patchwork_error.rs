@@ -4,16 +4,16 @@ use crate::{ActionId, Patchwork};
 
 #[derive(Debug, Error, Clone, Eq, PartialEq, Hash)]
 pub enum PatchworkError {
-    #[error("Invalid action in the current state of the game")]
+    #[error("[PatchworkError::InvalidActionError] Invalid action in the current state of the game,  action: {action:?}, reason: {reason}, state: {state:?}")]
     InvalidActionError {
         reason: &'static str,
         action: ActionId,
         state: Box<Patchwork>,
     },
-    #[error("The Game is in its initial state and no actions can be undone")]
+    #[error("[PatchworkError::GameStateIsInitialError] The Game is in its initial state and no actions can be undone")]
     GameStateIsInitialError,
-    #[error("The notation string representation is invalid")]
+    #[error("[PatchworkError::] The notation string representation is invalid ({notation}), reason: {reason}")]
     InvalidNotationError { notation: String, reason: &'static str },
-    #[error("The given range is invalid")]
+    #[error("[PatchworkError::InvalidRangeError] The given range is invalid, reason: {reason}")]
     InvalidRangeError { reason: &'static str },
 }

@@ -38,6 +38,8 @@ mod game_manager;
 mod tests {
     use std::num::NonZeroUsize;
 
+    use ::evaluator::StaticEvaluator;
+
     use super::player::*;
     use super::*;
 
@@ -56,7 +58,7 @@ mod tests {
 
     #[test]
     fn minimax_player() {
-        let player = Box::new(MinimaxPlayer::new(
+        let player = Box::new(MinimaxPlayer::<StaticEvaluator>::new(
             "Minimax Player",
             Some(MinimaxOptions {
                 depth: 3,
@@ -69,7 +71,7 @@ mod tests {
     #[test]
     #[ignore = "PVS Player fails, needs to be investigated (maybe because of short time?)"]
     fn pvs_player() {
-        let player: PVSPlayer = PVSPlayer::new(
+        let player: Box<dyn Player> = DefaultPVSPlayer::<TableActionOrderer, StaticEvaluator>::new(
             "PVS Player",
             Some(PVSOptions {
                 logging: Logging::Disabled,
@@ -77,7 +79,6 @@ mod tests {
                 features: PVSFeatures::default(),
             }),
         );
-        let player = Box::new(player);
         test_player(player);
     }
 

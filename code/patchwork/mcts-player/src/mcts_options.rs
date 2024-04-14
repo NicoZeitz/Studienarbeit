@@ -1,4 +1,5 @@
 use std::{
+    fmt::Display,
     num::NonZeroUsize,
     sync::{atomic::AtomicBool, Arc},
 };
@@ -14,6 +15,22 @@ pub enum MCTSEndCondition {
     Time(std::time::Duration),
     /// Run until the flag is set.
     Flag(Arc<AtomicBool>),
+}
+
+impl Display for MCTSEndCondition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Iterations(iterations) => {
+                write!(f, "Iterations({iterations})")
+            }
+            Self::Time(duration) => {
+                write!(f, "Time({duration:?})")
+            }
+            Self::Flag(_) => {
+                write!(f, "Flag")
+            }
+        }
+    }
 }
 
 /// Different options for the Monte Carlo Tree Search (MCTS) algorithm.

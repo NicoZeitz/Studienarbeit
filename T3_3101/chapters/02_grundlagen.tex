@@ -156,27 +156,27 @@ Der Minimax-Algorithmus, im Anhang Algorithmus \ref{algo:minimax}, wird für die
     \label{algo:minimax-alpha-beta}
     \begin{algorithmic}[1]
         \Function{alphabeta}{node $n, \alpha, \beta$}
-        \If{$n$ is a terminal node}
-        \State \Return value of $n$
-        \ElsIf{$n$ is a maximizer node}
-        \For{each child node $c$ of $n$}
-        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-        \State $\alpha \gets \max(\alpha, value)$
-        \If{$\alpha \geq \beta$}
-        \State \textbf{break}
-        \EndIf
-        \EndFor
-        \State \Return $\alpha$
-        \ElsIf{$n$ is a minimizer node}
-        \For{each child node $c$ of $n$}
-        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-        \State $\beta \gets \min(\beta, value)$
-        \If{$\beta \leq \alpha$}
-        \State \textbf{break}
-        \EndIf
-        \EndFor
-        \State \Return $\beta$
-        \EndIf
+            \If{$n$ is a terminal node}
+                \State \Return value of $n$
+            \ElsIf{$n$ is a maximizer node}
+                \For{each child node $c$ of $n$}
+                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+                    \State $\alpha \gets \max(\alpha, value)$
+                    \If{$\alpha \geq \beta$}
+                        \State \textbf{break} \Comment{$\beta$-Cutoff}
+                    \EndIf
+                \EndFor
+                \State \Return $\alpha$
+            \ElsIf{$n$ is a minimizer node}
+                \For{each child node $c$ of $n$}
+                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+                    \State $\beta \gets \min(\beta, value)$
+                    \If{$\beta \leq \alpha$}
+                        \State \textbf{break} \Comment{$\alpha$-Cutoff}
+                    \EndIf
+                \EndFor
+                \State \Return $\beta$
+            \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -189,14 +189,14 @@ Die Eingabeparameter sind der Startknoten $n$, $\alpha$, welcher der beste Wert 
           \begin{enumerate}
               \item Bestimmung des Wertes des Kindknotens $c$ durch rekursiven Selbstaufruf
               \item Aktualisierung von $\alpha$, falls der Wert von $c$ größer ist.
-              \item Falls $\alpha \geq \beta$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da der Gegner einen besseren Zug durch andere Pfadwahl nicht zulassen würde.
+              \item Falls $\alpha \geq \beta$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da der Gegner einen besseren Zug durch andere Pfadwahl nicht zulassen würde. (\labeltext{\emph{$\beta$-Cutoff}}{text:beta-cutoff})
               \item Zurückgeben von $\alpha$, was der maximale Endwert bei optimaler Spielablauf von $n$ ist.
           \end{enumerate}
     \item Wenn der Knoten $n$ ein Minimierungsknoten ist, werden alle Kinderknoten durchlaufen, um den besten Zug für den Gegner zu finden.
           \begin{enumerate}
               \item Bestimmung des Wertes des Kindknotens $c$ durch rekursiven Selbstaufruf
               \item Aktualisierung von $\beta$, falls der Wert von $c$ kleiner ist.
-              \item Falls $\beta \leq \alpha$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da kein besserer Zug für den Gegner möglich ist, als der Zug, welcher schon vom maximierenden Spieler  gefunden wurde.
+              \item Falls $\beta \leq \alpha$ ist, wird das Durchlaufen der Kinderknoten abgebrochen, da kein besserer Zug für den Gegner möglich ist, als der Zug, welcher schon vom maximierenden Spieler  gefunden wurde. (\labeltext{\emph{$\alpha$-Cutoff}}{text:alpha-cutoff})
               \item Zurückgeben von $\beta$, was der minimale Endwert bei optimalem Spielablauf von $n$ ist.
           \end{enumerate}
 \end{enumerate}

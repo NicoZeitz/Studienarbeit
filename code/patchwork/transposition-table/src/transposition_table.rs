@@ -1,4 +1,4 @@
-use std::sync::atomic::AtomicUsize;
+use std::{cell::UnsafeCell, sync::atomic::AtomicUsize};
 
 use patchwork_core::{ActionId, PatchManager, Patchwork, QuiltBoard};
 
@@ -13,14 +13,35 @@ use crate::{Entry, EvaluationType, Size, TranspositionTableStatistics, ZobristHa
 /// The table uses [Lockless Hashing](https://www.chessprogramming.org/Shared_Hash_Table#Lock-less)
 #[derive(Debug)]
 pub struct TranspositionTable {
-    pub entries: Vec<Entry>,
     pub zobrist_hash: ZobristHash,
     pub current_age: AtomicUsize,
     pub statistics: TranspositionTableStatistics,
     fail_soft: bool,
+    entries: UnsafeCell<Vec<Entry>>,
 }
 
+/// SAFETY: Transposition table is safe to share between threads as the underlying entries
+/// are always validated using lockless hashing.
+unsafe impl Sync for TranspositionTable {}
+
 impl TranspositionTable {
+    /// Creates a new empty transposition table.
+    ///
+    /// # Returns
+    ///
+    /// * `TranspositionTable` - The created transposition table.
+    #[inline]
+    #[must_use]
+    pub fn empty() -> Self {
+        Self {
+            entries: UnsafeCell::new(vec![]),
+            zobrist_hash: ZobristHash::new(),
+            current_age: AtomicUsize::new(0),
+            statistics: TranspositionTableStatistics::new(0),
+            fail_soft: false,
+        }
+    }
+
     /// Creates a new transposition table.
     ///
     /// # Arguments
@@ -49,7 +70,7 @@ impl TranspositionTable {
         let entries = size / std::mem::size_of::<Entry>();
 
         Self {
-            entries: vec![Entry::default(); entries],
+            entries: UnsafeCell::new(vec![Entry::default(); entries]),
             zobrist_hash: ZobristHash::new(),
             current_age: AtomicUsize::new(0),
             statistics: TranspositionTableStatistics::new(entries),
@@ -68,11 +89,21 @@ impl TranspositionTable {
     /// `𝒪(𝟣)`
     pub fn size(&self) -> usize {
         debug_assert_eq!(
-            self.entries.len() * std::mem::size_of::<Entry>(),
+            self.entries_len() * std::mem::size_of::<Entry>(),
             self.statistics.capacity.load(std::sync::atomic::Ordering::SeqCst),
             "[TranspositionTable::size] - capacity does not match entries length"
         );
-        std::mem::size_of::<Entry>() * self.entries.len()
+        std::mem::size_of::<Entry>() * self.entries_len()
+    }
+
+    /// Provides access to the underlying entries.
+    /// The entries can change at any time and are potentially invalid.
+    ///
+    /// # Returns
+    ///
+    /// * `&[Entry]` - The reference to the entries of the transposition table.
+    pub fn entries(&self) -> &[Entry] {
+        unsafe { &mut *self.entries.get() }
     }
 
     /// Probes the transposition table for an evaluation.
@@ -92,20 +123,19 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-
     pub fn probe_hash_entry(&self, game: &Patchwork, alpha: i32, beta: i32, depth: usize) -> Option<(ActionId, i32)> {
         self.statistics.increment_accesses();
 
         let hash = self.zobrist_hash.hash(game);
-        let index = (hash % self.entries.len() as u64) as usize;
+        let index = (hash % self.entries_len() as u64) as usize;
 
-        let data = self.entries[index].data;
+        let data = self.index_entries(index).data;
 
         // If key and data were written simultaneously by different search instances with different keys
         // this will result in a mismatch of the comparison, except the rare case of
         // (key collisions / type-1 errors](https://www.chessprogramming.org/Transposition_Table#KeyCollisions)
         let test_key = hash ^ data;
-        if self.entries[index].key != test_key {
+        if self.index_entries(index).key != test_key {
             self.statistics.increment_misses();
             return None;
         }
@@ -195,7 +225,7 @@ impl TranspositionTable {
     /// `𝒪(𝑚 · 𝑛)` where `𝑚` is the amount of symmetries for the game state (bounded by 64) and
     /// `𝑛` is the amount of transformations of the patch the action is for (bounded by 448).
     pub fn store_evaluation_with_symmetries(
-        &mut self,
+        &self,
         game: &Patchwork,
         depth: usize,
         evaluation: i32,
@@ -253,7 +283,7 @@ impl TranspositionTable {
     /// `𝒪(𝟣)`
     #[allow(clippy::if_same_then_else)]
     pub fn store_evaluation(
-        &mut self,
+        &self,
         game: &Patchwork,
         depth: usize,
         evaluation: i32,
@@ -262,12 +292,13 @@ impl TranspositionTable {
     ) {
         let hash = self.zobrist_hash.hash(game);
 
-        let index = (hash % self.entries.len() as u64) as usize;
+        let index = (hash % self.entries_len() as u64) as usize;
+        let entry = self.index_entries(index);
 
         if !self.should_replace(
-            self.entries[index].key,
-            self.entries[index].data,
-            self.entries[index].age,
+            entry.key,
+            entry.data,
+            entry.age,
             depth,
             evaluation_type,
             self.current_age.load(std::sync::atomic::Ordering::Acquire),
@@ -282,7 +313,7 @@ impl TranspositionTable {
         let data = Entry::pack_data(depth, evaluation, evaluation_type, action);
         let key = hash ^ data;
 
-        self.entries[index] = Entry {
+        self.get_entries()[index] = Entry {
             key,
             data,
             age: self.current_age.load(std::sync::atomic::Ordering::Acquire),
@@ -364,7 +395,7 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝟣)`
-    pub fn increment_age(&mut self) {
+    pub fn increment_age(&self) {
         self.current_age.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
     }
 
@@ -399,8 +430,8 @@ impl TranspositionTable {
                 let result = current_game.do_action(action, true);
                 if result.is_err() {
                     let hash = self.zobrist_hash.hash(&game_clone);
-                    let index = (hash % self.entries.len() as u64) as usize;
-                    let data = self.entries[index].data;
+                    let index = (hash % self.entries_len() as u64) as usize;
+                    let data = self.index_entries(index).data;
                     let (table_depth, table_evaluation, table_evaluation_type, _) = Entry::unpack_data(data);
 
                     // TODO: remove prints
@@ -439,11 +470,11 @@ impl TranspositionTable {
     /// `𝒪(𝟣)`
     pub fn probe_pv_move(&self, game: &Patchwork) -> Option<ActionId> {
         let hash = self.zobrist_hash.hash(game);
-        let index = (hash % self.entries.len() as u64) as usize;
-        let data = self.entries[index].data;
+        let index = (hash % self.entries_len() as u64) as usize;
+        let data = self.index_entries(index).data;
         let test_key = hash ^ data;
 
-        if self.entries[index].key != test_key {
+        if self.index_entries(index).key != test_key {
             return None;
         }
 
@@ -458,7 +489,7 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝟣)`
     pub fn clear(&mut self) {
-        self.entries = vec![Entry::default(); self.entries.len()];
+        self.entries = UnsafeCell::new(vec![Entry::default(); self.entries_len()]);
         self.current_age.store(0, std::sync::atomic::Ordering::SeqCst);
 
         self.statistics.reset_statistics();
@@ -472,14 +503,24 @@ impl TranspositionTable {
     ///
     /// `𝒪(𝟣)`
     pub fn reset_statistics(&mut self) {
-        let entries = self
-            .statistics
-            .entries
-            .load(TranspositionTableStatistics::LOAD_ORDERING);
+        let entries = self.statistics.entries.load(TranspositionTableStatistics::LOAD_ORDERING);
         self.statistics.reset_statistics();
-        self.statistics
-            .entries
-            .store(entries, TranspositionTableStatistics::STORE_ORDERING);
+        self.statistics.entries.store(entries, TranspositionTableStatistics::STORE_ORDERING);
+    }
+
+    #[allow(clippy::mut_from_ref)]
+    fn get_entries(&self) -> &mut [Entry] {
+        // SAFETY: This function is only used from within the transposition table and
+        // the entries are always validated using lockless hashing.
+        unsafe { &mut *self.entries.get() }
+    }
+
+    fn entries_len(&self) -> usize {
+        self.get_entries().len()
+    }
+
+    fn index_entries(&self, index: usize) -> Entry {
+        self.get_entries()[index]
     }
 }
 

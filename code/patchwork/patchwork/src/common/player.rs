@@ -1,15 +1,15 @@
-use std::io::Write;
+use std::{io::Write, num::NonZeroUsize};
 
 use anyhow::Error;
 use patchwork_lib::{
     evaluator::{Evaluator, NeuralNetworkEvaluator, ScoreEvaluator, StaticEvaluator, WinLossEvaluator},
     player::{
-        AlphaZeroEndCondition, AlphaZeroOptions, AlphaZeroPlayer, FailingStrategy, GreedyPlayer, HumanPlayer,
-        LazySMPFeature, Logging, MCTSEndCondition, MCTSOptions, MCTSPlayer, MinimaxOptions, MinimaxPlayer, PVSOptions,
-        PVSPlayer, Player, RandomOptions, RandomPlayer, Size, TranspositionTableFeature,
+        AlphaZeroEndCondition, AlphaZeroOptions, AlphaZeroPlayer, DefaultPVSPlayer, FailingStrategy, GreedyPlayer,
+        HumanPlayer, LazySMPFeature, Logging, MCTSEndCondition, MCTSOptions, MCTSPlayer, MinimaxOptions, MinimaxPlayer,
+        PVSOptions, Player, RandomOptions, RandomPlayer, Size, TranspositionTableFeature,
     },
     tree_policy::{PUCTPolicy, PartiallyScoredUCTPolicy, ScoredUCTPolicy, TreePolicy, UCTPolicy},
-    ActionId, ActionOrderer, Patchwork, TableActionOrderer,
+    ActionId, ActionOrderer, EvaluationActionOrderer, Patchwork, TableActionOrderer,
 };
 use regex::Regex;
 use rustyline::{error::ReadlineError, history::FileHistory, Editor};
@@ -61,7 +61,7 @@ pub fn interactive_get_player(
     logging: Logging,
 ) -> anyhow::Result<PlayerType> {
     if let Some(player_name) = player_name {
-        let Ok(player) = get_player(player_name.as_str(), player_position, logging) else {
+        let Ok(player) = get_player(player_name.as_str(), logging) else {
             println!("Could not find player {player_name}. Available players: ");
             for p in get_available_players() {
                 println!("  {p}");
@@ -83,7 +83,7 @@ fn ask_for_player(
     loop {
         // match rl.readline_with_initial("Player 1: ", ("Human", "")) {
         match rl.readline(format!("Player {player_position}: ").as_str()) {
-            Ok(player) => match get_player(&player, 1, logging) {
+            Ok(player) => match get_player(&player, logging) {
                 Ok(player) => return Ok(player),
                 Err(d) => {
                     logging = d;
@@ -101,7 +101,7 @@ fn ask_for_player(
     }
 }
 
-pub fn get_player(name: &str, player_position: usize, logging: Logging) -> Result<PlayerType, Logging> {
+pub fn get_player(name: &str, logging: Logging) -> Result<PlayerType, Logging> {
     let name = name.to_ascii_lowercase();
     let name = name.as_str();
 
@@ -109,33 +109,33 @@ pub fn get_player(name: &str, player_position: usize, logging: Logging) -> Resul
         unimplemented!("[get_player_from_str] Extern upi players are not yet implemented.");
     }
 
-    if let Some(player) = parse_human_player(name, player_position) {
+    if let Some(player) = parse_human_player(name) {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    if let Some(player) = parse_random_player(name, player_position) {
+    if let Some(player) = parse_random_player(name) {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    if let Some(player) = parse_greedy_player(name, player_position) {
+    if let Some(player) = parse_greedy_player(name) {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    if let Some(player) = parse_minimax_player(name, player_position) {
+    if let Some(player) = parse_minimax_player(name) {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    let (player_option, logging) = parse_pvs_player(name, player_position, logging);
+    let (player_option, logging) = parse_pvs_player(name, logging);
     if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    let (player_option, logging) = parse_mcts_player(name, player_position, logging.unwrap());
+    let (player_option, logging) = parse_mcts_player(name, logging.unwrap());
     if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
 
-    let (player_option, logging) = parse_alphazero_player(name, player_position, logging.unwrap());
+    let (player_option, logging) = parse_alphazero_player(name, logging.unwrap());
     if let Some(player) = player_option {
         return Ok(PlayerType::BuildIn(player, name.to_string()));
     }
@@ -154,7 +154,7 @@ pub fn get_available_players() -> Vec<String> {
         "minimax",
         "minimax(depth: uint, patches: uint)",
         "pvs",
-        "pvs(time: float, ord: table, eval: static|win|score|nn, fail: hard|soft, asp: yes|no, lmr: yes|no, lmp: yes|no, ext: yes|no, tt: enabled|disabled, smp: yes|no)",
+        "pvs(time: float, ord: table | eval, eval: static|win|score|nn, fail: hard|soft, asp: yes|no, lmr: yes|no, lmp: yes|no, ext: yes|no, tt: enabled|disabled, smp: yes|no)",
         "mcts",
         "mcts(time: float, iter: uint, tree: reuse|new, root: uint, leaf: uint, policy: uct|partial-score|score|puct, eval: static|win|score|nn)",
         "alphazero",
@@ -165,9 +165,9 @@ pub fn get_available_players() -> Vec<String> {
     .collect()
 }
 
-fn parse_human_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
+fn parse_human_player(mut name: &str) -> Option<Box<dyn Player>> {
     if name == "human" {
-        return Some(Box::new(HumanPlayer::new(format!("Human Player {player_position}"))));
+        name = "human()";
     }
 
     if !name.starts_with("human") {
@@ -180,22 +180,19 @@ fn parse_human_player(name: &str, player_position: usize) -> Option<Box<dyn Play
         .and_then(|o| o.name("options"))
         .map(|o| o.as_str())?;
 
-    let default_name = format!("Human Player {player_position}");
+    let default_name = "HumanPlayer".to_string();
     let name = Regex::new(r"name:\s*(?<name>\w+)")
         .unwrap()
         .captures(passed_options)
         .and_then(|o| o.name("name"))
-        .map_or(default_name.as_str(), |o| o.as_str());
+        .map_or(default_name, |o| format!("HumanPlayer(name: {})", o.as_str()));
 
     Some(Box::new(HumanPlayer::new(name)))
 }
 
-fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
+fn parse_random_player(mut name: &str) -> Option<Box<dyn Player>> {
     if name == "random" {
-        return Some(Box::new(RandomPlayer::new(
-            format!("Random Player {player_position}",),
-            None,
-        )));
+        name = "random()";
     }
 
     if !name.starts_with("random") {
@@ -209,6 +206,7 @@ fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
         .map(|o| o.as_str())?;
 
     let mut options = RandomOptions::default();
+    let mut player_name = "RandomPlayer".to_string();
 
     if let Some(seed) = Regex::new(r"seed:\s*(?<seed>\d+)")
         .unwrap()
@@ -217,22 +215,19 @@ fn parse_random_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
         .and_then(|o| o.as_str().parse().ok())
     {
         options.seed = seed;
+        player_name = format!("RandomPlayer(seed: {seed}");
     }
 
-    Some(Box::new(RandomPlayer::new(
-        format!("Random Player {player_position} (s: {})", options.seed),
-        Some(options),
-    )))
+    Some(Box::new(RandomPlayer::new(player_name, Some(options))))
 }
 
-fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
-    fn create_player<Eval: Evaluator + Default + 'static>(player_position: usize) -> Box<dyn Player> {
-        Box::new(GreedyPlayer::<Eval>::new(format!("Greedy Player {player_position}")))
+fn parse_greedy_player(mut name: &str) -> Option<Box<dyn Player>> {
+    fn create_player<Eval: Evaluator + Default + 'static>(player_name: impl Into<String>) -> Box<dyn Player> {
+        Box::new(GreedyPlayer::<Eval>::new(player_name))
     }
 
     if name == "greedy" {
-        let player: GreedyPlayer = GreedyPlayer::new(format!("Greedy Player {player_position}"));
-        return Some(Box::new(player));
+        name = "greedy()";
     }
 
     if !name.starts_with("greedy") {
@@ -257,22 +252,19 @@ fn parse_greedy_player(name: &str, player_position: usize) -> Option<Box<dyn Pla
     }
 
     let player: Box<dyn Player> = match evaluator {
-        "static" => create_player::<StaticEvaluator>(player_position),
-        "win" => create_player::<WinLossEvaluator>(player_position),
-        "score" => create_player::<ScoreEvaluator>(player_position),
-        "nn" => create_player::<NeuralNetworkEvaluator>(player_position),
+        "static" => create_player::<StaticEvaluator>("GreedyPlayer(eval: static)"),
+        "win" => create_player::<WinLossEvaluator>("GreedyPlayer(eval: win)"),
+        "score" => create_player::<ScoreEvaluator>("GreedyPlayer(eval: score)"),
+        "nn" => create_player::<NeuralNetworkEvaluator>("GreedyPlayer(eval: nn)"),
         _ => unreachable!(),
     };
 
     Some(player)
 }
 
-fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Player>> {
+fn parse_minimax_player(mut name: &str) -> Option<Box<dyn Player>> {
     if name == "minimax" {
-        return Some(Box::new(MinimaxPlayer::new(
-            format!("Minimax Player {player_position}"),
-            None,
-        )));
+        name = "minimax()";
     }
 
     if !name.starts_with("minimax") {
@@ -305,9 +297,9 @@ fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Pl
         options.amount_actions_per_piece = patches;
     }
 
-    Some(Box::new(MinimaxPlayer::new(
+    Some(Box::new(MinimaxPlayer::<StaticEvaluator>::new(
         format!(
-            "Minimax Player {player_position} (d: {}, p: {})",
+            "MinimaxPlayer(depth: {}, patches: {})",
             options.depth, options.amount_actions_per_piece
         ),
         Some(options),
@@ -315,31 +307,16 @@ fn parse_minimax_player(name: &str, player_position: usize) -> Option<Box<dyn Pl
 }
 
 #[allow(clippy::too_many_lines)]
-fn parse_pvs_player(
-    name: &str,
-    player_position: usize,
-    logging: Logging,
-) -> (Option<Box<dyn Player>>, Option<Logging>) {
+fn parse_pvs_player(mut name: &str, logging: Logging) -> (Option<Box<dyn Player>>, Option<Logging>) {
     fn create_player<Orderer: ActionOrderer + Default + 'static, Eval: Evaluator + Default + 'static>(
-        player_position: usize,
+        player_name: impl Into<String>,
         options: PVSOptions,
     ) -> Box<dyn Player> {
-        Box::new(PVSPlayer::<Orderer, Eval>::new(
-            format!("PVS Player {player_position}"),
-            Some(options),
-        ))
+        DefaultPVSPlayer::<Orderer, Eval>::new(player_name, Some(options))
     }
 
     if name == "pvs" {
-        let player: PVSPlayer = PVSPlayer::new(
-            format!("PVS Player {player_position}"),
-            Some(PVSOptions {
-                logging,
-                ..Default::default()
-            }),
-        );
-
-        return (Some(Box::new(player)), None);
+        name = "pvs()";
     }
 
     if !name.starts_with("pvs") {
@@ -465,11 +442,36 @@ fn parse_pvs_player(
         evaluator = eval;
     }
 
+    let player_name = format!(
+        "PVSPlayer(time: {:?}, ord: {orderer}, eval: {evaluator}, fail: {}, asp: {}, lmr: {}, lmp: {}, ext: {}, tt: {}, smp: {})",
+        options.time_limit,
+        options.features.failing_strategy,
+        options.features.aspiration_window,
+        options.features.late_move_reductions,
+        options.features.late_move_pruning,
+        options.features.search_extensions,
+        options.features.transposition_table,
+        options.features.lazy_smp
+    );
+
     let player: Box<dyn Player> = match (orderer, evaluator) {
-        ("table", "static") => create_player::<TableActionOrderer, StaticEvaluator>(player_position, options),
-        ("table", "win") => create_player::<TableActionOrderer, WinLossEvaluator>(player_position, options),
-        ("table", "score") => create_player::<TableActionOrderer, ScoreEvaluator>(player_position, options),
-        ("table", "nn") => create_player::<TableActionOrderer, NeuralNetworkEvaluator>(player_position, options),
+        ("table", "static") => create_player::<TableActionOrderer, StaticEvaluator>(player_name, options),
+        ("table", "win") => create_player::<TableActionOrderer, WinLossEvaluator>(player_name, options),
+        ("table", "score") => create_player::<TableActionOrderer, ScoreEvaluator>(player_name, options),
+        ("table", "nn") => create_player::<TableActionOrderer, NeuralNetworkEvaluator>(player_name, options),
+        ("eval", "static") => {
+            create_player::<EvaluationActionOrderer<StaticEvaluator>, StaticEvaluator>(player_name, options)
+        }
+        ("eval", "win") => {
+            create_player::<EvaluationActionOrderer<WinLossEvaluator>, WinLossEvaluator>(player_name, options)
+        }
+        ("eval", "score") => {
+            create_player::<EvaluationActionOrderer<ScoreEvaluator>, ScoreEvaluator>(player_name, options)
+        }
+        ("eval", "nn") => create_player::<EvaluationActionOrderer<NeuralNetworkEvaluator>, NeuralNetworkEvaluator>(
+            player_name,
+            options,
+        ),
         _ => unreachable!(),
     };
 
@@ -477,31 +479,16 @@ fn parse_pvs_player(
 }
 
 #[allow(clippy::too_many_lines)]
-fn parse_mcts_player(
-    name: &str,
-    player_position: usize,
-    logging: Logging,
-) -> (Option<Box<dyn Player>>, Option<Logging>) {
+fn parse_mcts_player(mut name: &str, logging: Logging) -> (Option<Box<dyn Player>>, Option<Logging>) {
     fn create_player<Policy: TreePolicy + Default + 'static, Eval: Evaluator + Default + 'static>(
-        player_position: usize,
+        player_name: impl Into<String>,
         options: MCTSOptions,
     ) -> Box<dyn Player> {
-        Box::new(MCTSPlayer::<Policy, Eval>::new(
-            format!("MCTS Player {player_position}"),
-            Some(options),
-        ))
+        Box::new(MCTSPlayer::<Policy, Eval>::new(player_name, Some(options)))
     }
 
     if name == "mcts" {
-        let player: MCTSPlayer = MCTSPlayer::new(
-            format!("MCTS Player {player_position}"),
-            Some(MCTSOptions {
-                logging,
-                ..Default::default()
-            }),
-        );
-
-        return (Some(Box::new(player)), None);
+        name = "mcts()";
     }
 
     if !name.starts_with("mcts") {
@@ -583,49 +570,50 @@ fn parse_mcts_player(
         evaluator = eval;
     }
 
+    let player_name = format!(
+        "MCTSPlayer(end: {}, tree: {}, root: {}, leaf: {}, policy: {}, eval: {})",
+        options.end_condition,
+        if options.reuse_tree { "reuse" } else { "new" },
+        options.root_parallelization,
+        options.leaf_parallelization,
+        policy,
+        evaluator
+    );
+
     #[rustfmt::skip]
     let player: Box<dyn Player> = match (policy, evaluator) {
-        ("uct", "static") => create_player::<UCTPolicy, StaticEvaluator>(player_position, options),
-        ("uct", "win") => create_player::<UCTPolicy, WinLossEvaluator>(player_position, options),
-        ("uct", "score") => create_player::<UCTPolicy, ScoreEvaluator>(player_position, options),
-        ("uct", "nn") => create_player::<UCTPolicy, NeuralNetworkEvaluator>(player_position, options),
-        ("partial-score", "static") => create_player::<PartiallyScoredUCTPolicy, StaticEvaluator>(player_position, options),
-        ("partial-score", "win") => create_player::<PartiallyScoredUCTPolicy, WinLossEvaluator>(player_position, options),
-        ("partial-score", "score") => create_player::<PartiallyScoredUCTPolicy, ScoreEvaluator>(player_position, options),
-        ("partial-score", "nn") => create_player::<PartiallyScoredUCTPolicy, NeuralNetworkEvaluator>(player_position, options),
-        ("score", "static") => create_player::<ScoredUCTPolicy, StaticEvaluator>(player_position, options),
-        ("score", "win") => create_player::<ScoredUCTPolicy, WinLossEvaluator>(player_position, options),
-        ("score", "score") => create_player::<ScoredUCTPolicy, ScoreEvaluator>(player_position, options),
-        ("score", "nn") => create_player::<ScoredUCTPolicy, NeuralNetworkEvaluator>(player_position, options),
-        ("puct", "static") => create_player::<PUCTPolicy, StaticEvaluator>(player_position, options),
-        ("puct", "win") => create_player::<PUCTPolicy, WinLossEvaluator>(player_position, options),
-        ("puct", "score") => create_player::<PUCTPolicy, ScoreEvaluator>(player_position, options),
-        ("puct", "nn") => create_player::<PUCTPolicy, NeuralNetworkEvaluator>(player_position, options),
+        ("uct", "static") => create_player::<UCTPolicy, StaticEvaluator>(player_name, options),
+        ("uct", "win") => create_player::<UCTPolicy, WinLossEvaluator>(player_name, options),
+        ("uct", "score") => create_player::<UCTPolicy, ScoreEvaluator>(player_name, options),
+        ("uct", "nn") => create_player::<UCTPolicy, NeuralNetworkEvaluator>(player_name, options),
+        ("partial-score", "static") => create_player::<PartiallyScoredUCTPolicy, StaticEvaluator>(player_name, options),
+        ("partial-score", "win") => create_player::<PartiallyScoredUCTPolicy, WinLossEvaluator>(player_name, options),
+        ("partial-score", "score") => create_player::<PartiallyScoredUCTPolicy, ScoreEvaluator>(player_name, options),
+        ("partial-score", "nn") => create_player::<PartiallyScoredUCTPolicy, NeuralNetworkEvaluator>(player_name, options),
+        ("score", "static") => create_player::<ScoredUCTPolicy, StaticEvaluator>(player_name, options),
+        ("score", "win") => create_player::<ScoredUCTPolicy, WinLossEvaluator>(player_name, options),
+        ("score", "score") => create_player::<ScoredUCTPolicy, ScoreEvaluator>(player_name, options),
+        ("score", "nn") => create_player::<ScoredUCTPolicy, NeuralNetworkEvaluator>(player_name, options),
+        ("puct", "static") => create_player::<PUCTPolicy, StaticEvaluator>(player_name, options),
+        ("puct", "win") => create_player::<PUCTPolicy, WinLossEvaluator>(player_name, options),
+        ("puct", "score") => create_player::<PUCTPolicy, ScoreEvaluator>(player_name, options),
+        ("puct", "nn") => create_player::<PUCTPolicy, NeuralNetworkEvaluator>(player_name, options),
         _ => unreachable!(),
     };
 
     (Some(player), None)
 }
 
-fn parse_alphazero_player(
-    name: &str,
-    player_position: usize,
-    logging: Logging,
-) -> (Option<Box<dyn Player>>, Option<Logging>) {
+fn parse_alphazero_player(mut name: &str, logging: Logging) -> (Option<Box<dyn Player>>, Option<Logging>) {
     fn create_player<Policy: TreePolicy + Default + 'static>(
-        player_position: usize,
+        player_name: &str,
         options: AlphaZeroOptions,
     ) -> Box<dyn Player> {
-        Box::new(AlphaZeroPlayer::<Policy>::new(
-            format!("AlphaZero Player {player_position}").as_str(),
-            Some(options),
-        ))
+        Box::new(AlphaZeroPlayer::<Policy>::new(player_name, Some(options)))
     }
 
     if name == "alphazero" {
-        let player: AlphaZeroPlayer =
-            AlphaZeroPlayer::new(format!("AlphaZero Player {player_position}").as_str(), None);
-        return (Some(Box::new(player)), None);
+        name = "alphazero()";
     }
 
     if !name.starts_with("alphazero") {
@@ -644,8 +632,6 @@ fn parse_alphazero_player(
     let mut options = AlphaZeroOptions::default();
     let mut policy = "puct";
     options.logging = logging;
-
-    // TODO: other options
 
     if let Some(time_limit) = Regex::new(r"time:\s*(?<time>\d+(?:\.\d+)?)")
         .unwrap()
@@ -675,12 +661,38 @@ fn parse_alphazero_player(
         policy = pol;
     }
 
+    if let Some(batch_size) = Regex::new(r"batch_size:\s*(?<batch_size>[123456789]\d*)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("batch_size"))
+        .and_then(|o| o.as_str().parse().ok())
+    {
+        options.batch_size = NonZeroUsize::new(batch_size).unwrap();
+    }
+
+    if let Some(parallelization) = Regex::new(r"smp:\s*(?<smp>[123456789]\d*)")
+        .unwrap()
+        .captures(passed_options)
+        .and_then(|o| o.name("smp"))
+        .and_then(|o| o.as_str().parse().ok())
+    {
+        options.parallelization = NonZeroUsize::new(parallelization).unwrap();
+    }
+
+    let player_name = format!(
+        "AlphaZeroPlayer(end: {}, policy: {policy}, batch_size: {}, parallelization: {})",
+        options.end_condition,
+        options.batch_size,
+        options.parallelization.get()
+    );
+    let player_name = player_name.as_str();
+
     #[rustfmt::skip]
     let player: Box<dyn Player> = match policy {
-        "uct" => create_player::<UCTPolicy>(player_position, options),
-        "partial-score" => create_player::<PartiallyScoredUCTPolicy>(player_position, options),
-        "score" => create_player::<ScoredUCTPolicy>(player_position, options),
-        "puct" => create_player::<PUCTPolicy>(player_position, options),
+        "uct" => create_player::<UCTPolicy>(player_name, options),
+        "partial-score" => create_player::<PartiallyScoredUCTPolicy>(player_name, options),
+        "score" => create_player::<ScoredUCTPolicy>(player_name, options),
+        "puct" => create_player::<PUCTPolicy>(player_name, options),
         _ => unreachable!(),
     };
 
