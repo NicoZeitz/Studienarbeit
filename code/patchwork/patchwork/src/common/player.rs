@@ -571,8 +571,7 @@ fn parse_mcts_player(mut name: &str, logging: Logging) -> (Option<Box<dyn Player
     }
 
     let player_name = format!(
-        "MCTSPlayer(end: {}, tree: {}, root: {}, leaf: {}, policy: {}, eval: {})",
-        options.end_condition,
+        "MCTSPlayer(tree: {}, root: {}, leaf: {}, policy: {}, eval: {})",
         if options.reuse_tree { "reuse" } else { "new" },
         options.root_parallelization,
         options.leaf_parallelization,
@@ -680,8 +679,7 @@ fn parse_alphazero_player(mut name: &str, logging: Logging) -> (Option<Box<dyn P
     }
 
     let player_name = format!(
-        "AlphaZeroPlayer(end: {}, policy: {policy}, batch_size: {}, parallelization: {})",
-        options.end_condition,
+        "AlphaZeroPlayer(policy: {policy}, batch_size: {}, parallelization: {})",
         options.batch_size,
         options.parallelization.get()
     );

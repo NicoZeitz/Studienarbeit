@@ -415,10 +415,10 @@ fn print_progress(
         writeln!(
             output,
             "{} \x1b[0;32m{}\x1b[0;31m{}\x1b[0m {}  ",
-            player_1_name,
+            &player_1_name.chars().take(30).collect::<String>(),
             "█".repeat(progress_player_1),
             "█".repeat(progress_player_2),
-            player_2_name
+            &player_2_name.chars().take(30).collect::<String>(),
         )?;
     }
     output.flush()?;

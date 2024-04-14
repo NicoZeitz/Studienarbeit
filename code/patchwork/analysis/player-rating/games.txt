@@ -4198,3 +4198,4803 @@ Game:
 [Result "0-1"]
 
 
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "RandomPlayer"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Time(10s), tree: reuse, root: 1, leaf: 1, policy: uct, eval: win) [R1|L1|TR]"]
+[Black "GreedyPlayer(eval: static)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(end: Iterations(600), tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "1-0"]
+
+
+Game:
+[White "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win)"]
+[Black "MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score)"]
+[Result "0-1"]
+
+
