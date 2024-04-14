@@ -40,8 +40,9 @@ fn main() {
         let readline = rl.readline("> ");
         match readline {
             Ok(line) => {
-                let _ = rl.add_history_entry(line.as_str());
-                if let Err(error) = match_line(&line, &mut rl) {
+                let line = line.trim();
+                let _ = rl.add_history_entry(line);
+                if let Err(error) = match_line(line, &mut rl) {
                     handle_exit_with_error(error);
                 }
             }

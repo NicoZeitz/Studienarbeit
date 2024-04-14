@@ -83,7 +83,7 @@ fn ask_for_player(
     loop {
         // match rl.readline_with_initial("Player 1: ", ("Human", "")) {
         match rl.readline(format!("Player {player_position}: ").as_str()) {
-            Ok(player) => match get_player(&player, logging) {
+            Ok(player) => match get_player(player.trim(), logging) {
                 Ok(player) => return Ok(player),
                 Err(d) => {
                     logging = d;

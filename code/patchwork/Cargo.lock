@@ -949,14 +949,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
-name = "elo"
-version = "1.0.0"
-dependencies = [
- "regex",
- "skillratings",
-]
-
-[[package]]
 name = "empirical-measurement"
 version = "1.0.0"
 dependencies = [
@@ -2232,6 +2224,14 @@ name = "pin-utils"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+
+[[package]]
+name = "player-rating"
+version = "1.0.0"
+dependencies = [
+ "regex",
+ "skillratings",
+]
 
 [[package]]
 name = "plotters"

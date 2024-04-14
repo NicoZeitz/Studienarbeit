@@ -1,0 +1,16 @@
+cat test.txt | cargo run --bin patchwork
+in Command Prompt (Powershell will add a BOM by default and fail)
+where test.txt contains
+
+```
+compare
+greedy  // player 1 name
+random  // player 2 name
+100     // games to play
+11      // parallelization
+compare // next game
+...
+```
+
+afterwards go to the analysis/player-ratings folder and execute 
+the player-ratings.exe on the command line to see the ratings

@@ -14,6 +14,7 @@ members = [
     "analysis/action-ordering",
     "analysis/empirical-measurement",
     "analysis/max-button-income",
+    "analysis/player-rating",
     "evaluator",
     "evaluator/evaluator-train",
     "greedy-player",
@@ -29,7 +30,7 @@ members = [
     "server",
     "transposition-table",
     "tree-policy",
-    "upi", "analysis/elo",
+    "upi",
 ]
 
 [workspace.lints.rust]

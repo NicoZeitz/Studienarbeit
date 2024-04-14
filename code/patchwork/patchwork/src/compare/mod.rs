@@ -2,6 +2,7 @@ use std::{
     fs::OpenOptions,
     io::{BufWriter, Write},
     panic,
+    path::Path,
     sync::atomic::{self, AtomicI32, AtomicU32, AtomicU64, Ordering},
 };
 
@@ -14,8 +15,6 @@ use patchwork_lib::{
     player::{Logging, Player},
     Patchwork, TerminationType,
 };
-
-// TODO: Bayesian Elo File Output in PNG Support https://www.remi-coulom.fr/Bayesian-Elo/
 
 #[derive(Debug, Parser, Default)]
 #[command(no_binary_name(true))]
@@ -254,6 +253,7 @@ fn compare(
                 break;
             }
             print_progress(
+                &mut std::io::stdout(),
                 iterations_done,
                 iterations,
                 wins_player_1.load(Ordering::Relaxed) as usize,
@@ -287,6 +287,7 @@ fn compare(
     atomic::fence(Ordering::SeqCst);
 
     print_progress(
+        &mut std::io::stdout(),
         iterations_done.load(Ordering::Relaxed) as usize,
         iterations,
         wins_player_1.load(Ordering::Relaxed) as usize,
@@ -305,7 +306,33 @@ fn compare(
         player_2.name(),
     )?;
 
-    let output = OpenOptions::new().append(true).create(true).open("compare.txt")?;
+    let rating_folder = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("analysis").join("player-rating");
+    let display_output = rating_folder.join("output.txt");
+    let games_output = rating_folder.join("games.txt");
+
+    let output = OpenOptions::new().append(true).create(true).open(display_output)?;
+    let mut writer = BufWriter::new(output);
+    print_progress(
+        &mut writer,
+        iterations_done.load(Ordering::Relaxed) as usize,
+        iterations,
+        wins_player_1.load(Ordering::Relaxed) as usize,
+        wins_player_2.load(Ordering::Relaxed) as usize,
+        max_player_1_score.load(Ordering::Relaxed),
+        max_player_2_score.load(Ordering::Relaxed),
+        min_player_1_score.load(Ordering::Relaxed),
+        min_player_2_score.load(Ordering::Relaxed),
+        f64::from(sum_player_1_score.load(Ordering::Relaxed)),
+        f64::from(sum_player_2_score.load(Ordering::Relaxed)),
+        sum_time_player_1.load(Ordering::Relaxed) as f64,
+        sum_time_player_2.load(Ordering::Relaxed) as f64,
+        n_time_player_1.load(Ordering::Relaxed) as f64,
+        n_time_player_2.load(Ordering::Relaxed) as f64,
+        player_1.name(),
+        player_2.name(),
+    )?;
+
+    let output = OpenOptions::new().append(true).create(true).open(games_output)?;
     let mut writer = BufWriter::new(output);
     for game in recorded_games {
         // Write Portable Game Notation (PGN)
@@ -326,6 +353,7 @@ fn compare(
 
 #[allow(clippy::too_many_arguments)]
 fn print_progress(
+    output: &mut impl Write,
     iteration: usize,
     iterations: usize,
     wins_player_1: usize,
@@ -349,9 +377,9 @@ fn print_progress(
     let avg_player_1_time = sum_time_player_1 / turns_player_1;
     let avg_player_2_time = sum_time_player_2 / turns_player_2;
 
-    print!("\x1b[4A\r");
-    println!("Iteration {iteration: >7} / {iterations}");
-    println!(
+    write!(output, "\x1b[4A\r")?;
+    writeln!(output, "Iteration {iteration: >7} / {iterations}")?;
+    writeln!(output,
         "Player 1: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {: >9.3?}, turns: {}]                       ",
         wins_player_1,
         (wins_player_1 as f64 / iteration as f64 * 100.0),
@@ -360,8 +388,8 @@ fn print_progress(
         if min_player_1_score == i32::MAX { 0 } else { min_player_1_score },
         std::time::Duration::from_nanos(avg_player_1_time.round() as u64),
         turns_player_1
-    );
-    println!(
+    )?;
+    writeln!(output,
         "Player 2: {: >7} wins  ({:0>5.2}%) [avg score: {: >6.02}, max score: {: >3}, min score: {: >3}, avg time: {: >9.3?}, turns: {}]                       ",
         wins_player_2,
         (wins_player_2 as f64 / iteration as f64 * 100.0),
@@ -370,27 +398,29 @@ fn print_progress(
         if min_player_2_score == i32::MAX { 0 } else { min_player_2_score },
         std::time::Duration::from_nanos(avg_player_2_time.round() as u64),
         turns_player_2
-    );
+    )?;
     let progress_bar_length = 100;
 
     if iteration == 0 {
-        println!(
+        writeln!(
+            output,
             "{} {} {}  ",
             &player_1_name.chars().take(30).collect::<String>(),
             "█".repeat(progress_bar_length),
             &player_2_name.chars().take(30).collect::<String>(),
-        );
+        )?;
     } else {
         let progress_player_1 = (wins_player_1 as f64 / iteration as f64 * progress_bar_length as f64).round() as usize;
         let progress_player_2 = (progress_bar_length as i32 - progress_player_1 as i32).max(0) as usize;
-        println!(
+        writeln!(
+            output,
             "{} \x1b[0;32m{}\x1b[0;31m{}\x1b[0m {}  ",
             player_1_name,
             "█".repeat(progress_player_1),
             "█".repeat(progress_player_2),
             player_2_name
-        );
+        )?;
     }
-    std::io::stdout().flush()?;
+    output.flush()?;
     Ok(())
 }

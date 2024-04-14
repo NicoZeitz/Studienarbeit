@@ -1,5 +1,5 @@
 [package]
-name = "elo"
+name = "player-rating"
 edition = "2021"
 version.workspace = true
 authors.workspace = true
@@ -7,8 +7,6 @@ description.workspace = true
 repository.workspace = true
 license.workspace = true
 readme.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 regex = "1.10.4"
