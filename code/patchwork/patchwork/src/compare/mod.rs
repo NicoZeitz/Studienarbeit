@@ -115,6 +115,20 @@ fn compare(
         player_1.name(),
         player_2.name()
     );
+    {
+        let rating_folder = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().join("analysis").join("player-rating");
+        let display_output = rating_folder.join("output.txt");
+        let output = OpenOptions::new().append(true).create(true).open(display_output)?;
+        let mut writer = BufWriter::new(output);
+        writeln!(
+            writer,
+            "Comparing {} iterations with {} threads: {} vs. {}",
+            iterations,
+            parallelization,
+            player_1.name(),
+            player_2.name()
+        )?;
+    }
 
     let max_player_1_score = AtomicI32::new(i32::MIN);
     let max_player_2_score = AtomicI32::new(i32::MIN);
