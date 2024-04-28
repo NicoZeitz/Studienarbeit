@@ -165,9 +165,7 @@ impl Patchwork {
             let action = state.get_random_action();
             // no need to switch players every turn
             // EXPECT: ACTIONS ARE ALL VALID SO NO ERRORS CAN OCCUR
-            state
-                .do_action(action, false)
-                .expect("[Patchwork::random_rollout] Action was not valid");
+            state.do_action(action, false).expect("[Patchwork::random_rollout] Action was not valid");
         }
 
         state
@@ -249,10 +247,8 @@ impl Patchwork {
 
                 let current_player_position = self.current_player().position;
 
-                let special_patch_index = self
-                    .time_board
-                    .get_special_patch_before_position(current_player_position)
-                    .expect(
+                let special_patch_index =
+                    self.time_board.get_special_patch_before_position(current_player_position).expect(
                         "[Patchwork::do_action] Expected special patch to be placed before current player position",
                     );
 
@@ -784,9 +780,7 @@ mod tests {
             "1F1DDB9CDCF67F5DCA271B18I15P52 11EFF3FCFEFE7FBF9FFF0B26I6P50 2 N 14/24/6/29/3/13/11/12/15/16/17",
         )
         .unwrap();
-        let action = Action::load_from_notation("P14I0═3‖7↻0↔0P0")
-            .unwrap()
-            .to_surrogate_action_id();
+        let action = Action::load_from_notation("P14I0═3‖7↻0↔0P0").unwrap().to_surrogate_action_id();
 
         let mut new_forced_state = old_state.clone();
         let mut new_normal_state = old_state.clone();
@@ -851,9 +845,7 @@ mod tests {
                 "{: >2}: {} → {}",
                 iteration,
                 state.save_to_notation_with_phantom_state(true).unwrap(),
-                action
-                    .save_to_notation()
-                    .unwrap_or_else(|_| "Not Displayable".to_string())
+                action.save_to_notation().unwrap_or_else(|_| "Not Displayable".to_string())
             );
 
             let cloned_state = state.clone();
@@ -875,10 +867,7 @@ mod tests {
         while let Some(action) = actions.pop_back() {
             let old_state = states.pop_back().unwrap();
 
-            state
-                .undo_action(action, force_swap)
-                .map_err(|e| println!("{e:?}"))
-                .unwrap();
+            state.undo_action(action, force_swap).map_err(|e| println!("{e:?}")).unwrap();
 
             iteration -= 1;
 
@@ -886,9 +875,7 @@ mod tests {
                 old_state,
                 state,
                 "Old State != Restored State, Undo action {:?} failed at iteration {}",
-                action
-                    .save_to_notation()
-                    .unwrap_or_else(|_| "Not Displayable".to_string()),
+                action.save_to_notation().unwrap_or_else(|_| "Not Displayable".to_string()),
                 iteration
             );
         }
@@ -986,10 +973,7 @@ mod history_tests {
 
     fn replay_games(file_name: &str, force_swap: bool) {
         println!("────────────── Replaying games from {file_name} ──────────────");
-        let file = OpenOptions::new()
-            .read(true)
-            .open(format!("history/{file_name}"))
-            .unwrap();
+        let file = OpenOptions::new().read(true).open(format!("history/{file_name}")).unwrap();
 
         let games: Vec<Game> = bincode::deserialize_from(file).unwrap();
         for (i, game) in games.iter().enumerate() {

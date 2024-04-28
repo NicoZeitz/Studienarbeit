@@ -1,0 +1,13 @@
+┌───────────────────────────── MCTS Player ─────────────────────────────┐
+│ Features:            [RP(8), RT]                                      │
+│ Duration:            9.925s                                           │
+│ Total Iterations:    592082                                           │
+│ Iterations:          74767                                            │
+│ Nodes:               74791                                            │
+│ Reused Tree:         true                                             │
+│ Root actions:        110                                              │
+│ Expanded Depth:      4                                                │
+│ Win Percentage:      98.40%                                           │
+│ Principal Variation: P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 │
+│ Min/Max Evaluation:  -1/1                                             │
+└───────────────────────────────────────────────────────────────────────┘

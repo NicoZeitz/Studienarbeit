@@ -101,6 +101,53 @@ Für die Generierung aller Flicken werden funktionsähnliche Prozedurale Makros 
 
 \section{Zugmöglichkeiten}
 
+Die Methode \code{get\_valid\_actions} existiert, um die verschiedenen verfügbaren Aktionen zu generieren. In dieser Methode wird zuerst überprüft, ob sich der Spielzustand in einem Phantomzustand befindet. Ist dies der Fall, wird die Phantom-Aktion zurückgegeben. Weiterhin wird überprüft, ob sich der Spielzustand in \emph{SpecialPatchPlacement} befindet. In diesem Zustand wurde zuletzt ein Spezialflicken eingesammelt und muss nun gelegt werden. Deshalb wird beim Ablageplan des derzeitigen Spielers passende Methode aufgerufen, welche für jedes freie Feld auf dem Ablageplan eine Aktion zurückgibt. In allen anderen Fällen handelt es sich um einen normalen Spielzug, bei dem eine Liste an Aktionen erstellt wird. In dieser Liste befindet sich immer die Lauf-Aktion. Weiterhin wird für jeden der 3 verfügbaren Flicken die Methode \code{get\_valid\_actions\_for\_patch} auf dem Ablageplan des derzeitigen Spielers aufgerufen. Die in \ref{code:quilt-board-valid-actions} dargestellte Methode kann aufgrund der Speicherart des Ablageplans und der transformierten Flicken einfache Bitoperationen durchführen um alle validen Aktionen eines Flicken zu generieren.
+
+\lstinputlisting[
+    label={code:quilt-board-valid-actions},
+    caption={[Aktionsgenerierung auf dem Ablageplan]Generierung der möglichen Aktionen auf dem Ablageplan},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/quilt-board-get-valid-actions-for-patch.rs}
+
+Um die Implementierung dennoch so schnell wie möglich zu gestalten, werden vor dem Methodenaufruf im Ablageplan noch zwei einfache Bedingungen überprüft:
+
+\begin{itemize}
+    \item Sind die Knopfkosten des Flickens höher als der Knopfvorrat des derzeitigen Spielers?
+    \item Sind auf dem Ablageplan des derzeitigen Spielers weniger Felder frei, als der Flicken groß ist?
+\end{itemize}
+
+Beide diese Bedingungen können durch schnellen Zugriff auf bereits vorhandene Attribute implementiert werden. Ist eine dieser Bedingungen falsch, so müssen für den jeweiligen Flicken keine validen Aktionen auf dem Ablageplan generiert werden, \dash es wird Zeit eingespart.
+
+\section{Spielverlauf}
+
+Nachdem nun die grundlegenden Bausteine der Implementierung erklärt sind, kann sich dem Spielverlauf zugewendet werden. Der grundlegende Aufbau eines Spielverlaufes ist in Pseudocode \ref{algo:spielverlauf} dargestellt.
+
+\refstepcounter{lstlisting}
+\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode für einen Spielverlauf}
+
+\begin{algorithm}
+    \caption{Pseudocode für einen Spielverlauf}
+    \label{algo:spielverlauf}
+    \begin{algorithmic}[1]
+        \Function{game\_loop}{}
+        \State $state \gets Patchwork::\Call{get\_initial\_state}$
+        \While{not $state.\Call{is\_terminated}$}
+        \If{current player is 1}
+        \State $action \gets player1.\Call{get\_action}$
+        \Else
+        \State $action \gets player2.\Call{get\_action}$
+        \EndIf
+        \State $state \gets state.\Call{do\_action}{action}$
+        \EndWhile
+        \State $result \gets state.\Call{get\_termination\_result}$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Jedes Spiel beginnt zuerst damit, dass der Startzustand geladen wird. Dabei werden wie vorgegeben jedem Spieler 5 Knöpfe und ein leerer Ablageplan zugewiesen sowie ein Zeitplan im initialen Zustand erstellt. Weiterhin gibt der PatchManager eine zufällig gemischte Liste an allen Flicken zurück. Dann wiederholen sich die Spielzüge bis zum Ende des Spiels. In jedem Spielzug muss der derzeitige Spieler, bei dem es sich sowohl um einen menschlichen Spieler als auch eine Computerengine handeln kann, eine Aktion auswählen. Die Auswahl einer Aktion wird im \hyperref[chapter:erstellung-der-computerspielengines]{5. Kapitel} genauer beschrieben. Anschließend
+
 TODO:
 \cite{2018.CriterionAnalysis}
 \cite{2019.CriterionOutput}
@@ -109,27 +156,27 @@ TODO:
     \centering
     \resizebox{\textwidth}{!}{\begin{tabular}{|l|r|c|l|}
             \hline
-            \multicolumn{1}{|c|}{Methode}                                                 & \multicolumn{1}{|c|}{Zeit}      & $\mathcal{O}$-Kalkül        & \multicolumn{1}{|c|}{Bemerkungen}                  \\ \hline
+            \multicolumn{1}{|c|}{Methode}                                                 & \multicolumn{1}{|c|}{Zeit}      & $\mathcal{O}$-Kalkül        & \multicolumn{1}{|c|}{Bemerkungen}                                  \\ \hline
             \code{game.get\_initial\_state}                                               & $472{,}11\,\acs{ns}$            & $\mathcal{O}\left(n\right)$ & {\footnotesize $n$ aufgrund Mischen der Flicken }                  \\  \hline
             \code{game.get\_valid\_actions}                                               & $8{,}91\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & {\footnotesize $3\times$Aufruf von Ablageplan Aktionen generieren} \\  \hline
-            \code{game.get\_random\_action}                                               & $9{,}22\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & {\footnotesize Aufruf von \code{get\_valid\_actions} }              \\  \hline
-            \code{game.do\_action}                                                        & $280{,}00\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{game.undo\_action}                                                      & $286{,}78\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{game.clone}                                                             & $1{,}36\,\acs{us}$              & $\mathcal{O}\left(1\right)$ & $\hat{=}$ \code{memcpy}                            \\  \hline
-            \code{game.is\_terminated}                                                    & $84{,}79\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            {\footnotesize \code{action\_id.from\_natural\_action\_id} }                  & $42{,}44\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            {\footnotesize \code{natural\_action\_id.from\_surrogate\_action\_id} }       & $45{,}97\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{patch\_manager.get\_patch}                                              & $1{,}87\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{patch\_manager.get\_special\_patch}                                     & $3{,}70\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{patch\_manager.get\_transformation}                                     & $2{,}57\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{player.get\_position}                                                   & $41{,}93\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{quilt\_board.is\_full}                                                  & $561{,}16\,\acs{ps}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            {\footnotesize \code{quilt\_board.is\_special\_tile\_condition\_reached} }    & $523{,}76\,\acs{ps}$            & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{quilt\_board.do\_action}                                                & $46{,}90\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            \code{quilt\_board.undo\_action}                                              & $47{,}18\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
-            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_patch} }          & $1{,}27\,\acs{us}$              & $\mathcal{O}\left(n\right)$ &                                                    \\  \hline
-            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_special\_patch} } & $855{,}98\,\acs{ns}$            & $\mathcal{O}\left(n\right)$ &                                                    \\  \hline
-            Getter\textendash{} und Setter\textendash{}Methoden                           & \multicolumn{1}{|c|}{$\diagup$} & $\mathcal{O}\left(1\right)$ &                                                    \\  \hline
+            \code{game.get\_random\_action}                                               & $9{,}22\,\acs{us}$              & $\mathcal{O}\left(n\right)$ & {\footnotesize Aufruf von \code{get\_valid\_actions} }             \\  \hline
+            \code{game.do\_action}                                                        & $280{,}00\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{game.undo\_action}                                                      & $286{,}78\,\acs{ns}$            & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{game.clone}                                                             & $1{,}36\,\acs{us}$              & $\mathcal{O}\left(1\right)$ & $\hat{=}$ \code{memcpy}                                            \\  \hline
+            \code{game.is\_terminated}                                                    & $84{,}79\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            {\footnotesize \code{action\_id.from\_natural\_action\_id} }                  & $42{,}44\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            {\footnotesize \code{natural\_action\_id.from\_surrogate\_action\_id} }       & $45{,}97\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{patch\_manager.get\_patch}                                              & $1{,}87\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{patch\_manager.get\_special\_patch}                                     & $3{,}70\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{patch\_manager.get\_transformation}                                     & $2{,}57\,\acs{ns}$              & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{player.get\_position}                                                   & $41{,}93\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{quilt\_board.is\_full}                                                  & $561{,}16\,\acs{ps}$            & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.is\_special\_tile\_condition\_reached} }    & $523{,}76\,\acs{ps}$            & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{quilt\_board.do\_action}                                                & $46{,}90\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            \code{quilt\_board.undo\_action}                                              & $47{,}18\,\acs{ns}$             & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_patch} }          & $1{,}27\,\acs{us}$              & $\mathcal{O}\left(n\right)$ &                                                                    \\  \hline
+            {\footnotesize \code{quilt\_board.get\_valid\_actions\_for\_special\_patch} } & $855{,}98\,\acs{ns}$            & $\mathcal{O}\left(n\right)$ &                                                                    \\  \hline
+            Getter\textendash{} und Setter\textendash{}Methoden                           & \multicolumn{1}{|c|}{$\diagup$} & $\mathcal{O}\left(1\right)$ &                                                                    \\  \hline
         \end{tabular}}
     \vspace{3pt}
     \caption[Verfügbaren Methoden der Patchwork\textendash{}Implementierung]{Übersicht über die verfügbaren Methoden in der Patchwork\textendash{}Implementierung}
