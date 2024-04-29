@@ -3,7 +3,7 @@
 
 \input{chapters/AA_optimization}
 
-\section{Minimax-Alogrithmus}
+\section{Minimax-Algorithmus}
 
 \refstepcounter{lstlisting}
 \addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode vom Minimax-Algorithmus}
@@ -92,3 +92,16 @@
     firstline=0,
     basicstyle=\ttfamily\footnotesize
 ]{res/code/performance-benchmark.rs}
+
+\pagebreak
+
+\section{Principal-Variation-Search Spieler}
+\label{anhang:section-quellcode-principal-variation-search-spieler}
+
+\lstinputlisting[
+    label={code:pvs-search},
+    caption={[Suchmethode des PVS-Spielers] Suchmethode des \acs{PVS}-Spielers},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/pvs-search.rs}

@@ -601,7 +601,7 @@ impl<
                         evaluation = -self.principal_variation_search::<ZERO_WINDOW_SEARCH>(
                             game,
                             ply_from_root + 1,
-                            next_depth + extension,
+                            next_depth,
                             -beta,
                             -alpha,
                             num_extensions + extension,
