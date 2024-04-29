@@ -36,7 +36,8 @@
 
 \pagebreak
 
-\section{Ablageplan / QuiltBoard}
+\section{Spielimplementierung}
+\label{anhang:section-quellcode-game-implementation}
 
 \lstinputlisting[
     label={code:quilt-board-special-tile-condition},
@@ -46,6 +47,37 @@
     language=Rust,
     firstline=0,
 ]{res/code/quilt-board-special-tile-condition.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:get-initial-state},
+    caption={\code{Patchwork::get\_initial\_state}},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/get-initial-state.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:get-termination-result},
+    caption={\code{Patchwork::get\_termination\_result}},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/get-termination-result.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:do-action},
+    caption={\code{Patchwork::do\_action}},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+    basicstyle=\ttfamily\scriptsize
+]{res/code/do-action.rs}
 
 \pagebreak
 

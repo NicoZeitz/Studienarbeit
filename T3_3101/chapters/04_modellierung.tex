@@ -146,11 +146,15 @@ Nachdem nun die grundlegenden Bausteine der Implementierung erklärt sind, kann 
     \end{algorithmic}
 \end{algorithm}
 
-Jedes Spiel beginnt zuerst damit, dass der Startzustand geladen wird. Dabei werden wie vorgegeben jedem Spieler 5 Knöpfe und ein leerer Ablageplan zugewiesen sowie ein Zeitplan im initialen Zustand erstellt. Weiterhin gibt der PatchManager eine zufällig gemischte Liste an allen Flicken zurück. Dann wiederholen sich die Spielzüge bis zum Ende des Spiels. In jedem Spielzug muss der derzeitige Spieler, bei dem es sich sowohl um einen menschlichen Spieler als auch eine Computerengine handeln kann, eine Aktion auswählen. Die Auswahl einer Aktion wird im \hyperref[chapter:erstellung-der-computerspielengines]{5. Kapitel} genauer beschrieben. Anschließend
+Jedes Spiel beginnt zuerst damit, dass der Startzustand geladen wird (Anhang \ref{code:get-initial-state}). Dabei werden wie vorgegeben jedem Spieler 5 Knöpfe und ein leerer Ablageplan zugewiesen sowie ein Zeitplan im initialen Zustand erstellt. Weiterhin gibt der PatchManager eine zufällig gemischte Liste an allen Flicken zurück. Dann wiederholen sich die Spielzüge bis zum Ende des Spiels. In jedem Spielzug muss der derzeitige Spieler, bei dem es sich sowohl um einen menschlichen Spieler als auch eine Computerengine handeln kann, eine Aktion auswählen. Die Auswahl einer Aktion wird im \hyperref[chapter:erstellung-der-computerspielengines]{5. Kapitel} genauer beschrieben. Anschließend wird die Action mittels der Methode \code{do\_action} ausgeführt. Die Methode führt dabei einfach die in den Spielregeln beschriebenen Schritte aus (Anhang \ref{code:do-action}). So wird zum Beispiel bei dem Legen eines Flickens der Ablageplan gefüllt, die Knopfkosten vom Knopfvorrat des Spielers abgezogen und der Zeitstein um die Zeitkosten des Flickens vorbewegt. Zuletzt wird noch überprüft, ob eine Knopf-Wertung oder ein Spezialflicken passiert wurde und welcher Spieler als nächstes dran ist. Um ein Flicken auf dem Ablageplan abzulegen, wird einfach die passende Transformation aus dem PatchManager geladen und mittels einer Oder-Bitoperation auf den bestehenden Ablageplan gelegt.
 
-TODO:
-\cite{2018.CriterionAnalysis}
-\cite{2019.CriterionOutput}
+Ein Spiel ist im Endzustand angelangt, wenn $Player\, 1\, Position \ge \max\, Zeitplan\, Position$ $\wedge\, Player\, 2\, Position \ge\, \max\, Zeitplan\, Position$, also beide Spieler im Ziel sind. Nach dem Spiel lässt sich das Ergebnis über \code{get\_termination\_result} Abfragen. Diese Methode gibt neben dem Gewinner noch die Wertungen der beiden Spieler am Spielende zurück (Anhang \ref{code:get-termination-result}). Die Wertung des Gewinners ist immer größer gleich der Wertung des Verlierers, kann aber nach den Spielregeln auch gleich sein.
+
+In Tabelle \ref{tabelle:patchwork-methods} sind abschließend einige der wichtigsten Methoden für die Umsetzung von Patchwork als Computerspiel aufgelistet zusammen mit ihrer Komplexität im $\mathcal{O}$-Kalkül und der durchschnittlich benötigten Zeit.
+
+Die benötigte Zeit der Methoden wurde dabei mittels Benchmarks ermittelt. Für die Benchmarks wird \enquote{Criterion.rs} verwendet. Criterion ist eine extra für Mikro-Benchmarking zwecke entwickelte Bibliothek, welche versucht unter anderem mittels statistischer Methoden möglichst akkurate Ergebnisse zu erzeugen \cite{2018.Criterion}. Dazu werden alle Benchmarks vor der Zeitmessung zuerst mehrmals hintereinander in einer Warmup-Phase ausgeführt und dann so lange wiederholt, bis ein stabiles Ergebnis zustande kommt \cite{2018.CriterionAnalysis}. Aus den aufgenommenen Ausführungen der Benchmarks wird dann neben einem Punktschätzer, der Mittelwert der Ausführungen, auch ein Konfidenzintervall gebildet, in welchem das tatsächliche Ergebnis mit einer 95\%-igen Wahrscheinlichkeit liegt \cite{2019.CriterionOutput}. Um bei den Zeitmessungen dennoch so verlässliche Werte wie möglich zu erhalten, wurden diese bereits sehr stabilen Benchmarks zu verschiedenen Zeitpunkten insgesamt 10-mal wiederholt. In Tabelle \ref{tabelle:patchwork-methods} ist der Median der Punktschätzer all dieser Durchläufe abgebildet. Der Quellcode für die Performance-Benchmarks befindet sich in Anhang \ref{anhang:section-quellcode-performance-benchmarks} und alle Ergebnisse sind in Anhang \ref{anhang:section-tabellen-benchmark} aufgelistet.
+
+Es wurde auch an verschiedenen Stellen versucht, die benötigte Zeit noch weiter zu reduzieren. So gab es neben der jetzigen Implementierung auch eine manuelle \ac{SIMD} Implementierung der \code{get\_valid\_actions\_for\_patch}, bei der mehrere Flickentransformationen in einer Iteration getestet wurden. Jedoch ist die in Codeausschnitt \ref{code:quilt-board-valid-actions} dargestellte Implementierung mittels Standard-Rust Iteratormethodenaufrufen schneller als diese \ac{SIMD} Implementierung. Dies könnte unter anderem daran liegen, dass der Rust Compiler an vielen Stellen solche Funktionen von Iteratoren durch Auto-Vektorisierung selbst in \ac{SIMD} Instruktionen umschreiben kann \cite{2020.RustAutoVectorization}. Generell ist der größte Performancegewinn der Spielimplementierung das Verwenden von Bitoperationen und vorausberechneten \ac{u128} Bitfolgen für die Transformationen und das Legen von Flicken. Im Vergleich dazu war die vorherige Implementierung mit $9\times 9$ Boolean-Arrays und einer dynamischen Berechnung der Platzierungsmöglichkeiten der Flicken zur Laufzeit um den Faktor 10 langsamer. Sicherlich sind aber noch weitere Performanceoptimierungen in der Zukunft möglich.
 
 \begin{table}[H]
     \centering
@@ -182,16 +186,3 @@ TODO:
     \caption[Verfügbaren Methoden der Patchwork\textendash{}Implementierung]{Übersicht über die verfügbaren Methoden in der Patchwork\textendash{}Implementierung}
     \label{tabelle:patchwork-methods}
 \end{table}
-
-TODO: Hier fehlt noch der Anhang + Verweis für Benchmark
-
-\begin{itemize}
-    \item Aufbau des Spielfeldes
-    \item Speicherung der Quilt Boards (Row-Major)
-    \item Speicherung des Time Boards
-    \item Speicherung der Patchliste
-    \item Umsetzung von Zügen
-    \item Effizienzoptimierungen (u128, vorberechnete Transformationen, ...)
-    \item Abstraction von Player Interface
-    \item Evaluator, Move Orderer, Tree Policy (wahrscheinlich später)
-\end{itemize}
