@@ -115,20 +115,19 @@ TODO:
 
 Shannon führt in seinem Wert \emph{\enquote{Programming a Computer for Playing Chess}} eine Klassifizierung der Suchmethoden in einem Spielbaum ein, die zwei Haupttypen umfasst: \textbf{Typ-A} ist eine vollständige Brute-Force-Suche durch den gesamten Baum bis zu einer gewissen Tiefe \cite[S. 8]{1950.ChessShannon}. Bei der \textbf{Typ-B} werden die Äste des Spielbaums so selektiv ausgewählt, dass interessante Teilbäume tiefer durchsucht werden und uninteressante Teilbäume nur reduziert oder gar nicht durchsucht werden.
 
-Im Bereich der Sucherweiterungen werden in Schach normalerweise Aktionen wie das Schlagen von Schachfiguren oder Schachsetzten berücksichtigt \cite[S. 14]{1950.ChessShannon}\cite{2023.StockfishTerminology}\cite{2003.SearchExtensions}. Während solche Aktionen in Patchwork nicht existieren, gibt es zwei Ereignisse, die für einen Spieler besonders interessant sind: Das Erhalten des $7\times 7$ Sonderplättchens sowie das Legen eines Spezialflicken. Bei beiden Aktionen wird die Suche deshalb um eine Tiefenebene erhöht (Anhang \ref{TODO:}). Im Fall der Null-Fenster-Suche werden keine Sucherweiterungen angewendet.
+Im Bereich der Sucherweiterungen werden in Schach normalerweise Aktionen wie das Schlagen von Schachfiguren oder Schachsetzten berücksichtigt \cite[S. 14]{1950.ChessShannon}\cite{2023.StockfishTerminology}\cite{2003.SearchExtensions}. Während solche Aktionen in Patchwork nicht existieren, gibt es zwei Ereignisse, die für einen Spieler besonders interessant sind: Das Erhalten des $7\times 7$ Sonderplättchens sowie das Legen eines Spezialflicken. Bei beiden Aktionen wird die Suche deshalb um eine Tiefenebene erhöht (Anhang \ref{code:pvs-search-extension}). Im Fall der Null-Fenster-Suche werden keine Sucherweiterungen angewendet.
 
 Für Patchwork sind Suchreduktionen im Bereich der Typ-B-Suche jedoch von größerer Bedeutung. Um bei Spielzuständen, die viele Aktionen erlauben und somit einen hohen Verzweigungsfaktor haben, den Suchaufwand möglichst minimal zu halten, sollte ein großer Teil der Aktionen nur reduziert durchsucht oder ganz weggelassen werden. Im \ac{PVS}-Spieler kommen hierzu zwei Konzepte zum Einsatz: \ac{LMR} und \ac{LMP}.
 
-Bei einer Suche mit einigermaßen guter Zugreihenfolge tritt ein \hyperref[text:beta-cutoff]{\emph{Beta-Cutoff}} wenn überhaupt normalerweise am ersten Knoten auf \cite{2007.LMR}. Deswegen werden bei \ac{LMR} nur die ersten Aktionen mit der vollen Tiefe durchsucht und alle weiteren Aktionen werden insofern nichts interessantes passiert mit einer reduzierten Tiefe durchsucht. Als Nachteil muss aber bei einem zu guten Ergebnis über $\alpha$ der Teilbaum mit voller Tiefe erneut durchsucht werden \cite{2007.LMR}. Im \ac{PVS}-Spieler wird die Suche bei allen nicht \ac{PV}-Aktionen ab einer gewissen Tiefe auf ein Drittel der originalen Tiefe reduziert. Vorher wird die Suche immer um eine Ebene reduziert.
-
-
-\cite{2023.StockfishTerminology}
+Bei einer Suche mit einigermaßen guter Zugreihenfolge tritt ein \hyperref[text:beta-cutoff]{\emph{Beta-Cutoff}} wenn überhaupt normalerweise am ersten \acs{PV}-Knoten auf \cite{2007.LMR}. Deswegen werden bei \ac{LMR} nur die ersten Aktionen mit der vollen Tiefe durchsucht und alle weiteren Aktionen werden insofern nichts interessantes passiert mit einer reduzierten Tiefe durchsucht. Als Nachteil muss aber bei einem zu guten Ergebnis über $\alpha$ der Teilbaum mit voller Tiefe erneut durchsucht werden \cite{2007.LMR}. Im \ac{PVS}-Spieler wird die Suche bei allen nicht \ac{PV}-Aktionen ab einer gewissen Tiefe auf ein Drittel der originalen Tiefe reduziert. Vorher wird die Suche immer um eine Ebene reduziert.
 
 TODO:
 
 \subsection{Lazy-SMP}
 
-\ac{SMP}
+Der bisher beschriebene \ac{PVS}-Spieler läuft Single-Threaded ab. Da heutige Computer mehrere Kerne besitzen, sollten diese aber auch verwendet werden. Für Mimimax sowie davon abgeleitete Algorithmen existiert dazu eine einfache aber gleichzeitig effektive Parallelisierungsmöglichkeit.
+
+Bei Lazy \ac{SMP}, werden $n$ parallele unabhängige Suchen gleichzeitig gestartet, welche sich nur die Transposition Table teilen. Dadurch, dass alle bereits durchsuchten Spielzustände in die Transposition Table eingefügt werden, wird sichergestellt, dass Spielzustände, welche zuvor von Threads erkundet wurden, nicht erneut durchsucht werden müssen.
 
 TODO:
 
