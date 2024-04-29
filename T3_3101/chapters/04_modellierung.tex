@@ -33,7 +33,7 @@ Die in Codeausschnitt \ref{code:quilt-board-definition} definierte Struktur \cod
 \vspace*{-5cm}
 \pagebreak
 
-\vspace*{0.75cm}
+\vspace*{0.5cm}
 
 \begin{figure}[!ht]
     \centering
@@ -43,7 +43,7 @@ Die in Codeausschnitt \ref{code:quilt-board-definition} definierte Struktur \cod
     \label{fig:quilt-board-storage}
 \end{figure}
 
-\vspace*{0.15cm}
+\vspace*{0.25cm}
 
 Da der Ablageplan 81 Felder umfasst, muss $2^7=128$ Bit als Ganzzahldatentyp verwendet werden. Dieser wird von Rust nativ unterstützt und für 64 Bit Rechner in mehrere Operationen kompiliert. Die oberen Bits der Zahl sind dabei immer auf 0 gesetzt. Durch die effiziente Speicherung des Ablageplans in einem \ac{u128}, können Abfragen bezüglich Befüllung oder Überlagerung von Feldern in konstanter Zeit durch Bitmasken und Bitoperationen durchgeführt werden. Als Beispiel lässt sich hier die Methode zum Überprüfen der notwendigen Bedingung zur Erhaltung des $7\times 7$ Sonderplättchen anführen (Anhang \ref{code:quilt-board-special-tile-condition}).
 
