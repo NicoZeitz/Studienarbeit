@@ -47,15 +47,14 @@ Besonders anzumerken ist, dass die Flicken und ihre Transformationen, wie sie au
 
 \section{Modellierung der Aktionen}
 
-TODO: Action, ActionId/SurrogateActionId, NaturalActionId
-
+Wie in Codeauschnitt \ref{code:action} zu sehen, sind die Spielzüge von Patchwork für das Computerspiel als \code{enum} umgesetzt, das folgende Aktionen definiert:
 \begin{itemize}
-    \item \code{Action} als Tagged-Union
-    \item \code{ActionId} bzw. \code{SurrogateActionId} als \ac{u32}
-    \item \code{NaturalActionId} als TODO: 2028
+    \item Die Aktion \code{Walking} beschreibt die Laufaktion eines Spielers startend vom Feld \code{starting\_index}.
+    \item Die Aktion \code{PatchPlacement} beschriebt das Platzieren des Flickens mit der einzigartigen \ac{ID} \code{patch\_id}. Der Flicken muss einer der drei durch den aktuellen Spieler auswählbaren Flicken sein und wird unter diesen mit dem \code{patch\_index} identifiziert. In \code{patch\_transformation\_index} wird die jegliche Transformation des Flickens gespeichert, d.h. wie der Flicken gespiegelt, rotiert und wo er auf dem Spielfeld abgelegt wurde. Ob im vorigen Zug Spieler 1 an der Reihe war, wird im Attribut \code{previous\_player\_was\_1} gespeichert.
+    \item Bei der Aktion \code{SpecialPatchPlacement} wird ein Spezialflicken auf das Spielfeld auf die Position des \code{quilt\_board\_index} gelegt.
+    \item Die Aktion \code{Phantom} beschriebt einen Spielzug, indem der Spieler nichts tut. Diese Aktion kann im normalen Spielverlauf nicht vorkommen, wird allerdings für einige \ac{KI}-Gegner benötigt. Dies ist der Fall, in dem ein erzwungener Spielerwechsel stattfinden soll, also für die Situation in der eigentlich Spieler 1 an der Reihe wäre, aber Spieler 2 jetzt ziehen soll.
+    \item Die Aktion \code{Null} kennzeichnet einen illegalen Zug.
 \end{itemize}
-
-TODO:
 
 \lstinputlisting[
     label={code:action},
@@ -64,6 +63,17 @@ TODO:
     language=Rust,
     firstline=0,
 ]{res/code/action.rs}
+
+Um diese Aktionen kompakter zu speichern und die effizientere Verarbeitung mit einem Computer zu ermöglichen, existiert die Struktur \code{ActionId}, welche aus einer Variablen mit dem Typ \ac{u32} besteht. In dieser einen Zahl der folgenden Ganzzahl-Intervalle werden alle Aktionen als Surrogat eindeutig codiert und wie folgt gespeichert:
+\begin{itemize}
+    \item Eine \ac{ID} aus $[0, 52]$ beschreibt die Laufaktion, wobei die Zahl das Startfeld repräsentiert.
+    \item Eine \ac{ID} aus $[53, 133]$ beschreibt den Ablageort eines Spezialflickens, die Zahl repräsentiert die Position mittels Spielfeldindex.
+    \item Eine \ac{ID} aus $[134, 88.837]$ beschreibt eine Flickenplatzierung, wobei dieselben Information wie bei dem vorher beschriebenen \code{Action}-Enum codiert gespeichert werden.
+    \item Die Zahl 88.838 repräsentiert die Phantom-Aktion und folgende Zahl 88.839 die Null-Aktion.
+\end{itemize}
+Während die \code{ActionId} sehr gut für die Spielimplementierung geeignet ist, eignet sich diese aber nicht für die Ausgabe eines neuronalen Netzes. Ein Computernetzwerk sollte immer entscheiden, welche der ersten drei Flicken platziert werden soll. Die \code{ActionId} besitzt für diese Aufgabe durch ihren großen Zahlenbereich von ca. 90.000 Werten zu viel Overhead. So werden unter anderem für die Entscheidung unnötige Informationen wie der genaue Transformationsindex in der \code{ActionId} gespeichert. Aus diesem Grund existiert noch die \code{NaturalActionId}, welche als \ac{u64} Zahl kodiert ist. Hierbei wird mit der \ac{ID} 0 die Laufaktion codiert. Von 1 bis 81 werden die Platzierung für Spezialflicken mit Zeilen- und Spalteninformation codiert. Im Gegensatz zur \code{ActionId} werden danach alle weiteren Aktionen, die Flickenplatzierungen, im Bereich von 82 bis 2.025 codiert, indem nur gespeichert wird, welcher der ersten drei Flicken gewählt wurde und in welcher Reihe, Spalte, Rotation und Orientierung der Flicken platziert wurde. Die letzten beiden Zahlen codieren wieder die Phantom-Aktion (2.026) und die Null-Aktion (2.027).
+
+Die oberen Bits der \code {NaturalActionId} werden zur Speicherung von Informationen verwendet, welche für die Umwandlung zurück in eine \code{ActionId} benötigt werden. Für die Ausgabe eines neuronalen Netzes sind diese Bits nicht relevant.
 
 \section{Flicken}
 
