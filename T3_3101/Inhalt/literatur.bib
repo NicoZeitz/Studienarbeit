@@ -677,6 +677,20 @@
 % TODO: Quelle für statische Evaluierung
 
 % =================================== Principal Variation Search ===================================
+@article{2020.MinimaxTheorem,
+  title     = {Complexity Theory, Game Theory, and Economics: The Barbados Lectures},
+  volume    = {14},
+  issn      = {1551-3068},
+  url       = {http://dx.doi.org/10.1561/0400000085},
+  doi       = {10.1561/0400000085},
+  number    = {3–4},
+  journal   = {Foundations and Trends® in Theoretical Computer Science},
+  publisher = {Now Publishers},
+  author    = {Roughgarden, Tim},
+  year      = {2020},
+  pages     = {222–407}
+}
+
 @misc{2022.MoveOrdering,
   title        = {How move ordering works},
   journal      = {Creating the Rustic chess engine},
@@ -699,20 +713,144 @@
   publisher    = {{Stockfish}},
   editor       = {{Stockfish}},
   institution  = {{Stockfish}},
-  howpublished = {\url{https://github.com/official-stockfish/Stockfish/blob/master/src/search.cpp\#L348-L365}},
+  howpublished = {\url{https://github.com/official-stockfish/Stockfish/blob/0fe64286457549d2f80cd7792088375aaa9bee55/src/search.cpp\#L355-L372}},
   urldate      = {2024-04-13},
   language     = {en}
 }
 
-% Negamax: https://web.archive.org/web/20041020203547/http://www.brucemo.com/compchess/programming/minmax.htm
-% Alpha Beta abhängig von Suchorder: https://web.archive.org/web/20041020181521/http://www.brucemo.com/compchess/programming/alphabeta.htm
-% Principal Variation Search: https://web.archive.org/web/20041021002134/http://www.brucemo.com/compchess/programming/pvs.htm
+@misc{2024.Stockfish,
+  title        = {Stockfish - Open Source Chess Engine},
+  author       = {{The Stockfish developers}},
+  abstract     = {Stockfish is a free and strong UCI chess engine.},
+  address      = {o.O.},
+  year         = {o.J.},
+  publisher    = {{Stockfish}},
+  editor       = {{Stockfish}},
+  institution  = {{Stockfish}},
+  howpublished = {\url{https://stockfishchess.org/}},
+  urldate      = {2024-04-29},
+  language     = {en}
+}
 
-@misc{2003.SearchExtensions,
+@article{1975.AlphaBeta,
+  title    = {An analysis of alpha-beta pruning},
+  journal  = {Artificial Intelligence},
+  volume   = {6},
+  number   = {4},
+  pages    = {293-326},
+  year     = {1975},
+  issn     = {0004-3702},
+  doi      = {https://doi.org/10.1016/0004-3702(75)90019-3},
+  url      = {https://www.sciencedirect.com/science/article/pii/0004370275900193},
+  author   = {Donald E. Knuth and Ronald W. Moore},
+  abstract = {The alpha-beta technique for searching game trees is analyzed, in an attempt to provide some insight into its behavior. The first portion of this paper is an expository presentation of the method together with a proof of its correctness and a historical discussion. The alpha-beta procedure is shown to be optimal in a certain sense, and bounds are obtained for its running time with various kinds of random data.}
+}
+
+@article{1985.ParallelAlphaBeta,
+  author   = {Marsland, T. A. and Popowich, Fred},
+  journal  = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  title    = {Parallel Game-Tree Search},
+  year     = {1985},
+  volume   = {PAMI-7},
+  number   = {4},
+  pages    = {442-452},
+  abstract = {The design issues affecting a parallel implementation of the alpha-beta search algorithm are discussed with emphasis on a tree decomposition scheme that is intended for use on well ordered trees. In particular, the principal variation splitting method has been implemented, and experimental results are presented which show how such refinements as progressive deepening, narrow window searching, and the use of memory tables affect the performance of multiprocessor based chess playing programs. When dealing with parallel processing systems, communication delays are perhaps the greatest source of lost time. Therefore, an implementation of our tree decomposition based algorithm is presented, one that operates with a modest amount of message passing within a network of processors. Since our system has low search overhead, the principal basis for comparison is the communication overhead, which in turn is shown to have two components.},
+  keywords = {Parallel processing;Message passing;Tree graphs;Algorithm design and analysis;Delay systems;Delay effects;Decision trees;Parallel algorithms;Councils;Computer science;Alpha-beta search;chess programs;concurrent programming;graph and tree search strategies;message passing multiprocessors;tree decomposition},
+  doi      = {10.1109/TPAMI.1985.4767683},
+  issn     = {1939-3539},
+  month    = 7
+}
+
+@article{2005.EnhancedForwardPruning,
+  title    = {Enhanced forward pruning},
+  journal  = {Information Sciences},
+  volume   = {175},
+  number   = {4},
+  pages    = {315-329},
+  year     = 2005,
+  note     = {Heuristic Search and Computer Game Playing IV},
+  issn     = {0020-0255},
+  doi      = {https://doi.org/10.1016/j.ins.2004.04.011},
+  author   = {Mark H.M. Winands and H. Jaap {van den Herik} and Jos W.H.M. Uiterwijk and Erik C.D. {van der Werf}},
+  keywords = {search, Multi-cut pruning, Lines of action}
+}
+
+@article{1999.SolutionTreesGameTreeSearch,
+  author  = {Bruin, Arie and Pijls, Wim and Plaat, Aske},
+  year    = {1999},
+  month   = {10},
+  pages   = {},
+  title   = {Solution Trees as a Basis for Game Tree Search},
+  journal = {ICGA journal},
+  doi     = {10.3233/ICG-1994-17404}
+}
+
+@article{1991.SingleAgentGameTreeSearch,
+  title   = {Single-Agent and Game-Tree Search},
+  author  = {T. Anthony Marsland},
+  journal = {J. Int. Comput. Games Assoc.},
+  year    = {1991},
+  volume  = {14},
+  pages   = {149}
+}
+
+@misc{2017.Minimax,
+  title         = {A Minimax Algorithm Better Than Alpha-beta?: No and Yes},
+  author        = {Aske Plaat and Jonathan Schaeffer and Wim Pijls and Arie de Bruin},
+  year          = {2017},
+  eprint        = {1702.03401},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.AI}
+}
+
+% Negamax: https://web.archive.org/web/20041020203547/http://www.brucemo.com/compchess/programming/minmax.htm
+
+@misc{2003.AlphaBetaSearch,
+  title        = {Alpha-Beta Search},
+  author       = {Moreland, Bruce},
+  howpublished = {\url{https://web.archive.org/web/20041020181521/http://www.brucemo.com/compchess/programming/alphabeta.htm}},
+  year         = 2003,
+  month        = 1,
+  day          = 24,
+  address      = {o.O.},
+  language     = {en},
+  urldate      = {2024-04-30},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
+
+@misc{2002.PrincipalVariationSearch,
+  title        = {Principal Variation Search},
+  author       = {Moreland, Bruce},
+  howpublished = {\url{https://web.archive.org/web/20041021002134/http:/www.brucemo.com/compchess/programming/pvs.htm}},
+  year         = 2002,
+  month        = 4,
+  day          = 11,
+  address      = {o.O.},
+  language     = {en},
+  urldate      = {2024-04-30},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
+
+@misc{2003.AlphaBeta,
+  title        = {Alpha-Beta Search},
+  author       = {Moreland, Bruce},
+  howpublished = {\url{https://web.archive.org/web/20041020181521/http:/www.brucemo.com/compchess/programming/alphabeta.htm}},
+  year         = 2003,
+  month        = 1,
+  day          = 24,
+  address      = {o.O.},
+  language     = {en},
+  urldate      = {2024-04-13},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
+
+@misc{2002.SearchExtensions,
   title        = {Search Extensions},
   author       = {Moreland, Bruce},
   howpublished = {\url{https://web.archive.org/web/20071027053058/http://www.brucemo.com/compchess/programming/extensions.htm}},
-  year         = 2003,
+  year         = 2002,
+  month        = 12,
+  day          = 27,
   address      = {o.O.},
   language     = {en},
   urldate      = {2024-04-13},
@@ -724,9 +862,24 @@
   author       = {Moreland, Bruce},
   howpublished = {\url{https://web.archive.org/web/20071031095918/http://www.brucemo.com/compchess/programming/aspiration.htm}},
   year         = 2003,
+  month        = 1,
+  day          = 24,
   address      = {o.O.},
   language     = {en},
   urldate      = {2024-04-13},
+  note         = {Archiviert durch \emph{Wayback Machine}}
+}
+
+@misc{2003.SearchInstability,
+  title        = {Search Instability},
+  author       = {Moreland, Bruce},
+  howpublished = {\url{https://web.archive.org/web/20071031095928/http://www.brucemo.com/compchess/programming/instability.htm}},
+  year         = 2003,
+  month        = 1,
+  day          = 24,
+  address      = {o.O.},
+  language     = {en},
+  urldate      = {2024-04-26},
   note         = {Archiviert durch \emph{Wayback Machine}}
 }
 
