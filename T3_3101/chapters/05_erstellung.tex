@@ -1,12 +1,12 @@
 \chapter{Erstellung der Computerspielengines}
 \label{chapter:erstellung-der-computerspielengines}
 
-Nachdem Patchwork auf unterschiedlichste weißen analysiert wurde und das Brettspiel als Computerprogramm umgesetzt wurde, werden nachfolgend verschiedene Computerspielengines für das Spiel implementiert.
+Nachdem Patchwork auf unterschiedlichste Aspekte analysiert und das Brettspiel als Computerprogramm umgesetzt wurde, werden nachfolgend die verschiedenen Computerspielengines für das Spiel implementiert.
 
 \section{Ansatz A: Zufallsauswahl der Spielzüge}
 \label{section:erstellung-ansatz-a}
 
-TODO:
+Um eine Computerspielengine zu erstellen, muss das Trait \code{Player}, welcher in Codeausschnitt \ref{code:player-trait} zu sehen ist, von der Engine implementiert werden. Dafür müssen die zwei Methoden \code{name()} und \code{get\_action()}. Die erste Methode gibt den Namen der Computerspielengine zurück, um sie während des Spiels identifizieren zu können, während die zweite Methode die Aktion als \code{PlayerResult<Action>} zurückgibt, die der Spieler machen möchte und benötigt als Eingabe den aktuellen Zustand des Spiels.
 
 \lstinputlisting[
     label={code:player-trait},
@@ -16,7 +16,7 @@ TODO:
     firstline=0,
 ]{res/code/player-trait.rs}
 
-TODO:
+Die einfachste Computerspielengine ist der \code{RandomPlayer}, in Codeauschnitt \ref{code:random-player} zu sehen, welcher einen Spieler repräsentiert, der zufällige Züge macht. Zur Auswahl der Züge verwendet die Engine den Zufallsgenerator Xoshiro256++, der einen der möglichen Spielzüge im aktuellen Spielzustand \code{game} auswählt, die durch den Aufruf der Methode \code{game.get\_valid\_actions()} bereitgestellt werden. Diese Computergegner ist gut für Vergleichszwecke im späteren Kapitel \nameref{chapter:evaluation} geeignet, da die zufälligen Züge eine Baseline gegen die komplexeren, strategischen Entscheidungen der anderen Computerspielengines bildet.
 
 \lstinputlisting[
     label={code:random-player},
