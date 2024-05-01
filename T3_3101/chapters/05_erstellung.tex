@@ -210,29 +210,117 @@ Generell sie die Werte der Aktionen nicht perfekt. So müssten die Werte symmetr
 
 \subsection{Transposition Table und Zobrist Hashing}
 
-TODO:
+Für die \ac{PVS} Suche müssen die \ac{PV} Aktionen für jeden Spielzustand gespeichert werden. Nur so kann in der nächsten Iteration diese wieder als erstes durchsucht werden. Weiterhin ist es sinnvoll alle bereits evaluierten Zustände während der Suche zwischenzuspeichern, sodass falls dieser Zustand in einem anderem Teilbaum erneut auftritt, einfach der Wert zurückgegeben werden kann, anstatt erneut den gesamten Teilbaum zu evaluieren. Die Transposition Table dient als Lösung für beide diese Anwendungsfälle.
 
-\labeltext{\emph{Zobrist Hash}}{text:zobrist-hash}
+Die in Patchwork verwendete Transposition Table besteht aus 2 Feldern. Zuerst wird das Alter der Transposition Table gespeichert. Dieses wird im jedem \hyperref[text:ply]{\emph{Ply}} inkrementiert, sodass alte Einträge der Tabelle erkannt und ignoriert werden können. Weiterhin gibt es eine $250\acsp{MiB}$ große Liste an Tabelleneinträgen. Um jeden Spielzustand einen Eintrag innerhalb der Liste zuzuordnen, muss eine Hashfunktion verwendet. Hierzu wird typischerweise ein \labeltext{\emph{Zobrist Hash}}{text:zobrist-hash} verwendet. Existiert eine Reihe an Elementen, wobei jedes Element nur endliche Menge an Zuständen annehmen kann, so kann jedem Element eine gleichverteilte Zufallszahl zugeordnet werden. Ein \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} dieser Elemente wird gebildet, indem alle Elemente mittels \ac{XOR} kombiniert werden. \cite[S. 3]{1990.ZobristHash}. Der Vorteil bei der Verwendung von \hyperref[text:zobrist-hash]{\emph{Zobrist Hashen}}  liegt in der schnellen Laufzeitperformance, da nur Indexzugriffe und \ac{XOR}-Bitoperationen verwendet werden.
+
+\vspace*{-0.09cm}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/zobrist-hash.pdf}
+    \vspace*{-0.35cm}
+    \caption{Zobrist Hash}
+    \label{fig:zobrist-hash}
+\end{figure}
+
+\vspace*{-0.2cm}
+
+Der \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} in Patchwork setzt sich dabei aus den in Abbildung \ref{fig:zobrist-hash} gezeigten Bestandteilen zusammen. Da für alle diese Bestandteile aus dem \nameref{section:spieltheoretische-analyse} Kapitel Ober- und Untergrenzen bekannt sind, kann einfach im Voraus ein Array der benötigten Länge mit zufälligen Zahlen erstellt werden. Für den \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} wird dann einfach mit den Wert aus dem Spielzustand, \zB das aktuelle Knopfeinkommen, dieses Array indexiert. Gleichermaßen werden alle auf dem Ablageplan gefüllten Felder, die verfügbaren Flicken indexiert bei \ac{ID} und Distanz zur Spielfigur sowie alle anderen Bestandteile mit in den Zobrist-Hash aufgenommen.
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|l|}
         \hline
-        Eintrag & Erläuterung                                                                                                                    \\ \hline
+        Eintrag & Erläuterung                                                                                                      \\ \hline
         Key     & \ac{u64} mit \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} des Spielzustandes \emph{\acs{XOR}} das Data Feld \\ \hline
-        Data    & Die Daten des Eintrags, codiert als ein \ac{u64} von \acs{MSB} nach \ac{LSB} mit:                                        \\
-                & \tabitem Evaluation (37 Bits): Die Evaluation des Spielzustandes                                                                                     \\
-                & \tabitem Beste Aktion (17 Bits): Die beste Aktion ausgehend vom Spielzustand                                                                                   \\
-                & \tabitem Suchtiefe (8 Bits): Die Suchtiefe, bei der der Eintrag eingefügt wurde                                                                                      \\
-                & \tabitem Typ der Evaluation (2 Bits): untere Grenze, obere Grenze oder exakt                                             \\
-        Age     & Das Alter des Eintrags.                                                                                                  \\ \hline
+        Data    & Die Daten des Eintrags, codiert als ein \ac{u64} von \acs{MSB} nach \ac{LSB} mit:                                \\
+                & \tabitem Evaluation (37 Bits): Die Evaluation des Spielzustandes                                                 \\
+                & \tabitem Beste Aktion (17 Bits): Die beste Aktion ausgehend vom Spielzustand                                     \\
+                & \tabitem Suchtiefe (8 Bits): Die Suchtiefe, bei der der Eintrag eingefügt wurde                                  \\
+                & \tabitem Typ der Evaluation (2 Bits): untere Grenze, obere Grenze oder exakt                                     \\ \hline
+        Age     & Das Alter des Eintrags.                                                                                          \\ \hline
     \end{tabular}
     \vspace{3pt}
     \caption{Transposition Table Eintrag}
     \label{tabelle:transposition-table-entry}
 \end{table}
 
-TODO:
+\vspace*{-0.2cm}
+
+Ein Eintrag der Transposition Table ist in Tabelle \ref{tabelle:transposition-table-entry} darstellt. Zuerst wird der Schlüssel (Key) des Spielzustandes gespeichert, um mögliche Hashkollisionen zu erkennen, dann folgen alle relevanten Daten und zuletzt noch das Alter der Transposition Table zum Zeitpunkt des Einfügens, um alte Einträge zu erkennen und zu ignorieren. Die Daten sind dabei in einem besonderen Format gespeichert. Zuerst wird nicht der tatsächliche \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} als Key, sondern eine \ac{XOR}-Kombination mit den Daten als Schlüssel gespeichert. Weiterhin sind alle Daten in einen \ac{u64} codiert, anstatt diese in einzelnen Feldern zu speichern. All diese Modifikationen dienen dazu, Lockless Hashing zu unterstützen. Die \ac{PVS} Suche soll auch parallel Ablaufen können. Dazu muss die Transposition Table über mehrere Threads geteilt werden. Die geteilte Transposition Table sollte dabei möglichst ohne Locks auskommen, da das häufige Sperren und Freigeben einzelner Einträge ein Performanceoverhead ist.
+
+\begin{lstlisting}[
+    label={code:lockless-hashing},
+    caption={Einfügen und Lookup bei Lockless Hashing},
+    captionpos=b,
+    language=Rust,
+    escapeinside={<*}{*>},
+    numbers=none]
+index = zobrist_hash % TABLE_SIZE;
+
+// Einfügen
+tt_table[index].<*key*>  = zobrist_hash ^ data;
+tt_table[index].data = data;
+
+// Lookup
+if (tt_table[index].<*key*> ^ tt_table[index].data == zobrist_hash) {
+   // Eintrag gefunden
+}
+\end{lstlisting}
+
+Lockless Hashing umgeht das Problem von Synchronisation, indem ein Eintrag wie in Quellcode \ref{code:lockless-hashing} eingefügt wird. So kann bei der Lookup-Operation einfach der Key mit dem Data Feld durch ein \ac{XOR} zurück in den \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} umgewandelt werden. Dadurch, dass in der Lookup-Operation beide Felder verwendet werden, kann so sichergestellt werden, dass Key und Data auch tatsächlich übereinstimmen. Sollte ein anderer Thread gleichzeitig auch nur eines der Felder ändern, so würde die Überprüfung fehlschlagen. Aus diesem Grund können mehrere Threads gleichzeitig den Eintrag lesen und schreiben, ohne dass ein korrupter Zustand aus der Transposition Table ausgelesen werden kann. \cite{2002.LocklessTT}
+
+Das Daten Feld beinhaltet die Evaluation des Spielzustandes, sodass diese in einem anderem Teilbaum wiederverwendet werden kann. Weiterhin wird die beste von diesem Zustand ausgehende Aktion, also die \ac{PV}-Aktion gespeichert. Falls diese nicht bekannt ist, werden die Bits der \emph{Null}-ActionId gespeichert. Die Suchtiefe ist wie das Alter eines Eintrags für Lookup und Ersetzung von Einträgen relevant. Weiterhin wird ein EvaluationTyp gespeichert, welcher einer von drei möglichen Zuständen annehmen kann:
+
+\begin{itemize}
+    \item Exakt: Der gespeicherte Spielzustand ist ein \hyperref[text:pv-node]{\acs{PV}-Knoten} und die Evaluation ist somit exakt.
+    \item Untere Grenze / Fail-High: Der Knoten ist ein \hyperref[text:cut-node]{Cut-Knoten} und somit ist die gespeicherte Evaluation nur eine untere Grenze für den tatsächlichen Wert des Spielzustands.
+    \item Obere Grenze / Fail-Low: Der Knoten ist ein \hyperref[text:all-node]{All-Knoten}. Die Evaluation ist somit nur eine untere Grenze und der tatsächliche Wert kann noch niedriger sein.
+\end{itemize}
+
+Für das Einfügen neuer Einträge in die Transposition Table müssen die in Pseudocode \ref{algo:transposition-table-overwrite} dargestellte Bedingungen erfüllt sein. So können leere Einträge oder Einträge aus einem vorherigen \hyperref[text:ply]{\emph{Ply}} immer überschrieben werden. Weiterhin werden alte Einträge überschrieben, falls der neu einzufügende Eintrag für die Evaluation tiefer gesucht hat als der alte Eintrag. Falls also ein bestehender Eintrag existiert, welcher nach der Spielposition noch 3 weitere Ebenen für die Evaluation gesucht hat, wird dieser durch einen neuen Eintrag mit Suchtiefe 4 oder mehr überschrieben. Weiterhin werden Einträge, die nur eine obere oder untere Grenze besitzen durch exakte Evaluationen ausgetauscht.
+
+\pagebreak
+
+\refstepcounter{lstlisting}
+\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode: Aspiration Windows}
+
+\begin{algorithm}[!ht]
+    \caption[Pseudocode: Transposition Table Überschreiben]{Pseudocode: Logik zum Überschreiben von Transposition Table Einträgen}
+    \label{algo:transposition-table-overwrite}
+
+    \begin{algorithmic}[1]
+        \State \textbf{if} entry.key == 0 \textbf{then}
+        \State \hspace*{\algorithmicindent} \Return \emph{Überschreiben} \Comment{Eintrag ist leer}
+        \State \textbf{if} entry.age < current\_age \textbf{then}
+        \State \hspace*{\algorithmicindent} \Return \emph{Überschreiben} \Comment{Alte Einträge überschreiben}
+        \State \textbf{if} entry.data.depth <= new\_depth \textbf{then}
+        \State \hspace*{\algorithmicindent} \Return \emph{Überschreiben} \Comment{Einträge mit geringerer Tiefe überschreiben}
+        \State \textbf{if} entry.data.depth == new\_depth
+        \State \hskip1em \textbf{and} entry.age == current\_age
+        \State \hskip1em \textbf{and} entry.data.evaluation\_type != EvaluationType::Exact
+        \State \hskip1em \textbf{and} new\_evaluation\_type == EvaluationTyp::Exact \textbf{then}
+        \State \hspace*{\algorithmicindent} \Return \emph{Überschreiben} \Comment{Nicht \acs{PV} Einträge überschreiben}
+        \State \Return \emph{Nicht Überschreiben}
+    \end{algorithmic}
+\end{algorithm}
+
+Um den in Abschnitt \ref{subsection:zustandsraum-komplexitaet} aufgezeigten großen Zustandsraum wenigstens teilweise entgegenwirken, wird das Einfügen eines Eintrags noch erweitert. Wenn eine Spielposition erreichbar ist, so ist die gleiche Spielposition mit gedrehten und gespiegelten Ablageplänen beider Spieler ebenso erreichbar und besitzt die gleiche Evaluation. Aus diesem Grund werden all diese symmetrischen Spielpositionen gleichzeitig mit dem originalen Eintrag in die Transposition Table eingefügt.
+
+Um einen Eintrag in der Transposition Table nachzuschauen (Quellcode \ref{code:probe-hash-entry}), muss einfach mit der zuvor vorgestellten Routine überprüft werden, ob der Transposition Table Eintrag mit dem Spielstand übereinstimmt. Ist dies der Fall, muss die Suchtiefe des Eintrags größer gleich der noch zu durchsuchenden Tiefe sein. Es macht beispielsweise keinen Sinn einen Transposition Eintrag zu verwenden, der nur noch eine ebene weitergesucht hat, wenn die eigene Suchfunktion noch mindestens 2 Ebenen tiefer suchen muss. Weiterhin muss beim Lookup auch der EvaluationTyp beachtet werden. Ist der EvaluationTyp ein exakter Wert, kann dieser eingeschränkt auf das $\alpha$-$\beta$-Fenster zurückgegeben werden. Ist nur eine obere Grenze für die Evaluation gespeichert, kann diese nur zurückgegeben werden, wenn sich diese obere Grenze auch unterhalb des $\alpha$-$\beta$-Fensters, also unterhalb von $\alpha$ befindet. Analog verhält es sich mit einer unteren Grenze. Soll nur die \ac{PV}-Aktion aus der Transposition Table ausgelesen werden, sind alle Nebenbedingungen egal. Jedoch kann es dabei vorkommen, dass auch die invalide \emph{Null}-Aktion zurückgegeben wird, da die beste Aktion nicht bekannt ist.
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:probe-hash-entry},
+    caption={Lookup in der Transposition Table},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/probe-hash-entry.rs}
+
+\pagebreak
 
 \subsection{Aspiration Windows}
 
@@ -271,9 +359,7 @@ Da das initiale Fenster deutlich schmaler ist, können während der Suche im Nor
     \end{algorithmic}
 \end{algorithm}
 
-Wird ein Wert unterhalb von $\alpha$ zurückgegeben, handelt es sich um einen \emph{Fail-Low}, ist der Wert oberhalb von $\beta$, ist es ein \emph{Fail-High} Fall. Um im solch einen Failing-Fall möglichst effizient zu agieren, wird das Aspiration Window oftmals mit einem exponentiellen Backoff breiter gemacht, bis der Wert der Suche innerhalb des Fensters liegt. Die im Pseudocode \ref{algo:aspiration-window} verwendeten Werte für die Anpassung von $\alpha$, $\beta$ und $\Delta$ entsprechen dabei den Werten, welche in Stockfish verwendet werden, was eine der besten Schach-Computerspielengines ist \cite{2024.StockfishBackoff} \cite{2024.Stockfish}. Aus diesem Grund verwendet der \ac{PVS}-Spieler den gleichen exponentiellen Backoff.
-
-Bei einer einfachen Mimimax-Suche lässt sich in einem Fail-Fail die Fenstergrenze, welche nicht fehlgeschlagen ist, immer auf die andere Grenze setzten. Kommt es also zu einem Fail-High bei der Suche mit Aspiration Window $\left[\alpha, \beta\right]$, so könnte die nächste Suche mit $\left[\beta, \beta + \Delta\right]$ stattfinden. Bei der Suche des \ac{PVS}-Spielers ist dies aufgrund von Suchinstabilität nicht der Fall. Suchinstabilität heißt, dass eine wiederholte Suche eines Spielzustands nicht immer die gleiche Evaluation zurückgeben muss \cite{2003.SearchInstability}. Diese Suchinstabilität kann bereits durch die Verwendung der gespeicherten Evaluationen aus der Transposition Table entstehen \cite{2003.SearchInstability}. Im Falle der Aspiration Windows bedeutet dies, dass eine Suche, die vorher mit Fail-High abgebrochen wurde, in der darauffolgenden Suche einen Fail-Low erzeugen kann. Deshalb wird der Wert von $\beta$ im Pseudocode zum Beispiel nur in die Mitte des Fensters verschoben.
+Wird ein Wert unterhalb von $\alpha$ zurückgegeben, handelt es sich um einen \emph{Fail-Low}, ist der Wert oberhalb von $\beta$, ist es ein \emph{Fail-High} Fall. Um im solch einen Failing-Fall möglichst effizient zu agieren, wird das Aspiration Window oftmals mit einem exponentiellen Backoff breiter gemacht, bis der Wert der Suche innerhalb des Fensters liegt. Die im Pseudocode \ref{algo:aspiration-window} verwendeten Werte für die Anpassung von $\alpha$, $\beta$ und $\Delta$ entsprechen dabei den Werten, welche in Stockfish verwendet werden, was eine der besten Schach-Computerspielengines ist \cite{2024.StockfishBackoff} \cite{2024.Stockfish}. Aus diesem Grund verwendet der \ac{PVS}-Spieler den gleichen exponentiellen Backoff. Bei einer einfachen Mimimax-Suche lässt sich in einem Fail-Fail die Fenstergrenze, welche nicht fehlgeschlagen ist, immer auf die andere Grenze setzten. Kommt es also zu einem Fail-High bei der Suche mit Aspiration Window $\left[\alpha, \beta\right]$, so könnte die nächste Suche mit $\left[\beta, \beta + \Delta\right]$ stattfinden. Bei der Suche des \ac{PVS}-Spielers ist dies aufgrund von Suchinstabilität nicht der Fall. Suchinstabilität heißt, dass eine wiederholte Suche eines Spielzustands nicht immer die gleiche Evaluation zurückgeben muss \cite{2003.SearchInstability}. Diese Suchinstabilität kann bereits durch die Verwendung der gespeicherten Evaluationen aus der Transposition Table entstehen \cite{2003.SearchInstability}. Im Falle der Aspiration Windows bedeutet dies, dass eine Suche, die vorher mit Fail-High abgebrochen wurde, in der darauffolgenden Suche einen Fail-Low erzeugen kann. Deshalb wird der Wert von $\beta$ im Pseudocode zum Beispiel nur in die Mitte des Fensters verschoben.
 
 \subsection{Suchselektivität}
 
@@ -281,19 +367,24 @@ Shannon führt in seinem Wert \emph{\enquote{Programming a Computer for Playing 
 
 Im Bereich der Sucherweiterungen werden in Schach normalerweise Aktionen wie das Schlagen von Schachfiguren oder Schachsetzten berücksichtigt \cite[S. 14]{1950.ChessShannon}\cite{2023.StockfishTerminology}\cite{2002.SearchExtensions}. Während solche Aktionen in Patchwork nicht existieren, gibt es zwei Ereignisse, die für einen Spieler besonders interessant sind: Das Erhalten des $7\times 7$ Sonderplättchens sowie das Legen eines Spezialflicken. Bei beiden Aktionen wird die Suche deshalb um eine Tiefenebene erhöht (Anhang \ref{code:pvs-search-extension}). Im Fall der Null-Fenster-Suche werden keine Sucherweiterungen angewendet.
 
+\vspace*{-5cm}
+
+\pagebreak
+
 Für Patchwork sind Suchreduktionen im Bereich der Typ-B-Suche jedoch von größerer Bedeutung. Um bei Spielzuständen, die viele Aktionen erlauben und somit einen hohen Verzweigungsfaktor haben, den Suchaufwand möglichst minimal zu halten, sollte ein großer Teil der Aktionen nur reduziert durchsucht oder ganz weggelassen werden. Im \ac{PVS}-Spieler kommen hierzu zwei Konzepte zum Einsatz: \ac{LMR} und \ac{LMP}.
 
 Bei einer Suche mit einigermaßen guter Zugreihenfolge tritt ein \hyperref[text:beta-cutoff]{\emph{Beta-Cutoff}} wenn überhaupt normalerweise am ersten \hyperref[text:pv-node]{\emph{\acs{PV}-Knoten}} auf \cite{2007.LMR}. Deswegen werden bei \ac{LMR} nur die ersten Aktionen mit der vollen Tiefe durchsucht und alle weiteren Aktionen werden insofern nichts interessantes passiert mit einer reduzierten Tiefe durchsucht. Als Nachteil muss aber bei einem zu guten Ergebnis über $\alpha$ der Teilbaum mit voller Tiefe erneut durchsucht werden \cite{2007.LMR}. Im \ac{PVS}-Spieler wird die Suche bei allen nicht \ac{PV}-Aktionen ab einer gewissen Tiefe auf ein Drittel der originalen Tiefe reduziert. Vorher wird die Suche immer um eine Ebene reduziert.
 
 Bei \ac{LMP} wird ein noch drastischere Ansatz verfolgt, indem bestimmte Teilbäume gar nicht mehr anstatt nur reduziert durchsucht werden \cite{2023.StockfishTerminology}. Dabei handelt es sich um einen Tradeoff zwischen Suchgenauigkeit bzw. -stabilität und Zeit. Je mehr Aktionen \emph{geprunt}, also weggelassen werden, desto tiefer kommt die Suche. Gleichzeitig könnten aber so Teilbäume übersehen werden, welche einen besseren Spielverlauf beinhalten. Um die sehr große Anzahl an Aktionen, die bei einem Spielzustand auftreten können (1345) zu reduzieren, werden sehr viele Aktionen im \ac{PVS}-Spieler geprunt. Während in der ersten Ebene immer alle Aktionen betrachtet werden, wird in den späteren Tiefen immer nur sichergestellt, dass mindestens 3 Platzierungsmöglichkeiten für jeden Flicken überprüft werden. Die Auswahl dieser Aktionen basiert dabei auf der Bewertung der Aktionen-Anordnung. Die spezifischen Pruning-Werte wurden ermittelt, indem verschiedene Konfigurationen für die Starttiefe und die Anzahl an Platzierungsmöglichkeiten pro Flicken mit dem klassischen Alpha-Beta-Minimax-Algorithmus (wie in \ref{algo:minimax-alpha-beta}) gegeneinander spielten. Dabei wurden die besten Werte für den \ac{PVS}-Spieler übernommen.
 
+\pagebreak
+
 \subsection{Lazy-SMP}
 
 Der bisher beschriebene \ac{PVS}-Spieler läuft Single-Threaded ab. Da heutige Computer mehrere Kerne besitzen, sollten diese aber auch verwendet werden. Für Mimimax sowie davon abgeleitete Algorithmen existiert dazu eine einfache aber gleichzeitig effektive Parallelisierungsmöglichkeit.
 
-Bei Lazy \ac{SMP}, werden $n$ parallele unabhängige Suchen gleichzeitig gestartet, welche sich nur die Transposition Table teilen. Dadurch, dass alle bereits durchsuchten Spielzustände in die Transposition Table eingefügt werden, wird sichergestellt, dass Spielzustände, welche zuvor von Threads erkundet wurden, nicht erneut durchsucht werden müssen.
+Bei Lazy \ac{SMP}, werden $n$ parallele unabhängige Suchen gleichzeitig gestartet, welche sich nur die Transposition Table teilen. Dadurch, dass alle bereits durchsuchten Spielzustände in die Transposition Table eingefügt werden, wird sichergestellt, dass Spielzustände, welche zuvor von Threads erkundet wurden, nicht erneut durchsucht werden müssen. Dadurch, dass die Transposition Table bereits Lockless Hashing verwendet, können im Code einfach neue Threads gestartet werden, ohne dass weitere Synchronisationsmechanismen eingebaut werden müssen. Nachdem die Zeit abgelaufen ist, werden alle Threads gestoppt und die \ac{PV} Aktion aus der Transposition Table ausgelesen.
 
-TODO:
 
 \section{Ansatz D: Monte Carlo Tree Search}
 \label{section:erstellung-ansatz-c}

@@ -413,7 +413,6 @@ impl TranspositionTable {
     /// # Complexity
     ///
     /// `𝒪(𝑛)` where `𝑛` is the depth of the PV line.
-
     pub fn get_pv_line(&self, game: &Patchwork, depth: usize) -> Vec<ActionId> {
         let mut pv_line = Vec::with_capacity(depth);
 

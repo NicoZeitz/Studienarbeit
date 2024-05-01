@@ -78,6 +78,7 @@ In der Spielanleitung ist nicht genau beschrieben, was geschehen soll, wenn ein 
 Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enquote{zuerst ein Quadrat von mindestens $7\times7$ Feldern auf seinem Ablageplan vollständig belegt hat} \cite{2014.PatchworkSpielanleitung}, das Sonderplättchen bekommt. Hier wird nicht ganz deutlich, wie genau diese Regel auszulegen ist. Die Regel wird im Konsens wie folgt interpretiert: Es muss kein vollständiges Quadrat ($8\times8$, $9\times9$) das $7\times7$-Quadrat umschließen, es reicht aus, wenn $7\times7$-Felder vollständig von Flicken bedeckt sind. Somit ist erlaubt, dass neben dem $7\times7$-Quadrat weitere Felder ausgefüllt sind und die gesamte Form auf dem Ablageplan kein Quadrat sein muss. \cite{2014.Discussion7x7}
 
 \section{Spieltheoretische Analyse}
+\label{section:spieltheoretische-analyse}
 
 Patchwork ist ein \hyperref[text:game-theory-sequenziell]{\emph{sequentielles}}, \hyperref[text:game-theory-kompetitiv]{\emph{kompetitives}} 2\textendash{}Spieler\textendash{}Brettspiel. Außerdem ist Patchwork ein Spiel mit \hyperref[text:game-theory-perfekte-information]{\emph{perfekter}} sowie \hyperref[text:game-theory-vollkommene-information]{\emph{vollkommener Information}}.Des Weiteren ist Patchwork ein \hyperref[text:game-theory-strategiespiel]{\emph{Strategiespiel}}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \hyperref[text:game-theory-nullsummenspiel]{\emph{Nullsummenspiel}}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels. Da der Ablageplan immer nur weiter befüllt werden kann bzw. die Zeitsteine immer nur vorrücken können und es dafür immer weniger Möglichkeiten gibt, \hyperref[text:game-theory-konvergenz]{\emph{konvergiert}} Patchwork, was automatisch auch bedeutet, dass die Spiellänge begrenzt ist.
 
@@ -753,7 +754,7 @@ Um das Optimierungsproblem zu lösen, müssen zuerst alle Variablen wie rechts z
 
 Der sich aus dem Optimierungsproblem ergebene perfekte Spielverlauf eines Spielers ist in Grafik \ref{fig:max-score-turns} zu sehen. Zuerst werden Flicken gekauft, die zu ihren vergleichsweißen geringen Kosten viel Knopfeinkommen generieren. Zusammen mit einer Laufaktion kann so im frühem Spielverlauf so viel Knopfeinkommen generiert werden, dass anschließend mehrere Flicken gekauft werden, die das Knopfeinkommen früh deutlich erhöhen. Im weiteren Verlauf des Spiels nimmt die Anzahl der Knopfeinkommen auf den gekauften Flicken immer weiter ab. Das ist wahrscheinlich der Fall, da das noch zu generierende Knopfeinkommen den höheren Preis solcher Flicken im späteren Spielstadium nicht mehr kompensieren kann.
 
-Im spätem Spielverlauf wird nur noch die auf dem Ablageplan gefüllte Fläche vollständig ausgefüllt und alle übrigen \enquote{freien} Aktionen dazu verwendet, durch Laufen den Knopfvorrat weiter zu erhöhen. Als letzte Aktion wird noch der Flicken Nummer 16 genommen, da dieser eine relative große Fläche ausfüllt, ein Knopfeinkommen generiert und nur einen Knopf kostet. Da anschließend direkt das Ziel erreicht wird, sind die großen Zeitkosten von 5 zu vernachlässigen. Am Ende ergibt sich für den Spieler eine maximale Wertung von $\boldsymbol{84}$ Punkten.
+Im spätem Spielverlauf wird nur noch die auf dem Ablageplan gefüllte Fläche vollständig ausgefüllt und alle übrigen \enquote{freien} Aktionen dazu verwendet, durch Laufen den Knopfvorrat weiter zu erhöhen. Als letzte Aktion wird noch der Flicken Nummer 16 genommen, da dieser eine relative große Fläche ausfüllt, ein Knopfeinkommen generiert und nur einen Knopf kostet. Da anschließend direkt das Ziel erreicht wird, sind die großen Zeitkosten von 5 zu vernachlässigen. Am Ende ergibt sich für den Spieler eine maximale Wertung von $\boldsymbol{85}$ Punkten.
 
 \begin{wrapfigure}{r}{0.45\textwidth}
     \vspace*{-0.75cm}
@@ -768,7 +769,7 @@ Im spätem Spielverlauf wird nur noch die auf dem Ablageplan gefüllte Fläche v
     \vspace*{-0.75cm}
 \end{wrapfigure}
 
-Um zu zeigen, dass es sich bei den $84$ Punkten auch tatsächlich um die maximale Wertung handelt, müssen alle Flicken auch auf dem Ablageplan platzierbar sein. Eine mögliche Kombination hierfür ist in Abbildung \ref{fig:max-score-quilt-board} zu sehen.
+Um zu zeigen, dass es sich bei den $85$ Punkten auch tatsächlich um die maximale Wertung handelt, müssen alle Flicken auch auf dem Ablageplan platzierbar sein. Eine mögliche Kombination hierfür ist in Abbildung \ref{fig:max-score-quilt-board} zu sehen.
 
 Besonders anzumerken ist hierbei, dass der Gegenspieler genau einen der Spezialflicken aufsammeln muss, da der Spieler den fünften Spezialflicken ansonsten auf seinem Ablageplan platzieren müsse und somit keinen Platz mehr für den letzten Flicken hätte. Somit ergibt sich automatisch, dass innerhalb eines Spiels nicht gleichzeitig die maximale Wertung bei einem Spieler und die minimale Wertung bei einem anderen Spieler auftreten kann. Das ist sowieso der Fall, da ein Spieler für die minimale als auch die maximale Wertung den Flicken mit der Nummer 4 kaufen muss.
 
@@ -824,6 +825,7 @@ Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfüg
 Nachdem nun einige Betrachtungen zu konkreten Wertungen, Aktionen und Spielverläufen von Patchwork gemacht sowie empirische Daten analysiert wurden, wird nachfolgend die spieltheoretische Komplexität untersucht, um eine genauere Vorstellung über die Komplexität von Patchwork im Vergleich zu anderen Spielen zu erhalten.
 
 \subsubsection*{Zustandsraum-Komplexität}
+\label{subsection:zustandsraum-komplexitaet}
 
 Eine Spieler kann im Spiel aus maximal $3 \cdot 448 + 1 = 1345$ Aktionen wählen und das längste Patchwork-Spiel geht 63 \hyperref[text:ply]{\emph{Plys}}. Somit lässt sich eine einfache obere Schätzung für die Zustandsraum-Komplexität formulieren:
 
