@@ -426,10 +426,9 @@ Bei \ac{LMP} wird ein noch drastischere Ansatz verfolgt, indem bestimmte Teilbä
 
 \subsection{Lazy-SMP}
 
-Der bisher beschriebene \ac{PVS}-Spieler läuft Single-Threaded ab. Da heutige Computer mehrere Kerne besitzen, sollten diese aber auch verwendet werden. Für Mimimax sowie davon abgeleitete Algorithmen existiert dazu eine einfache aber gleichzeitig effektive Parallelisierungsmöglichkeit.
+Der bisher beschriebene \ac{PVS}-Spieler läuft Single-Threaded ab. Da heutige Computer mehrere Kerne besitzen, sollten diese aber auch verwendet werden. Für Mimimax sowie davon abgeleitete Algorithmen existiert dazu eine einfache aber gleichzeitig so effektive Parallelisierungsmöglichkeit, dass selbst die besten Schachengines diese verwenden \cite{2016.Stockfish7} \cite[S. ]{2016.ParallelChessEngine}.
 
 Bei Lazy \ac{SMP}, werden $n$ parallele unabhängige Suchen gleichzeitig gestartet, welche sich nur die Transposition Table teilen. Dadurch, dass alle bereits durchsuchten Spielzustände in die Transposition Table eingefügt werden, wird sichergestellt, dass Spielzustände, welche zuvor von Threads erkundet wurden, nicht erneut durchsucht werden müssen. Dadurch, dass die Transposition Table bereits Lockless Hashing verwendet, können im Code einfach neue Threads gestartet werden, ohne dass weitere Synchronisationsmechanismen eingebaut werden müssen. Nachdem die Zeit abgelaufen ist, werden alle Threads gestoppt und die \ac{PV} Aktion aus der Transposition Table ausgelesen.
-
 
 \section{Ansatz D: Monte Carlo Tree Search}
 \label{section:erstellung-ansatz-c}
