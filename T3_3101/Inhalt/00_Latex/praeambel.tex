@@ -143,6 +143,7 @@
 \usetikzlibrary{ext.paths.ortho}
 \usetikzlibrary{tikzmark}
 % \usetikzmarklibrary{listings}
+\usepackage{pmboxdraw}
 \usepackage[T1]{fontenc}% http://ctan.org/pkg/fontenc
 \usepackage[export]{adjustbox}
 \usepackage{makecell}
@@ -283,7 +284,7 @@
     \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
 }
 \usepackage{upquote} % Upright quotes for verbatim code
-\usepackage[breakable]{tcolorbox}
+\usepackage[breakable,skins]{tcolorbox}
 \usepackage{fancyvrb} % verbatim replacement that allows latex
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 
@@ -490,3 +491,11 @@
 % =========================== MATH =========================== %
 \DeclareMathOperator*{\maximize}{maximiere}
 \DeclareMathOperator*{\minimize}{minimiere}
+
+% =========================== EXTRA COMMANDS =========================== %
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+% https://www.johndcook.com/unicode_latex.html
+\DeclareUnicodeCharacter{21BB}{\ensuremath{\circlearrowright}} % ↻
+\DeclareUnicodeCharacter{2194}{\ensuremath{\leftrightarrow}} % ↔
+\DeclareUnicodeCharacter{25BA}{\ensuremath{\blacktriangleright}} % ►

@@ -17,6 +17,103 @@ hier ersteinmal leichte Vergleiche (z.B. greedy, random)
 
 TODO:
 
+
+% ┌───────────────────────────── Principal Variation Search Player ─────────────────────────────┐
+% │ Features:            [AW, TT(S), LMR, LMP, SE]                                              │
+% │ Depth:               9 started from (P1: 11, P2: 13, type: Normal)                            │
+% │ Time:                5.0634892s                                                             │
+% │ Nodes searched:      43720                                                                  │
+% │ Branching factor:    2.84 AVG / 1.78 EFF / 1.38 MEAN                                        │
+% │ Best Action:         P7I1═4‖3↻1↔0P1 (0 pts)                                                 │
+% │ Move Ordering:       86.80\% (8611 high pv / 9920 high)                                      │
+% │ Aspiration window:   0 low / 0 high                                                         │
+% │ Zero window search:  2 fails (0.01\%)                                                        │
+% │ Search Extensions:   0 SP, 0 ST (enabled)                                                   │
+% │ LMR (Fail/All):      0/114 (0.00%)                                                          │
+% │ LMP:                 3271                                                                   │
+% │ Principal Variation: P7I1═4‖3↻1↔0P1 → P21I0═2‖1↻0↔0P0 → P31I0═7‖4↻0↔1P1 → P11I0═0‖2↻0↔1P0 │
+% │ ┌──────────────────────────── Transposition Table Statistics ─────────────────────────────┐ │
+% │ │ Capacity:            10416666                                                           │ │
+% │ │ Entries:              5257801 /  50.47\% filled                                          │ │
+% │ │ Overwrites:          13138704                                                           │ │
+% │ │ Accesses:             1141676                                                           │ │
+% │ │ ├──► Hit:              261862 /  22.94\%                                                 │ │
+% │ │ └──► Miss:             879814 /  77.06\%                                                 │ │
+% │ └─────────────────────────────────────────────────────────────────────────────────────────┘ │
+% └─────────────────────────────────────────────────────────────────────────────────────────────┘
+\begin{figure}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tcolorbox}[
+                rounded corners=all,
+                boxrule=1pt,
+                colback=white,
+                colframe=black,
+                hbox,
+                % width=\linewidth,
+                enhanced,
+                coltitle=black,
+                title={\acl{PVS} Player},
+                top=6pt,
+                left=0pt,
+                right=5pt,
+                bottom=0pt,
+                attach boxed title to top center={yshift=-\tcboxedtitleheight/2},
+                boxed title style={size=small,colback=white,colframe=white}
+            ]
+            \begingroup
+            \setlength{\arrayrulewidth}{0pt}
+
+            \begin{tabular}{@{}ll@{}}
+                Features:             & [AW, TT(S), \acs{LMR}, \acs{LMP}, SE]                                \\
+                Depth:                & $9$ started from (P1: $11$, P2: $13$, type: Normal)                  \\
+                Time:                 & $5{,}0634892\acs{s}$                                                 \\
+                Nodes searched:       & $43720$                                                              \\
+                Branching factor:     & $2{,}84$ AVG / $1{,}78$ EFF / $1{,}38$ MEAN                          \\
+                Best Action:          & P7I1═4‖3↻1↔0P1 ($0$ pts)                                             \\
+                Action Ordering:      & $86{,}80\%$ ($8611$ high pv / $9920$ high)                           \\
+                Aspiration window:    & $0$ low / $0$ high                                                   \\
+                Zero window search:   & $2$ fails ($0{,}01\%$)                                               \\
+                Search Extensions:    & $0$ SP, $0$ ST (enabled)                                             \\
+                \acs{LMR} (Fail/All): & $0/114$ ($0{,}00\%$)                                                 \\
+                \acs{LMP}:            & $3271$                                                               \\
+                \acl{PV}:             & P7I1═4‖3↻1↔0P1 → P21I0═2‖1↻0↔0P0 → P31I0═7‖4↻0↔1P1 → P11I0═0‖2↻0↔1P0 \\
+                \multicolumn{2}{@{}c@{}}{
+                \begin{tcolorbox}[
+                        rounded corners=all,
+                        boxrule=1pt,
+                        colback=white,
+                        colframe=black,
+                        width=1.325\linewidth,
+                        enhanced,
+                        coltitle=black,
+                        title={Transposition Table},
+                        top=6pt,
+                        left=0pt,
+                        right=0pt,
+                        bottom=0pt,
+                        attach boxed title to top center={yshift=-\tcboxedtitleheight/2},
+                        boxed title style={size=small,colback=white,colframe=white}
+                    ]
+                    \begin{tabular}{ll}
+                        Capacity:   & $10416666$                      \\
+                        Entries:    & $5257801$ /  $50{,}47\%$ filled \\
+                        Overwrites: & $13138704$                      \\
+                        Accesses:   & $1141676$                       \\
+                        ├──► Hit:   & $261862$ /  $22{,}94\%$         \\
+                        └──► Miss:  & $879814$ /  $77{,}06\%$         \\
+                    \end{tabular}
+                \end{tcolorbox}
+                }                                                                                            \\
+            \end{tabular}
+            \endgroup
+        \end{tcolorbox}}
+    \vspace*{-0.25cm}
+    \caption{\acs{PVS}-Suchstatistiken}
+    \label{fig:pvs-statistics}
+\end{figure}
+
+TODO:
+
 \begin{figure}[!ht]
     \centering
     \resizebox{\textwidth}{!}{\begin{tikzpicture}
@@ -174,6 +271,63 @@ TODO:
 
 
 TODO:
+
+
+% ┌───────────────────────────── MCTS Player ─────────────────────────────┐
+% │ Features:            [RP(8), RT]                                      │
+% │ Duration:            9.925s                                           │
+% │ Total Iterations:    592082                                           │
+% │ Iterations:          74767                                            │
+% │ Nodes:               74791                                            │
+% │ Reused Tree:         true                                             │
+% │ Root actions:        110                                              │
+% │ Expanded Depth:      4                                                │
+% │ Win Percentage:      98.40%                                           │
+% │ Principal Variation: P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 │
+% │ Min/Max Evaluation:  -1/1                                             │
+% └───────────────────────────────────────────────────────────────────────┘
+\begin{figure}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tcolorbox}[
+                rounded corners=all,
+                boxrule=1pt,
+                colback=white,
+                colframe=black,
+                hbox,
+                % width=\linewidth,
+                enhanced,
+                coltitle=black,
+                title={\acs{MCTS} Player},
+                top=6pt,
+                left=0pt,
+                right=3pt,
+                bottom=0pt,
+                attach boxed title to top center={yshift=-\tcboxedtitleheight/2},
+                boxed title style={size=small,colback=white,colframe=white}
+            ]
+            \begingroup
+            \setlength{\arrayrulewidth}{0pt}
+
+            \begin{tabular}{@{}ll@{}}
+                Features:           & [RP(8), RT]                                     \\
+                Duration:           & $9{,}925\acs{s}$                                \\
+                Total Iterations:   & $592082$                                        \\
+                Iterations:         & $74767$                                         \\
+                Nodes:              & $74791$                                         \\
+                Reused Tree:        & true                                            \\
+                Root actions:       & $110$                                           \\
+                Expanded Depth:     & $4$                                             \\
+                Win Percentage:     & $98{,}40\%$                                     \\
+                \acl{PV}:           & P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 \\
+                Min/Max Evaluation: & $-1\ /\ 1$                                      \\
+            \end{tabular}
+
+            \endgroup
+        \end{tcolorbox}}
+    \vspace*{-0.25cm}
+    \caption{\acs{MCTS}-Suchstatistiken}
+    \label{fig:mcts-statistics}
+\end{figure}
 
 TODO: Search Staticstics (Console Ausgabe) (Nodes searched, also for pvs)
 

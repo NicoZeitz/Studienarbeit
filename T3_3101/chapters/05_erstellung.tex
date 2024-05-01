@@ -212,6 +212,28 @@ Generell sie die Werte der Aktionen nicht perfekt. So müssten die Werte symmetr
 
 TODO:
 
+\labeltext{\emph{Zobrist Hash}}{text:zobrist-hash}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|l|}
+        \hline
+        Eintrag & Erläuterung                                                                                                                    \\ \hline
+        Key     & \ac{u64} mit \hyperref[text:zobrist-hash]{\emph{Zobrist Hash}} des Spielzustandes \emph{\acs{XOR}} das Data Feld \\ \hline
+        Data    & Die Daten des Eintrags, codiert als ein \ac{u64} von \acs{MSB} nach \ac{LSB} mit:                                        \\
+                & \tabitem Evaluation (37 Bits): Die Evaluation des Spielzustandes                                                                                     \\
+                & \tabitem Beste Aktion (17 Bits): Die beste Aktion ausgehend vom Spielzustand                                                                                   \\
+                & \tabitem Suchtiefe (8 Bits): Die Suchtiefe, bei der der Eintrag eingefügt wurde                                                                                      \\
+                & \tabitem Typ der Evaluation (2 Bits): untere Grenze, obere Grenze oder exakt                                             \\
+        Age     & Das Alter des Eintrags.                                                                                                  \\ \hline
+    \end{tabular}
+    \vspace{3pt}
+    \caption{Transposition Table Eintrag}
+    \label{tabelle:transposition-table-entry}
+\end{table}
+
+TODO:
+
 \subsection{Aspiration Windows}
 
 Eine mögliche Verbesserung der Iterativen Tiefensuche liegt in der Verwendung von Aspiration Windows. Bei der einfachen Implementierung der Tiefensuche ist der initiale Aufruf der \ac{PVS}-Suche immer mit $\alpha = -\infty$ und $\beta = \infty$. Bei Aspiration Windows wird diese Annahme insofern aufgelockert, indem davon ausgegangen wird, dass sich der Wert der nächsten Suchiteration nicht viel von dem Wert der vorherigen Suche unterscheidet. Deshalb wird statt dem gesamten Bereich nur ein Fenster (Aspiration Window) der Größe $\Delta$ um den vorherigen Suchwert erkundet. \cite{2003.AspirationWindows}
