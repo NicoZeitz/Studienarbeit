@@ -35,18 +35,20 @@ TODO: auch Evaluator
 \section{Ansatz C: Principal-Variation-Search}
 \label{section:erstellung-ansatz-b}
 
-Der dritte und erste richtige Versuch eines starken Computerspielgegners ist der \acl{PVS} Spieler. Für das Finden der besten Aktion verwenden der \acs{PVS} Spieler verwendet dabei eine optimierte Variante des Alpha-Beta-Suchalgorithmus, die \acf{PVS}. Bei der \ac{PVS} werden mehrere Änderungen vorgenommen. Zuerst wird der klassische Minimax-Algorithmus mittels Negamax implementiert. Bei Nullsummenspielen wie Patchwork ist der maximale Wert des einen Spielers immer der negierte minimale Wert des anderen Spielers ($\max\left(a,b\right) = -\min\left(-a,-b\right)$) \cite[S. 9]{2020.MinimaxTheorem}. Bei Negamax wird dies ausgenutzt, indem immer dieselbe Funktion aufgerufen wird und das Ergebnis negiert wird, anstatt zwei verschiedene Fälle für den min- und max-Spieler zu haben. Dies funktioniert aber nur, wenn der aktive Spieler nach jedem Spielzug wechselt. Dies ist in Patchwork nicht der Fall, kann in der Computerspielimplementierung aber erzwungen werden, indem der \code{do\_action} Methode ein \enquote{force player switch} Parameter übergeben wird. Würde der Spieler im Normalfall nicht wechseln, so wird einfach ein Spielerwechsel erzwungen und dem neuen Spieler nur die \emph{Phantom}-Aktion zur Verfügung gestellt. So kann auch die Suche in Patchwork ohne Probleme als Negamax implementiert werden, was die Implementierung vereinfacht.
+Der dritte und erste richtige Versuch eines starken Computerspielgegners ist der \acl{PVS} Spieler. Für das Finden der besten Aktion verwenden der \acs{PVS} Spieler verwendet dabei eine optimierte Variante des Alpha-Beta-Suchalgorithmus, die \acf{PVS}. Bei der \ac{PVS} werden mehrere Änderungen vorgenommen. Zuerst wird der klassische Minimax-Algorithmus mittels Negamax implementiert. Bei Nullsummenspielen wie Patchwork ist der maximale Wert des einen Spielers immer der negierte minimale Wert des anderen Spielers ($\max\left(a,b\right) = -\min\left(-a,-b\right)$) \cite[S. 9]{2020.MinimaxTheorem}. Bei Negamax wird dies ausgenutzt, indem immer dieselbe Funktion aufgerufen wird und das Ergebnis negiert wird, anstatt zwei verschiedene Fälle für den min- und max-Spieler zu haben. Dies funktioniert aber nur, wenn der aktive Spieler nach jedem Spielzug wechselt. Dies ist in Patchwork nicht der Fall, kann in der Computerspielimplementierung aber erzwungen werden, indem der \code{do\_action} Methode ein \enquote{force player switch} Parameter übergeben wird. Würde der Spieler im Normalfall nicht wechseln, so wird einfach ein Spielerwechsel erzwungen und dem neuen Spieler nur die \emph{Phantom}-Aktion zur Verfügung gestellt. So kann auch die Suche in Patchwork ohne Probleme als Negamax implementiert werden, was die Implementierung vereinfacht. Bei Mimimax-basierten Algorithmen wird immer eine Bewertungsfunktion für die Evaluation der Blattknoten benötigt. Hierzu wird der im vorherigen Abschnitt vorgestellte \code{StaticEvaluator} verwendet. Um genauer auf die weiteren Unterschiede von \ac{PVS} im Vergleich zur Alpha-Beta Suche eingehen zu können, müssen zunächst die in der Suche auftretenden Knotentypen erläutert werden:
 
-Um genauer auf die weiteren Unterschiede von \ac{PVS} im Vergleich zur Alpha-Beta Suche eingehen zu können, müssen zuerst die in der Suche auftretenden Knotentypen erläutert werden:
-
-\vspace*{-0.5cm}
+\vspace*{-0.45cm}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.75\textwidth]{res/pictures/minimal-search-tree.pdf}
+    \includegraphics[width=0.695\textwidth]{res/pictures/minimal-search-tree.pdf}
     \caption{Minimaler Suchbaum bei der Alpha-Beta Suche}
     \label{fig:minimal-search-tree}
 \end{figure}
+
+\vspace*{-5cm}
+
+\pagebreak
 
 \begin{itemize}
     \item \labeltext{\emph{\acs{PV}-Knoten}}{text:pv-node} oder \emph{Typ-1-Knoten}: Die \ac{PV} ist eine Sequenz an Aktionen, bei denen beide Spieler immer die für sich beste Aktion wählen. Es handelt es also um den \enquote{perfekten} Spielverlauf, bei dem kein Pruning stattfinden kann. \cite[S. 316f.]{2005.EnhancedForwardPruning}
@@ -108,14 +110,47 @@ Die gesamte Implementation des \ac{PVS}-Algorithmus zusammen mit allen nachfolge
 
 \subsection{Aktionen-Anordnung}
 
-TODO:
-\cite{2022.MoveOrdering}
-Anordnung nicht Sortieren -> Warum überhaupt anordnen und warum nicht sortieren?
--> insertion sort??
-Wie gemacht? -> Table mit linearer Interpolation based timeboard position
-heatmap generierung erläutern
-heatmaps erläutern und warum sinnvoll erscheint
-müsste eigentlich symmetrisch sein
+Die Effizient von Alpha-Beta-Pruning also auch dem \ac{PVS}-Spieler hängt in großen Teilen davon ab, ab wie vielen durchsuchten Aktionen ein $\beta$-Cutoff erzielt werden kann \cite{2003.AlphaBetaSearch}. Je schneller dies passiert, desto weniger Baumknoten müssen durchsucht werden, womit die Engine die gewonnene Zeit für eine tiefergehende Suche verwenden kann. Deshalb sollten die Aktionen in einer möglichst vorteilhaften Reihenfolge durchsucht werden. Bei \ac{PVS} wird dadurch, dass die vorherige \ac{PV} Aktion an erster Stelle steht, schon eine möglichst gute Reihenfolge sichergestellt. Jedoch sind nicht in allen Knoten solche vorherigen \ac{PV} Aktionen vorhanden, beispielsweise wenn eine neue Tiefe durchsucht wird. Aus diesem Grund ist es sinnvoll alle Aktionen basierend auf einer Heuristik in eine Durchsuchungsreihenfolge anzuordnen.
+
+Dabei wird bewusst von einer Aktionen-Anordnung und nicht von einer Aktionen-Sortierung gesprochen. Während man jeder Aktion basierend auf der Heuristik einen Wert zuweisen und danach die gesamte Liste sortieren könnte, ist dies ineffizient. Bei einem $\beta$-Cutoff, welcher meistens bereits bei der ersten Aktion passiert, wird nur eine teilsortierte Liste an Aktionen benötigt. \cite{2022.MoveOrdering}
+
+\refstepcounter{lstlisting}
+\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode: Aspiration Windows}
+
+\begin{algorithm}[!ht]
+    \caption{Pseudocode: Aktionen-Anordnung}
+    \label{algo:action-ordering}
+    \begin{algorithmic}[1]
+        \Function{score\_actions}{$game$,\, $actions$,\, $pv\_action$}
+        \For{each valid $action$ of $actions$}
+        \State $action.score \gets $ \Call{score\_single\_action}{$game$,\, $action$,\, $pv\_action$}
+        \EndFor
+        \EndFunction
+        \Function{pick\_action}{$actions$,\, $start\_index$}
+        \LineComment Einzelne Iteration von Selectionsort
+        \For{each $i \coloneq start\_index + 1$ bis $len\left(actions\right)$}
+        \If{$actions\left[i\right].score > actions\left[start\_index\right].score$}
+        \State swap $actions\left[start\_index\right]$ und $actions\left[i\right]$
+        \EndIf
+        \State \Return $actions\left[start\_index\right]$
+        \EndFor
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Aus diesem Grund besteht die in Pseudocode \ref{algo:action-ordering} dargestellte Aktionen-Anordnung aus zwei Schritten. Vor dem eigentlichen \ac{PVS}-Algorithmus wird jeder Aktion mit \code{score\_actions} ein durch die Heuristik vergebener Wert zugewiesen. Während jeder \ac{PVS} Iteration wird dann mit \code{pick\_action} eine Iteration des Selektionsort Algorithmus ausgeführt, um die nächste Aktion zu erhalten. Obwohl die Zeitkomplexität von Selektionsort $\mathcal{O}\left(n^2\right)$ ist, wird der Sortieralgorithmus für eine Teilsortierung aufgrund der einfachen Implementierung bevorzugt.
+
+Für die Aktionen-Anordnung stellt sich nun die Frage wie genau die Heuristik aussieht. In Schach werden hierfür beispielsweise Aktionen, bei denen eine andere Schachfigur geschlagen wird nach dem \ac{MVV-LVA} Prinzip angeordnet \cite[S. 72]{2002.FPGAMoveGenerator}. In Patchwork gibt es keine Aktionen, die den Spielzustand eindeutig verbessern, wie das Schlagen von Spielfiguren. Eine vollständige Analyse der entstehenden Ablagepläne wäre zu zeitaufwendig. Um dennoch keine zufällige Aktionsanordnung zu erhalten, werden die in »\nameref{section:auswertung-empirischer-daten}« Aufgenommenen empirischen Spieldaten verwendet.
+\begin{equation}
+    \label{eqn:action-value}
+    \frac{|wins|}{|games|} + \varepsilon \cdot \sqrt[3]{\frac{\sum score}{|games|}}
+\end{equation}
+
+Jeder Aktion wird dazu eine Liste an Endergebnissen zugeordnet, welche entstanden sind, nachdem die Aktion innerhalb eines Spiels verwendet wurde. Mithilfe dieser Endergebnisse wird für jede Aktion mittels des Terms \ref{eqn:action-value} ein \enquote{Wert} zugeordnet. Der Term berechnet dabei die Winrate des Spielers zusammen mit einem kleinen Anteil aus der Kubikwurzel des tatsächlichen Endergebniswerts. Ziel ist durch die große Anzahl an empirischen Spielen eine Approximation des tatsächlichen Wertes einer \enquote{Aktion} zu erhalten. Da in den empirischen Daten nicht alle Aktionen verwendet wurden, werden in den Daten nicht vorkommende Flickenlegeaktionen durch die Werte aus der umliegenden Nachbarschaft interpoliert. Weiterhin sind die Werte dabei noch in Opening- und Endgame-Tabellen aufgeteilt. Ist eine Aktion in den empirischen Daten vor 50\% der Gesamtanzahl der \hyperref[text:ply]{\emph{Plys}} des Spiels ausgeführt worden, so wird der Wert mit in die Berechnung der Opening-Tabelle aufgenommen, andernfalls für die Endgame-Tabelle verwendet. Zuletzt wurden alle Werte mittels einer Min-Max-Normalisierung auf den Wertebereich $\left[-1, 1\right]$ skaliert. Für die tatsächliche Aktionen-Anordnung wird dann der Wert der Aktion zwischen Opening- und Endgame-Tabelle mittels der Position des Spielers auf dem Zeitplan linear interpoliert.
+
+Um die Effektivität dieser Aktion-Wert-Tabellen zu überprüfen, sind die Werte der Flickenplatzierenaktionen als Heatmap auf dem Ablageplan aufgetragen. So sind in Abbildung \ref{fig:action-ordering-patch-17} und \ref{fig:action-ordering-patch-21} die Heatmaps der Flicken 17 und 21 zu sehen. Für die Erstellung wurde dabei für jedes Feld auf dem Ablageplan geschaut, welche Aktionen dieses Feld belegen, deren Werte aussummiert und anschließend durch die Anzahl geteilt. In den Grafiken ist links ist die Heatmap der Opening-Werte und rechts die der Endgame-Werte abgebildet.
+
+\vspace*{-0.77cm}
 
 \begin{figure}[!ht]
     \centering
@@ -130,9 +165,12 @@ müsste eigentlich symmetrisch sein
     \begin{minipage}{.11\textwidth}
         \hfill
     \end{minipage}
+    \vspace*{-0.32cm}
     \captionof{figure}{Heatmap des Flicken 17}
     \label{fig:action-ordering-patch-17}
 \end{figure}
+
+\vspace*{-0.36cm}
 
 \begin{figure}[!ht]
     \centering
@@ -147,9 +185,18 @@ müsste eigentlich symmetrisch sein
     \begin{minipage}{.11\textwidth}
         \hfill
     \end{minipage}
+    \vspace*{-0.32cm}
     \captionof{figure}{Heatmap des Flicken 21}
     \label{fig:action-ordering-patch-21}
 \end{figure}
+
+\vspace*{-0.14cm}
+
+Der Flicken 17 wird im perfekten Patchwork Spiel zu Beginn des Spiels verwendet, da er sehr viel Knopfeinkommen für einen relativ geringen Preis liefert (siehe \ref{section-loesung-des-optimierungsproblems}). Auch in der Heatmap ist der Flicken deshalb in der Opening-Tabelle mit sehr positiven Werten vertreten, während der Flicken im Endgame durch die hohen Kosten als negativ angesehen wird. Auch die positionen Auf dem Ablageplan stimmen mit der menschlichen Position überein. Flicken 17 ist durch seine kantige Form besser in der Mitte unterzubringen als am Rand des Ablageplans.
+
+Den Erwartungen nach sollte Flicken 21 durch das nicht vorhandene Knopfeinkommen generell weniger wert sein als Flicken 17. Diese Annahme wird auch durch die Heatmap widergespiegelt. Auch, dass die Positionen an den Rändern erwartungsgemäß bei Flicken 21 besser bewertet werden, wird in der Heatmap deutlich. Vor allem verbessert sich die Bewertung von Flicken 21 im späterem Spiel, da dort das Füllen des Ablageplans deutlich relevanter ist als ein nicht existierendes Knopfeinkommen.
+
+Generell sie die Werte der Aktionen nicht perfekt. So müssten die Werte symmetrisch über den Ablageplan verteilt sein, da jeder Spielverlauf auch einfach in einer gedrehten/gespiegelten Form existiert. Dies ist jedoch wie zu erkennen nicht der Fall. Weiterhin sind die in Heatmap \ref{fig:action-ordering-special-patch} dargestellten Werte der Spezialflicken zwar wie zu erwarten generell positiv, wirken aber noch sehr zufällig verteilt.
 
 \begin{figure}[!ht]
     \centering
@@ -160,8 +207,6 @@ müsste eigentlich symmetrisch sein
     \captionof{figure}{Heatmap des Spezialflicken}
     \label{fig:action-ordering-special-patch}
 \end{figure}
-
-TODO:
 
 \subsection{Transposition Table und Zobrist Hashing}
 
