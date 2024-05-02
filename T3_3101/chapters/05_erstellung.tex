@@ -40,7 +40,7 @@ Die Computerspielengine, welche mit dem Greedy-Algorithmus arbeitet, ist ebenfal
     firstline=0,
 ]{res/code/evaluator.rs}
 
-Der \enquote{Handcrafted Evaluator} für diese Computerspielengine berechnet wie folgt den Score für die aktuelle Spielposition. Es werden die Scores für beide Spieler berechnet und anschließend der ist Evaluation der Score des Spielers abgezogen vom Score des Gegners. Innerhalb der Berechnung des Scores für einen Spieler werden folgende Berechnungsgrundlagen angewandt:
+Der \enquote{Handcrafted Evaluator}, im Quellcode als \code{StaticEvaluator} bezeichnet, für diese Computerspielengine, berechnet wie folgt den Score für die aktuelle Spielposition. Es werden die Scores für beide Spieler berechnet und anschließend der ist Evaluation der Score des Spielers abgezogen vom Score des Gegners. Innerhalb der Berechnung des Scores für einen Spieler werden folgende Berechnungsgrundlagen angewandt:
 
 Als erster Faktor wird die Spielposition, die mit den normalen Endregeln berechnet wird, als $es$ eingerechnet. Die normalen Endregeln bedeuten in diesem Fall, dass für jedes freie Feld zwei Punkte abgezogen werden und jeder Knopf, der dem Spieler gehört, mit einem Punkt gewertet wird.
 
