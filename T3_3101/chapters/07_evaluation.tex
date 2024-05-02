@@ -13,6 +13,28 @@ definition der testszenarien (was vergleichen wir, warum, wie)
 
 hier ersteinmal leichte Vergleiche (z.B. greedy, random)
 
+\begin{figure}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tikzpicture}
+            \coordinate (bar1Start) at (0,0);
+            \coordinate (bar1End) at (10,0);
+            \coordinate (bar1Break) at (2.1,0);
+
+            \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+            \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+            \node[left = 0.1cm of bar1Start] {Random Player};
+            \node[right = 0.1cm of bar1End, align=left] {Greedy Player \\ (eval: static)};
+            \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $21$ Gewonnen};
+            \node[below = 0.1cm of bar1Break] {\scriptsize $21\%$};
+            \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $79$ Verloren};
+        \end{tikzpicture}}
+    % \vspace*{-0.5cm}
+    \caption{TODO:}
+    \label{fig:random-greedy-comparison}
+\end{figure}
+
+
+
 \section{Vergleich der PVS-Varianten}
 
 TODO:
@@ -123,7 +145,7 @@ TODO:
 
             \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
             \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
-            \node[left = 0.1cm of bar1Start] {PVSPlayer};
+            \node[left = 0.1cm of bar1Start] {\acs{PVS}-Player};
             \node[right = 0.1cm of bar1End] {RandomPlayer};
             \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $86$ Gewonnen};
             \node[below = 0.1cm of bar1Break] {\scriptsize $86\%$};
@@ -135,27 +157,27 @@ TODO:
 
             \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
             \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
-            \node[left = 0.1cm of bar2Start] {PVSPlayer};
+            \node[left = 0.1cm of bar2Start] {\acs{PVS}-Player};
             \node[right = 0.1cm of bar2End] {GreedyPlayer};
             \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $66$ Gewonnen};
             \node[below = 0.1cm of bar2Break] {\scriptsize $66\%$};
             \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $34$ Verloren};
 
-            \coordinate (bar3Start) at (0,-3);
-            \coordinate (bar3End) at (10,-3);
-            \coordinate (bar3Break) at (6.4,-3);
+            % \coordinate (bar3Start) at (0,-3);
+            % \coordinate (bar3End) at (10,-3);
+            % \coordinate (bar3Break) at (6.4,-3);
 
-            \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
-            \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
-            \node[left = 0.1cm of bar3Start] {Hard-Fail};
-            \node[right = 0.1cm of bar3End] {Soft-Fail};
-            \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $64$ Gewonnen};
-            \node[below = 0.1cm of bar3Break] {\scriptsize $64\%$};
-            \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $36$ Verloren};
+            % \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
+            % \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
+            % \node[left = 0.1cm of bar3Start] {Hard-Fail};
+            % \node[right = 0.1cm of bar3End] {Soft-Fail};
+            % \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $64$ Gewonnen};
+            % \node[below = 0.1cm of bar3Break] {\scriptsize $64\%$};
+            % \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $36$ Verloren};
 
-            \coordinate (bar4Start) at (0,-4.5);
-            \coordinate (bar4End) at (10,-4.5);
-            \coordinate (bar4Break) at (5.1,-4.5);
+            \coordinate (bar4Start) at (0,-3);
+            \coordinate (bar4End) at (10,-3);
+            \coordinate (bar4Break) at (5.1,-3);
 
             \draw[color=win, line width=0.25cm] (bar4Start) -- (bar4Break);
             \draw[color=loss, line width=0.25cm] (bar4Break) -- (bar4End);
@@ -165,9 +187,9 @@ TODO:
             \node[below = 0.1cm of bar4Break] {\scriptsize $51\%$};
             \node[above left = 0.05cm and -0.15cm of bar4End] {\footnotesize $49$ Verloren};
 
-            \coordinate (bar5Start) at (0,-6);
-            \coordinate (bar5End) at (10,-6);
-            \coordinate (bar5Break) at (5.4,-6);
+            \coordinate (bar5Start) at (0,-4.5);
+            \coordinate (bar5End) at (10,-4.5);
+            \coordinate (bar5Break) at (5.4,-4.5);
 
             \draw[color=win, line width=0.25cm] (bar5Start) -- (bar5Break);
             \draw[color=loss, line width=0.25cm] (bar5Break) -- (bar5End);
@@ -177,21 +199,21 @@ TODO:
             \node[below = 0.1cm of bar5Break] {\scriptsize $54\%$};
             \node[above left = 0.05cm and -0.15cm of bar5End] {\footnotesize $46$ Verloren};
 
-            \coordinate (bar6Start) at (0,-7.5);
-            \coordinate (bar6End) at (10,-7.5);
-            \coordinate (bar6Break) at (5.3,-7.5);
+            \coordinate (bar6Start) at (0,-6);
+            \coordinate (bar6End) at (10,-6);
+            \coordinate (bar6Break) at (5.3,-6);
 
             \draw[color=win, line width=0.25cm] (bar6Start) -- (bar6Break);
             \draw[color=loss, line width=0.25cm] (bar6Break) -- (bar6End);
-            \node[left = 0.1cm of bar6Start] {LMR, LMP};
-            \node[right = 0.1cm of bar6End] {Keine LMR, LMP};
+            \node[left = 0.1cm of bar6Start] {\acs{LMR}, \acs{LMP}};
+            \node[right = 0.1cm of bar6End] {Keine \acs{LMR}, \acs{LMP}};
             \node[above right = 0.05cm and -0.15cm of bar6Start] {\footnotesize $53$ Gewonnen};
             \node[below = 0.1cm of bar6Break] {\scriptsize $53\%$};
             \node[above left = 0.05cm and -0.15cm of bar6End] {\footnotesize $47$ Verloren};
 
-            \coordinate (bar7Start) at (0,-9);
-            \coordinate (bar7End) at (10,-9);
-            \coordinate (bar7Break) at (5,-9);
+            \coordinate (bar7Start) at (0,-7.5);
+            \coordinate (bar7End) at (10,-7.5);
+            \coordinate (bar7Break) at (5,-7.5);
 
             \draw[color=win, line width=0.25cm] (bar7Start) -- (bar7Break);
             \draw[color=loss, line width=0.25cm] (bar7Break) -- (bar7End);
@@ -201,14 +223,14 @@ TODO:
             \node[below = 0.1cm of bar7Break] {\scriptsize $50\%$};
             \node[above left = 0.05cm and -0.15cm of bar7End] {\footnotesize $50$ Verloren};
 
-            \coordinate (bar8Start) at (0,-10.5);
-            \coordinate (bar8End) at (10,-10.5);
-            \coordinate (bar8Break) at (4.1,-10.5);
+            \coordinate (bar8Start) at (0,-9);
+            \coordinate (bar8End) at (10,-9);
+            \coordinate (bar8Break) at (4.1,-9);
 
             \draw[color=win, line width=0.25cm] (bar8Start) -- (bar8Break);
             \draw[color=loss, line width=0.25cm] (bar8Break) -- (bar8End);
-            \node[left = 0.1cm of bar8Start] {Kein SMP};
-            \node[right = 0.1cm of bar8End] {Lazy SMP};
+            \node[left = 0.1cm of bar8Start] {Kein \acs{SMP}};
+            \node[right = 0.1cm of bar8End] {Lazy \acs{SMP}};
             \node[above right = 0.05cm and -0.15cm of bar8Start] {\footnotesize $41$ Gewonnen};
             \node[below = 0.1cm of bar8Break] {\scriptsize $41\%$};
             \node[above left = 0.05cm and -0.15cm of bar8End] {\footnotesize $59$ Verloren};
@@ -269,9 +291,53 @@ TODO:
     \label{fig:mcts-tree-reuse-comparision}
 \end{figure}
 
-
 TODO:
 
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \coordinate (bar1Start) at (0,0);
+        \coordinate (bar1End) at (10,0);
+        \coordinate (bar1Break) at (7.7,0);
+
+        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+        \node[left = 0.1cm of bar1Start, align=right] {\acs{MCTS}\\(1 Thread)};
+        \node[right = 0.1cm of bar1End, align=left] {\acs{MCTS}\\(8 Leaf)};
+        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $77$ Gewonnen};
+        \node[below = 0.1cm of bar1Break] {\scriptsize $77\%$};
+        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $23$ Verloren};
+
+        \coordinate (bar2Start) at (0,-1.5);
+        \coordinate (bar2End) at (10,-1.5);
+        \coordinate (bar2Break) at (4.6,-1.5);
+
+        \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
+        \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
+        \node[left = 0.1cm of bar2Start, align=right] {\acs{MCTS}\\(1 Thread)};
+        \node[right = 0.1cm of bar2End, align=left] {\acs{MCTS}\\(8 Root)};
+        \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $46$ Gewonnen};
+        \node[below = 0.1cm of bar2Break] {\scriptsize $46\%$};
+        \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $54$ Verloren};
+
+        \coordinate (bar3Start) at (0,-3);
+        \coordinate (bar3End) at (10,-3);
+        \coordinate (bar3Break) at (1.8,-3);
+
+        \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
+        \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
+        \node[left = 0.1cm of bar3Start, align=right] {\acs{MCTS}\\(8 Leaf)};
+        \node[right = 0.1cm of bar3End, align=left] {\acs{MCTS}\\(8 Root)};
+        \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $18$ Gewonnen};
+        \node[below = 0.1cm of bar3Break] {\scriptsize $18\%$};
+        \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $82$ Verloren};
+    \end{tikzpicture}
+    % \vspace*{-0.5cm}
+    \caption[Vergleich der MCTS Varianten]{Vergleich der \acs{MCTS} Varianten}
+    \label{fig:mcts-comparision}
+\end{figure}
+
+TODO:
 
 % ┌───────────────────────────── MCTS Player ─────────────────────────────┐
 % │ Features:            [RP(8), RT]                                      │
@@ -329,13 +395,11 @@ TODO:
     \label{fig:mcts-statistics}
 \end{figure}
 
-TODO: Search Staticstics (Console Ausgabe) (Nodes searched, also for pvs)
+TODO:
 
 \section{Evaluation von AlphaZero}
 
 TODO:
-
-
 
 \begin{figure}[!ht]
     \centering
@@ -369,7 +433,76 @@ TODO:
     \label{fig:alphazero-comparision}
 \end{figure}
 
+TODO:
+
 \section{Paarvergleiche}
+
+TODO:
+
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \coordinate (bar1Start) at (0,0);
+        \coordinate (bar1End) at (10,0);
+        \coordinate (bar1Break) at (0.1,0);
+
+        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+        \node[left = 0.1cm of bar1Start, align=right] {\acs{PVS} Player \\ (1 Thread)};
+        \node[right = 0.1cm of bar1End, align=left] {\acs{MCTS} Player \\ (1 Thread)};
+        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $1$ Gewonnen};
+        \node[below = 0.1cm of bar1Break] {\scriptsize $1\%$};
+        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $99$ Verloren};
+
+        \coordinate (bar2Start) at (0,-1.5);
+        \coordinate (bar2End) at (10,-1.5);
+        \coordinate (bar2Break) at (0,-1.5);
+
+        \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
+        \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
+        \node[left = 0.1cm of bar2Start, align=right] {\acs{PVS} Player \\ (8 Threads)};
+        \node[right = 0.1cm of bar2End, align=left] {\acs{MCTS} Player \\ (1 Thread)};
+        \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $0$ Gewonnen};
+        \node[below = 0.1cm of bar2Break] {\scriptsize $0\%$};
+        \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $100$ Verloren};
+
+        \coordinate (bar3Start) at (0,-3);
+        \coordinate (bar3End) at (10,-3);
+        \coordinate (bar3Break) at (0.1,-3);
+
+        \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
+        \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
+        \node[left = 0.1cm of bar3Start, align=right] {\acs{PVS} Player \\ (8 Threads)};
+        \node[right = 0.1cm of bar3End, align=left] {\acs{MCTS} Player \\ (8 Threads)};
+        \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $1$ Gewonnen};
+        \node[below = 0.1cm of bar3Break] {\scriptsize $1\%$};
+        \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $99$ Verloren};
+    \end{tikzpicture}
+    \caption{\acs{PVS} Player vs. \acs{MCTS} Player}
+    \label{fig:pvs-mcts-comparison}
+\end{figure}
+
+TODO:
+
+\begin{figure}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tikzpicture}
+            \coordinate (bar1Start) at (0,0);
+            \coordinate (bar1End) at (10,0);
+            \coordinate (bar1Break) at (3.1,0);
+
+            \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+            \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+            \node[left = 0.1cm of bar1Start, align=right] {Greedy Player \\ (eval: static)};
+            \node[right = 0.1cm of bar1End, align=left] {Greedy Player \\ (eval: score)};
+            \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $31$ Gewonnen};
+            \node[below = 0.1cm of bar1Break] {\scriptsize $31\%$};
+            \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $69$ Verloren};
+        \end{tikzpicture}}
+    % \vspace*{-0.5cm}
+    \caption{Statische Evaluation vs. Random Rollout Score Evaluation}
+    \label{fig:greedy-static-greedy-score-comparison}
+\end{figure}
 
 TODO:
 
@@ -381,6 +514,17 @@ Bewertungssystem
 
 \cite{2022.Glicko2}
 \cite{2024.ChessRatingSystems}
+
+TODO:
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/plots/player-ratings.pdf}
+    \caption{Bewertung der Spieler im Glicko-2-Wertungssystem}
+    \label{fig:player-ratings}
+\end{figure}
+
+TODO:
 
 \section{Ergebnisse gegen die Autoren}
 

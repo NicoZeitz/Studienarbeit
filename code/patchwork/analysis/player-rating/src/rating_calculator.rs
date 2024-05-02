@@ -6,7 +6,7 @@ use std::{
 use rand::seq::SliceRandom;
 use rand::SeedableRng;
 use skillratings::{
-    glicko2::{glicko2, Glicko2Config, Glicko2Rating},
+    glicko2::{confidence_interval, glicko2, Glicko2Config, Glicko2Rating},
     Outcomes,
 };
 
@@ -70,7 +70,11 @@ pub fn analyze_ratings(games: &HashMap<String, Vec<(String, Outcomes)>>) {
     new_players.sort_by_key(|p| (p.rating.rating * -100_000.0) as i64);
 
     for player in new_players {
-        println!("{player:?}");
+        let (interval_low, interval_high) = confidence_interval(&player.rating);
+        println!(
+            "{player:?}, interval: [{interval_low}, {:?}, {interval_high}]",
+            player.rating.rating
+        );
     }
 
     // let players = games
