@@ -3,7 +3,6 @@
 
 % \definecolor{win}{HTML}{0de929}
 % \definecolor{loss}{HTML}{ef4748}
-
 \definecolor{win}{HTML}{63be7b}
 \definecolor{loss}{HTML}{f8696b}
 
@@ -29,16 +28,15 @@ hier ersteinmal leichte Vergleiche (z.B. greedy, random)
             \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $79$ Verloren};
         \end{tikzpicture}}
     % \vspace*{-0.5cm}
-    \caption{TODO:}
+    \caption{Rnadom Player vs. Greedy Player}
     \label{fig:random-greedy-comparison}
 \end{figure}
 
-
+TODO:
 
 \section{Vergleich der PVS-Varianten}
 
 TODO:
-
 
 % ┌───────────────────────────── Principal Variation Search Player ─────────────────────────────┐
 % │ Features:            [AW, TT(S), LMR, LMP, SE]                                              │
@@ -130,7 +128,7 @@ TODO:
             \endgroup
         \end{tcolorbox}}
     \vspace*{-0.25cm}
-    \caption{\acs{PVS}-Suchstatistiken}
+    \caption[PVS-Suchstatistiken]{\acs{PVS}-Suchstatistiken}
     \label{fig:pvs-statistics}
 \end{figure}
 
@@ -206,7 +204,7 @@ TODO:
             \draw[color=win, line width=0.25cm] (bar6Start) -- (bar6Break);
             \draw[color=loss, line width=0.25cm] (bar6Break) -- (bar6End);
             \node[left = 0.1cm of bar6Start] {\acs{LMR}, \acs{LMP}};
-            \node[right = 0.1cm of bar6End] {Keine \acs{LMR}, \acs{LMP}};
+            \node[right = 0.1cm of bar6End] {Kein \acs{LMR}, \acs{LMP}};
             \node[above right = 0.05cm and -0.15cm of bar6Start] {\footnotesize $53$ Gewonnen};
             \node[below = 0.1cm of bar6Break] {\scriptsize $53\%$};
             \node[above left = 0.05cm and -0.15cm of bar6End] {\footnotesize $47$ Verloren};
@@ -236,7 +234,7 @@ TODO:
             \node[above left = 0.05cm and -0.15cm of bar8End] {\footnotesize $59$ Verloren};
         \end{tikzpicture}}
     % \vspace*{-0.5cm}
-    \caption{TODO:}
+    \caption[Vergleich der PVS Varianten]{Vergleich der \acs{PVS} Varianten}
     \label{fig:pvs-comparision}
 \end{figure}
 
@@ -287,7 +285,7 @@ TODO:
         \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $500$ Verloren};
     \end{tikzpicture}
     % \vspace*{-0.5cm}
-    \caption{TODO:}
+    \caption[Vergleich neuer Baum vs. Baum wiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwendung bei \acs{MCTS}}
     \label{fig:mcts-tree-reuse-comparision}
 \end{figure}
 
@@ -391,7 +389,7 @@ TODO:
             \endgroup
         \end{tcolorbox}}
     \vspace*{-0.25cm}
-    \caption{\acs{MCTS}-Suchstatistiken}
+    \caption[MCTS-Suchstatistiken]{\acs{MCTS}-Suchstatistiken}
     \label{fig:mcts-statistics}
 \end{figure}
 
