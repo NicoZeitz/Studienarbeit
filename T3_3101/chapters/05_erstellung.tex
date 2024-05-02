@@ -26,9 +26,54 @@ Die einfachste Computerspielengine ist der \code{RandomPlayer}, in Codeauschnitt
     firstline=0,
 ]{res/code/random-player.rs}
 
+\pagebreak
+
 \section{Ansatz B: Greedy-Algorithmus}
 
-TODO: auch Evaluator
+Die Computerspielengine, welche mit dem Greedy-Algorithmus arbeitet, ist ebenfalls ein weiterer guter Vergleichskandidat für die komplexeren Computergegner. Wenn der Greedy-Algorithmus vor eine Entscheidung gestellt wird, wählt dieser immer den Spielzug, der in der aktuellen Situation optimal erscheint, auch wenn der Spielzug sich im weiteren Spielverlauf nicht als bester Zug herausstellt \cite[S. 234]{2023Greedy}. Durch die direkte Bewertung mittels des Evaluators mit 1-Zug-Voraussicht ist dieses zukünftige Wissen allerdings nicht bekannt. Als einer der Evaluatoren wurde für diesen Computergegner eine \enquote{Handcrafted Evaluation} implementiert, dieser Evaluator zeichnet sich dadurch aus, dass er zahlreiche Heuristiken und Regeln verwendet, um eine Evaluierung einer Position zu determinieren \cite{2023.StockfishTerminology}. Um einen Evaluator zu erstellen, muss der Trait \code{Evaluator} implementiert werden. Dieser ist in Codeausschnitt \ref{code:evaluator} zu sehen und beinhaltet drei Methoden. Tatsächlich muss jedoch nur die erste Methode \code{evaluate\_intermediate\_node()} implementiert werden, da die anderen beiden Methoden \code{evalute\_terminal\_node()} und \code{evaluate\_node()} allgemeingültige Standardimplementierungen besitzen. Die Methoden funktionieren alle gleich: Sie nehmen den aktuellen Spielzustand an und geben dann eine Zahl aus, welche die Evaluierung der Position beschreibt, wobei eine große Zahl in negative oder positive Richtung für den jeweiligen Spieler gut ist.
+
+\lstinputlisting[
+    label={code:evaluator},
+    caption={Evaluierer für den Spielzustand},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/evaluator.rs}
+
+Der \enquote{Handcrafted Evaluator}, im Quellcode als \code{StaticEvaluator} bezeichnet, für diese Computerspielengine, berechnet wie folgt den Score für die aktuelle Spielposition. Es werden die Scores für beide Spieler berechnet und anschließend der ist Evaluation der Score des Spielers abgezogen vom Score des Gegners. Innerhalb der Berechnung des Scores für einen Spieler werden folgende Berechnungsgrundlagen angewandt:
+
+Als erster Faktor wird die Spielposition, die mit den normalen Endregeln berechnet wird, als $es$ eingerechnet. Die normalen Endregeln bedeuten in diesem Fall, dass für jedes freie Feld zwei Punkte abgezogen werden und jeder Knopf, der dem Spieler gehört, mit einem Punkt gewertet wird.
+
+Als zweiter Faktor wird mit $ps$ einberechnet, an welcher Stelle der Zeitstein des Spielers liegt. Für jedes Feld, über das der Zeitstein noch nicht gezogen ist, wird dieser Faktor mit einem Punkt mehr gewertet.
+
+Als dritter Faktor wird die Bewertung des Ablageplans des Spielers $bs$ miteingerechnet. Dazu wird zuerst die Feldanzahl mit neun multipliziert, um immer für $bs$ eine positive Punktzahl zu bekommen. Im Fall von Patchwork mit seinen 81 Felder pro Ablageplan ist somit die intitale Punktezahl 719. Nun wird für jedes freie Feld auf dem Ablageplan neun Punkte von der Punktzahl abgezogen, somit kommt man bei einem komplett leeren Ablageplan auf einen $bs$ von null. Anschließend wird für jedes Feld, auf dem ein Teil von einem Flicken liegt, berechnet wie viele leere Nachbarfelder dieses hat und für jedes leere Feld ein Punkt abgezogen. Der Rand gilt bei dieser Berechnung als befülltes Feld, wenn er als Nachbarfeld in Frage kommt, für den Rand werden jedoch nicht die leeren Nachbarfelder bestimmt. Zur Bestimmung, was die Nachbarn eines Feldes sind, gibt es zwei klassische Nachbarschaften: Die von Neumann Nachbarschaft, wobei alle Felder als Nachbar gelten, welche eine Manhattan-Distanz entfernt sind und die Moore Nachbarschaft, bei der alle Felder als Nachbar gelten, die eine Tschebyschow-Distanz entfernt sind \cite[S. 2]{2016.kneighborhood}. In der Abbildung \ref{fig:nachbarschaften} sind diese beiden Nachbarschaften grafisch dargestellt und jeweils mit zwei Beispielen im Patchwork-Kontext versehen.
+
+Für die Implementierung der Nachbarschaft wurde sich für die Moore Nachbarschaft entschieden, um alle umliegenden Felder des betrachten Feld abzudecken.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/nachbarschaften.pdf}
+    \caption{Mögliche Nachbarschaften für den Evaluator}
+    \label{fig:nachbarschaften}
+\end{figure}
+
+Als vierter Faktor wird der Knopfeinkommen-Score $bis$ miteingerechnet. Die Formel \ref{eqn:button-income-score} zur Berechnung dieses Scores benötigt die Argumente $tp$ und $bi$, wobei das erste Argument die Anzahl der schon überschrittenen Knopfwertungen beschreibt und das zweite Argument die Höhe des Knopfeinkommen vom Spieler beschreibt, also wie viele Knöpfe dieser bei Überschreiten einer Knopfwertung erhält. Je weniger Knopfwertungen vor dem Zeitstein des Spielers sind, desto weniger Nutzen besitzt eine hohes Knopfeinkommen. Daher bewertet dieser Score die untenstehende Formel mit exponentiellem Zerfall. Wurde noch keine Knopfeinkommen überschritten, so bringt jeder Knopf des Knopfeinkommes acht Punkte, wohingegen nur noch ein Punkt pro Knopf im Knopfeinkommen gewertet wird, wenn noch ein Knopfwertung aussteht.
+
+\begin{equation}
+    \label{eqn:button-income-score}
+    bis(tp, bi) = 8 \cdot e^{\frac{tp}{8}\ln\left(\frac{1}{8}\right)} \cdot bi
+\end{equation}
+
+\pagebreak
+
+Um die Evaluation für eine Spielposition zu erhalten, werden mit der folgenden Formel \ref{eqn:evaluator-score} alle Faktoren zusammengerechnet. $\tau$ beschriebt hierbei als Prozentzahl, wie weit das Spiel der Spielposition schon fortgeschritten ist. Daraus lässt sich schließen, dass zu Beginn eines Spiels der Ablageplan-Score $bs$ im Verhältnis zum Endscore $es$ viel höher gewichtet wird, um anstatt irgendwie viele Felder mit Flicken zu befüllen, die Flicken sinnvoll platziert werden, zum Beispiel am Rand oder nahtlos anschließend an andere Flicken. Beide Faktoren werden zweifachgewichtet in die Evaluation mit einberechnet, während der Positions-Score für den Zeitstein $ps$ und der Knopfeinkommen-Score $bis$ nur einfach gewichtet sind. Diese Gewichtung wurde vorgenommen, um möglichst viele Strafpunkte pro freiem Feld auf dem Ablageplans zu vermeiden und in beide vorderen Scores der Ablageplan von großer Bedeutung ist.
+
+\begin{equation}
+    \label{eqn:evaluator-score}
+    eval = 2 \cdot bs \cdot (1 - \tau) + 2 \cdot es \cdot \tau + ps + bis
+\end{equation}
+
+Neben dem \enquote{Handcrafted Evaluator} gibt es noch weitere Evaluatoren, von denen zwei an dieser Stelle beschrieben werden sollen. Der Win-Loss-Evaluator lässt zur Bewertung einer Spielposition das Spiel von dieser Stelle aus zufällig zu Ende spielen und gibt dann eine 1 zurück, wenn der Spieler gewonnen hat und eine -1, wenn der Gegner in dem zufälligen Spielende gewonnen hat. Der Score-Evaluator funktioniert nach dem gleichen Prinzip des zufälligen zu Ende Spielens der Spielposition, mit dem einzigen Unterschied, dass nicht -1 oder 1 zurückgegeben wird, sondern die Differenz der Endwertung der beiden Spieler.
 
 \pagebreak
 
@@ -477,7 +522,7 @@ TODO:
     % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
     % im Abbildungsverzeichnis. Der Text darunter wird
-    % tatsächlich angezeigt.
+    % tats��chlich angezeigt.
     \caption[Squeeze \& Excitation Block]{\unskip}
     Squeeze \& Excitation Block
     \label{fig:squeeze-and-excitation-block}
