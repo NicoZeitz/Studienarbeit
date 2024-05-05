@@ -517,7 +517,7 @@ Für die Parallelisierung von \ac{MCTS} existieren wie in Abbildung \ref{fig:mct
 \end{figure}
 \vspace*{-0.15cm}
 
-Bei der \emph{Leaf-Parallelisierung} finden die \ac{MCTS} Phasen Selektion und Expansion wie normal statt. Nur während der Simulations-Phase werden mehrere Threads gestartet, welche alle verschiedene zufällige Spielverlauft ausgehend von dem ausgewählten Knoten simulieren. So können in der Backpropagation-Phase gleich mehrere Spielausgänge im Baum rückpropagiert werden, sodass für den Zustand direkt eine etwas genauere Schätzung bei einer einzigen \ac{MCTS} Phase besteht. Nachteil hierbei ist, dass immer gewartet werden muss, bis alle Threads ihren simulierten Spielverlauf fertig gestellt haben und sonst keine Parallelisierung stattfindet. Somit schafft diese Parallelisierungsart insgesamt weniger vollständige \ac{MCTS} Iterationen als die Single-Threaded-Variante. \cite[S. 63]{2008.ParallelMCTS}
+Bei der \emph{Leaf-Parallelisierung} finden die \ac{MCTS} Phasen Selektion und Expansion wie normal statt. Nur während der Simulations-Phase werden mehrere Threads gestartet, welche alle verschiedene zufällige Spielverlauft ausgehend von dem ausgewählten Knoten simulieren. So können in der Backpropagation-Phase gleich mehrere Spielausgänge im Baum rückpropagiert werden, sodass für den Zustand direkt eine etwas genauere Schätzung bei einer einzigen \ac{MCTS} Phase besteht. Nachteil hierbei ist, dass immer gewartet werden muss, bis alle Threads ihren simulierten Spielverlauf fertig gestellt haben und sonst keine Parallelisierung stattfindet. Somit schafft diese Parallelisierungsart insgesamt weniger vollständige \ac{MCTS} Iterationen als die Single-Threaded-Variante. . \cite[S. 204]{2016.HybridMCTS}
 
 \vspace*{-5cm}
 
@@ -531,7 +531,7 @@ Für den \ac{MCTS} Spieler wurden die Parallelisierungsarten \emph{Leaf Parallel
 
 \pagebreak
 
-\section{Ansatz E: AlphaZero}
+\section{Ansatz E: PatchZero}
 \label{section:erstellung-ansatz-d}
 
 TODO:
@@ -555,6 +555,15 @@ TODO:
 \end{figure}
 
 TODO: LSTM Bild
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/patch-embeddings.png}
+    \caption{Patch Embeddings}
+    \label{fig:patch-embeddings}
+\end{figure}
+
+TODO:
 
 \pagebreak
 
@@ -643,7 +652,7 @@ TODO:
 
 \subsection{Parallelisierung}
 
-Im Gegensatz zum \ac{MCTS} Spieler wird bei AlphaZero die \emph{Tree Parallelisierung} verwendet um eine Suche über mehrere Kerne bereitzustellen. Diese Parallelisierungsart wird auch von der originalen AlphaZero Implementierung mit gutem Grunde verwendet. Die Ausführung eines neuronales Netzes ist umso effizienter, umso mehr Datensätze das Netz auf einmal als Eingabe erhält. Zwar ist insgesamt die Zeit, die das neuronale Netz für die Forwardpropagation, also der Transformation der Eingaben in die Ausgaben, braucht höher, jedoch wird die Zeit die durchschnittlich für einen Datensatz benötigt wird geringer. Dies ist der Fall, da sich der Aufwand für die Parallelisierung verschiedener Operationen wie Matrixmultiplikation erst bei größeren Eingaben für eine Geschwindigkeitserhöhung der Forwardpropagation lohnt.
+Im Gegensatz zum \ac{MCTS} Spieler wird bei PatchZero die \emph{Tree Parallelisierung} verwendet um eine Suche über mehrere Kerne bereitzustellen. Diese Parallelisierungsart wird auch von der originalen AlphaZero Implementierung mit gutem Grunde verwendet. Die Ausführung eines neuronales Netzes ist umso effizienter, umso mehr Datensätze das Netz auf einmal als Eingabe erhält. Zwar ist insgesamt die Zeit, die das neuronale Netz für die Forwardpropagation, also der Transformation der Eingaben in die Ausgaben, braucht höher, jedoch wird die Zeit die durchschnittlich für einen Datensatz benötigt wird geringer. Dies ist der Fall, da sich der Aufwand für die Parallelisierung verschiedener Operationen wie Matrixmultiplikation erst bei größeren Eingaben für eine Geschwindigkeitserhöhung der Forwardpropagation lohnt.
 
 TODO:
 

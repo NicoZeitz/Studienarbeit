@@ -244,99 +244,6 @@ TODO:
 
 TODO:
 
-\begin{table}[H]
-    \centering
-    \resizebox{\textwidth}{!}{\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
-            \hline
-            \multicolumn{1}{|c}{Policy}       & $\rightarrow$ & \ac{UCT}                          & \ac{UCT}                          & \ac{UCT}                          & Score                             & Score                             & Score                             & \tiny \makecell{Partial-                                                                                  \\Score}  & \tiny \makecell{Partial-\\Score}  & \tiny \makecell{Partial-\\Score}  \\ \cline{3-11}
-            \multicolumn{1}{|c}{$\downarrow$} & Evaluator     & Win                               & Score                             & Static                            & Win                               & Score                             & Static                            & Win                               & Score                             & Static                            \\ \hline
-            \ac{UCT}                          & Win           & $\diagup$                         & \cellcolor[HTML]{ece683}$0{,}562$ & \cellcolor[HTML]{67bf7c}$0{,}989$ & \cellcolor[HTML]{c5db81}$0{,}686$ & \cellcolor[HTML]{fee883}$0{,}490$ & \cellcolor[HTML]{85c87d}$0{,}894$ & \cellcolor[HTML]{f3e884}$0{,}541$ & \cellcolor[HTML]{f7e984}$0{,}526$ & \cellcolor[HTML]{82c77d}$0{,}902$ \\ \hline
-            \ac{UCT}                          & Score         & \cellcolor[HTML]{feda80}$0{,}438$ & $\diagup$                         & \cellcolor[HTML]{68c07c}$0{,}984$ & \cellcolor[HTML]{cadc81}$0{,}673$ & \cellcolor[HTML]{fbea84}$0{,}516$ & \cellcolor[HTML]{7ec67d}$0{,}914$ & \cellcolor[HTML]{f7e984}$0{,}526$ & \cellcolor[HTML]{feea83}$0{,}499$ & \cellcolor[HTML]{85c87d}$0{,}894$ \\ \hline
-            \ac{UCT}                          & Static        & \cellcolor[HTML]{f86b6b}$0{,}011$ & \cellcolor[HTML]{f86d6b}$0{,}016$ & $\diagup$                         & \cellcolor[HTML]{f8726c}$0{,}038$ & \cellcolor[HTML]{f86d6b}$0{,}018$ & \cellcolor[HTML]{fcb87a}$0{,}305$ & \cellcolor[HTML]{f86e6c}$0{,}021$ & \cellcolor[HTML]{f86c6b}$0{,}013$ & \cellcolor[HTML]{fcb87a}$0{,}304$ \\ \hline
-            Score                             & Win           & \cellcolor[HTML]{fcba7a}$0{,}314$ & \cellcolor[HTML]{fcbe7b}$0{,}327$ & \cellcolor[HTML]{6fc27c}$0{,}962$ & $\diagup$                         & \cellcolor[HTML]{fdca7d}$0{,}374$ & \cellcolor[HTML]{a0d07f}$0{,}805$ & \cellcolor[HTML]{fcc07b}$0{,}335$ & \cellcolor[HTML]{fcc47c}$0{,}353$ & \cellcolor[HTML]{9dcf7f}$0{,}816$ \\ \hline
-            Score                             & Score         & \cellcolor[HTML]{fceb84}$0{,}510$ & \cellcolor[HTML]{fee683}$0{,}484$ & \cellcolor[HTML]{69c07c}$0{,}982$ & \cellcolor[HTML]{d8e082}$0{,}626$ & $\diagup$                         & \cellcolor[HTML]{7ec67d}$0{,}915$ & \cellcolor[HTML]{f6e984}$0{,}531$ & \cellcolor[HTML]{fbea84}$0{,}516$ & \cellcolor[HTML]{80c77d}$0{,}909$ \\ \hline
-            Score                             & Static        & \cellcolor[HTML]{f98470}$0{,}106$ & \cellcolor[HTML]{f97f6f}$0{,}086$ & \cellcolor[HTML]{c3da81}$0{,}695$ & \cellcolor[HTML]{fa9b74}$0{,}195$ & \cellcolor[HTML]{f97f6f}$0{,}085$ & $\diagup$                         & \cellcolor[HTML]{f98871}$0{,}123$ & \cellcolor[HTML]{f9806f}$0{,}092$ & \cellcolor[HTML]{fedf81}$0{,}457$ \\ \hline
-            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &           Win & \cellcolor[HTML]{fee081}$0{,}459$ & \cellcolor[HTML]{fee482}$0{,}474$ & \cellcolor[HTML]{6ac07c}$0{,}979$ & \cellcolor[HTML]{ccdd82}$0{,}665$ & \cellcolor[HTML]{fee282}$0{,}469$ & \cellcolor[HTML]{8aca7e}$0{,}877$ & $\diagup$                         & \cellcolor[HTML]{fbea84}$0{,}513$ & \cellcolor[HTML]{82c77d}$0{,}903$ \\ \hline
-            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &         Score & \cellcolor[HTML]{fee482}$0{,}474$ & \cellcolor[HTML]{ffeb84}$0{,}501$ & \cellcolor[HTML]{68c07c}$0{,}987$ & \cellcolor[HTML]{d2de82}$0{,}647$ & \cellcolor[HTML]{fee683}$0{,}484$ & \cellcolor[HTML]{80c77d}$0{,}908$ & \cellcolor[HTML]{fee783}$0{,}487$ & $\diagup$                         & \cellcolor[HTML]{7cc67d}$0{,}920$ \\ \hline
-            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &        Static & \cellcolor[HTML]{f9826f}$0{,}098$ & \cellcolor[HTML]{f98470}$0{,}106$ & \cellcolor[HTML]{c2da81}$0{,}696$ & \cellcolor[HTML]{fa9874}$0{,}184$ & \cellcolor[HTML]{f9806f}$0{,}091$ & \cellcolor[HTML]{f2e884}$0{,}543$ & \cellcolor[HTML]{f9826f}$0{,}097$ & \cellcolor[HTML]{f97d6e}$0{,}080$ & $\diagup$                         \\ \hline
-        \end{tabular}}
-    \vspace{3pt}
-    \caption{Vergleich der \acs{MCTS} Policy und Evaluator Varianten}
-    \label{tabelle:mcts-policy-eval-comparision}
-\end{table}
-
-Iterationen 2500, keine parallelisierungen, kein tree reuse, winrate -> gegen oben
-
-TODO:
-
-\begin{figure}[!ht]
-    \centering
-    \begin{tikzpicture}
-        \coordinate (bar1Start) at (0,0);
-        \coordinate (bar1End) at (10,0);
-        \coordinate (bar1Break) at (5,0);
-
-        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
-        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
-        \node[left = 0.1cm of bar1Start] {Tree New};
-        \node[right = 0.1cm of bar1End] {Tree Reuse};
-        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $500$ Gewonnen};
-        \node[below = 0.1cm of bar1Break] {\scriptsize $50\%$};
-        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $500$ Verloren};
-    \end{tikzpicture}
-    % \vspace*{-0.5cm}
-    \caption[Vergleich neuer Baum vs. Baum wiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwendung bei \acs{MCTS}}
-    \label{fig:mcts-tree-reuse-comparision}
-\end{figure}
-
-TODO:
-
-\begin{figure}[!ht]
-    \centering
-    \begin{tikzpicture}
-        \coordinate (bar1Start) at (0,0);
-        \coordinate (bar1End) at (10,0);
-        \coordinate (bar1Break) at (7.7,0);
-
-        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
-        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
-        \node[left = 0.1cm of bar1Start, align=right] {\acs{MCTS}\\(1 Thread)};
-        \node[right = 0.1cm of bar1End, align=left] {\acs{MCTS}\\(8 Leaf)};
-        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $77$ Gewonnen};
-        \node[below = 0.1cm of bar1Break] {\scriptsize $77\%$};
-        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $23$ Verloren};
-
-        \coordinate (bar2Start) at (0,-1.5);
-        \coordinate (bar2End) at (10,-1.5);
-        \coordinate (bar2Break) at (4.6,-1.5);
-
-        \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
-        \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
-        \node[left = 0.1cm of bar2Start, align=right] {\acs{MCTS}\\(1 Thread)};
-        \node[right = 0.1cm of bar2End, align=left] {\acs{MCTS}\\(8 Root)};
-        \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $46$ Gewonnen};
-        \node[below = 0.1cm of bar2Break] {\scriptsize $46\%$};
-        \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $54$ Verloren};
-
-        \coordinate (bar3Start) at (0,-3);
-        \coordinate (bar3End) at (10,-3);
-        \coordinate (bar3Break) at (1.8,-3);
-
-        \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
-        \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
-        \node[left = 0.1cm of bar3Start, align=right] {\acs{MCTS}\\(8 Leaf)};
-        \node[right = 0.1cm of bar3End, align=left] {\acs{MCTS}\\(8 Root)};
-        \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $18$ Gewonnen};
-        \node[below = 0.1cm of bar3Break] {\scriptsize $18\%$};
-        \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $82$ Verloren};
-    \end{tikzpicture}
-    % \vspace*{-0.5cm}
-    \caption[Vergleich der MCTS Varianten]{Vergleich der \acs{MCTS} Varianten}
-    \label{fig:mcts-comparision}
-\end{figure}
-
-TODO:
-
 % ┌───────────────────────────── MCTS Player ─────────────────────────────┐
 % │ Features:            [RP(8), RT]                                      │
 % │ Duration:            9.925s                                           │
@@ -395,7 +302,100 @@ TODO:
 
 TODO:
 
-\section{Evaluation von AlphaZero}
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+            \hline
+            \multicolumn{1}{|c}{Policy}       & $\rightarrow$ & \ac{UCT}                          & \ac{UCT}                          & \ac{UCT}                          & Score                             & Score                             & Score                             & \tiny \makecell{Partial-                                                                                  \\Score}  & \tiny \makecell{Partial-\\Score}  & \tiny \makecell{Partial-\\Score}  \\ \cline{3-11}
+            \multicolumn{1}{|c}{$\downarrow$} & Evaluator     & Win                               & Score                             & Static                            & Win                               & Score                             & Static                            & Win                               & Score                             & Static                            \\ \hline
+            \ac{UCT}                          & Win           & $\diagup$                         & \cellcolor[HTML]{ece683}$0{,}562$ & \cellcolor[HTML]{67bf7c}$0{,}989$ & \cellcolor[HTML]{c5db81}$0{,}686$ & \cellcolor[HTML]{fee883}$0{,}490$ & \cellcolor[HTML]{85c87d}$0{,}894$ & \cellcolor[HTML]{f3e884}$0{,}541$ & \cellcolor[HTML]{f7e984}$0{,}526$ & \cellcolor[HTML]{82c77d}$0{,}902$ \\ \hline
+            \ac{UCT}                          & Score         & \cellcolor[HTML]{feda80}$0{,}438$ & $\diagup$                         & \cellcolor[HTML]{68c07c}$0{,}984$ & \cellcolor[HTML]{cadc81}$0{,}673$ & \cellcolor[HTML]{fbea84}$0{,}516$ & \cellcolor[HTML]{7ec67d}$0{,}914$ & \cellcolor[HTML]{f7e984}$0{,}526$ & \cellcolor[HTML]{feea83}$0{,}499$ & \cellcolor[HTML]{85c87d}$0{,}894$ \\ \hline
+            \ac{UCT}                          & Static        & \cellcolor[HTML]{f86b6b}$0{,}011$ & \cellcolor[HTML]{f86d6b}$0{,}016$ & $\diagup$                         & \cellcolor[HTML]{f8726c}$0{,}038$ & \cellcolor[HTML]{f86d6b}$0{,}018$ & \cellcolor[HTML]{fcb87a}$0{,}305$ & \cellcolor[HTML]{f86e6c}$0{,}021$ & \cellcolor[HTML]{f86c6b}$0{,}013$ & \cellcolor[HTML]{fcb87a}$0{,}304$ \\ \hline
+            Score                             & Win           & \cellcolor[HTML]{fcba7a}$0{,}314$ & \cellcolor[HTML]{fcbe7b}$0{,}327$ & \cellcolor[HTML]{6fc27c}$0{,}962$ & $\diagup$                         & \cellcolor[HTML]{fdca7d}$0{,}374$ & \cellcolor[HTML]{a0d07f}$0{,}805$ & \cellcolor[HTML]{fcc07b}$0{,}335$ & \cellcolor[HTML]{fcc47c}$0{,}353$ & \cellcolor[HTML]{9dcf7f}$0{,}816$ \\ \hline
+            Score                             & Score         & \cellcolor[HTML]{fceb84}$0{,}510$ & \cellcolor[HTML]{fee683}$0{,}484$ & \cellcolor[HTML]{69c07c}$0{,}982$ & \cellcolor[HTML]{d8e082}$0{,}626$ & $\diagup$                         & \cellcolor[HTML]{7ec67d}$0{,}915$ & \cellcolor[HTML]{f6e984}$0{,}531$ & \cellcolor[HTML]{fbea84}$0{,}516$ & \cellcolor[HTML]{80c77d}$0{,}909$ \\ \hline
+            Score                             & Static        & \cellcolor[HTML]{f98470}$0{,}106$ & \cellcolor[HTML]{f97f6f}$0{,}086$ & \cellcolor[HTML]{c3da81}$0{,}695$ & \cellcolor[HTML]{fa9b74}$0{,}195$ & \cellcolor[HTML]{f97f6f}$0{,}085$ & $\diagup$                         & \cellcolor[HTML]{f98871}$0{,}123$ & \cellcolor[HTML]{f9806f}$0{,}092$ & \cellcolor[HTML]{fedf81}$0{,}457$ \\ \hline
+            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &           Win & \cellcolor[HTML]{fee081}$0{,}459$ & \cellcolor[HTML]{fee482}$0{,}474$ & \cellcolor[HTML]{6ac07c}$0{,}979$ & \cellcolor[HTML]{ccdd82}$0{,}665$ & \cellcolor[HTML]{fee282}$0{,}469$ & \cellcolor[HTML]{8aca7e}$0{,}877$ & $\diagup$                         & \cellcolor[HTML]{fbea84}$0{,}513$ & \cellcolor[HTML]{82c77d}$0{,}903$ \\ \hline
+            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &         Score & \cellcolor[HTML]{fee482}$0{,}474$ & \cellcolor[HTML]{ffeb84}$0{,}501$ & \cellcolor[HTML]{68c07c}$0{,}987$ & \cellcolor[HTML]{d2de82}$0{,}647$ & \cellcolor[HTML]{fee683}$0{,}484$ & \cellcolor[HTML]{80c77d}$0{,}908$ & \cellcolor[HTML]{fee783}$0{,}487$ & $\diagup$                         & \cellcolor[HTML]{7cc67d}$0{,}920$ \\ \hline
+            \tiny \makecell{Partial-                                                                                                                                                                                                                                                                                                                                                              \\Score} &        Static & \cellcolor[HTML]{f9826f}$0{,}098$ & \cellcolor[HTML]{f98470}$0{,}106$ & \cellcolor[HTML]{c2da81}$0{,}696$ & \cellcolor[HTML]{fa9874}$0{,}184$ & \cellcolor[HTML]{f9806f}$0{,}091$ & \cellcolor[HTML]{f2e884}$0{,}543$ & \cellcolor[HTML]{f9826f}$0{,}097$ & \cellcolor[HTML]{f97d6e}$0{,}080$ & $\diagup$                         \\ \hline
+        \end{tabular}}
+    \vspace{3pt}
+    \caption{Vergleich der \acs{MCTS} Policy und Evaluator Varianten}
+    \label{tabelle:mcts-policy-eval-comparision}
+\end{table}
+
+Iterationen 2500, keine parallelisierungen, kein tree reuse, winrate -> gegen oben
+
+TODO:
+
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \coordinate (bar1Start) at (0,0);
+        \coordinate (bar1End) at (10,0);
+        \coordinate (bar1Break) at (5,0);
+
+        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+        \node[left = 0.1cm of bar1Start] {Tree New};
+        \node[right = 0.1cm of bar1End] {Tree Reuse};
+        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $500$ Gewonnen};
+        \node[below = 0.1cm of bar1Break] {\scriptsize $50\%$};
+        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $500$ Verloren};
+    \end{tikzpicture}
+    % \vspace*{-0.5cm}
+    \caption[Vergleich neuer Baum vs. Baum wiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwendung bei \acs{MCTS}}
+    \label{fig:mcts-tree-reuse-comparision}
+\end{figure}
+
+Weiterhin wurde der \ac{MCTS} Spieler noch vergleichen, indem ein Spieler immer wieder versucht den alten Suchbaum wiederzuverwenden (\emph{Tree Reuse}, während der andere Spieler einfach direkt mit einem neuen Suchbaum anfängt (\emph{Tree New}). Das Ergebnis der 1000 Vergleichsspiele, bei dem jeder Spieler je 5000 Iterationen pro \hyperref[text:ply]{\emph{Ply}} zusteht, ist relativ ernüchternd. Wie in \ref{fig:mcts-tree-reuse-comparision} zu sehen ist, liegt das Ergebnis bei genau 50\% Gewinnrate beider Spieler. Möglicherweise kann das Ergebnis für \emph{Tree Reuse} noch verbessert werden, wenn mehr Iterationen gespielt werden, da dort ein größerer vorheriger Suchbaum existiert, jedoch sind hierfür noch umfangreichere Tests erforderlich.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \coordinate (bar1Start) at (0,0);
+        \coordinate (bar1End) at (10,0);
+        \coordinate (bar1Break) at (7.7,0);
+
+        \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
+        \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
+        \node[left = 0.1cm of bar1Start, align=right] {\acs{MCTS}\\(1 Thread)};
+        \node[right = 0.1cm of bar1End, align=left] {\acs{MCTS}\\(8 Leaf)};
+        \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $77$ Gewonnen};
+        \node[below = 0.1cm of bar1Break] {\scriptsize $77\%$};
+        \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $23$ Verloren};
+
+        \coordinate (bar2Start) at (0,-1.5);
+        \coordinate (bar2End) at (10,-1.5);
+        \coordinate (bar2Break) at (4.6,-1.5);
+
+        \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
+        \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
+        \node[left = 0.1cm of bar2Start, align=right] {\acs{MCTS}\\(1 Thread)};
+        \node[right = 0.1cm of bar2End, align=left] {\acs{MCTS}\\(8 Root)};
+        \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $46$ Gewonnen};
+        \node[below = 0.1cm of bar2Break] {\scriptsize $46\%$};
+        \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $54$ Verloren};
+
+        \coordinate (bar3Start) at (0,-3);
+        \coordinate (bar3End) at (10,-3);
+        \coordinate (bar3Break) at (1.8,-3);
+
+        \draw[color=win, line width=0.25cm] (bar3Start) -- (bar3Break);
+        \draw[color=loss, line width=0.25cm] (bar3Break) -- (bar3End);
+        \node[left = 0.1cm of bar3Start, align=right] {\acs{MCTS}\\(8 Leaf)};
+        \node[right = 0.1cm of bar3End, align=left] {\acs{MCTS}\\(8 Root)};
+        \node[above right = 0.05cm and -0.15cm of bar3Start] {\footnotesize $18$ Gewonnen};
+        \node[below = 0.1cm of bar3Break] {\scriptsize $18\%$};
+        \node[above left = 0.05cm and -0.15cm of bar3End] {\footnotesize $82$ Verloren};
+    \end{tikzpicture}
+    % \vspace*{-0.5cm}
+    \caption[Vergleich der MCTS Varianten]{Vergleich der \acs{MCTS} Varianten}
+    \label{fig:mcts-comparision}
+\end{figure}
+
+Um die \ac{MCTS} Spielervergleiche abzuschließen, werden zuletzt die einzelnen Parallelisierungsmöglichkeiten untereinander in \ref{fig:mcts-comparision} verglichen. Dabei spielen die nicht parallelisierte Single-Threaded Variante sowie die Leaf- und Root-Parallelisierten Varianten mit 8 Threads gegenaeinander. Die Leaf-Parallelisierung schneidet dabei am schlechtesten ab, auch schlechter als die \ac{MCTS} Suche mit einem Thread. Da der \ac{MCTS} Spieler in Patchwork generell sehr wenige Iterationen schafft, ist es wahrscheinlich besser die Change einen guten Spielverlauf zu finden durch viele Iterationen zu maximieren, anstatt weniger Pfade auszuprobieren und für diese Pfade mittels \emph{Leaf-Parallelisierung} eine etwas genaueren Schätzer für den tatsächlichen Wert eines Knotens zu erhalten. Am besten spielt die \emph{Root-Parallelisierte} Variante. Diese setzt sich gegen beide anderen Varianten durch, auch wenn der Vorsprung vor der Single-Threaded Variante geringer ausfällt als erhofft.
+
+\section{Evaluation von PatchZero}
 
 TODO:
 
@@ -408,7 +408,7 @@ TODO:
 
         \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
         \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
-        \node[left = 0.1cm of bar1Start] {AlphaZero};
+        \node[left = 0.1cm of bar1Start] {PatchZero};
         \node[right = 0.1cm of bar1End] {RandomPlayer};
         \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $55$ Gewonnen};
         \node[below = 0.1cm of bar1Break] {\scriptsize $55\%$};
@@ -420,7 +420,7 @@ TODO:
 
         \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
         \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
-        \node[left = 0.1cm of bar2Start] {AlphaZero};
+        \node[left = 0.1cm of bar2Start] {PatchZero};
         \node[right = 0.1cm of bar2End] {GreedyPlayer};
         \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $22$ Gewonnen};
         \node[below = 0.1cm of bar2Break] {\scriptsize $22\%$};
@@ -428,7 +428,7 @@ TODO:
     \end{tikzpicture}
     % \vspace*{-0.5cm}
     \caption{TODO:}
-    \label{fig:alphazero-comparision}
+    \label{fig:patchzero-comparision}
 \end{figure}
 
 TODO:
@@ -517,7 +517,7 @@ Für die Vergabe der Bewertung sind jedem Spieler zum Anfang die aus dem Glicko-
     \label{fig:player-ratings}
 \end{figure}
 
-In der Rangliste spiegeln sich die Ergebnisse der Vergleichspartien. Auch hier ist der RandomPlayer der schlechteste Spieler. Kurz davor liegt AlphaZero. Die Greedy und \ac{PVS} Spieler Varianten teilen sich zusammen in eine ähnliche Bewertungsgruppe ein, wobei der mit Lazy \ac{SMP} parallelisierte \ac{PVS} Spieler die Gruppe anführt. Die \ac{MCTS} Varianten stehen deutlich von den anderen Spielern abgesetzt auf den vorderen Plätzen. Nur der \ac{MCTS} Spieler mit einer statischen Evaluation liegt im Bereich von Greedy- und \ac{PVS}-Spieler. Dies ist nicht verwunderlich, da diese Variante auch eher ähnlich zu diesen Spielern arbeitet, als wie die tatsächlichen \ac{MCTS} Spieler. Die Leaf-Parallelisierung bei \ac{MCTS} liegt leicht abgeschlagen von den anderen Varianten, jedoch immer noch weit vor allen anderen Algorithmen, während Root-Parallelisierung einen kleinen Rangvorsprung über die Single-Threaded \ac{MCTS} Varianten aufbauen kann. An dieser Stelle ist es wichtig anzumerken, dass alle in Abbildung \ref{fig:player-ratings} aufgezeigten Glicko-2-Ratings nur relativ zueinander sind und somit nicht mit anderen Glicko-2-Ratings, zum Beispiel von Schach, verglichen werden können.
+In der Rangliste spiegeln sich die Ergebnisse der Vergleichspartien. Auch hier ist der RandomPlayer der schlechteste Spieler. Kurz davor liegt PatchZero. Die Greedy und \ac{PVS} Spieler Varianten teilen sich zusammen in eine ähnliche Bewertungsgruppe ein, wobei der mit Lazy \ac{SMP} parallelisierte \ac{PVS} Spieler die Gruppe anführt. Die \ac{MCTS} Varianten stehen deutlich von den anderen Spielern abgesetzt auf den vorderen Plätzen. Nur der \ac{MCTS} Spieler mit einer statischen Evaluation liegt im Bereich von Greedy- und \ac{PVS}-Spieler. Dies ist nicht verwunderlich, da diese Variante auch eher ähnlich zu diesen Spielern arbeitet, als wie die tatsächlichen \ac{MCTS} Spieler. Die Leaf-Parallelisierung bei \ac{MCTS} liegt leicht abgeschlagen von den anderen Varianten, jedoch immer noch weit vor allen anderen Algorithmen, während Root-Parallelisierung einen kleinen Rangvorsprung über die Single-Threaded \ac{MCTS} Varianten aufbauen kann. An dieser Stelle ist es wichtig anzumerken, dass alle in Abbildung \ref{fig:player-ratings} aufgezeigten Glicko-2-Ratings nur relativ zueinander sind und somit nicht mit anderen Glicko-2-Ratings, zum Beispiel von Schach, verglichen werden können.
 
 TODO:
 
