@@ -30,7 +30,7 @@ Die einfachste Computerspielengine ist der \code{RandomPlayer}, in Codeauschnitt
 
 \section{Ansatz B: Greedy-Algorithmus}
 
-Die Computerspielengine, welche mit dem Greedy-Algorithmus arbeitet, ist ebenfalls ein weiterer guter Vergleichskandidat für die komplexeren Computergegner. Wenn der Greedy-Algorithmus vor eine Entscheidung gestellt wird, wählt dieser immer den Spielzug, der in der aktuellen Situation optimal erscheint, auch wenn der Spielzug sich im weiteren Spielverlauf nicht als bester Zug herausstellt \cite[S. 234]{2023Greedy}. Durch die direkte Bewertung mittels des Evaluators mit 1-Zug-Voraussicht ist dieses zukünftige Wissen allerdings nicht bekannt. Als einer der Evaluatoren wurde für diesen Computergegner eine \enquote{Handcrafted Evaluation} implementiert, dieser Evaluator zeichnet sich dadurch aus, dass er zahlreiche Heuristiken und Regeln verwendet, um eine Evaluierung einer Position zu determinieren \cite{2023.StockfishTerminology}. Um einen Evaluator zu erstellen, muss der Trait \code{Evaluator} implementiert werden. Dieser ist in Codeausschnitt \ref{code:evaluator} zu sehen und beinhaltet drei Methoden. Tatsächlich muss jedoch nur die erste Methode \code{evaluate\_intermediate\_node()} implementiert werden, da die anderen beiden Methoden \code{evalute\_terminal\_node()} und \code{evaluate\_node()} allgemeingültige Standardimplementierungen besitzen. Die Methoden funktionieren alle gleich: Sie nehmen den aktuellen Spielzustand an und geben dann eine Zahl aus, welche die Evaluierung der Position beschreibt, wobei eine große Zahl in negative oder positive Richtung für den jeweiligen Spieler gut ist.
+Die Computerspielengine, welche mit dem Greedy-Algorithmus arbeitet, ist ebenfalls ein weiterer guter Vergleichskandidat für die komplexeren Computergegner. Wenn der Greedy-Algorithmus vor eine Entscheidung gestellt wird, wählt dieser immer den Spielzug, der in der aktuellen Situation optimal erscheint, auch wenn der Spielzug sich im weiteren Spielverlauf nicht als bester Zug herausstellt \cite[S. 234]{2023Greedy}. Durch die direkte Bewertung mittels des Evaluators mit 1-Zug-Voraussicht ist dieses zukünftige Wissen allerdings nicht bekannt. Als einer der Evaluatoren wurde für diesen Computergegner eine \enquote{Handcrafted Evaluation} implementiert, dieser Evaluator zeichnet sich dadurch aus, dass er zahlreiche Heuristiken und Regeln verwendet, um eine Evaluierung einer Position zu determinieren \cite{2023.StockfishTerminology}.
 
 \lstinputlisting[
     label={code:evaluator},
@@ -40,31 +40,38 @@ Die Computerspielengine, welche mit dem Greedy-Algorithmus arbeitet, ist ebenfal
     firstline=0,
 ]{res/code/evaluator.rs}
 
+\pagebreak
+
+Um einen Evaluator zu erstellen, muss der Trait \code{Evaluator} implementiert werden. Dieser ist in Codeausschnitt \ref{code:evaluator} zu sehen und beinhaltet drei Methoden. Tatsächlich muss jedoch nur die erste Methode \code{evaluate\_intermediate\_node()} implementiert werden, da die anderen beiden Methoden \code{evalute\_terminal\_node()} und \code{evaluate\_node()} allgemeingültige Standardimplementierungen besitzen. Die Methoden funktionieren alle gleich: Sie nehmen den aktuellen Spielzustand an und geben dann eine Zahl aus, welche die Evaluierung der Position beschreibt, wobei eine große Zahl in negative oder positive Richtung für den jeweiligen Spieler gut ist.
+
 Der \enquote{Handcrafted Evaluator}, im Quellcode als \code{StaticEvaluator} bezeichnet, für diese Computerspielengine, berechnet wie folgt den Score für die aktuelle Spielposition. Es werden die Scores für beide Spieler berechnet und anschließend der ist Evaluation der Score des Spielers abgezogen vom Score des Gegners. Innerhalb der Berechnung des Scores für einen Spieler werden folgende Berechnungsgrundlagen angewandt:
 
 Als erster Faktor wird die Spielposition, die mit den normalen Endregeln berechnet wird, als $es$ eingerechnet. Die normalen Endregeln bedeuten in diesem Fall, dass für jedes freie Feld zwei Punkte abgezogen werden und jeder Knopf, der dem Spieler gehört, mit einem Punkt gewertet wird.
 
 Als zweiter Faktor wird mit $ps$ einberechnet, an welcher Stelle der Zeitstein des Spielers liegt. Für jedes Feld, über das der Zeitstein noch nicht gezogen ist, wird dieser Faktor mit einem Punkt mehr gewertet.
 
-Als dritter Faktor wird die Bewertung des Ablageplans des Spielers $bs$ miteingerechnet. Dazu wird zuerst die Feldanzahl mit neun multipliziert, um immer für $bs$ eine positive Punktzahl zu bekommen. Im Fall von Patchwork mit seinen 81 Felder pro Ablageplan ist somit die intitale Punktezahl 719. Nun wird für jedes freie Feld auf dem Ablageplan neun Punkte von der Punktzahl abgezogen, somit kommt man bei einem komplett leeren Ablageplan auf einen $bs$ von null. Anschließend wird für jedes Feld, auf dem ein Teil von einem Flicken liegt, berechnet wie viele leere Nachbarfelder dieses hat und für jedes leere Feld ein Punkt abgezogen. Der Rand gilt bei dieser Berechnung als befülltes Feld, wenn er als Nachbarfeld in Frage kommt, für den Rand werden jedoch nicht die leeren Nachbarfelder bestimmt. Zur Bestimmung, was die Nachbarn eines Feldes sind, gibt es zwei klassische Nachbarschaften: Die von Neumann Nachbarschaft, wobei alle Felder als Nachbar gelten, welche eine Manhattan-Distanz entfernt sind und die Moore Nachbarschaft, bei der alle Felder als Nachbar gelten, die eine Tschebyschow-Distanz entfernt sind \cite[S. 2]{2016.kneighborhood}. In der Abbildung \ref{fig:nachbarschaften} sind diese beiden Nachbarschaften grafisch dargestellt und jeweils mit zwei Beispielen im Patchwork-Kontext versehen.
+Als dritter Faktor wird die Bewertung des Ablageplans des Spielers $bs$ miteingerechnet. Dazu wird zuerst die Feldanzahl mit neun multipliziert, um immer für $bs$ eine positive Punktzahl zu bekommen. Im Fall von Patchwork mit seinen 81 Felder pro Ablageplan ist somit die intitale Punktezahl 719. Nun wird für jedes freie Feld auf dem Ablageplan neun Punkte von der Punktzahl abgezogen, somit kommt man bei einem komplett leeren Ablageplan auf einen $bs$ von null. Anschließend wird für jedes Feld, auf dem ein Teil von einem Flicken liegt, berechnet wie viele leere Nachbarfelder dieses hat und für jedes leere Feld ein Punkt abgezogen. Der Rand gilt bei dieser Berechnung als befülltes Feld, wenn er als Nachbarfeld in Frage kommt, für den Rand werden jedoch nicht die leeren Nachbarfelder bestimmt.
 
-Für die Implementierung der Nachbarschaft wurde sich für die Moore Nachbarschaft entschieden, um alle umliegenden Felder des betrachten Feld abzudecken.
+\pagebreak
 
+Zur Bestimmung, was die Nachbarn eines Feldes sind, gibt es zwei klassische Nachbarschaften: Die von Neumann Nachbarschaft, wobei alle Felder als Nachbar gelten, welche eine Manhattan-Distanz entfernt sind und die Moore Nachbarschaft, bei der alle Felder als Nachbar gelten, die eine Tschebyscheff-Distanz entfernt sind \cite[S. 2]{2016.kneighborhood}. In der Abbildung \ref{fig:nachbarschaften} sind diese beiden Nachbarschaften grafisch dargestellt und jeweils mit zwei Beispielen im Patchwork-Kontext versehen. Für die Implementierung der Nachbarschaft wurde sich für die Moore Nachbarschaft entschieden, um alle umliegenden Felder des betrachten Feld abzudecken.
+
+\vspace*{-0.25cm}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth]{res/pictures/nachbarschaften.pdf}
+    \vspace*{-0.45cm}
     \caption{Mögliche Nachbarschaften für den Evaluator}
     \label{fig:nachbarschaften}
 \end{figure}
+\vspace*{-0.2cm}
 
-Als vierter Faktor wird der Knopfeinkommen-Score $bis$ miteingerechnet. Die Formel \ref{eqn:button-income-score} zur Berechnung dieses Scores benötigt die Argumente $tp$ und $bi$, wobei das erste Argument die Anzahl der schon überschrittenen Knopfwertungen beschreibt und das zweite Argument die Höhe des Knopfeinkommen vom Spieler beschreibt, also wie viele Knöpfe dieser bei Überschreiten einer Knopfwertung erhält. Je weniger Knopfwertungen vor dem Zeitstein des Spielers sind, desto weniger Nutzen besitzt eine hohes Knopfeinkommen. Daher bewertet dieser Score die untenstehende Formel mit exponentiellem Zerfall. Wurde noch keine Knopfeinkommen überschritten, so bringt jeder Knopf des Knopfeinkommes acht Punkte, wohingegen nur noch ein Punkt pro Knopf im Knopfeinkommen gewertet wird, wenn noch ein Knopfwertung aussteht.
+Als vierter Faktor wird der Knopfeinkommen-Score $bis$ miteingerechnet. Die Formel \ref{eqn:button-income-score} zur Berechnung dieses Scores benötigt die Argumente $tp$ und $bi$, wobei das erste Argument die Anzahl der schon überschrittenen Knopfwertungen beschreibt und das zweite Argument die Höhe des Knopfeinkommen vom Spieler beschreibt, also wie viele Knöpfe dieser bei Überschreiten einer Knopfwertung erhält. Je weniger Knopfwertungen vor dem Zeitstein des Spielers sind, desto weniger Nutzen besitzt eine hohes Knopfeinkommen. Daher bewertet dieser Score die untenstehende Formel mit exponentiellem Zerfall. Wurde noch kein Knopfeinkommen überschritten, so bringt jeder Knopf des Knopfeinkommens acht Punkte, wohingegen nur noch ein Punkt pro Knopf im Knopfeinkommen gewertet wird, wenn noch ein Knopfwertung aussteht.
 
 \begin{equation}
     \label{eqn:button-income-score}
     bis(tp, bi) = 8 \cdot e^{\frac{tp}{8}\ln\left(\frac{1}{8}\right)} \cdot bi
 \end{equation}
-
-\pagebreak
 
 Um die Evaluation für eine Spielposition zu erhalten, werden mit der folgenden Formel \ref{eqn:evaluator-score} alle Faktoren zusammengerechnet. $\tau$ beschriebt hierbei als Prozentzahl, wie weit das Spiel der Spielposition schon fortgeschritten ist. Daraus lässt sich schließen, dass zu Beginn eines Spiels der Ablageplan-Score $bs$ im Verhältnis zum Endscore $es$ viel höher gewichtet wird, um anstatt irgendwie viele Felder mit Flicken zu befüllen, die Flicken sinnvoll platziert werden, zum Beispiel am Rand oder nahtlos anschließend an andere Flicken. Beide Faktoren werden zweifachgewichtet in die Evaluation mit einberechnet, während der Positions-Score für den Zeitstein $ps$ und der Knopfeinkommen-Score $bis$ nur einfach gewichtet sind. Diese Gewichtung wurde vorgenommen, um möglichst viele Strafpunkte pro freiem Feld auf dem Ablageplans zu vermeiden und in beide vorderen Scores der Ablageplan von großer Bedeutung ist.
 
@@ -73,7 +80,7 @@ Um die Evaluation für eine Spielposition zu erhalten, werden mit der folgenden 
     eval = 2 \cdot bs \cdot (1 - \tau) + 2 \cdot es \cdot \tau + ps + bis
 \end{equation}
 
-Neben dem \enquote{Handcrafted Evaluator} gibt es noch weitere Evaluatoren, von denen zwei an dieser Stelle beschrieben werden sollen. Der Win-Loss-Evaluator lässt zur Bewertung einer Spielposition das Spiel von dieser Stelle aus zufällig zu Ende spielen und gibt dann eine 1 zurück, wenn der Spieler gewonnen hat und eine -1, wenn der Gegner in dem zufälligen Spielende gewonnen hat. Der Score-Evaluator funktioniert nach dem gleichen Prinzip des zufälligen zu Ende Spielens der Spielposition, mit dem einzigen Unterschied, dass nicht -1 oder 1 zurückgegeben wird, sondern die Differenz der Endwertung der beiden Spieler.
+Neben dem \enquote{Handcrafted Evaluator} gibt es noch zwei weitere Evaluatoren. Der Win-Loss-Evaluator lässt zur Bewertung einer Spielposition das Spiel von dieser Stelle aus zufällig zu Ende spielen und gibt dann eine 1 zurück, wenn Spieler 1 gewonnen hat und eine -1, falls der zweite Spieler in dem zufälligen Spielende gewonnen hat. Somit entspricht dieser Evaluator der Simulationsphase innerhalb einer \ac{MCTS} Iteration. Der Score-Evaluator erweitert den Win-Loss-Evaluator insofern, dass auch die bei Patchwork entstehenden Endergebnisse berücksichtigt werden, \dash auch hier wird von der Position zufällig bis zum Ende gespeilt, mit dem einzigen Unterschied, dass am Ende nicht -1 oder 1 zurückgegeben wird, sondern die Differenz der Endwertung der beiden Spieler.
 
 \pagebreak
 
@@ -430,18 +437,99 @@ Der bisher beschriebene \ac{PVS}-Spieler läuft Single-Threaded ab. Da heutige C
 
 Bei Lazy \ac{SMP}, werden $n$ parallele unabhängige Suchen gleichzeitig gestartet, welche sich nur die Transposition Table teilen. Dadurch, dass alle bereits durchsuchten Spielzustände in die Transposition Table eingefügt werden, wird sichergestellt, dass Spielzustände, welche zuvor von Threads erkundet wurden, nicht erneut durchsucht werden müssen. Dadurch, dass die Transposition Table bereits Lockless Hashing verwendet, können im Code einfach neue Threads gestartet werden, ohne dass weitere Synchronisationsmechanismen eingebaut werden müssen. Nachdem die Zeit abgelaufen ist, werden alle Threads gestoppt und die \ac{PV} Aktion aus der Transposition Table ausgelesen.
 
+\pagebreak
+
 \section{Ansatz D: Monte Carlo Tree Search}
 \label{section:erstellung-ansatz-c}
 
-TODO:
+Der \ac{MCTS} Spieler verwendet zur Suche nach der besten Aktion den \acl{MCTS} Algorithmus. Dabei werden die vier Phasen immer wieder wie in Quellcode \ref{code:mcts-playout} wiederholt, bis eine vorgegebene Endbedingung erreicht ist. Im Regelfall ist diese Endbedingung ein Zeitlimit, kann aber zu Testzwecken auch durch eine Anzahl an Iterationen der vier Phasen angegeben werden. Der \ac{MCTS} Spieler selbst übernimmt keine Suche, sondern erstellt mit dem gegebenen Spielzustand einen neuen Suchbaum. Innerhalb des Suchbaums sind die \ac{MCTS} Phasen implementiert. Der \ac{MCTS} Spieler ruft dann solange die Endbedingung nicht erreicht ist immer wieder die \code{playout} Methode im Suchbaum auf. Am Ende wird dann die Aktion ausgewählt, bei dem der assoziierte Knoten im Suchbaum am meisten Besuche hat, da dies der Knoten ist, welcher die größte Gewinnwahrscheinlichkeit besitzt \cite[S. 217]{2008.MCTS}.
 
-\begin{itemize}
-    \item Normaler MCTS
-    \item UCT (Upper Confidence Bound for Trees)
-    \item Parallel (Root und Leaf)
-    \item Tree Reuse
-    \item Evaluator (WinLoss, Score) -> In Eval genauer betrachten
-\end{itemize}
+\lstinputlisting[
+    label={code:mcts-playout},
+    caption={[Die vier Phasen einer MCTS Iteration]Die vier Phasen einer \acs{MCTS} Iteration},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/mcts-playout.rs}
+
+Die einzelnen Knoten innerhalb des Suchbaums werden durch die in Quellcode \ref{code:mcts-node} dargestellte Struktur \code{Node} modelliert. Jedem Knoten wird neben einer \ac{ID} und dem Spielzustand, den der Knoten repräsentiert auch ein optionaler Elternknoten zugeordnet, der immer vorhanden ist, solange es sich nicht um die Wurzel des Suchbaums handelt. Die Wurzel des Suchbaums entspricht den Ausgangszustand, bei dem der \ac{MCTS} Spieler eine Aktion auswählen soll. In \code{action\_taken} ist die Aktion gespeichert, welche verwendet wurde, um vom dem Spielzustand des Elternknotens in den Spielzustand des Knotens zu gelangen. Weiterhin gibt es eine Liste an Kinderknoten. Diese Liste ist nach dem \ac{MCTS} Algorithmus jedoch zu Beginn leer und füllt sich erst mit der Zeit durch die Expansionsphase. Um zu überwachen, welche Knoten bereits existieren, gibt es noch eine List mit expandierbaren Aktionen. Diese ist zu Beginn mit allen aus dem Spielzustand verfügbaren Aktionen gefüllt. Wird innerhalb der Expansionsphase ein neuer Knoten erstellt, so wird die entsprechende Aktion aus der Liste entfernt. Ist die Liste leer, so ist ein Knoten vollständig expandiert. Zuletzt wird noch eine Reihe von statistischen Kenngrößen gespeichert, die für die Auswahl der Knoten mittels einer \enquote{Tree Policy} innerhalb der Selektionsphase von \ac{MCTS} benötigt werden. Die \emph{neutral} Werte sind dabei immer aus Sicht des ersten Spielers gespeichert, anstatt aus sich des Spielers, welcher in dem Spielzustand des Knotens gerade an der Reihe ist.
+
+\lstinputlisting[
+    label={code:mcts-node},
+    caption={[Knoten im MCTS-Baum]Knoten im \acs{MCTS}-Baum},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/mcts-node.rs}
+
+\pagebreak
+
+Die einzelnen Knoten verweisen dabei mit \emph{NodeIds} aufeinander, anstatt mit direkten Referenzen, um die Rust-Ownership Regeln einzuhalten. In Rust darf ein Objekt nur von einem anderen Objekt \enquote{besitzt} werden. Wird ein Knoten durch seinen Eltern- als auch seine Kindknoten referenziert, so ist dieser eindeutige Besitzt nicht mehr geregelt. Aus diesem Grund werden alle Knoten außerhalb des Suchbaums in einem Array gespeichert und mittels der NodeId referenziert.
+
+\subsection{Tree Policy}
+
+In der Selektionsphase einer \ac{MCTS} Iteration muss ausgehend von dem Wurzelknoten immer ein weiterer Knoten ausgewählt werden, bis ein Knoten erreicht wird, bei dem noch nicht jede Aktion einmal ausprobiert wurde oder bei dem es sich um einen Terminalknoten handelt, also einen Knoten wo der assoziierte Spielstand ein Endzustand ist. Für die Selektion wird eine \enquote{Tree Policy} verwendet. Die Tree Policy betrachtet alle Kinderknoten eines Knotens und entscheidet sich für einen der Knoten. Dazu wird im Normalfall jedem Kinderknoten ein Wert zugeordnet und der Knoten mit dem höchsten Wert ausgewählt. Bei dem \ac{MCTS} Spieler stehen dabei 3 mögliche Tree Policies zur Auswahl.
+
+\begingroup
+\allowdisplaybreaks
+\begin{align}
+    \mathbb{UCT}                         & = \frac{w}{n} + c \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \\  \notag
+    \intertext{Die erste Tree Policy ist die bereits aus dem Grundlagen-Kapitel bekannte \acf{UCT} Formel. Der Name \acf{UCB} kommt daher, dass diese Formel auch als obere Grenze eines Konfidenzintervalls gesehen werden kann. So wird mit dem exploitativen Teil, der Gewinnrate ($\sfrac{w}{n}$) des Knotens, ein Punktschätzer für den wahren Wert des Knotens erstellt. Da diese Schätzung bei kleinen $n$ jedoch relativ ungenau ist, wird die Unsicherheit bzw. Varianz der Schätzung durch den explorativen Teil, dem Verhältnis aus Anzahl von Besuchen bei von Eltern- und Kindknoten ($\sqrt{\frac{\ln N}{n}}$), angegeben \cite[S. 36]{2018.ReinforcementLearning}. Durch die Kombination beider Terme ergibt sich somit durch Punktschätzer und Varianz die obere Grenze eines Konfidenzintervalls, bei dem der wahre Wert mit großer Wahrscheinlichkeit unterhalb dieser Grenze liegt. Die \ac{UCT} Formel selektiert nun den Knoten mit der größten oberen Grenze, um dieses Maximum entweder zu bestätigen oder die Schätzung anzupassen.}                                                                                                        \notag \\
+    \text{Scored-}\mathbb{UCT}           & = \frac{\sum s_i}{n} + c \cdot |\max S_i - \min_i S_i| \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\ \notag
+    \intertext{Die zweite mögliche Tree Policy erweitert die \ac{UCT} Formel insofern, dass auch das tatsächliche Ergebnis eines Patchwork Spiels in der Entscheidung eine Rolle spielt. Während bei \ac{UCT} einfach nur eine Gewinnrate berechnet wird, verwendet Scored-$\mathbb{UCT}$ die Endergebnisse, indem der Mittelwert dieser als explorativer Teil berechnet wird ($\sfrac{\sum s_i}{n}$). Da hierbei der explorative Teil außerhalb von $\left[0,1\right]$ fallen kann, muss auch der exploitative Teil entsprechend skaliert werden. Das geschieht dadurch, das die Differenz zwischen dem höchsten und niedrigsten Gewinn, welcher im Elternknoten im Laufe der Zeit aufgetreten ist, berechnet wird ($|\max S_i - \min_i S_i|$) und zum Skalieren verwendet wird.}                                                                                                       \notag                                                                                                                                                                                                                                                                            \\
+    \text{Partially-Scored-}\mathbb{UCT} & = \rho \cdot \text{Scored-}\mathbb{UCT} + (1 - \rho) \cdot \mathbb{UCT}
+\end{align}
+\endgroup
+
+Die dritte Tree Policy kombiniert die beiden ersten Ansätze, indem eine lineare Interpolation zwischen $\mathbb{UCT}$ und Scored-$\mathbb{UCT}$ bereitgestellt wird. Der Hyperparameter $\rho$ bestimmt dabei zu wie viel Prozent die einzelnen Terme in die Gesamtwertung eingehen sollen. Die Performance der einzelnen Tree Policies wird in Kapitel \ref{chapter:evaluation} verglichen.
+
+\subsection{Evaluator}
+
+Für die Simulationsphase von \ac{MCTS} kann einfach das bereits zuvor vorgestellte Evaluator-Trait verwendet werden. Dies hat den Vorteil, dass verschiedene Rollout-Mechanismen leicht austauschbar und gegeneinander testbar sind. So wird der Standard-Rollout-Mechanismus für die Simulation mit dem wählen von zufälligen Aktionen und dem anschließenden Backpropagieren von Gewinn oder Verlust bereits durch den Win-Loss-Evaluator bereitgestellt. Genauso gut kann aber durch den Austausch des Win-Loss-Evaluators mit den Score-Evaluator das tatsächliche Endergebnis der zufälligen Spiele miteinbezogen werden.
+
+\subsection{Wiederverwendung des Suchbaums}
+
+Um Kenntnisse aus den vorherigen vorherigem \hyperref[text:ply]{\emph{Plys}} zu verwenden, wird der Suchbaum von dem \ac{MCTS} Spieler nach Möglichkeit wiederverwendet. Dabei besteht die Hoffnung, dass der Wurzelknoten der neuen Suche bereits als ein Knoten im Suchbaum eines vorherigen \hyperref[text:ply]{\emph{Plys}} enthalten ist. Dann könnte dieser Knoten als neuer Wurzelknoten verwendet werden und von dort die Suche gestartet werden. Alle bereits bestehenden Knoten im alten Suchbaum können dann direkt übernommen werden zusammen mit den bereits erworbenen Kenntnissen über die zugrundeliegende Wahrscheinlichkeitsverteilungen für das Gewinnen. Ziel ist es somit die Anzahl der \ac{MCTS} Iterationen innerhalb eines Zeitraums \enquote{künstlich} zu erhöhen, indem alte Iterationen direkt übernommen werden.
+
+Das Hauptproblem liegt dabei, herauszufinden, welcher Knoten im alten Suchbaum mit dem Wurzelknoten im neuen Suchbaum korrespondiert. Generell kann ein Spieler direkt 2-mal hintereinander dran sein, womit sich der neue Wurzelknoten direkt in der ersten Ebene des alten Suchbaums befindet. Genauso ist es aber möglich, dass nach einem Zug des \ac{MCTS} Spielers erst einmal bis zu 7 Züge des gegnerischen Spielers folgen (siehe \ref{subsection:analyse-maximale-anzahl-aufeinanderfolgender-plys}). In solchen Fällen könnte es sinnvoller sein, die Suche direkt mit einem neuen Suchbaum zu beginnen, anstatt den Suchaufwand im alten Baum zu betreiben. Der Grund dafür ist, dass Zeit mit der Suche verloren geht, welche besser dafür verwendet werden kann, neue \ac{MCTS} Iterationen durchzuführen. Das ist vor allem der Fall, da die Wahrscheinlichkeit, dass in der achten Ebene im alten Suchbaum überhaupt viele Iterationen und somit ein großer Teilbaum existieren, recht gering ist. Als Kompromiss wird deshalb im \ac{MCTS} der alte Suchbaum immer übergeben und eine Breitensuche entlang diesem Suchbaum nach dem neuen Wurzelknoten wie in Codeausschnitt \ref{code:mcts-node} durchgeführt. Diese Breitensuche wird beendet, sobald der neue Wurzelknoten gefunden ist oder abgebrochen, wenn das erste Mal ein Knoten in der achten Ebene des alten Suchbaums auftritt. Wurde der neue Spielzustand nicht innerhalb der ersten sieben Ebenen gefunden, so existiert er im alten Suchbaum einfach nicht, zum Beispiel da zuvor nicht genügend Iterationen stattgefunden haben, um auch diesen Zustand zu erreichen. Weiterhin wird die Suche nach dem neuem Wurzelknoten auch nach einer gewissen Zeit verfrüht abgebrochen, um nicht zu viel Zeit mit der Suche im alten Suchbaum zu verbringen. Als Zeitlimit wird hierbei 2 \acp{ms} verwendet. In dieser Zeit können im alten Suchbaum mehrere Ebenen durchsucht werden, während gleichzeitig nicht zu viel Zeit für die Suche verloren geht.
+
+\lstinputlisting[
+    label={code:mcts-node},
+    caption={[Wiederverwendung des MCTS-Suchbaums]Wiederverwendung des \acs{MCTS}-Suchbaums},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/mcts-tree-reuse.rs}
+
+Die Suche nach dem neuen Spielzustand innerhalb des alten Teilbaums ließe sich in Zukunft noch dadurch verbessern, dass einfach alle Aktionen, die seit der letzten Aktion des \ac{MCTS} Spielers passiert sind, gespeichert werden. Diese Aktionenfolge kann dann im alten Suchbaum solange verfolgt werden bis entweder der passende Spielzustand und somit der Teilbaum gefunden ist oder kein weiterer passender Knoten mehr existiert.
+
+\subsection{Parallelisierung}
+
+Für die Parallelisierung von \ac{MCTS} existieren wie in Abbildung \ref{fig:mcts-parallization} dargestellt 3 verschiedene Varianten.
+
+\vspace*{-0.3cm}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/mcts-parallization.pdf}
+    \vspace*{-0.75cm}
+    \caption[Parallelisierungsmöglichkeiten bei MCTS]{Parallelisierungsmöglichkeiten bei \acs{MCTS}}
+    \label{fig:mcts-parallization}
+\end{figure}
+\vspace*{-0.15cm}
+
+Bei der \emph{Leaf-Parallelisierung} finden die \ac{MCTS} Phasen Selektion und Expansion wie normal statt. Nur während der Simulations-Phase werden mehrere Threads gestartet, welche alle verschiedene zufällige Spielverlauft ausgehend von dem ausgewählten Knoten simulieren. So können in der Backpropagation-Phase gleich mehrere Spielausgänge im Baum rückpropagiert werden, sodass für den Zustand direkt eine etwas genauere Schätzung bei einer einzigen \ac{MCTS} Phase besteht. Nachteil hierbei ist, dass immer gewartet werden muss, bis alle Threads ihren simulierten Spielverlauf fertig gestellt haben und sonst keine Parallelisierung stattfindet. Somit schafft diese Parallelisierungsart insgesamt weniger vollständige \ac{MCTS} Iterationen als die Single-Threaded-Variante. \cite[S. 63]{2008.ParallelMCTS}
+
+\vspace*{-5cm}
+
+\pagebreak
+
+Die \emph{Root-Parallelisierung} ist ebenso wie die \emph{Leaf-Parallelisierung} leicht umzusetzen. Anstatt dass nur ein einziger \ac{MCTS}-Suchbaum existiert, wird einfach für jeden Thread ein neuer Suchbaum erstellt. Während der Suchzeit führen die Threads dann auf ihrem Suchbaum eine einfache Singe-Threaded-\ac{MCTS}-Suche durch. Am Ende werden einfach die Knoten aller Bäume aus der ersten Ebene kombiniert. Dies kann einfach über die Aktion geschehen, welche verwendet wurde, um vom Wurzelknoten zu dem Knoten in der ersten Ebene zu kommen. Die ausgewählte Aktion des Spielers ist die Knotenkombination, welche insgesamt am meisten Besuche durch alle Threads besitzt. \cite[S. 63]{2008.ParallelMCTS}
+
+Die dritte Parallelisierungsart, die \emph{Tree Parallisierung} sorgt für eine gemeinsame Suche von mehreren Threads innerhalb von einem Baum. Dazu werden am jedem Knoten Sperren, wie beispielsweise Mutexe, verwendet. Möchte ein Thread die Werte des Knotens lesen oder modifizieren wird einfach eine Lese- bzw. Schreibsperre gesetzt. In diesem Zeitraum können keine anderen Threads auf diesen Knoten zugreifen. Da alle Threads Knoten nach der gleichen Tree Policy selektieren, würde diese Implementierung dazu führen, dass alle Threads immer die gleichen Knoten im Baum selektieren und somit auf einem sehr ähnlichen Pfad durch den Baum traversieren. Dies führt dazu, dass die Threads sich dauernd durch Sperren gegenseitig zum Warten zwingen, was den Sinn von Parallelisierung entgegenwirkt. Aus diesem Grund wird noch das Konzept eines \emph{Virtual Loss} eingeführt. Sobald ein Thread einen Knoten selektiert hat, wird der \emph{Virtual Loss} inkrementiert und erst wieder dekrementiert, wenn der Thread mit der Backpropagation-Phase fertig ist und eine neue \ac{MCTS}-Iteration anfängt. Der \emph{Virtual Loss} verhält sich dabei wie normale Niederlagen durch die Simulationsphase. Da bei der Selektion Knoten bevorzugt werden, bei denen die Gewinnrate möglichst hoch ist, bevorzugen die anderen Threads dann einen anderen Pfad durch den Suchbaum und es kommt zu weniger Sperren. \cite[S. 64]{2008.ParallelMCTS}
+
+Für den \ac{MCTS} Spieler wurden die Parallelisierungsarten \emph{Leaf Parallelisierung} und \emph{Root Parallelisierung} umgesetzt. Diese lassen sich leicht in den bereits bestehenden Code für die Single-Threaded Suche integrieren. Die \emph{Tree Parallelisierung} hingegen wurde nicht umgesetzt, da hierzu der gesamte \ac{MCTS} angepasst werden müsste, um Sperren innerhalb der Knoten zu unterstützen. Da die \emph{Tree Parallelisierung} im Vergleich zur \emph{Root Parallelisierung} in dem Paper \enquote{Parallel Monte-Carlo Tree Search} \cite[S. 69]{2008.ParallelMCTS} schlechter abgeschnitten hat, erschien hierzu der Aufwand zu groß.
+
+\pagebreak
 
 \section{Ansatz E: AlphaZero}
 \label{section:erstellung-ansatz-d}
@@ -550,5 +638,15 @@ TODO:
         \label{fig:policy-head}
     \end{minipage}
 \end{figure}
+
+TODO:
+
+\subsection{Parallelisierung}
+
+Im Gegensatz zum \ac{MCTS} Spieler wird bei AlphaZero die \emph{Tree Parallelisierung} verwendet um eine Suche über mehrere Kerne bereitzustellen. Diese Parallelisierungsart wird auch von der originalen AlphaZero Implementierung mit gutem Grunde verwendet. Die Ausführung eines neuronales Netzes ist umso effizienter, umso mehr Datensätze das Netz auf einmal als Eingabe erhält. Zwar ist insgesamt die Zeit, die das neuronale Netz für die Forwardpropagation, also der Transformation der Eingaben in die Ausgaben, braucht höher, jedoch wird die Zeit die durchschnittlich für einen Datensatz benötigt wird geringer. Dies ist der Fall, da sich der Aufwand für die Parallelisierung verschiedener Operationen wie Matrixmultiplikation erst bei größeren Eingaben für eine Geschwindigkeitserhöhung der Forwardpropagation lohnt.
+
+TODO:
+
+\subsection{Training des Netzwerks}
 
 TODO:

@@ -506,14 +506,9 @@ TODO:
 
 \section{Platzierungen innerhalb des Glicko-2-Systems}
 
-alternativtitel Ranking mit einem Wertungssystem
+Auch wenn die einzelnen Paarvergleiche der Computerengines einen groben Einblick in die Leistungsfähigkeit der einzelnen Spieler geben können, ist ein präzises Ranking aller Spieler anschaulicher. Deshalb wird das Glicko-2-System verwendet, um einen genaueren Überblick sowie eine Einschätzung für ein präzises Ranking zu erstellen. Das Glicko-System ist ein mathematisches Bewertungssystem, das speziell für die Bewertung der Spielstärke von Spielern in Turnieren entwickelt wurde \cite[S. 377]{1999.GlickoMath}. Im originalen Glicko-System wird neben der genauen Bewertung auch eine \enquote{Rating Derviation} geschätzt \cite[S. 1f.]{2016.Glicko}. Die \enquote{Rating Derviation} entspricht der Standardabweichung und stellt die Unsicherheit bei der Schätzung der Bewertung dar. So kann neben dem Punktschätzer der Bewertung auch ein Konfidenzintervall angegeben werden, in dem die Bewertung eines Spielers mit einer hohen Wahrscheinlichkeit liegt. Das Glicko-2-System erweitert diese Modellierung noch um die \emph{Volatilität}, welche niedrig ist falls ein Spieler konstant gleiche Leistungen erbringt und hoch, wenn ein Spieler unregelmäßig größere Ausreißer in den Leistungen zeigt \cite[S. 1]{2022.Glicko2}. Das Glicko-2-System wird auch von Schachwebseiten wie \enquote{Lichess} für das Rating der Spieler verwendet, während andere Webseiten wie \enquote{Chess.com} den Vorgänger Glicko-1 verwenden \cite{2024.ChessRatingSystems}.
 
-Bewertungssystem
-
-\cite{2022.Glicko2}
-\cite{2024.ChessRatingSystems}
-
-TODO:
+Für die Vergabe der Bewertung sind jedem Spieler zum Anfang die aus dem Glicko-2-Paper übernommenen Standardwerte von 1500 für die Bewertung, 350 für die \enquote{Rating Derviation} und $0{,}06$ für die \emph{Volatilität} zugeordnet \cite[S. 2]{2022.Glicko2}. Diese Werte werden dann inkrementell aktualisiert, indem die zuvor beschriebenen Vergleichsspiele als Ergebnisse eingesetzt werden. Die daraus entstehende Rangliste ist in Abbildung \ref{fig:player-ratings} dargestellt. Dabei werden bei den Spielern, welche mehrere Varianten besitzen, der Übersichtlichkeit halber immer nur die besten Varianten dargestellt.
 
 \begin{figure}[!ht]
     \centering
@@ -521,6 +516,8 @@ TODO:
     \caption{Bewertung der Spieler im Glicko-2-Wertungssystem}
     \label{fig:player-ratings}
 \end{figure}
+
+In der Rangliste spiegeln sich die Ergebnisse der Vergleichspartien. Auch hier ist der RandomPlayer der schlechteste Spieler. Kurz davor liegt AlphaZero. Die Greedy und \ac{PVS} Spieler Varianten teilen sich zusammen in eine ähnliche Bewertungsgruppe ein, wobei der mit Lazy \ac{SMP} parallelisierte \ac{PVS} Spieler die Gruppe anführt. Die \ac{MCTS} Varianten stehen deutlich von den anderen Spielern abgesetzt auf den vorderen Plätzen. Nur der \ac{MCTS} Spieler mit einer statischen Evaluation liegt im Bereich von Greedy- und \ac{PVS}-Spieler. Dies ist nicht verwunderlich, da diese Variante auch eher ähnlich zu diesen Spielern arbeitet, als wie die tatsächlichen \ac{MCTS} Spieler. Die Leaf-Parallelisierung bei \ac{MCTS} liegt leicht abgeschlagen von den anderen Varianten, jedoch immer noch weit vor allen anderen Algorithmen, während Root-Parallelisierung einen kleinen Rangvorsprung über die Single-Threaded \ac{MCTS} Varianten aufbauen kann. An dieser Stelle ist es wichtig anzumerken, dass alle in Abbildung \ref{fig:player-ratings} aufgezeigten Glicko-2-Ratings nur relativ zueinander sind und somit nicht mit anderen Glicko-2-Ratings, zum Beispiel von Schach, verglichen werden können.
 
 TODO:
 

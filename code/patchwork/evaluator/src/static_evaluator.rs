@@ -120,5 +120,5 @@ fn get_button_income_score(button_income: f64, time_board: &TimeBoard, position:
         TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS as i32 - amount_button_income_triggers_left as i32;
 
     // f(x) = 8exp(ln(1/8) * x / 8)
-    8.0 * ((1.0 / 8.0).ln() * f64::from(amount_button_income_triggers) / 8.0).exp() * button_income
+    8.0 * ((1.0 / 8f64).ln() * f64::from(amount_button_income_triggers_passed) / 8.0).exp() * button_income
 }

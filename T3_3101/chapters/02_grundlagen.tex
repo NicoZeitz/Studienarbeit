@@ -74,7 +74,7 @@ Die Erstellung von Computergegnern basiert in der Regel auf den Spielbäumen. Um
 
 \subsection{Spielkomplexität}
 
-Die kombinatorische Spieltheorie ist ein Teilbereich der Spieltheorie, der sich mit der Analyse von \hyperref[text:game-theory-sequenziell]{\emph{zugbasierten}} Spielen mit \hyperref[text:game-theory-perfekte-information]{\emph{perfekter Information}} befasst. Der Bereich beschäftigt sich mit der Entwicklung verschiedener theoretischer Methoden zur Betrachtung der Spiele. Dazu gehören unter anderem mehrere verschiedene Beschreibungen für die Komplexität von Spielen. Nachfolgend sind drei wesentliche Begriffe für Komplexität in der kombinatorischen Spieltheorie: 
+Die kombinatorische Spieltheorie ist ein Teilbereich der Spieltheorie, der sich mit der Analyse von \hyperref[text:game-theory-sequenziell]{\emph{zugbasierten}} Spielen mit \hyperref[text:game-theory-perfekte-information]{\emph{perfekter Information}} befasst. Der Bereich beschäftigt sich mit der Entwicklung verschiedener theoretischer Methoden zur Betrachtung der Spiele. Dazu gehören unter anderem mehrere verschiedene Beschreibungen für die Komplexität von Spielen. Nachfolgend sind drei wesentliche Begriffe für Komplexität in der kombinatorischen Spieltheorie:
 
 \pagebreak
 
@@ -156,27 +156,27 @@ Der Minimax-Algorithmus, im Anhang Algorithmus \ref{algo:minimax}, wird für die
     \label{algo:minimax-alpha-beta}
     \begin{algorithmic}[1]
         \Function{alphabeta}{node $n, \alpha, \beta$}
-            \If{$n$ is a terminal node}
-                \State \Return value of $n$
-            \ElsIf{$n$ is a maximizer node}
-                \For{each child node $c$ of $n$}
-                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-                    \State $\alpha \gets \max(\alpha, value)$
-                    \If{$\alpha \geq \beta$}
-                        \State \textbf{break} \Comment{$\beta$-Cutoff}
-                    \EndIf
-                \EndFor
-                \State \Return $\alpha$
-            \ElsIf{$n$ is a minimizer node}
-                \For{each child node $c$ of $n$}
-                    \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
-                    \State $\beta \gets \min(\beta, value)$
-                    \If{$\beta \leq \alpha$}
-                        \State \textbf{break} \Comment{$\alpha$-Cutoff}
-                    \EndIf
-                \EndFor
-                \State \Return $\beta$
-            \EndIf
+        \If{$n$ is a terminal node}
+        \State \Return value of $n$
+        \ElsIf{$n$ is a maximizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\alpha \gets \max(\alpha, value)$
+        \If{$\alpha \geq \beta$}
+        \State \textbf{break} \Comment{$\beta$-Cutoff}
+        \EndIf
+        \EndFor
+        \State \Return $\alpha$
+        \ElsIf{$n$ is a minimizer node}
+        \For{each child node $c$ of $n$}
+        \State $value \gets$ \Call{alphabeta}{$c, \alpha, \beta$}
+        \State $\beta \gets \min(\beta, value)$
+        \If{$\beta \leq \alpha$}
+        \State \textbf{break} \Comment{$\alpha$-Cutoff}
+        \EndIf
+        \EndFor
+        \State \Return $\beta$
+        \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
@@ -235,7 +235,7 @@ Für die erste Phase der Selektion wird im Normalfall die in \ref{eqn:uct} darge
 
 \begin{equation}
     \label{eqn:uct}
-    \mathbb{U}\mathbb{C}\mathbb{T} = \frac{w}{n} + c \cdot \sqrt{\frac{\ln N}{n}}
+    \mathbb{UCT} = \frac{w}{n} + c \cdot \sqrt{\frac{\ln N}{n}}
 \end{equation}
 
 Ein entscheidender Vorteil von \ac{MCTS} ist, dass keine statische Evaluierungsfunktion einer Position wie bei vergleichbaren Algorithmen existieren muss \cite[S. 61]{2008.ParallelMCTS}, da durch zufällige Erkundungen eines Teils des Suchbaums eine Approximation für den tatsächlichen Wert geschaffen wird. \ac{MCTS} hat sich vor allem für Spiele mit einer sehr großen Anzahl an Aktionen bzw. möglichen Zuständen als besser geeignet als traditionelle \hyperref[chapter:minimax-algorithmus]{Minimax}-basierte Programme herausgestellt \cite[S. 1]{2013.MCTSAndMinimaxHybrids} und ist aus diesem Grund auch zu großen Teilen für die Verbesserung der Computergegner in solchen Spielen wie beispielsweise Go verantwortlich \cite[S. 206]{2009.ComputerGoMCTS} \cite[S. 185]{2018.ReinforcementLearning}.
