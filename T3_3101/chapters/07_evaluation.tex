@@ -244,64 +244,6 @@ TODO:
 
 TODO:
 
-% ┌───────────────────────────── MCTS Player ─────────────────────────────┐
-% │ Features:            [RP(8), RT]                                      │
-% │ Duration:            9.925s                                           │
-% │ Total Iterations:    592082                                           │
-% │ Iterations:          74767                                            │
-% │ Nodes:               74791                                            │
-% │ Reused Tree:         true                                             │
-% │ Root actions:        110                                              │
-% │ Expanded Depth:      4                                                │
-% │ Win Percentage:      98.40%                                           │
-% │ Principal Variation: P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 │
-% │ Min/Max Evaluation:  -1/1                                             │
-% └───────────────────────────────────────────────────────────────────────┘
-\begin{figure}[!ht]
-    \centering
-    \resizebox{\textwidth}{!}{\begin{tcolorbox}[
-                rounded corners=all,
-                boxrule=1pt,
-                colback=white,
-                colframe=black,
-                hbox,
-                % width=\linewidth,
-                enhanced,
-                coltitle=black,
-                title={\acs{MCTS} Player},
-                top=6pt,
-                left=0pt,
-                right=3pt,
-                bottom=0pt,
-                attach boxed title to top center={yshift=-\tcboxedtitleheight/2},
-                boxed title style={size=small,colback=white,colframe=white}
-            ]
-            \begingroup
-            \setlength{\arrayrulewidth}{0pt}
-
-            \begin{tabular}{@{}ll@{}}
-                Features:           & [RP(8), RT]                                     \\
-                Duration:           & $9{,}925\acs{s}$                                \\
-                Total Iterations:   & $592082$                                        \\
-                Iterations:         & $74767$                                         \\
-                Nodes:              & $74791$                                         \\
-                Reused Tree:        & true                                            \\
-                Root actions:       & $110$                                           \\
-                Expanded Depth:     & $4$                                             \\
-                Win Percentage:     & $98{,}40\%$                                     \\
-                \acl{PV}:           & P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 \\
-                Min/Max Evaluation: & $-1\ /\ 1$                                      \\
-            \end{tabular}
-
-            \endgroup
-        \end{tcolorbox}}
-    \vspace*{-0.25cm}
-    \caption[MCTS-Suchstatistiken]{\acs{MCTS}-Suchstatistiken}
-    \label{fig:mcts-statistics}
-\end{figure}
-
-TODO:
-
 \begin{table}[H]
     \centering
     \resizebox{\textwidth}{!}{\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
@@ -394,6 +336,64 @@ Weiterhin wurde der \ac{MCTS} Spieler noch vergleichen, indem ein Spieler immer 
 \end{figure}
 
 Um die \ac{MCTS} Spielervergleiche abzuschließen, werden zuletzt die einzelnen Parallelisierungsmöglichkeiten untereinander in \ref{fig:mcts-comparision} verglichen. Dabei spielen die nicht parallelisierte Single-Threaded Variante sowie die Leaf- und Root-Parallelisierten Varianten mit 8 Threads gegenaeinander. Die Leaf-Parallelisierung schneidet dabei am schlechtesten ab, auch schlechter als die \ac{MCTS} Suche mit einem Thread. Da der \ac{MCTS} Spieler in Patchwork generell sehr wenige Iterationen schafft, ist es wahrscheinlich besser die Change einen guten Spielverlauf zu finden durch viele Iterationen zu maximieren, anstatt weniger Pfade auszuprobieren und für diese Pfade mittels \emph{Leaf-Parallelisierung} eine etwas genaueren Schätzer für den tatsächlichen Wert eines Knotens zu erhalten. Am besten spielt die \emph{Root-Parallelisierte} Variante. Diese setzt sich gegen beide anderen Varianten durch, auch wenn der Vorsprung vor der Single-Threaded Variante geringer ausfällt als erhofft.
+
+% ┌───────────────────────────── MCTS Player ─────────────────────────────┐
+% │ Features:            [RP(8), RT]                                      │
+% │ Duration:            9.925s                                           │
+% │ Total Iterations:    592082                                           │
+% │ Iterations:          74767                                            │
+% │ Nodes:               74791                                            │
+% │ Reused Tree:         true                                             │
+% │ Root actions:        110                                              │
+% │ Expanded Depth:      4                                                │
+% │ Win Percentage:      98.40%                                           │
+% │ Principal Variation: P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 │
+% │ Min/Max Evaluation:  -1/1                                             │
+% └───────────────────────────────────────────────────────────────────────┘
+\begin{figure}[!ht]
+    \centering
+    \resizebox{\textwidth}{!}{\begin{tcolorbox}[
+                rounded corners=all,
+                boxrule=1pt,
+                colback=white,
+                colframe=black,
+                hbox,
+                % width=\linewidth,
+                enhanced,
+                coltitle=black,
+                title={\acs{MCTS} Player},
+                top=6pt,
+                left=0pt,
+                right=3pt,
+                bottom=0pt,
+                attach boxed title to top center={yshift=-\tcboxedtitleheight/2},
+                boxed title style={size=small,colback=white,colframe=white}
+            ]
+            \begingroup
+            \setlength{\arrayrulewidth}{0pt}
+
+                \begin{tabular}{@{}ll@{}}
+                    Features:           & [RP(8), RT]                                     \\
+                    Duration:           & $9{,}925\acs{s}$                                \\
+                    Total Iterations:   & $592082$                                        \\
+                    Iterations:         & $74767$                                         \\
+                    Nodes:              & $74791$                                         \\
+                    Reused Tree:        & true                                            \\
+                    Root actions:       & $110$                                           \\
+                    Expanded Depth:     & $4$                                             \\
+                    Win Percentage:     & $98{,}40\%$                                     \\
+                    \acl{PV}:           & P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 \\
+                    Min/Max Evaluation: & $-1\ /\ 1$                                      \\
+                \end{tabular}
+
+            \endgroup
+        \end{tcolorbox}}
+    \vspace*{-0.25cm}
+    \caption[MCTS-Suchstatistiken]{\acs{MCTS}-Suchstatistiken}
+    \label{fig:mcts-statistics}
+\end{figure}
+
+Abschließend werden wie beim \ac{PVS} Spieler noch verschiedene Statistiken zu einer \ac{MCTS} Suche betrachtet. Die in Abbildung \ref{fig:mcts-statistics} gezeigte auflistung stammt dabei von einem \ac{MCTS} Spieler mit einer \emph{Root-Parallelisierung} mit 8 Threads, der seinen Suchbaum wiederverwendet, die \ac{UCT} Tree Policy sowie den Win-Loss-Evaluator verwendet. Generell schafft ein Thread innerhalb der Suchzeit meistens zwischen $50{.}000$ und $100{.}000$ Iterationen. Je später im Spiel eine Aktion gesucht wird, desto mehr Iterationen sind es normalerweise, da eine Simulationsphase zum Beispiel statt $42$ nur noch $10$ \hyperref[text:ply]{\emph{Plys}} umfasst. Über eine Vielzahl von Iterationen summiert sich dieser kleine Zeitunterschied auf. In der dargestellten Auflistung hat der Main-Thread $74{.}767$ Iterationen geschafft. Es ist auch zu erkennten, dass die \emph{Root-Parallelisierung} einwandfrei funktioniert. Schafft ein Thread $74{.}767$ Iterationen, so müssten 8 Threads $74{.}767 \cdot 8 = 598{.}136$ Iterationen schaffen. Der tatsächliche Wert aller Threads liegt bei $592{.}082$ Iterationen, was einer prozentuellen Abweichung von $-1{,}01\%$ vom erwarteten Wert entspricht und somit innerhalb der Fehlermarge liegt. Auch gibt es im Suchbaum des Main-Threads leicht weniger Knoten als Iterationen im Baum. Somit wurde die Expansionsphase innerhalb einiger Iterationen übersprungen, was nur vorkommen kann, falls ein Spielverlauf verfolgt wird, der im Baum in einem bereits bestehendem Terminalknoten endet. Das ist generell ein gutes Zeichen, da der \ac{MCTS} Spieler in diesem Fall bereit einen großen Bereich der möglichen Spielverläufe erkundet oder einen sehr vielversprechenden Spielverlauf gefunden hat. Die \acl{PV} ist 4 \hyperref[text:ply]{\emph{Plys}} lang. Somit wurden entlang der \ac{PV} vier Ebenen lang alle möglichen Aktionen expandiert und mindestens einmal erkunden. Nach diesen vier Ebenen existieren noch weitere Ebenen, bei denen aber noch nicht alle möglichen Aktionen erkunden sind.
 
 \section{Evaluation von PatchZero}
 
