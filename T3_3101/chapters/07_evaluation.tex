@@ -285,7 +285,7 @@ TODO:
         \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $500$ Verloren};
     \end{tikzpicture}
     % \vspace*{-0.5cm}
-    \caption[Vergleich neuer Baum vs. Baum wiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwendung bei \acs{MCTS}}
+    \caption[Vergleich Baumwiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwenden bei \acs{MCTS}}
     \label{fig:mcts-tree-reuse-comparision}
 \end{figure}
 
@@ -372,19 +372,19 @@ Um die \ac{MCTS} Spielervergleiche abzuschließen, werden zuletzt die einzelnen 
             \begingroup
             \setlength{\arrayrulewidth}{0pt}
 
-                \begin{tabular}{@{}ll@{}}
-                    Features:           & [RP(8), RT]                                     \\
-                    Duration:           & $9{,}925\acs{s}$                                \\
-                    Total Iterations:   & $592082$                                        \\
-                    Iterations:         & $74767$                                         \\
-                    Nodes:              & $74791$                                         \\
-                    Reused Tree:        & true                                            \\
-                    Root actions:       & $110$                                           \\
-                    Expanded Depth:     & $4$                                             \\
-                    Win Percentage:     & $98{,}40\%$                                     \\
-                    \acl{PV}:           & P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 \\
-                    Min/Max Evaluation: & $-1\ /\ 1$                                      \\
-                \end{tabular}
+            \begin{tabular}{@{}ll@{}}
+                Features:           & [RP(8), RT]                                     \\
+                Duration:           & $9{,}925\acs{s}$                                \\
+                Total Iterations:   & $592082$                                        \\
+                Iterations:         & $74767$                                         \\
+                Nodes:              & $74791$                                         \\
+                Reused Tree:        & true                                            \\
+                Root actions:       & $110$                                           \\
+                Expanded Depth:     & $4$                                             \\
+                Win Percentage:     & $98{,}40\%$                                     \\
+                \acl{PV}:           & P17I2═5‖0↻0↔0P1 → W27 → P28I0═8‖1↻0↔0P1 → S═4‖4 \\
+                Min/Max Evaluation: & $-1\ /\ 1$                                      \\
+            \end{tabular}
 
             \endgroup
         \end{tcolorbox}}
@@ -498,7 +498,7 @@ TODO:
             \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $69$ Verloren};
         \end{tikzpicture}}
     % \vspace*{-0.5cm}
-    \caption{Statische Evaluation vs. Random Rollout Score Evaluation}
+    \caption[Statische Evaluation vs. Score Evaluation]{Statische Evaluation vs. Random Rollout Score Evaluation}
     \label{fig:greedy-static-greedy-score-comparison}
 \end{figure}
 
