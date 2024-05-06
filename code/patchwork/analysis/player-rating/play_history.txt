@@ -1,0 +1,213 @@
+compare
+random
+greedy(eval: static)
+100
+16
+compare
+greedy(eval: static)
+greedy(eval: score)
+100
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: win)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: score)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: static)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: score)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: uct, eval: static)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: score)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: static)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: score)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: score, eval: static)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+1000
+16
+compare
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+mcts(iter: 2500, tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+1000
+16
+compare
+mcts(iter: 5000, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 5000, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+1000
+16
+compare
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(time: 10, tree: reuse, root: 1, leaf: 8, policy: uct, eval: win)
+100
+2
+compare
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(time: 10, tree: reuse, root: 8, leaf: 1, policy: uct, eval: win)
+100
+2
+compare
+mcts(time: 10, tree: reuse, root: 1, leaf: 8, policy: uct, eval: win)
+mcts(time: 10, tree: reuse, root: 8, leaf: 1, policy: uct, eval: win)
+100
+2
+compare
+mcts(time: 10, tree: reuse, root: 1, leaf: 8, policy: uct, eval: win)
+mcts(time: 10, tree: reuse, root: 8, leaf: 1, policy: uct, eval: win)
+100
+2
+compare
+random
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+greedy(eval: static)
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: table, eval: static, fail: soft, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: no, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: no, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: no, lmp: no, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: static, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: no)
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: yes)
+100
+16
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: yes)
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+2
+compare
+pvs(time: 10, ord: table, eval: static, fail: hard, asp: yes, lmr: yes, lmp: yes, ext: yes, tt: enabled, smp: yes)
+mcts(time: 10, tree: reuse, root: 8, leaf: 1, policy: uct, eval: win)
+100
+2
+compare
+random
+alphazero(time: 10, policy: puct, parallelization: 8, batch_size: 20)
+100
+2
+compare
+greedy
+alphazero(time: 10, policy: puct, parallelization: 8, batch_size: 20)
+100
+2
+
+???
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: win) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: score) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: win)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: score)
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: score, eval: static) vs. MCTSPlayer(tree: new, root: 1, leaf: 1, policy: partial-score, eval: static)
+???
+
+compare
+random
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+16
+compare
+greedy(eval: static)
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+16
+compare
+greedy(eval: score)
+mcts(time: 10, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+100
+16
+compare
+mcts(iter: 100000, tree: new, root: 1, leaf: 1, policy: uct, eval: win)
+mcts(iter: 100000, tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+1000
+16

@@ -163,7 +163,6 @@ Player 1:      45 wins  (45.00%) [avg score: -11.44, max score:  23, min score: 
 Player 2:      55 wins  (55.00%) [avg score: -12.78, max score:  17, min score: -52, avg time:    8.755s, turns: 2221]
 RandomPlayer [0;32m█████████████████████████████████████████████[0;31m███████████████████████████████████████████████████████[0m AlphaZeroPlayer(policy: puct,
 Comparing 100 iterations with 2 threads: GreedyPlayer(eval: static) vs. AlphaZeroPlayer(policy: puct, batch_size: 20, parallelization: 16)
-Comparing 100 iterations with 2 threads: GreedyPlayer(eval: static) vs. AlphaZeroPlayer(policy: puct, batch_size: 20, parallelization: 16)
 [4A
 Iteration     100 / 100
 Player 1:      78 wins  (78.00%) [avg score:   6.39, max score:  34, min score: -25, avg time:  67.024µs, turns: 2283]
@@ -313,3 +312,27 @@ Iteration    1000 / 1000
 Player 1:     457 wins  (45.70%) [avg score:   2.14, max score:  48, min score: -39, avg time:   7.914ms, turns: 22413]
 Player 2:     543 wins  (54.30%) [avg score:   3.33, max score:  53, min score: -41, avg time:   9.298ms, turns: 22295]
 MCTSPlayer(tree: new, root: 1, [0;32m██████████████████████████████████████████████[0;31m██████████████████████████████████████████████████████[0m MCTSPlayer(tree: new, root: 1,
+Comparing 100 iterations with 16 threads: RandomPlayer vs. MCTSPlayer(tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+[4A
+Iteration     100 / 100
+Player 1:       0 wins  (00.00%) [avg score: -19.74, max score:   1, min score: -44, avg time:   6.572µs, turns: 2313]                       
+Player 2:     100 wins  (100.00%) [avg score:  10.47, max score:  27, min score:  -6, avg time:    7.772s, turns: 2153]                       
+RandomPlayer [0;32m[0;31m████████████████████████████████████████████████████████████████████████████████████████████████████[0m MCTSPlayer(tree: reuse, root:   
+Comparing 100 iterations with 16 threads: GreedyPlayer(eval: static) vs. MCTSPlayer(tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+[4A
+Iteration     100 / 100
+Player 1:       2 wins  (02.00%) [avg score:  -7.77, max score:  37, min score: -37, avg time:  55.365µs, turns: 2498]                       
+Player 2:      98 wins  (98.00%) [avg score:  12.73, max score:  27, min score:  -3, avg time:    8.044s, turns: 2237]                       
+GreedyPlayer(eval: static) [0;32m██[0;31m██████████████████████████████████████████████████████████████████████████████████████████████████[0m MCTSPlayer(tree: reuse, root:   
+Comparing 100 iterations with 16 threads: GreedyPlayer(eval: score) vs. MCTSPlayer(tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+[4A
+Iteration     100 / 100
+Player 1:       0 wins  (00.00%) [avg score:  -5.11, max score:  16, min score: -36, avg time:   5.108ms, turns: 2351]                       
+Player 2:     100 wins  (100.00%) [avg score:  11.78, max score:  29, min score:  -5, avg time:    7.936s, turns: 2206]                       
+GreedyPlayer(eval: score) [0;32m[0;31m████████████████████████████████████████████████████████████████████████████████████████████████████[0m MCTSPlayer(tree: reuse, root:   
+Comparing 1000 iterations with 16 threads: MCTSPlayer(tree: new, root: 1, leaf: 1, policy: uct, eval: win) vs. MCTSPlayer(tree: reuse, root: 1, leaf: 1, policy: uct, eval: win)
+[4A
+Iteration    1000 / 1000
+Player 1:     499 wins  (49.90%) [avg score:  17.03, max score:  44, min score: -35, avg time:    3.609s, turns: 21041]                       
+Player 2:     501 wins  (50.10%) [avg score:  16.78, max score:  43, min score: -30, avg time:    3.526s, turns: 20874]                       
+MCTSPlayer(tree: new, root: 1, [0;32m██████████████████████████████████████████████████[0;31m██████████████████████████████████████████████████[0m MCTSPlayer(tree: reuse, root:   
