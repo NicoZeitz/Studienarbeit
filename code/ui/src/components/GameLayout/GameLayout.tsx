@@ -4,6 +4,7 @@ import { API_URL, Game, type PatchworkState } from '../../constants.ts';
 import { createContext } from 'react';
 import Patch from '../Patch/Patch.tsx';
 import { motion } from 'framer-motion';
+import { ArrowClockwise, FlipHorizontal } from '@phosphor-icons/react';
 
 export interface GameLayoutProps {}
 
@@ -26,18 +27,21 @@ export default function GameLayout(props: GameLayoutProps) {
                 }
                 className="relative flex h-dvh w-dvw flex-col overflow-clip"
             >
-                <header>
-                    HEADER PATCHWORK<Link to="/">NAVIGATE BACK</Link>
-                </header>
                 <div className="grow">
                     {/* TODO: absolute render patch queue here */}
                     {/* TODO: render patch selection here */}
-
+                    <div className="fixed left-[1px] top-[-10px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 32)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
                     <div
                         style={{ gridTemplateRows: '1fr auto 1fr' }}
-                        className="grid h-full grid-cols-1 items-center gap-1 pl-[15%] pr-[15%]"
+                        className="grid h-full grid-cols-1 items-center gap-0 pl-[15%] pr-[15%]"
                     >
-                        <div className="relative ml-auto mr-auto flex gap-2">
+                        <div className="gap-0ß relative ml-auto mr-auto flex">
                             <div className="absolute left-[-10%] top-0 h-full w-[6%]">
                                 <picture className="w-10% h-full object-contain drop-shadow-md">
                                     <source
@@ -51,27 +55,72 @@ export default function GameLayout(props: GameLayoutProps) {
                                     />
                                 </picture>
                             </div>
-                            <Patch
-                                patch={
-                                    state.patches.filter((p) => p.id === 10)[0]
-                                }
-                                rotation={0}
-                                flipped={false}
-                            />
-                            <Patch
-                                patch={
-                                    state.patches.filter((p) => p.id === 0)[0]
-                                }
-                                rotation={0}
-                                flipped={false}
-                            />
-                            <Patch
-                                patch={
-                                    state.patches.filter((p) => p.id === 10)[0]
-                                }
-                                rotation={0}
-                                flipped={false}
-                            />
+                            {/* First patch to choose*/}
+                            <div className="flex flex-col place-items-center">
+                                <div className="flex">
+                                    <FlipHorizontal
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                    <ArrowClockwise
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                </div>
+                                <Patch
+                                    patch={
+                                        state.patches.filter(
+                                            (p) => p.id === 20,
+                                        )[0]
+                                    }
+                                    rotation={0}
+                                    flipped={false}
+                                />
+                            </div>
+                            {/* Second patch to choose*/}
+                            <div className="flex flex-col place-items-center">
+                                <div className="flex">
+                                    <FlipHorizontal
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                    <ArrowClockwise
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                </div>
+                                <Patch
+                                    patch={
+                                        state.patches.filter(
+                                            (p) => p.id === 3,
+                                        )[0]
+                                    }
+                                    rotation={0}
+                                    flipped={false}
+                                />
+                            </div>
+                            {/* Third patch to choose*/}
+                            <div className="flex flex-col place-items-center">
+                                <div className="flex">
+                                    <FlipHorizontal
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                    <ArrowClockwise
+                                        size={32}
+                                        weight="duotone"
+                                    />
+                                </div>
+                                <Patch
+                                    patch={
+                                        state.patches.filter(
+                                            (p) => p.id === 30,
+                                        )[0]
+                                    }
+                                    rotation={0}
+                                    flipped={false}
+                                />
+                            </div>
                         </div>
                         <div className="w-full ">
                             <TableCenter />
