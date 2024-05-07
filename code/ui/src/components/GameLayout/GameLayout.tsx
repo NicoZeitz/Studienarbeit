@@ -30,9 +30,213 @@ export default function GameLayout(props: GameLayoutProps) {
                 <div className="grow">
                     {/* TODO: absolute render patch queue here */}
                     {/* TODO: render patch selection here */}
-                    <div className="fixed left-[1px] top-[-10px] scale-50">
+                    <div className="fixed left-[375px] top-[30px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 0)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[240px] top-[0px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 1)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[100px] top-[-30px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 2)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[0px] top-[50px] scale-50">
                         <Patch
                             patch={state.patches.filter((p) => p.id === 32)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[-20px] top-[180px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 4)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[0px] top-[320px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 5)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[-20px] top-[450px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 6)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[0px] top-[580px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 7)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[60px] top-[720px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 8)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[180px] top-[800px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 9)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[320px] top-[840px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 10)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[450px] top-[790px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 11)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[580px] top-[820px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 12)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[710px] top-[780px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 13)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[840px] top-[800px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 14)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[970px] top-[780px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 15)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1100px] top-[820px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 16)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1230px] top-[850px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 17)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1340px] top-[800px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 18)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1460px] top-[860px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 19)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    {/*Other side of the board (first 10 patches)*/}
+                    <div className="fixed left-[1300px] top-[30px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 27)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1440px] top-[0px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 22)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1580px] top-[-30px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 23)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1700px] top-[50px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 24)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1680px] top-[180px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 25)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1700px] top-[320px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 26)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1680px] top-[450px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 21)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1700px] top-[580px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 28)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1660px] top-[710px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 29)[0]}
+                            rotation={0}
+                            flipped={false}
+                        />
+                    </div>
+                    <div className="fixed left-[1580px] top-[800px] scale-50">
+                        <Patch
+                            patch={state.patches.filter((p) => p.id === 31)[0]}
                             rotation={0}
                             flipped={false}
                         />

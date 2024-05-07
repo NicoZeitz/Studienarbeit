@@ -109,6 +109,7 @@ const patchAttribute = [
     [
         // patch id 20
         { gridRow: '3 / span 6', gridColumn: '1 / span 10' },
+        { gridRow: '3 / span 10', gridColumn: '1 / span 20', rotate: '90deg' },
     ],
     [
         // patch id 21
