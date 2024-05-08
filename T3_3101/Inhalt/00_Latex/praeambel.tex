@@ -152,6 +152,7 @@
 \usepackage{array}
 \usepackage{xpatch}
 \usepackage{longtable}
+\usepackage{verbatimbox}
 
 % =========================== GENERAL COMMANDS =========================== %
 \newcommand{\tikzcircle}[1][red,fill=red]{\tikz[baseline=-0.5ex]\draw[#1,radius=4.5pt] (0,0) circle ;}%
@@ -208,7 +209,8 @@
 
 % create a shadow layer, so that we don't need to worry about overdrawing other things
 \pgfdeclarelayer{shadow}
-\pgfsetlayers{shadow,main}
+\pgfdeclarelayer{back}
+\pgfsetlayers{shadow,back,main}
 
 \newcommand\shadowimage[2][]{%
     \begin{figure}[!h]
@@ -501,3 +503,4 @@
 \DeclareUnicodeCharacter{21BB}{\ensuremath{\circlearrowright}} % ↻
 \DeclareUnicodeCharacter{2194}{\ensuremath{\leftrightarrow}} % ↔
 \DeclareUnicodeCharacter{25BA}{\ensuremath{\blacktriangleright}} % ►
+\DeclareUnicodeCharacter{2B1C}{\phantom{█}} % ⬜

@@ -27,7 +27,7 @@
     "notebook.output.scrolling": true,
     "notebook.output.wordWrap": false,
     "notebook.formatOnSave.enabled": true,
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "explorer.fileNesting.patterns": {
         "Cargo.toml": "clippy.toml, rust-toolchain.toml, rustfmt.toml, Cargo.lock",
         "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.spec.ts",
