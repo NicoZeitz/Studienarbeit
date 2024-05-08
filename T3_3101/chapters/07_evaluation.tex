@@ -6,11 +6,18 @@
 \definecolor{win}{HTML}{63be7b}
 \definecolor{loss}{HTML}{f8696b}
 
-TODO:
+Nachfolgend wird eine Evaluation der einzelnen Computerengines vorgenommen. Dazu spielen die Computerengines erst einmal verschiedene Vergleichsspiele untereinander. Die Vergleichsspiele sind dabei alle auf einem System mit folgenden Spezifikationen ausgeführt worden:
 
-definition der testszenarien (was vergleichen wir, warum, wie)
+\begin{itemize}
+    \item \vspace{-0.15cm} \textbf{Prozessor:} \ac{AMD} Ryzen 7 5800X 8-Core Processor
+    \item \vspace{-0.15cm} \textbf{Arbeitsspeicher:} 32 \acsp{GiB} @ 3600 \acsp{MHz}
+    \item \vspace{-0.15cm} \textbf{Betriebssystem:} Windows 11
+    \item \vspace{-0.15cm} \textbf{Rust Version:} rustc 1.77.2
+\end{itemize}
 
-hier ersteinmal leichte Vergleiche (z.B. greedy, random)
+Nachfolgend werden, sofern nicht anders beschrieben, immer 100 Vergleichsspiele zwischen 2 Spielern gegeneinander gespielt. Dabei hat jeder Spieler immer eine Bedenkzeit von $10\acs{s}$, um eine Aktion auszuwählen. Computerengines mit Parallelisierung stehen 8 Threads zur Verfügung.
+
+Die Stichprobe von 100 Spielen ist zu klein, um verlässliche statistische Vorhersagen zu treffen, vor allem was die genauen Gewinnraten der Spieler gegeneinander betrifft. Eine Tendenz der Ergebnisse lässt sich aber dennoch feststellen. Die kleine Anzahl an Vergleichsspielen ergibt sich aus der zeitlichen und hardwaretechnischen Ressourcenbegrenzung. Ein Spieler hat $10\acs{s}$ Bedenkzeit, multipliziert mit der durchschnittlichen Anzahl an \hyperref[text:ply]{\emph{Plys}} ($42{,}8176$) und den 100 Vergleichsspielen, ergibt sich eine Zeit von ca. $11,89$ Stunden für ein Vergleich zwischen zwei Spielern. Hardwaretechnisch werden alle Spiele auf dem gleichen oben genannten Rechnersystem durchgeführt, um vergleichbare Ergebnisse zu erhalten. Somit war es nicht möglich für die Evaluation mehr Vergleichsspiele durchzuführen. Bei den Vergleichsspielen wird immer nur das Endergebnis (also Gewinnen oder Verlieren) betrachtet, nicht die genaue Endwertung. In tatsächlichen Spielen geht es auch darum welcher Spieler gewinnt und nicht mit welcher Punktzahl. Außerdem wird die genaue Endwertung stark durch die initiale Flickenverteilung, den Spielverlauf und das Gegnerverhalten bestimmt. Spielen zwei starke Spieler gegeneinander, kann die Endwertung niedriger ausfallen als bei zwei schwächeren Spielern, da sich die starken Spieler vielleicht auch gegenseitig die besten Aktionen verbauen.
 
 \begin{figure}[!ht]
     \centering
@@ -28,15 +35,15 @@ hier ersteinmal leichte Vergleiche (z.B. greedy, random)
             \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $79$ Verloren};
         \end{tikzpicture}}
     % \vspace*{-0.5cm}
-    \caption{Rnadom Player vs. Greedy Player}
+    \caption{Random Player vs. Greedy Player}
     \label{fig:random-greedy-comparison}
 \end{figure}
 
-TODO:
+Die Evaluation beginnt mit einem einfachen Vergleich zwischen dem Random Spieler und dem Greedy Spieler mit dem statischen Evaluator. Die Ergebnisse der Vergleichsspiele sind in Abbildung \ref{fig:random-greedy-comparison} dargestellt. Wie zu erwarten, schneidet der Random Spieler schlechter ab als der Greedy Spieler mit 21 Gewonnenen und 79 Verlorenen Spielen. Somit kann in allen nachfolgenden Vergleichen angenommen werden, dass der Random Spieler eine Basis ist, die vermutlich jede andere Engine überwinden kann und der Greedy Player ein guter etwas anspruchsvollerer Vergleichspartner ist.
 
 \section{Vergleich der PVS-Varianten}
 
-TODO:
+Beim \ac{PVS} Spieler werden zuerst während der Suche typische Statistiken betrachtet. Die in Abbildung \ref{fig:pvs-statistics} gezeigten Werte stammen dabei aus einem tatsächlich stattgefundenen Spiel, sind aber vergleichbar mit in anderen Spielen beobachteten Werten.
 
 % ┌───────────────────────────── Principal Variation Search Player ─────────────────────────────┐
 % │ Features:            [AW, TT(S), LMR, LMP, SE]                                              │
@@ -44,11 +51,11 @@ TODO:
 % │ Time:                5.0634892s                                                             │
 % │ Nodes searched:      43720                                                                  │
 % │ Branching factor:    2.84 AVG / 1.78 EFF / 1.38 MEAN                                        │
-% │ Best Action:         P7I1═4‖3↻1↔0P1 (0 pts)                                                 │
+% │ Best Action:         P7I1═4‖3↻1↔0P1 (3 points)                                              │
 % │ Move Ordering:       86.80\% (8611 high pv / 9920 high)                                      │
 % │ Aspiration window:   0 low / 0 high                                                         │
 % │ Zero window search:  2 fails (0.01\%)                                                        │
-% │ Search Extensions:   0 SP, 0 ST (enabled)                                                   │
+% │ Search Extensions:   1 SP, 0 ST (enabled)                                                   │
 % │ LMR (Fail/All):      0/114 (0.00%)                                                          │
 % │ LMP:                 3271                                                                   │
 % │ Principal Variation: P7I1═4‖3↻1↔0P1 → P21I0═2‖1↻0↔0P0 → P31I0═7‖4↻0↔1P1 → P11I0═0‖2↻0↔1P0 │
@@ -88,12 +95,13 @@ TODO:
                 Depth:                & $9$ started from (P1: $11$, P2: $13$, type: Normal)                  \\
                 Time:                 & $5{,}0634892\acs{s}$                                                 \\
                 Nodes searched:       & $43720$                                                              \\
-                Branching factor:     & $2{,}84$ AVG / $1{,}78$ EFF / $1{,}38$ MEAN                          \\
-                Best Action:          & P7I1═4‖3↻1↔0P1 ($0$ pts)                                             \\
+                % Branching factor:   & $2{,}84$ AVG / $1{,}78$ EFF / $1{,}38$ MEAN                          \\
+                Branching factor:     & $13{,}73$ AVG / $3{,}32$ EFF / $1{,}59$ MEAN                         \\
+                Best Action:          & P7I1═4‖3↻1↔0P1 ($3$ points)                                          \\
                 Action Ordering:      & $86{,}80\%$ ($8611$ high pv / $9920$ high)                           \\
                 Aspiration window:    & $0$ low / $0$ high                                                   \\
                 Zero window search:   & $2$ fails ($0{,}01\%$)                                               \\
-                Search Extensions:    & $0$ SP, $0$ ST (enabled)                                             \\
+                Search Extensions:    & $1$ SP, $0$ ST (enabled)                                             \\
                 \acs{LMR} (Fail/All): & $0/114$ ($0{,}00\%$)                                                 \\
                 \acs{LMP}:            & $3271$                                                               \\
                 \acl{PV}:             & P7I1═4‖3↻1↔0P1 → P21I0═2‖1↻0↔0P0 → P31I0═7‖4↻0↔1P1 → P11I0═0‖2↻0↔1P0 \\
@@ -248,9 +256,11 @@ Wie in Tabelle \ref{tabelle:mcts-policy-eval-comparision} zu sehen ist, sind vie
 \begin{figure}[!ht]
     \centering
     \begin{tikzpicture}
-        \coordinate (bar1Start) at (0,0);
-        \coordinate (bar1End) at (10,0);
-        \coordinate (bar1Break) at (5,0);
+        \node at (5,0) [align=center] {$5{.}000$ Iterationen mit $2\acs{ms}$ Tree Reuse Timeout};
+
+        \coordinate (bar1Start) at (0,-1);
+        \coordinate (bar1End) at (10,-1);
+        \coordinate (bar1Break) at (5,-1);
 
         \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
         \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
@@ -259,13 +269,27 @@ Wie in Tabelle \ref{tabelle:mcts-policy-eval-comparision} zu sehen ist, sind vie
         \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $500$ Gewonnen};
         \node[below = 0.1cm of bar1Break] {\scriptsize $50\%$};
         \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $500$ Verloren};
+
+        \node at (5,-2.25) [align=center] {$100{.}000$ Iterationen};
+
+        \coordinate (bar2Start) at (0,-3);
+        \coordinate (bar2End) at (10,-3);
+        \coordinate (bar2Break) at (4.99,-3);
+
+        \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
+        \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
+        \node[left = 0.1cm of bar2Start] {Tree New};
+        \node[right = 0.1cm of bar2End] {Tree Reuse};
+        \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $499$ Gewonnen};
+        \node[below = 0.1cm of bar2Break] {\scriptsize $49{,}9\%$};
+        \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $501$ Verloren};
     \end{tikzpicture}
     % \vspace*{-0.5cm}
     \caption[Vergleich Baumwiederverwendung bei MCTS]{Vergleich neuer Baum vs. Baum wiederverwenden bei \acs{MCTS}}
     \label{fig:mcts-tree-reuse-comparision}
 \end{figure}
 
-Weiterhin wird der \ac{MCTS} Spieler noch vergleichen, indem ein Spieler immer wieder versucht den alten Suchbaum wiederzuverwenden (\emph{Tree Reuse}, während der andere Spieler einfach direkt mit einem neuen Suchbaum anfängt (\emph{Tree New}). Das Ergebnis der 1000 Vergleichsspiele, bei dem jeder Spieler je 5000 Iterationen pro \hyperref[text:ply]{\emph{Ply}} zusteht, ist relativ ernüchternd. Wie in \ref{fig:mcts-tree-reuse-comparision} zu sehen ist, liegt das Ergebnis bei genau 50\% Gewinnrate beider Spieler. Möglicherweise kann das Ergebnis für \emph{Tree Reuse} noch verbessert werden, wenn mehr Iterationen gespielt werden, da dort ein größerer vorheriger Suchbaum existiert, jedoch sind hierfür noch umfangreichere Tests erforderlich.
+Weiterhin werden die \ac{MCTS} Spielervarianten noch verglichen, indem ein Spieler immer wieder versucht den alten Suchbaum wiederzuverwenden (\emph{Tree Reuse}), während der andere Spieler einfach direkt mit einem neuen Suchbaum anfängt (\emph{Tree New}). Die in \ref{fig:mcts-tree-reuse-comparision} gezeigten Ergebnisse sind dabei relative ernüchternd. Einerseits werden beide Varianten mit $5{.}000$ Iterationen getestet, wobei für \emph{Tree Reuse} ein Timeout von $2\acsp{ms}$ hat, um den neuen Spielzustand im alten Suchbaum zu finden. Andererseits werden beide Varianten noch mit je $100{.}000$ Iterationen pro \hyperref[text:ply]{\emph{Ply}} und keinem Timeout für \emph{Tree Reuse} verglichen. Beide Vergleiche enden dabei mit einer Gewinnrate von ziemlich genau $50\%$. Selbst bei Variante mit vielen Iterationen, bei der immer der Suchbaum wiederverwendet wird, gewinnt \emph{Tree Reuse} nur ein Spiel mehr, was statistisch wenig aussagekräftig ist. Dies ist der Fall, obwohl mehr Iterationen einen größeren Suchbaum und somit auch einen größeren wiederverwendeten Teilbaum implizieren. Wenn das Wiederverwenden des Suchbaums also einen Vorteil bringen sollte, dann ist der Versuchsaufbau oder die Stichprobengröße nicht groß genug, um diesen Vorteil eindeutig abzugrenzen.
 
 \begin{figure}[!ht]
     \centering
@@ -373,7 +397,7 @@ Abschließend werden wie beim \ac{PVS} Spieler noch verschiedene Statistiken zu 
 
 \section{Evaluation von PatchZero}
 
-TODO:
+Die Evaluation des PatchZero Spielers findet im direkten Vergleich mit dem RandomPlayer und dem GreedyPlayer statt (Abbildung \ref{fig:patchzero-comparision}). PatchZero gewinnt gegen RandomPlayer mit einem sehr knappen Vorsprung. Mit so einem kleinen Vorsprung wird PatchZero wie zu erwarten danach eindeutig vom GreedyPlayer geschlagen.
 
 \begin{figure}[!ht]
     \centering
@@ -403,7 +427,7 @@ TODO:
         \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $78$ Verloren};
     \end{tikzpicture}
     % \vspace*{-0.5cm}
-    \caption{TODO:}
+    \caption{PatchZero vs. Random und Greedy}
     \label{fig:patchzero-comparision}
 \end{figure}
 
@@ -411,7 +435,7 @@ TODO:
 
 \section{Paarvergleiche}
 
-TODO:
+Ähnlich wie bei PatchZero folgen nun Paarvergleiche der einzelnen Computerengines untereinander.
 
 \begin{figure}[!ht]
     \centering
@@ -422,7 +446,7 @@ TODO:
 
             \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
             \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
-            \node[left = 0.1cm of bar1Start, align = right] {\acs{PVS}-Player \\ (1 Thread)};
+            \node[left = 0.1cm of bar1Start, align = right] {\phantom{M}\acs{PVS}-Player \\ (1 Thread)};
             \node[right = 0.1cm of bar1End] {RandomPlayer};
             \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $86$ Gewonnen};
             \node[below = 0.1cm of bar1Break] {\scriptsize $86\%$};
@@ -434,7 +458,7 @@ TODO:
 
             \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
             \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
-            \node[left = 0.1cm of bar2Start, align = right] {\acs{PVS}-Player \\ (1 Thread)};
+            \node[left = 0.1cm of bar2Start, align = right] {\phantom{M}\acs{PVS}-Player \\ (1 Thread)};
             \node[right = 0.1cm of bar2End] {GreedyPlayer};
             \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $66$ Gewonnen};
             \node[below = 0.1cm of bar2Break] {\scriptsize $66\%$};
@@ -452,26 +476,26 @@ TODO:
     \resizebox{\textwidth}{!}{\begin{tikzpicture}
             \coordinate (bar1Start) at (0,0);
             \coordinate (bar1End) at (10,0);
-            \coordinate (bar1Break) at (5,0);
+            \coordinate (bar1Break) at (10,0);
 
             \draw[color=win, line width=0.25cm] (bar1Start) -- (bar1Break);
             \draw[color=loss, line width=0.25cm] (bar1Break) -- (bar1End);
             \node[left = 0.1cm of bar1Start, align=right] {\acs{MCTS}-Player \\ (1 Thread)};
             \node[right = 0.1cm of bar1End] {RandomPlayer};
-            \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $00$ Gewonnen};
-            \node[below = 0.1cm of bar1Break] {\scriptsize $00\%$};
-            \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $00$ Verloren};
+            \node[above right = 0.05cm and -0.15cm of bar1Start] {\footnotesize $100$ Gewonnen};
+            \node[below = 0.1cm of bar1Break] {\scriptsize $100\%$};
+            \node[above left = 0.05cm and -0.15cm of bar1End] {\footnotesize $0$ Verloren};
 
             \coordinate (bar2Start) at (0,-1.5);
             \coordinate (bar2End) at (10,-1.5);
-            \coordinate (bar2Break) at (5,-1.5);
+            \coordinate (bar2Break) at (9.8,-1.5);
             \draw[color=win, line width=0.25cm] (bar2Start) -- (bar2Break);
             \draw[color=loss, line width=0.25cm] (bar2Break) -- (bar2End);
             \node[left = 0.1cm of bar2Start, align=right] {\acs{MCTS}-Player \\ (1 Thread)};
             \node[right = 0.1cm of bar2End] {GreedyPlayer};
-            \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $00$ Gewonnen};
-            \node[below = 0.1cm of bar2Break] {\scriptsize $00\%$};
-            \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $00$ Verloren};
+            \node[above right = 0.05cm and -0.15cm of bar2Start] {\footnotesize $98$ Gewonnen};
+            \node[below = 0.1cm of bar2Break] {\scriptsize $98\%$};
+            \node[above left = 0.05cm and -0.15cm of bar2End] {\footnotesize $2$ Verloren};
         \end{tikzpicture}}
     % \vspace*{-0.5cm}
     \caption[MCTS Spieler vs. Random und Greedy]{\acs{MCTS} Spieler vs. Random und Greedy}
@@ -564,6 +588,18 @@ In der Rangliste spiegeln sich die Ergebnisse der Vergleichspartien. Auch hier i
 
 TODO:
 
+\pagebreak
+
 \section{Ergebnisse gegen die Autoren}
 
-TODO:
+Abschließend wird noch eine \textbf{subjektive} Einschätzung der Spielstärke der einzelnen Computerengines durch die Autoren dieser Arbeit vorgenommen, um die objektivere Einordnung oben zu ergänzen. Dazu wurden verschiedene Spiele gegen die einzelnen Engines gespielt, jedoch nicht genau protokolliert, wie die genauen Ergebnisse aussehen. Die subjektive Einschätzung begrenzt sich dabei jeweils auf die stärkste Variante der unterschiedlichen Computerspielengines.
+
+Gegen den Random Spieler konnten die Autoren einen Großteil der Spiele gewinnen. Generell hat das $7\times 7$ Sonderplättchen für den Random Spieler keinerlei Relevanz, da er immer nur zufällig Flicken über seinen Ablageplan verteilt. So entsteht auf dem Ablageplan der Engine mit sehr hoher Wahrscheinlichkeit eine Zusammenstellung einzelner Fragmente, die untereinander viele Lücken besitzen und keine große gemeinsame Region. Somit erhält der Random Spieler eigentlich nie das $7\times 7$ Sonderplättchen. Für die Autoren dieser Arbeit ist das Sonderplättchen hingegen so gut wie immer erreichbar. Der Punkteunterschied von 7 Punkten, der dadurch am Ende immer existiert, reicht fast immer aus, um das Spiel zu gewinnen. Generell spielt der Random Spieler aber besser als erwartet. Dadurch, dass es in den meisten Fällen deutlich mehr Aktionen gibt, um einen Flicken zu legen (durch alle möglichen Zeilen- und Spaltenpositionen sowie die Rotation und Spiegelung) anstatt die Laufaktion auszuführen, bevorzugt auch der Random Spieler das Legen von Flicken. Somit wird der Ablageplan im Spielverlauf so gut wie möglich gefüllt. Somit erreicht der Random Spieler auch öfters mal Endergebnisse im einstelligen negativen oder positiven Bereich. Solche Ergebnisse lagen auch bei den ersten Spielen der Autoren gegeneinander oft vor.
+
+Die Autoren konnten auch meistens gegen den Greedy Spieler gewinnen. Generell spielt dieser Spieler merklich besser als Random, was sich dadurch auszeichnet, dass die Flickenpositionen auf dem Ablageplan eher wie bei menschlichen Spielern ohne große Lücken sind. Generell wird aber deutlich, dass Greedy dadurch limitiert ist, dass nur eine Position vorausgesehen werden kann. So werden Züge des Gegners nicht beachtet und es findet auch keine längerfristige Planung statt. So schauen sich menschliche Spieler oftmals direkt eine Kombination an Flicken an. Beispielsweise holt ein Spieler sich vielleicht ein schlechteres Teil, um danach direkt noch einmal an der Reihe zu sein und sich ein nun erreichbares besseres Teil zu kaufen.
+
+Der \ac{PVS} Spieler wirkt leicht besser als der Greedy Spieler, was auch mit der Glicko-2 Einschätzung in Abbildung \ref{fig:player-ratings} übereinstimmt. Die Züge wirken teilweise besser überlegt und es werden auch die zuvor angesprochenen Züge mit einer Kombination an Flicken beachtet. Generell können die Autoren aber immer noch gut gegen den \ac{PVS} Spieler gewinnen. Vor allem der Ablageplan des \ac{PVS} Spielers wirkt gegen Ende des Spiels oft noch zu unüberlegt, mit schwierig zu füllenden Lücken. Wahrscheinlich werden durch den StatischenEvaluator die Aktionen bevorzugt, die die restlichen Lücken minimieren. Gleichzeitig ist der \ac{PVS} Spieler dann durch die Ebenen, die vorrausgeschaut werden, begrenzt, sodass die Engine nicht mehr erkennt, dass die restlichen übrigen Flicken nicht mehr dazu geeignet sind, um diese Lücken zu füllen.
+
+Bei dem \ac{MCTS} Spieler hingegen sieht es anders aus. Dieser gewinnt oft gegen die Autoren, ist aber merklich durch seine Bedenkzeit von $10\acs{s}$ beschränkt. Das ist vor allem am Spielanfang bemerkbar. Dort werden oft Flicken fast schon zufällig platziert. Oftmals kann ein Spieler beim ersten Zug alle 1345 möglichen Aktionen ausführen. Der \ac{MCTS} schafft dann $50{.}000-100{.}000$ Iterationen während seiner Bedenkzeit, wobei die wahre Anzahl am Anfang eher bei $50{.}000$ Iterationen liegt. Somit ergibt sich eine durchschnittliche Stichprobengröße von nur 37 möglichen Spielverläufen für jede Aktion. Auch wenn der \ac{MCTS} die Stichproben der Spielverläufe nicht gleichverteilt ausprobiert, sondern häufiger gewinnende Aktionen durch die Tree Policy bevorzugt, wirken die $37$ sehr wenig. Dadurch bildet sich am Anfang ein interessanter häufig zufälliger Ablageplan des \ac{MCTS} Spielers. Im Spielverlauf wird der \ac{MCTS} Spieler dann aber immer besser, da durch den gefüllten Ablageplan weniger Aktionen zur Auswahl stehen und die Simulationsphasen bis zum Spielende kürzer dauern. Somit findet der \ac{MCTS} Spieler auch bei diesem Ablageplan durch die große Anzahl an Iterationen immer genau die Züge, die ihm zum Gewinn führen. Für die Autoren wirkt es so, als sehen sie in der Anfangsphase immer besser dar, trotzdem werden die Spiele dann zum Ende hin immer verloren.
+
+Obwohl der PatchZero Spieler nach der Evaluation leicht besser als Random sein sollte, verhält er sich während des Spielgeschehens für die Autoren genau gleich. Somit gewinnen die Autoren hier auch wieder den Großteil der Spiele. Wahrscheinlich liegt dieses Verhalten daran, dass die Engine nicht genug trainiert worden ist und sich für die Netzwerkevaluation als auf die finale Evaluation eigentlich zufällige Werte ergeben. Dabei ist es nicht erkennbar, ob schon erste kleine Dinge gelernt wurden oder ob sich der PatchZero Spieler tatsächlich zufällig verhält.

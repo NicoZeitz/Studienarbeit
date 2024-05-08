@@ -336,3 +336,4 @@ Iteration    1000 / 1000
 Player 1:     499 wins  (49.90%) [avg score:  17.03, max score:  44, min score: -35, avg time:    3.609s, turns: 21041]                       
 Player 2:     501 wins  (50.10%) [avg score:  16.78, max score:  43, min score: -30, avg time:    3.526s, turns: 20874]                       
 MCTSPlayer(tree: new, root: 1, [0;32m██████████████████████████████████████████████████[0;31m██████████████████████████████████████████████████[0m MCTSPlayer(tree: reuse, root:   
+Comparing 100 iterations with 7 threads: PVSPlayer(time: 10s, ord: table, eval: static, fail: Hard, asp: true, lmr: true, lmp: true, ext: true, tt: Symmetry(Size: MiB(250), Strategy: Hard), smp: Yes(Parallelism: 4)) vs. GreedyPlayer(eval: static)

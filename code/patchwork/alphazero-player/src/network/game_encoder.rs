@@ -244,12 +244,8 @@ impl<const PATCH_LAYERS: usize> GameEncoder<PATCH_LAYERS> {
             time_board_input.push(f32::from(*index) / f32::from(TimeBoard::MAX_POSITION));
         }
         // Each tile of the time board (54) normalized to [0, 1)
-        time_board_input.extend(
-            time_board
-                .tiles
-                .iter()
-                .map(|tile| f32::from(*tile) / f32::from(time_board_flags::MAX_VALUE)),
-        );
+        time_board_input
+            .extend(time_board.tiles.iter().map(|tile| f32::from(*tile) / f32::from(time_board_flags::MAX_VALUE)));
 
         debug_assert_eq!(
             time_board_input.len(),

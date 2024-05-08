@@ -473,10 +473,10 @@ In der Selektionsphase einer \ac{MCTS} Iteration muss ausgehend von dem Wurzelkn
 \begingroup
 \allowdisplaybreaks
 \begin{align}
-    \mathbb{UCT}                         & = \frac{w}{n} + c \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  \\  \notag
-    \intertext{Die erste Tree Policy ist die bereits aus dem Grundlagen-Kapitel bekannte \acf{UCT} Formel. Der Name \acf{UCB} kommt daher, dass diese Formel auch als obere Grenze eines Konfidenzintervalls gesehen werden kann. So wird mit dem exploitativen Teil, der Gewinnrate ($\sfrac{w}{n}$) des Knotens, ein Punktschätzer für den wahren Wert des Knotens erstellt. Da diese Schätzung bei kleinen $n$ jedoch relativ ungenau ist, wird die Unsicherheit bzw. Varianz der Schätzung durch den explorativen Teil, dem Verhältnis aus Anzahl von Besuchen bei von Eltern- und Kindknoten ($\sqrt{\frac{\ln N}{n}}$), angegeben \cite[S. 36]{2018.ReinforcementLearning}. Durch die Kombination beider Terme ergibt sich somit durch Punktschätzer und Varianz die obere Grenze eines Konfidenzintervalls, bei dem der wahre Wert mit großer Wahrscheinlichkeit unterhalb dieser Grenze liegt. Die \ac{UCT} Formel selektiert nun den Knoten mit der größten oberen Grenze, um dieses Maximum entweder zu bestätigen oder die Schätzung anzupassen.}                                                                                                        \notag \\
-    \text{Scored-}\mathbb{UCT}           & = \frac{\sum s_i}{n} + c \cdot |\max S_i - \min_i S_i| \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\ \notag
-    \intertext{Die zweite mögliche Tree Policy erweitert die \ac{UCT} Formel insofern, dass auch das tatsächliche Ergebnis eines Patchwork Spiels in der Entscheidung eine Rolle spielt. Während bei \ac{UCT} einfach nur eine Gewinnrate berechnet wird, verwendet Scored-$\mathbb{UCT}$ die Endergebnisse, indem der Mittelwert dieser als explorativer Teil berechnet wird ($\sfrac{\sum s_i}{n}$). Da hierbei der explorative Teil außerhalb von $\left[0,1\right]$ fallen kann, muss auch der exploitative Teil entsprechend skaliert werden. Das geschieht dadurch, das die Differenz zwischen dem höchsten und niedrigsten Gewinn, welcher im Elternknoten im Laufe der Zeit aufgetreten ist, berechnet wird ($|\max S_i - \min_i S_i|$) und zum Skalieren verwendet wird.}                                                                                                       \notag                                                                                                                                                                                                                                                                            \\
+    \mathbb{UCT}                         & = \frac{w}{n} + c \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 \\  \notag
+    \intertext{Die erste Tree Policy ist die bereits aus dem Grundlagen-Kapitel bekannte \acf{UCT} Formel. Der Name \ac{UCB} kommt daher, dass diese Formel auch als obere Grenze eines Konfidenzintervalls gesehen werden kann. So wird mit dem exploitativen Teil, der Gewinnrate ($\sfrac{w}{n}$) des Knotens, ein Punktschätzer für den wahren Wert des Knotens erstellt. Da diese Schätzung bei kleinen $n$ jedoch relativ ungenau ist, wird die Unsicherheit bzw. Varianz der Schätzung durch den explorativen Teil, dem Verhältnis aus Anzahl von Besuchen bei von Eltern- und Kindknoten ($\sqrt{\frac{\ln N}{n}}$), angegeben \cite[S. 36]{2018.ReinforcementLearning}. Durch die Kombination beider Terme ergibt sich somit durch Punktschätzer und Varianz die obere Grenze eines Konfidenzintervalls, bei dem der wahre Wert mit großer Wahrscheinlichkeit unterhalb dieser Grenze liegt. Die \ac{UCT} Formel selektiert nun den Knoten mit der größten oberen Grenze, um dieses Maximum entweder zu bestätigen oder die Schätzung anzupassen.}                                                                                                        \notag \\
+    \text{Scored-}\mathbb{UCT}           & = \frac{\sum s_i}{n} + c \cdot |\max S_i - \min_i S_i| \cdot \sqrt{\frac{\ln N}{n}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \\ \notag
+    \intertext{Die zweite mögliche Tree Policy erweitert die \ac{UCT} Formel insofern, dass auch das tatsächliche Ergebnis eines Patchwork Spiels in der Entscheidung eine Rolle spielt. Während bei \ac{UCT} einfach nur eine Gewinnrate berechnet wird, verwendet Scored-$\mathbb{UCT}$ die Endergebnisse, indem der Mittelwert dieser als explorativer Teil berechnet wird ($\sfrac{\sum s_i}{n}$). Da hierbei der explorative Teil außerhalb von $\left[0,1\right]$ fallen kann, muss auch der exploitative Teil entsprechend skaliert werden. Das geschieht dadurch, das die Differenz zwischen dem höchsten und niedrigsten Gewinn, welcher im Elternknoten im Laufe der Zeit aufgetreten ist, berechnet wird ($|\max S_i - \min_i S_i|$) und zum Skalieren verwendet wird.}                                                                                                       \notag                                                                                                                                                                                                                                                                           \\
     \text{Partially-Scored-}\mathbb{UCT} & = \rho \cdot \text{Scored-}\mathbb{UCT} + (1 - \rho) \cdot \mathbb{UCT}
 \end{align}
 \endgroup
@@ -534,17 +534,43 @@ Für den \ac{MCTS} Spieler wurden die Parallelisierungsarten \hyperref[text:leaf
 \section{Ansatz E: PatchZero}
 \label{section:erstellung-ansatz-d}
 
+Der letzte Computerengineansatz verfolgt die Umsetzung eines Spielers mithilfe des AlphaZero Algorithmus und bestärkendem Lernen. Der Spieler PatchZero setzt dabei einen Großteil der originalen AlphaZero Implementierung direkt um, während noch verschiedene Patchwork-spezifischen Änderungen wie beispielsweise die Zustandskodierung vorgenommen werden.
+
+Der AlphaZero Algorithmus setzt grundlegend auf dem \ac{MCTS} Algorithmus auf. Dabei werden die vier Phasen durch drei neue Phasen ersetzt. Zuerst existiert die \textbf{Selektion}, gleich wie bei \ac{MCTS}. Danach folgt eine \textbf{Evaluation} mittels des neuronalen Netzwerks. Zuletzt existiert noch die Phase \textbf{Expansion und Backpropagation}. Wie bei \ac{MCTS} werden diese Phasen innerhalb der Bedenkzeit so oft wie möglich wiederholt.
+
 TODO:
 
-\begin{itemize}
-    \item Änderungen Gegenüber MCTS / Generelle Funktionsweise
-    \item Kodierung des Spielzustandes
-    \item Netzwerk-Architektur
-    \item Parallelization with Virtual Loss
-    \item Training-Loop
-\end{itemize}
+Die Selektionsphase von PatchZero wird wie bei \ac{MCTS} mit einer Tree Policy durchgeführt. Dabei wird eine modifizierte \ac{UCT} Formel verwendet, welche die durch das Policy-Netzwerk erzeugte \emph{A-priori} Schätzung miteinbezieht. Diese $\mathbb{PUCT}$ Formel setzt sich dabei wie in \ref{eqn:alpha-zero-puct} wieder aus einem exploitativen ($Q$) und einem explorativen Teil ($U$) zusammen.
 
-\subsubsection*{Kodierung des Spielzustandes}
+\begin{align}
+    \label{eqn:alpha-zero-puct}
+    \mathbb{PUCT}(s, a) = Q(s,a) + U(s,a)
+\end{align}
+
+TODO:
+
+\begin{align}
+    \label{eqn:alpha-zero-puct-q}
+    U(s,a) = c \cdot \pi(a | s) \cdot \sqrt{\frac{N}{1 + n}}
+\end{align}
+
+TODO:
+
+\begin{align}
+    \label{eqn:alpha-zero-puct-u}
+    Q(s,a) = \begin{cases}
+        fpu         & \text{ wenn } n = 0 \\
+        \frac{w}{n} & \text{ sonst }
+    \end{cases}
+\end{align}
+
+Die in der Selektionsphase ausgewählte Aktion ergibt sich wieder als $\argmax\limits_{a\, \in\, Actions}\ \mathbb{PUCT}(s,a)$.
+
+TODO:
+
+\subsection{Kodierung des Spielzustandes}
+
+Um einen Spielzustand durch das neuronale Netz evaluieren zu lassen, muss der Spielstand zuerst in ein Format codiert werden, was durch das neuronale Netz verstanden wird. Die Eingabe in das neuronale Netz muss ein Tensor, also ein mehrdimensionales Array an Zahlen, sein. Für PatchZero wird jeder Spielzustand in einen $9\times 9\times 8$ Stapel wie in Abbildung \ref{fig:patch-zero-state} codiert. Der Tensor besteht dabei aus acht übereinanderliegenden $9\times 9$ Feldern.
 
 \begin{figure}[!ht]
     \centering
@@ -554,7 +580,7 @@ TODO:
     \label{fig:patch-zero-state}
 \end{figure}
 
-TODO: LSTM Bild
+Zuerst wird der Ablageplan des aktuellen Spielers codiert. Dazu wird jedes mit Flicken belegte Feld in eine 1 umgewandelt und alle anderen Felder in eine 0. Danach folgt der Ablageplan des anderen Spielers mit der gleichen Kodierung. Daraufhin wird eine Ebene dafür verwendet dem Netzwerk den aktuellen Spieler mitzuteilen. Dabei steht eine $9\times 9$ gefüllte Ebene an Einsen für Spieler 1 und eine mit Nullen gefüllte Ebene für Spieler 2. Die originale AlphaZero Implementierung verwendet auch eine ganze Ebene für die Kodierung des aktuellen Spielers \cite[Anhang]{2017.AlphaGoZeroPaper}. Dadurch, dass eine ganze Ebene für den aktuellen Spieler verwendet wird, können die lokalen Konvolutionsoperationen im Netzwerk, welche immer nur $n\times n\times 8$Teilbereiche des Spielzustandes anschauen nachher jederzeit feststellen, welcher Spieler gerade an der Reihe ist. Dann werden in vier weiteren Ebenen die verfügbaren Flicken kodiert. Die ersten 3 verfügbaren Flicken werden jeweils in einer eigenen Ebene codiert, da diese auch alle drei einzeln für den derzeitigen Spieler zur Verfügung stehen. Sollte es einmal vorkommen, dass keine drei Flicken mehr zu Auswahl stehen, sondern zum Beispiel nur noch zwei, da alle anderen Flicken bereits vergeben sind, so wird die entsprechende Ebene mit Nullen gefüllt. Es ist aber unklar, ob das überhaupt im normalen Spiel vorkommen kann. Da alle weiteren verfügbaren Flicken auch relevant sind, werden diese durch eine weitere Ebene repräsentiert. Die Anzahl der verfügbaren Flicken nimmt während dem Patchwork Spiel immer weiter stetig ab. Da das AlphaZero Netzwerk keinen Tensor von variabler Länge annehmen kann, müssen die restlichen Flicken zusammen in einer Ebene codiert werden. Um diese gemeinsame Kodierung hinzubekommen, wird ein rekurrentes \ac{LSTM} Netzwerk verwendet, was genau für diese Transformation mehrerer Eingaben in eine Ausgabe gemacht ist (Many-to-One) \cite{2015.RNN}. Dabei wird das \ac{LSTM} Netzwerk nacheinander mit den verfügbaren Flicken in falscher Reihenfolge aufgerufen, sodass beim ersten Aufruf der Flicken verwendet wird, der der Flicken ist, welcher am weitesten von der Spielfigur entfernt ist. Bei jedem Aufruf merkt sich das \ac{LSTM} intern einen Zustand, der auch in die Berechnung der Ausgabe eingeht. So kann final eine Ausgabe erzeugt werden, bei der alle Flicken zusammen mit ihrer Position innerhalb einer Ebene gemeinsam kodiert sind.
 
 \begin{figure}[!ht]
     \centering
@@ -563,11 +589,25 @@ TODO: LSTM Bild
     \label{fig:patch-embeddings}
 \end{figure}
 
-TODO:
+Die Kodierung der einzelnen Flicken in eine $9\times 9$ Ebene wird nicht manuell vorgenommen, sondern es werden sogenannte Einbettungen verwendet. Dabei wird jeder Flicken-\ac{ID} wie in Abbildung \ref{fig:patch-embeddings} ein Vektor mit 81 Einträgen zugeordnet. Dieser Vektor enthält dann die Werte für die passende Ebene im kodierten Spielzustand. Besonders ist hierbei, dass der Vektor mit allen 81 Werten durch das neuronale Netz gelernt wird, \dash während dem Training werden nach und nach wichtige Eigenschaften eines Flicken festgestellt und durch die Zahlen innerhalb des Vektors kodiert \cite{2023.PytorchEmbedding}. Somit kann das neuronale Netz selbst entscheiden, welche Eigenschaften relevant sind und muss nicht durch den Menschen vorgegebene Werte verwenden. Ein 81-dimensionaler Vektor sollte dabei auch ausreichen, um neben den Zeit-, Knopfkosten und dem Knopfeinkommen noch die Form und Ablagemöglichkeiten eines Flickens zu lernen.
 
-\pagebreak
+Zuletzt wird für die Spielzustandskodierung noch der Zeitplan mit allen relevanten Informationen in einer Ebene kodiert. Dazu werden verschiedene Eingaben durch ein neuronales Netzwerk mit 2 Schichten und \ac{ReLU} Aktivierungsfunktionen in eine 81 Zahlen lange Ausgabe transformiert, die anschließend in eine $9\times 9$ Ebene umgeformt wird. Die verschiedenen Eingaben setzen sich dabei wie folgt zusammen:
 
-\subsubsection*{Netzwerk-Architektur}
+\begin{itemize}
+    \item Die Position des ersten Spielers auf dem Zeitplan, wobei die Werte nicht von 0 bis 54 gehen, sondern auf den Bereich $\left[0,1\right]$ normalisiert sind.
+    \item Die Position des zweiten Spielers auf dem Zeitplan mit der gleichen Normalisierung zu $\left[0,1\right]$.
+    \item Die Distanz zwischen beiden Spielern aus der Sicht des ersten Spielers von $\left[-6,6\right]$ normalisiert auf $\left[-1,1\right]$.
+    \item $9\times$ die Positionen der Knopfwertungen auf dem Zeitplan, normalisiert auf $(0,1]$.
+    \item $5\times$ die Positionen der Spezialflicken auf dem Zeitplan, normalisiert auf $(0,1)$.
+    \item Alle 54 Felder auf dem Zeitplan normalisiert auf $[0,1)$.
+\end{itemize}
+
+Diese menschlich ausgesuchten Angaben kann das PatchZero-Netzwerk durch die Transformation mit dem 2-Schichten-Netzwerk in für das Netzwerk besser geeignete Werte übertragen. So wird wie bei den Flicken der menschliche Bias nicht direkt an das Netzwerk übergeben.
+
+\subsection{Netzwerk-Architektur}
+
+\cite[Anhang]{2017.AlphaGoZeroPaper}
+\cite[Anhang, S. 10]{2017.AlphaGoZeroPaper}
 
 \cite{2018.Lc0AlphaZero}
 \cite{2019.SqueezeandExcitation}
@@ -576,7 +616,7 @@ TODO:
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth]{res/pictures/patch-zero-architecture.pdf}
-    \caption{Architektur von PatchZero}
+    \caption{Netzwerkarchitektur von PatchZero}
     \label{fig:patch-zero-architecture}
 \end{figure}
 
