@@ -62,8 +62,10 @@ impl Default for FPUStrategy {
 /// - [Multi-armed bandits with episode context](https://link.springer.com/article/10.1007/s10472-011-9258-6)
 #[derive(Debug, Clone)]
 pub struct PUCTPolicy {
-    /// The exploration parameter for the UCT policy.
-    exploration_constant: f64,
+    /// The c base exploration parameter for the PUCT policy.
+    c_base: f64,
+    /// The c init exploration parameter for the PUCT policy.
+    c_init: f64,
     /// The First Play Urgency (FPU) strategy to use for the MCTS.
     fpu_strategy: FPUStrategy,
 }
@@ -79,9 +81,10 @@ impl PUCTPolicy {
     ///
     /// The new [`AlphaZeroUCTPolicy`].
     #[must_use]
-    pub const fn new(exploration_constant: f64, fpu_strategy: FPUStrategy) -> Self {
+    pub const fn new(c_base: f64, c_init: f64, fpu_strategy: FPUStrategy) -> Self {
         Self {
-            exploration_constant,
+            c_base,
+            c_init,
             fpu_strategy,
         }
     }
@@ -89,7 +92,8 @@ impl PUCTPolicy {
 
 impl Default for PUCTPolicy {
     fn default() -> Self {
-        Self::new(2f64.sqrt(), FPUStrategy::default())
+        // Values from https://gist.github.com/erenon/cb42f6656e5e04e854e6f44a7ac54023 (AlphaZero Pseudo Code)
+        Self::new(1.25, 19652.0, FPUStrategy::default())
     }
 }
 
@@ -114,15 +118,15 @@ impl PUCTPolicy {
                         // [EdgeAndNode::GetQ](https://github.com/LeelaChessZero/lc0/blob/master/src/mcts/node.h#L375)
                         // [Engine Parameters](https://lczero.org/play/flags)
                         // 0.0
-                        f64::from(child.wins_for(parent_player)) // push up virtual loss
+                        child.score_sum_for(parent_player) // push up virtual loss
                     } else {
-                        f64::from(parent.wins_for(parent_player)) / parent_visit_count - reduction
+                        parent.score_sum_for(parent_player) / parent_visit_count - reduction
                     }
                 }
             };
         }
 
-        let res = f64::from(child.wins_for(parent_player)) / child_visit_count;
+        let res = child.score_sum_for(parent_player) / child_visit_count;
 
         #[cfg(debug_assertions)]
         if res.is_infinite() {
@@ -149,7 +153,8 @@ impl PUCTPolicy {
     ) -> f64 {
         let child_visit_count = child.visit_count() as f64;
         let parent_visit_count = parent.visit_count() as f64;
-        self.exploration_constant * child.prior_value() * (parent_visit_count.sqrt() / (1.0 + child_visit_count))
+        let exploration_constant = ((1.0 + parent_visit_count + self.c_base) / self.c_base).ln() + self.c_init;
+        exploration_constant * child.prior_value() * (parent_visit_count.sqrt() / (1.0 + child_visit_count))
     }
 }
 

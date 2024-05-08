@@ -277,9 +277,9 @@ impl TreePolicyNode for Node {
 
     fn score_sum_for(&self, player: Self::Player) -> f64 {
         if player {
-            self.neutral_score_sum
+            self.neutral_score_sum - f64::from(self.virtual_loss.load(Ordering::Relaxed))
         } else {
-            -self.neutral_score_sum
+            -self.neutral_score_sum - f64::from(self.virtual_loss.load(Ordering::Relaxed))
         }
     }
 

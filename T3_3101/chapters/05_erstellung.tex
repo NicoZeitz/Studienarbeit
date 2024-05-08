@@ -538,94 +538,94 @@ Der letzte Computerengineansatz verfolgt die Umsetzung eines Spielers mithilfe d
 
 Der AlphaZero Algorithmus setzt grundlegend auf dem \ac{MCTS} Algorithmus auf. Dabei werden die vier Phasen durch drei neue Phasen ersetzt. Zuerst existiert die \textbf{Selektion}, gleich wie bei \ac{MCTS}. Danach folgt eine \textbf{Evaluation} mittels des neuronalen Netzwerks. Zuletzt existiert noch die Phase \textbf{Expansion und Backpropagation}. Wie bei \ac{MCTS} werden diese Phasen innerhalb der Bedenkzeit so oft wie möglich wiederholt.
 
-TODO:
+Die Evaluationsphase ersetzt die Simulationsphase beim \ac{MCTS}. Anstatt ein zufälliges Spiel zu spielen und so eine Evaluation für einen Spielzustand zu erhalten, wird ein neuronales Netzwerk verwendet, welches eine Approximation der Evaluation $\mathcal{V}$ als Ergebnis ausgibt. Dies ist der sogenannte \emph{Value Head} des Netzwerks. Neben diesem gibt es noch den \emph{Policy Head}, der für einen Spielzustand eine Wahrscheinlichkeitsverteilung aller Aktionen $\pi\left(a\,|\,s\right)$ ermittelt, der darstellt wie gut die Auswahl einer Aktion $a$ ist im gegebenen Spielzustand $s$ ist.
+
+Die beiden Ausgaben des Netzwerks werden in der Expansion und Backpropagation Phase verwendet. Zuerst werden bei dem betrachteten Knoten alle Kinderknoten erzeugt, die den Spielzustand nach der Ausführung einer möglichen Aktion besitzen. Jeder dieser Kinderknoten bekommt als \emph{A-priori} Wahrscheinlichkeit das Ergebnis des \emph{Policy Heads} der passenden Aktion zugewiesen. Danach wird das Ergebnis des \emph{Value Heads} verwendet, um die Evaluationsapproximation wie bei \ac{MCTS} über alle Knoten bis zum Wurzelknoten hochzureichen.
+
+
+\begin{align}
+    \label{eqn:alpha-zero-puct}
+    \mathbb{PUCT}\left(s, a\right) = Q\left(s,a\right) + U\left(s,a\right)
+\end{align}
 
 Die Selektionsphase von PatchZero wird wie bei \ac{MCTS} mit einer Tree Policy durchgeführt. Dabei wird eine modifizierte \ac{UCT} Formel verwendet, welche die durch das Policy-Netzwerk erzeugte \emph{A-priori} Schätzung miteinbezieht. Diese $\mathbb{PUCT}$ Formel setzt sich dabei wie in \ref{eqn:alpha-zero-puct} wieder aus einem exploitativen ($Q$) und einem explorativen Teil ($U$) zusammen.
 
 \begin{align}
-    \label{eqn:alpha-zero-puct}
-    \mathbb{PUCT}(s, a) = Q(s,a) + U(s,a)
-\end{align}
-
-TODO:
-
-\begin{align}
     \label{eqn:alpha-zero-puct-q}
-    U(s,a) = c \cdot \pi(a | s) \cdot \sqrt{\frac{N}{1 + n}}
+    U\left(s,a\right) = c \cdot \pi\left(a\,|\,s\right) \cdot \frac{\sqrt{\,N\,\,}}{1 + n}\qquad \text{mit } c=\ln\left(\frac{1 + N + c_{base}}{c_{base}}\right) + c_{init}
 \end{align}
 
-TODO:
+Der in \ref{eqn:alpha-zero-puct-u} gezeigte explorative Teil nutzt dabei die gleiche modifizierte \ac{UCT} Formel wie das originale AlphaZero Paper \cite[Anhang, S. 2]{2017.AlphaGoZeroPaper}. Wie schon bei der originalen \ac{UCT} Formel stehen $c$ für die Explorationskonstante und $N$ bzw. $n$ für die Anzahl der Besuche beim Eltern- bzw. Kindknoten. Die Policy $\pi\left(a\,|\,s\right)$ dabei die Ausgabe dafür, mit welcher \emph{A-priori} Wahrscheinlichkeit die Aktion $a$ gewählt werden sollte, wenn der Spieler sich im Zustand $s$ befindet. Weiterhin ist die Explorationskonstante $c$ kein fester Wert mehr, sondern wächst langsam mit der Suchzeit. PatchZero verwendet dabei $c_{base} = 1{,}25$ und $c_{init} = 19652{,}0$, die originalen Werte von AlphaZero \cite[S. 17]{2018.AlphaZero}.
 
 \begin{align}
     \label{eqn:alpha-zero-puct-u}
-    Q(s,a) = \begin{cases}
-        fpu         & \text{ wenn } n = 0 \\
-        \frac{w}{n} & \text{ sonst }
+    Q\left(s,a\right) = \begin{cases}
+        \acs{FPU}         & \text{ wenn } n = 0 \\
+        \sfrac{\sum_{Subtree} \mathcal{V}}{n} & \text{ sonst }
     \end{cases}
 \end{align}
 
+Der exploitativen Anteil an der Formel ist die durch das neuronale Netz entstandene Schätzung für die Gewinnrate des Knotens (Formel eqn:alpha-zero-puct-q). Dabei wird die Summer über alle Wertevaluationen $\mathcal{V}$ gebildet, die in einem Teilbaum ausgehend vom Knoten entstanden sind. Um daraus den Durchschnitt zu bilden, wie noch durch die Anzahl der Besuche $n$ geteilt. Da im Gegensatz zu \ac{MCTS} bei AlphaZero aber alle Kinderknoten auf einmal expandiert werden, kann der Fall auftreten, dass $n$ Null ist. Dieser Fall ist auch als \ac{FPU} bekannt \cite[S. 4]{2006.FPU}. Anstatt wie AlphaZero einen beliebigen Wert einzusetzen, orientiert sich PatchZero an der Implementierung in \ac{Lc0}. \acl{Lc0} ist eine Open-Source Schachengine, die auf der Grundlage von AlphaZero entwickelt wurde und eine der derzeit stärksten Schachengines ist \cite{2024.Lc0}. Dabei ist \ac{Lc0} auch stärker als der Vorgänger AlphaZero \cite{2024.Lc0vsAlphaZero}. In \ac{Lc0} wird einem Knoten die \ac{FPU} basierend auf der Bewertung des Elternknotens zugewiesen, da davon ausgegangen wird, dass die Evaluation wahrscheinlich ähnlich ist \cite{2018.Lc0AlphaZero}. So wird in \ac{Lc0} als auch in PatchZero die Bewertungsfunktion des Elternknotens reduziert um $0{,}44$ verwendet. Da der Wurzelknoten kein Elternknoten besitzt, wird hier die \ac{FPU} auf 0 gesetzt, es wird also standardmäßig von einem Unentschieden ausgegangen.
+
 Die in der Selektionsphase ausgewählte Aktion ergibt sich wieder als $\argmax\limits_{a\, \in\, Actions}\ \mathbb{PUCT}(s,a)$.
 
-TODO:
+\pagebreak
 
 \subsection{Kodierung des Spielzustandes}
 
 Um einen Spielzustand durch das neuronale Netz evaluieren zu lassen, muss der Spielstand zuerst in ein Format codiert werden, was durch das neuronale Netz verstanden wird. Die Eingabe in das neuronale Netz muss ein Tensor, also ein mehrdimensionales Array an Zahlen, sein. Für PatchZero wird jeder Spielzustand in einen $9\times 9\times 8$ Stapel wie in Abbildung \ref{fig:patch-zero-state} codiert. Der Tensor besteht dabei aus acht übereinanderliegenden $9\times 9$ Feldern.
 
+\vspace*{-0.35cm}
 \begin{figure}[!ht]
     \centering
     \vspace*{-1.75cm}
     \includegraphics[width=\textwidth]{res/pictures/patch-zero-state.pdf}
+    \vspace*{-0.45cm}
     \caption{Zustandskodierung von PatchZero}
     \label{fig:patch-zero-state}
 \end{figure}
+\vspace*{-0.25cm}
 
-Zuerst wird der Ablageplan des aktuellen Spielers codiert. Dazu wird jedes mit Flicken belegte Feld in eine 1 umgewandelt und alle anderen Felder in eine 0. Danach folgt der Ablageplan des anderen Spielers mit der gleichen Kodierung. Daraufhin wird eine Ebene dafür verwendet dem Netzwerk den aktuellen Spieler mitzuteilen. Dabei steht eine $9\times 9$ gefüllte Ebene an Einsen für Spieler 1 und eine mit Nullen gefüllte Ebene für Spieler 2. Die originale AlphaZero Implementierung verwendet auch eine ganze Ebene für die Kodierung des aktuellen Spielers \cite[Anhang]{2017.AlphaGoZeroPaper}. Dadurch, dass eine ganze Ebene für den aktuellen Spieler verwendet wird, können die lokalen Konvolutionsoperationen im Netzwerk, welche immer nur $n\times n\times 8$Teilbereiche des Spielzustandes anschauen nachher jederzeit feststellen, welcher Spieler gerade an der Reihe ist. Dann werden in vier weiteren Ebenen die verfügbaren Flicken kodiert. Die ersten 3 verfügbaren Flicken werden jeweils in einer eigenen Ebene codiert, da diese auch alle drei einzeln für den derzeitigen Spieler zur Verfügung stehen. Sollte es einmal vorkommen, dass keine drei Flicken mehr zu Auswahl stehen, sondern zum Beispiel nur noch zwei, da alle anderen Flicken bereits vergeben sind, so wird die entsprechende Ebene mit Nullen gefüllt. Es ist aber unklar, ob das überhaupt im normalen Spiel vorkommen kann. Da alle weiteren verfügbaren Flicken auch relevant sind, werden diese durch eine weitere Ebene repräsentiert. Die Anzahl der verfügbaren Flicken nimmt während dem Patchwork Spiel immer weiter stetig ab. Da das AlphaZero Netzwerk keinen Tensor von variabler Länge annehmen kann, müssen die restlichen Flicken zusammen in einer Ebene codiert werden. Um diese gemeinsame Kodierung hinzubekommen, wird ein rekurrentes \ac{LSTM} Netzwerk verwendet, was genau für diese Transformation mehrerer Eingaben in eine Ausgabe gemacht ist (Many-to-One) \cite{2015.RNN}. Dabei wird das \ac{LSTM} Netzwerk nacheinander mit den verfügbaren Flicken in falscher Reihenfolge aufgerufen, sodass beim ersten Aufruf der Flicken verwendet wird, der der Flicken ist, welcher am weitesten von der Spielfigur entfernt ist. Bei jedem Aufruf merkt sich das \ac{LSTM} intern einen Zustand, der auch in die Berechnung der Ausgabe eingeht. So kann final eine Ausgabe erzeugt werden, bei der alle Flicken zusammen mit ihrer Position innerhalb einer Ebene gemeinsam kodiert sind.
+Zuerst wird der Ablageplan des aktuellen Spielers codiert. Dazu wird jedes mit Flicken belegte Feld in eine 1 umgewandelt und alle anderen Felder in eine 0. Danach folgt der Ablageplan des anderen Spielers mit der gleichen Kodierung. Daraufhin wird eine Ebene dafür verwendet dem Netzwerk den aktuellen Spieler mitzuteilen. Dabei steht eine $9\times 9$ gefüllte Ebene an Einsen für Spieler 1 und eine mit Nullen gefüllte Ebene für Spieler 2. Die originale AlphaZero Implementierung verwendet auch eine ganze Ebene für die Kodierung des aktuellen Spielers \cite[Anhang, S. 2]{2017.AlphaGoZeroPaper}. Dadurch, dass eine ganze Ebene für den aktuellen Spieler verwendet wird, können die lokalen Konvolutionsoperationen im Netzwerk, welche immer nur $n\times n\times 8$ Teilbereiche des Spielzustandes anschauen nachher jederzeit feststellen, welcher Spieler gerade an der Reihe ist. Dann werden in vier weiteren Ebenen die verfügbaren Flicken kodiert. Die ersten 3 verfügbaren Flicken werden jeweils in einer eigenen Ebene codiert, da diese auch alle drei einzeln für den derzeitigen Spieler zur Verfügung stehen. Sollte es einmal vorkommen, dass keine drei Flicken mehr zu Auswahl stehen, sondern zum Beispiel nur noch zwei, da alle anderen Flicken bereits vergeben sind, so wird die entsprechende Ebene mit Nullen gefüllt. Es ist aber unklar, ob das überhaupt im normalen Spiel vorkommen kann.
+
+\vspace*{-5cm}
+\pagebreak
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth]{res/pictures/patch-embeddings.png}
+    \vspace*{-0.5cm}
     \caption{Patch Embeddings}
     \label{fig:patch-embeddings}
 \end{figure}
+\vspace*{-0.25cm}
 
-Die Kodierung der einzelnen Flicken in eine $9\times 9$ Ebene wird nicht manuell vorgenommen, sondern es werden sogenannte Einbettungen verwendet. Dabei wird jeder Flicken-\ac{ID} wie in Abbildung \ref{fig:patch-embeddings} ein Vektor mit 81 Einträgen zugeordnet. Dieser Vektor enthält dann die Werte für die passende Ebene im kodierten Spielzustand. Besonders ist hierbei, dass der Vektor mit allen 81 Werten durch das neuronale Netz gelernt wird, \dash während dem Training werden nach und nach wichtige Eigenschaften eines Flicken festgestellt und durch die Zahlen innerhalb des Vektors kodiert \cite{2023.PytorchEmbedding}. Somit kann das neuronale Netz selbst entscheiden, welche Eigenschaften relevant sind und muss nicht durch den Menschen vorgegebene Werte verwenden. Ein 81-dimensionaler Vektor sollte dabei auch ausreichen, um neben den Zeit-, Knopfkosten und dem Knopfeinkommen noch die Form und Ablagemöglichkeiten eines Flickens zu lernen.
+Da alle weiteren verfügbaren Flicken auch relevant sind, werden diese durch eine weitere Ebene repräsentiert. Die Anzahl der verfügbaren Flicken nimmt während dem Patchwork Spiel immer weiter stetig ab. Da das AlphaZero Netzwerk keinen Tensor von variabler Länge annehmen kann, müssen die restlichen Flicken zusammen in einer Ebene codiert werden. Um diese gemeinsame Kodierung hinzubekommen, wird ein rekurrentes \ac{LSTM} Netzwerk verwendet, was genau für diese Transformation mehrerer Eingaben in eine Ausgabe gemacht ist (Many-to-One) \cite{2015.RNN}. Dabei wird das \ac{LSTM} Netzwerk nacheinander mit den verfügbaren Flicken in falscher Reihenfolge aufgerufen, sodass beim ersten Aufruf der Flicken verwendet wird, der der Flicken ist, welcher am weitesten von der Spielfigur entfernt ist. Bei jedem Aufruf merkt sich das \ac{LSTM} intern einen Zustand, der auch in die Berechnung der Ausgabe eingeht. So kann final eine Ausgabe erzeugt werden, bei der alle Flicken zusammen mit ihrer Position innerhalb einer Ebene gemeinsam kodiert sind. Die Kodierung der einzelnen Flicken in eine $9\times 9$ Ebene wird nicht manuell vorgenommen, sondern es werden sogenannte Einbettungen verwendet. Dabei wird jeder Flicken-\ac{ID} wie in Abbildung \ref{fig:patch-embeddings} ein Vektor mit 81 Einträgen zugeordnet. Dieser Vektor enthält dann die Werte für die passende Ebene im kodierten Spielzustand. Besonders ist hierbei, dass der Vektor mit allen 81 Werten durch das neuronale Netz gelernt wird, \dash während dem Training werden nach und nach wichtige Eigenschaften eines Flicken festgestellt und durch die Zahlen innerhalb des Vektors kodiert \cite{2023.PytorchEmbedding}. Somit kann das neuronale Netz selbst entscheiden, welche Eigenschaften relevant sind und muss nicht durch den Menschen vorgegebene Werte verwenden. Ein 81-dimensionaler Vektor sollte dabei auch ausreichen, um neben den Zeit-, Knopfkosten und dem Knopfeinkommen noch die Form und Ablagemöglichkeiten eines Flickens zu lernen.
+
+\vspace*{-5cm}
+\pagebreak
 
 Zuletzt wird für die Spielzustandskodierung noch der Zeitplan mit allen relevanten Informationen in einer Ebene kodiert. Dazu werden verschiedene Eingaben durch ein neuronales Netzwerk mit 2 Schichten und \ac{ReLU} Aktivierungsfunktionen in eine 81 Zahlen lange Ausgabe transformiert, die anschließend in eine $9\times 9$ Ebene umgeformt wird. Die verschiedenen Eingaben setzen sich dabei wie folgt zusammen:
 
 \begin{itemize}
-    \item Die Position des ersten Spielers auf dem Zeitplan, wobei die Werte nicht von 0 bis 54 gehen, sondern auf den Bereich $\left[0,1\right]$ normalisiert sind.
-    \item Die Position des zweiten Spielers auf dem Zeitplan mit der gleichen Normalisierung zu $\left[0,1\right]$.
-    \item Die Distanz zwischen beiden Spielern aus der Sicht des ersten Spielers von $\left[-6,6\right]$ normalisiert auf $\left[-1,1\right]$.
-    \item $9\times$ die Positionen der Knopfwertungen auf dem Zeitplan, normalisiert auf $(0,1]$.
-    \item $5\times$ die Positionen der Spezialflicken auf dem Zeitplan, normalisiert auf $(0,1)$.
-    \item Alle 54 Felder auf dem Zeitplan normalisiert auf $[0,1)$.
+    \item \vspace*{-0.1cm} Die Position des ersten Spielers auf dem Zeitplan, wobei die Werte nicht von 0 bis 54 gehen, sondern auf den Bereich $\left[0,1\right]$ normalisiert sind.
+    \item \vspace*{-0.2cm} Die Position des zweiten Spielers auf dem Zeitplan mit der gleichen Normalisierung zu $\left[0,1\right]$.
+    \item \vspace*{-0.2cm} Die Distanz zwischen beiden Spielern aus der Sicht des ersten Spielers von $\left[-6,6\right]$ normalisiert auf $\left[-1,1\right]$.
+    \item \vspace*{-0.2cm} $9\times$ die Positionen der Knopfwertungen auf dem Zeitplan, normalisiert auf $(0,1]$.
+    \item \vspace*{-0.2cm} $5\times$ die Positionen der Spezialflicken auf dem Zeitplan, normalisiert auf $(0,1)$.
+    \item \vspace*{-0.2cm} Alle 54 Felder auf dem Zeitplan normalisiert auf $[0,1)$.
 \end{itemize}
+\vspace*{-0.1cm}
 
 Diese menschlich ausgesuchten Angaben kann das PatchZero-Netzwerk durch die Transformation mit dem 2-Schichten-Netzwerk in für das Netzwerk besser geeignete Werte übertragen. So wird wie bei den Flicken der menschliche Bias nicht direkt an das Netzwerk übergeben.
 
 \subsection{Netzwerk-Architektur}
 
-\cite[Anhang]{2017.AlphaGoZeroPaper}
-\cite[Anhang, S. 10]{2017.AlphaGoZeroPaper}
-
-\cite{2018.Lc0AlphaZero}
-\cite{2019.SqueezeandExcitation}
-\cite{2020.Lc0NetworkTopology}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\textwidth]{res/pictures/patch-zero-architecture.pdf}
-    \caption{Netzwerkarchitektur von PatchZero}
-    \label{fig:patch-zero-architecture}
-\end{figure}
-
-TODO:
-
 \begin{wrapfigure}{r}{0.25\textwidth}
-    \includegraphics[width=0.2\textwidth]{res/pictures/conv-block.pdf}
+    \vspace*{-0.5cm}
+    \includegraphics[width=0.23\textwidth]{res/pictures/conv-block.pdf}
     % \vspace{-10pt}
-    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % Das folgende ist ein Trick, um "Abbildung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
     % im Abbildungsverzeichnis. Der Text darunter wird
     % tatsächlich angezeigt.
@@ -635,35 +635,60 @@ TODO:
     \label{fig:conv-block}
 \end{wrapfigure}
 
-TODO:
+Die in Abbildung \ref{fig:patch-zero-architecture} dargestellte Netzwerkarchitektur von PatchZero orientiert sich stark, an AlphaZero und \ac{Lc0}. Das Netzwerk nimmt den kodierten Spielzustand an und senden diesen durch einen in \ref{fig:conv-block} gezeigten \enquote{Convolutional Block}. Dieser \enquote{Convolutional Block}. Der Convolutional-Layer (Conv2d) betrachtet $3\times 3 \times 8$ Regionen innerhalb des kodierten Zustands und extrahiert somit lokale Informationen. Daraufhin folgt eine Barch Normalisierung, um die Werte innerhalb des Netzwerks klein zu halten. So lässt sich das Netzwerk nachher schneller trainieren \cite{2018.BatchNorm}. Die Aktivierungsfunktion \ac{ReLU} wird verwendet, um Nichtlinearitäten in das Netzwerk einzuführen.
 
-\begin{wrapfigure}{l}{0.3\textwidth}
-    \includegraphics[width=0.25\textwidth]{res/pictures/res-block.pdf}
-    % \vspace{-10pt}
-    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
-    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
-    % im Abbildungsverzeichnis. Der Text darunter wird
-    % tatsächlich angezeigt.
+\begin{figure}[!ht]
     \centering
-    \caption[Residual Block]{\unskip}
-    Residual Block
-    \label{fig:resblock}
-\end{wrapfigure}
+    \includegraphics[width=\textwidth]{res/pictures/patch-zero-architecture.pdf}
+    \caption{Netzwerkarchitektur von PatchZero}
+    \label{fig:patch-zero-architecture}
+\end{figure}
 
-TODO:
+% \begin{tabular}{|l|l|l|}
+%     \multirow{2}{0.3\textwidth}{
+%         \vspace*{-3cm}
+%         \centering
+%         \raisebox{1.5\height}{\includegraphics[width=0.28\textwidth]{res/pictures/res-block.pdf}}
 
-\begin{wrapfigure}{r}{0.35\textwidth}
-    \centering
-    \includegraphics[width=0.3\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
-    % \vspace{-10pt}
-    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
-    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
-    % im Abbildungsverzeichnis. Der Text darunter wird
-    % tats��chlich angezeigt.
-    \caption[Squeeze \& Excitation Block]{\unskip}
-    Squeeze \& Excitation Block
-    \label{fig:squeeze-and-excitation-block}
-\end{wrapfigure}
+%     } & \multicolumn{2}{|l|}{\parbox{0.7\textwidth}{ Anschließend werden die Daten durch einen Stapel an \enquote{Residual Block} Elementen geleitet. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi omnis quibusdam optio adipisci perspiciatis molestiae. Error consequatur assumenda facilis. Quaerat inventore quis reiciendis voluptatem possimus! Corporis sunt repudiandae provident soluta. }} \\ \hline
+%     & \multirow{2}{0.35\textwidth}{ Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo voluptatum ex veritatis optio, ad architecto possimus repudiandae iste, necessitatibus deleniti consequatur aliquid consectetur non, autem hic accusamus neque iusto ipsa! } &  \multirow{3}{0.35\textwidth}{
+%         \vspace*{-3cm}
+%         \centering
+%         \includegraphics[width=0.33\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
+%         % \captionof{figure}[Squeeze \& Excitation Block]{\unskip}\label{fig:squeeze-and-excitation-block}
+%         % Squeeze \& Excitation Block
+%     } \\ \hline
+%     \begin{tabular}[c]{@{}l@{}}
+%         \captionof{figure}[Residual Block]{\unskip}\label{fig:resblock} \\
+%         Residual Block
+%     \end{tabular} & & \\
+%     \multicolumn{2}{|l|}{\parbox{0.65\textwidth}{ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem laboriosam voluptates ipsa pariatur minima, fugiat ratione debitis optio esse quibusdam veritatis tempore quod eius beatae ullam quaerat sed nam distinctio! }} &  \\
+% \end{tabular}
+
+\pagebreak
+
+
+
+
+% \begin{wrapfigure}{r}{0.35\textwidth}
+%     \centering
+%     \vspace*{-5cm}
+%     \includegraphics[width=0.33\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
+%     % \vspace{-10pt}
+%     % Das folgende ist ein Trick, um "Abbildung x.y" in eine
+%     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+%     % im Abbildungsverzeichnis. Der Text darunter wird
+%     % tats��chlich angezeigt.
+%     \caption[Squeeze \& Excitation Block]{\unskip}
+%     Squeeze \& Excitation Block
+%     \label{fig:squeeze-and-excitation-block}
+% \end{wrapfigure}
+
+Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem in qui quia pariatur libero omnis voluptas iusto sint quae vero sit nisi adipisci eius, doloremque, est ab sapiente porro? Veritatis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates quidem facere, libero corrupti incidunt numquam nostrum tenetur temporibus, inventore quibusdam magnam nihil corporis consequuntur eius recusandae repellendus soluta repellat ea! Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum maxime inventore commodi odio quia iure, doloribus dignissimos facilis deleniti quas ipsum nihil culpa voluptate. Sit quas nemo quis iusto reiciendis.
+
+\pagebreak
+
+
 
 TODO:
 
@@ -699,3 +724,7 @@ Deswegen gibt es beim PatchZero Spieler 8 Threads, die gleichzeitig in einem Suc
 \subsection{Training des Netzwerks}
 
 TODO:
+
+\cite{2018.Lc0AlphaZero}
+\cite{2019.SqueezeandExcitation}
+\cite{2020.Lc0NetworkTopology}
