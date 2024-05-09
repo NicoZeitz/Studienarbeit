@@ -644,56 +644,43 @@ Die in Abbildung \ref{fig:patch-zero-architecture} dargestellte Netzwerkarchitek
     \label{fig:patch-zero-architecture}
 \end{figure}
 
-% \begin{tabular}{|l|l|l|}
-%     \multirow{2}{0.3\textwidth}{
-%         \vspace*{-3cm}
-%         \centering
-%         \raisebox{1.5\height}{\includegraphics[width=0.28\textwidth]{res/pictures/res-block.pdf}}
+\begin{wrapfigure}{l}{0.3\textwidth}
+    \vspace*{-0.375cm}
+    \centering
+    \includegraphics[width=0.28\textwidth]{res/pictures/res-block.pdf}
+    \vspace*{-5pt}
+    \caption[Residual Block]{\unskip}
+    Residual Block
+    \label{fig:resblock}
+    \vspace*{-4cm}
+\end{wrapfigure}
 
-%     } & \multicolumn{2}{|l|}{\parbox{0.7\textwidth}{ Anschließend werden die Daten durch einen Stapel an \enquote{Residual Block} Elementen geleitet. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Modi omnis quibusdam optio adipisci perspiciatis molestiae. Error consequatur assumenda facilis. Quaerat inventore quis reiciendis voluptatem possimus! Corporis sunt repudiandae provident soluta. }} \\ \hline
-%     & \multirow{2}{0.35\textwidth}{ Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo voluptatum ex veritatis optio, ad architecto possimus repudiandae iste, necessitatibus deleniti consequatur aliquid consectetur non, autem hic accusamus neque iusto ipsa! } &  \multirow{3}{0.35\textwidth}{
-%         \vspace*{-3cm}
-%         \centering
-%         \includegraphics[width=0.33\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
-%         % \captionof{figure}[Squeeze \& Excitation Block]{\unskip}\label{fig:squeeze-and-excitation-block}
-%         % Squeeze \& Excitation Block
-%     } \\ \hline
-%     \begin{tabular}[c]{@{}l@{}}
-%         \captionof{figure}[Residual Block]{\unskip}\label{fig:resblock} \\
-%         Residual Block
-%     \end{tabular} & & \\
-%     \multicolumn{2}{|l|}{\parbox{0.65\textwidth}{ Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem laboriosam voluptates ipsa pariatur minima, fugiat ratione debitis optio esse quibusdam veritatis tempore quod eius beatae ullam quaerat sed nam distinctio! }} &  \\
-% \end{tabular}
+Anschließend werden die Daten durch einen Stapel an \enquote{Residual Block} Elementen geleitet. Diese \enquote{Residual Blöcke} sind dabei ähnlich aufgebaut wie der \enquote{Convolutional Block}, um Informationen aus dem Datenstapel zu extrahieren (Abbildung \ref{fig:resblock}). Die Besonderheit dabei ist, dass neben dem eigentlichen Netzwerk auch die Eingabe $x$ über eine weitere
 
+\begin{minipage}{0.67\textwidth}
+    % \textwidth = 449.55371pt
+    % \vspace*{-0.05cm}
+    \begin{addmargin}[144.866113pt]{0em}
+        Verbindung bis an das Ende unverändert durchgereicht wird. So muss anstatt der kompletten Ausgabe nur noch die Differenz $\mathcal{F}\left(x\right) = \mathcal{H}\left(x\right) - x$ zwischen der Eingabe $x$ und der Ausgabe $\mathcal{H}\left(x\right)$ gelernt werden, was das Lernen in tiefen neuronalen
+    \end{addmargin}
+    Netzwerken vereinfacht \cite[S. 3]{2015.ResNet}. In PatchZero sind 10 dieser \enquote{Residual Blöcke} hintereinander geschaltet, wobei jeder Block 64 einzelne $3\times 3$ Konvolutionsfilter besitzt um lokale Informationen zu extrahieren. Diese lokalen Informationen werden in den späteren Schichten immer mehr zu globalen Informationen zusammengefasst, woraus die Evaluation der Spielposition entsteht.
+\end{minipage}
+\begin{minipage}{0.33\textwidth}
+    \centering
+    \captionsetup{type=figure}
+    \includegraphics[width=0.95\linewidth]{res/pictures/squeeze-and-excitation-block.pdf}
+    \captionof{figure}[Squeeze \& Excitation Block]{\unskip}\label{fig:squeeze-and-excitation-block}
+    Squeeze \& Excitation Block
+\end{minipage}
+
+\vspace*{-10cm}
 \pagebreak
 
+Weiterhin verwendet PatchZero in den \enquote{Residual Blöcken} noch eine von \ac{Lc0} eingeführte Erweiterung mit den in Abbildung \ref{fig:squeeze-and-excitation-block} dargestellten \enquote{Squeeze \& Excitation} Blöcken \cite{2020.Lc0NetworkTopology}. Dieser Block erweitert eine normale Konvolution mit mehreren Filtern, indem die einzelnen Filterkanäle nach ihrer Bedeutung in der Ausgabe skaliert werden \cite[S. 1]{2019.SqueezeandExcitation}.
 
+Im letzten Schritt wird das Netzwerk in einen \emph{Value Head} und ein \emph{Policy Head} aufgeteilt. Diese können somit zwei voneinander unabhängige Netzwerkausgaben produzieren. Zum einem wird vom \emph{Value Head} eine Approximation der Evaluation der Spielposition aus Sicht des derzeitigen Spielers produziert und andererseits erzeugt der \emph{Policy Head} die Wahrscheinlichkeitsverteilung, wie gut es ist einzelne Aktionen ausgehend vom Spielzustand auszuführen.
 
-
-% \begin{wrapfigure}{r}{0.35\textwidth}
-%     \centering
-%     \vspace*{-5cm}
-%     \includegraphics[width=0.33\textwidth]{res/pictures/squeeze-and-excitation-block.pdf}
-%     % \vspace{-10pt}
-%     % Das folgende ist ein Trick, um "Abbildung x.y" in eine
-%     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
-%     % im Abbildungsverzeichnis. Der Text darunter wird
-%     % tats��chlich angezeigt.
-%     \caption[Squeeze \& Excitation Block]{\unskip}
-%     Squeeze \& Excitation Block
-%     \label{fig:squeeze-and-excitation-block}
-% \end{wrapfigure}
-
-Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem in qui quia pariatur libero omnis voluptas iusto sint quae vero sit nisi adipisci eius, doloremque, est ab sapiente porro? Veritatis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates quidem facere, libero corrupti incidunt numquam nostrum tenetur temporibus, inventore quibusdam magnam nihil corporis consequuntur eius recusandae repellendus soluta repellat ea! Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum maxime inventore commodi odio quia iure, doloribus dignissimos facilis deleniti quas ipsum nihil culpa voluptate. Sit quas nemo quis iusto reiciendis.
-
-\pagebreak
-
-
-
-TODO:
-
-\pagebreak
-
+\vspace*{-0.55cm}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.7\textwidth]{res/pictures/value-and-policy-head.pdf}
@@ -713,9 +700,44 @@ TODO:
     \end{minipage}
 \end{figure}
 
-TODO:
+Der in Abbildung \ref{fig:value-head} dargestellte \emph{Value Head} sendet die Daten dabei durch mehrere Fully-connected Layer, bevor eine finale Evaluation mittels der $\tanh$ Funktion ausgegeben wird. Die Tangens Hyperbolicus Funktion stellt dabei sicher, dass die Ausgabe in den Bereich von $\left[-1,1\right]$ fällt, wobei eine $1$ für das Gewinnen und eine $-1$ für das Verlieren des derzeitigen Spielers steht.
+
+\pagebreak
+
+Im Gegensatz dazu wird beim \emph{Policy Head} (Abbildung \ref{fig:policy-head}) die Eingabe nicht auf einen Wert reduziert, sondern es wird ein Vektor an Ausgaben produziert, mit jeweils einer Zahl für jede mögliche \hyperref[text:natural-action-id]{\code{NaturalActionId}}. Durch in \ref{eqn:softmax} gezeigte die \emph{Softmax} Funktion werden die Daten vor der Ausgabe stetig in eine Wahrscheinlichkeitsverteilung transformiert.
+
+\vspace*{-0.85cm}
+\begin{align}
+    \label{eqn:softmax}
+    \sigma\left(\vec{x}\right): & \begin{cases}
+        [\min \vec{x}, \max \vec{x}] \to \left[0,1\right] \\
+        \sigma\left(\vec{x}_i\right)= \frac{e^{\vec{x}_i}}{\sum_{j=1}^n e^{\vec{x}_j}}
+        \end{cases} \\
+        &   \text{mit } \forall a,b: a<b \implies \sigma\left(a\right) < \sigma\left(b\right) \notag
+\end{align}
+\vspace*{-1.2cm}
+
+Vor der Netzwerkevaluation wird von einer Spielposition jede aus dem Spielzustand mögliche \hyperref[text:action-id]{\code{ActionId}} bestimmt. Dann wird eine Zuordnung zwischen \hyperref[text:action-id]{\code{ActionId}} und passender \hyperref[text:natural-action-id]{\code{NaturalActionId}} erstellt, da diese die Ausgabe des neuronalen Netzes darstellen. Bei der Ausgabe des neuronalen Netzes kann es nun sein, dass Aktionen, welche nicht ausgeführt werden können, trotzdem eine Wahrscheinlichkeit von nicht Null erhalten. Aus diesem Grund, muss die Ausgabe des \emph{Policy Head} wie in Quellcode \ref{code:patch-zero-transform-output} gezeigt noch mit einem Tensor multipliziert werden, der bei allen verfügbaren Aktionen eine Eins als Eintrag besitzt und ansonsten Null. Um die Wahrscheinlichkeitsverteilung der Ausgabe zu erhalten, müssen wieder alle Einträge durch die Gesamtsumme geteilt werden.
+
+\vspace*{-0.1cm}
+\lstinputlisting[
+    label={code:patch-zero-transform-output},
+    caption={Ausgabentransformation bei PatchZero},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+]{res/code/patch-zero-transform-output.rs}
+\vspace*{-0.2cm}
+
+Die Ausgaben des \emph{Value Heads} und des \emph{Policy Heads} sind dabei ein- bzw. zweidimensional anstatt wie zu erwarten nur ein Skalar bzw. ein eindimensionaler Vektor. Das ist der Fall, da das neuronale Netz neben den Ausgabedimensionen noch eine weitere Dimension, die Minibatch-Dimension, besitzt. Diese weitere Dimension wird zur gleichzeitigen Evaluation mehrerer Spielzustände eingesetzt. Dies wird im nachfolgendem Abschnitt »\nameref{section:erstellung-ansatz-d-parallelisierung}« noch genauer besprochen.
+
+\vspace*{-5cm}
+\pagebreak
+
+Um nach der Evaluation mit der Expansions- und Backpropagationsphase weiter fortführen zu können, wird zuletzt eine Rücktransformation der Ausgabe, bei der es sich um die Wahrscheinlichkeiten der \hyperref[text:natural-action-id]{\code{NaturalActionId}} handelt, in eine \hyperref[text:action-id]{\code{ActionId}} vorgenommen, sodass die neuen Spielzustände nach der Anwendung einer Aktion erstellt werden können.
 
 \subsection{Parallelisierung}
+\label{section:erstellung-ansatz-d-parallelisierung}
 
 Im Gegensatz zum \ac{MCTS} Spieler wird bei PatchZero die \hyperref[text:tree-parallelization]{\emph{Tree Parallelisierung}} verwendet um eine Suche über mehrere Kerne bereitzustellen. Diese Parallelisierungsart wird auch von der originalen AlphaZero Implementierung mit gutem Grunde verwendet. Die Ausführung eines neuronales Netzes ist umso effizienter, umso mehr Datensätze das Netz auf einmal als Eingabe erhält. Zwar ist insgesamt die Zeit, die das neuronale Netz für die Forwardpropagation, also der Transformation der Eingaben in die Ausgaben, braucht höher, jedoch wird die Zeit die durchschnittlich für einen Datensatz benötigt wird geringer. Dies ist der Fall, da sich der Aufwand für die Parallelisierung verschiedener Operationen wie Matrixmultiplikation erst bei größeren Eingaben für eine Geschwindigkeitserhöhung der Forwardpropagation lohnt.
 
@@ -724,7 +746,3 @@ Deswegen gibt es beim PatchZero Spieler 8 Threads, die gleichzeitig in einem Suc
 \subsection{Training des Netzwerks}
 
 TODO:
-
-\cite{2018.Lc0AlphaZero}
-\cite{2019.SqueezeandExcitation}
-\cite{2020.Lc0NetworkTopology}
