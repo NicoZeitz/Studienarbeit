@@ -538,7 +538,7 @@ Der letzte Computerengineansatz verfolgt die Umsetzung eines Spielers mithilfe d
 
 Der AlphaZero Algorithmus setzt grundlegend auf dem \ac{MCTS} Algorithmus auf. Dabei werden die vier Phasen durch drei neue Phasen ersetzt. Zuerst existiert die \textbf{Selektion}, gleich wie bei \ac{MCTS}. Danach folgt eine \textbf{Evaluation} mittels des neuronalen Netzwerks. Zuletzt existiert noch die Phase \textbf{Expansion und Backpropagation}. Wie bei \ac{MCTS} werden diese Phasen innerhalb der Bedenkzeit so oft wie möglich wiederholt.
 
-Die Evaluationsphase ersetzt die Simulationsphase beim \ac{MCTS}. Anstatt ein zufälliges Spiel zu spielen und so eine Evaluation für einen Spielzustand zu erhalten, wird ein neuronales Netzwerk verwendet, welches eine Approximation der Evaluation $\mathcal{V}$ als Ergebnis ausgibt. Dies ist der sogenannte \emph{Value Head} des Netzwerks. Neben diesem gibt es noch den \emph{Policy Head}, der für einen Spielzustand eine Wahrscheinlichkeitsverteilung aller Aktionen $\pi\left(a\,|\,s\right)$ ermittelt, der darstellt wie gut die Auswahl einer Aktion $a$ ist im gegebenen Spielzustand $s$ ist.
+Die Evaluationsphase ersetzt die Simulationsphase beim \ac{MCTS}. Anstatt ein zufälliges Spiel zu spielen und so eine Evaluation für einen Spielzustand zu erhalten, wird ein neuronales Netzwerk $f_\theta$ verwendet, welches eine Approximation der Evaluation $\mathcal{V}$ als Ergebnis ausgibt. Dies ist der sogenannte \emph{Value Head} des Netzwerks. Neben diesem gibt es noch den \emph{Policy Head}, der für einen Spielzustand eine Wahrscheinlichkeitsverteilung aller Aktionen $\pi\left(a\,|\,s\right)$ ermittelt, der darstellt wie gut die Auswahl einer Aktion $a$ ist im gegebenen Spielzustand $s$ ist.
 
 Die beiden Ausgaben des Netzwerks werden in der Expansion und Backpropagation Phase verwendet. Zuerst werden bei dem betrachteten Knoten alle Kinderknoten erzeugt, die den Spielzustand nach der Ausführung einer möglichen Aktion besitzen. Jeder dieser Kinderknoten bekommt als \emph{A-priori} Wahrscheinlichkeit das Ergebnis des \emph{Policy Heads} der passenden Aktion zugewiesen. Danach wird das Ergebnis des \emph{Value Heads} verwendet, um die Evaluationsapproximation wie bei \ac{MCTS} über alle Knoten bis zum Wurzelknoten hochzureichen.
 
@@ -746,3 +746,19 @@ Deswegen gibt es beim PatchZero Spieler 8 Threads, die gleichzeitig in einem Suc
 \subsection{Training des Netzwerks}
 
 TODO:
+
+\ac{MSE}
+
+\begin{align}
+    \label{eqn:patch-zero-loss-function}
+    (\mathcal{V}, \pi) &= f_\theta\left(s\right) \\
+    \text{Loss} &= \underbrace{\left(z - \mathcal{V}\right)^2}_{\acs{MSE}}\:\,\mspace{1mu} \underbrace{-\: p^\mathsf{T}\, \ln \pi}_{\mathclap{\substack{\text{Multi-Target}\\ \text{Cross-Entropy}\\ \text{Loss}}}}\:\,\mspace{1mu} +\:\,\mspace{1mu} \underbrace{\lambda \cdot \lVert \theta\rVert _2^2}_{\mathclap{\substack{\text{L}_2 \\ \text{Regularisierung}}}} \\
+    p \sim \text{MCTS(iter: 400)} \\
+    z \sim tatsaechlicher outcome
+\end{align}
+
+% \mathclap{}
+
+TODO:
+
+Grafik!
