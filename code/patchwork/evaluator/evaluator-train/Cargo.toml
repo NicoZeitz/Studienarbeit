@@ -29,8 +29,8 @@ metal = ["candle-core/metal", "candle-nn/metal", "evaluator/metal"]
 
 [dependencies]
 regex = { version = "1.10.3" }
-candle-core = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
-candle-nn = { version = "0.4.1", git = "https://github.com//huggingface/candle.git" }
+candle-core = { version = "0.5.1", git = "https://github.com//huggingface/candle.git" }
+candle-nn = { version = "0.5.1", git = "https://github.com//huggingface/candle.git" }
 greedy-player = { path = "../../greedy-player" }
 patchwork-core = { path = "../../patchwork-core" }
 evaluator = { path = "../../evaluator" }
