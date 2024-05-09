@@ -745,20 +745,46 @@ Deswegen gibt es beim PatchZero Spieler 8 Threads, die gleichzeitig in einem Suc
 
 \subsection{Training des Netzwerks}
 
-TODO:
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{res/pictures/patch-zero-train.png}
+    \caption{Trainingsprozess von PatchZero}
+    \label{fig:patch-zero-train}
+\end{figure}
 
-\ac{MSE}
+Damit das neuronale Netzwerk $f_\theta$ sinnvolle Ausgaben für die Evaluation und die Aktionenwahrscheinlichkeiten eines Spielzustands liefern kann, ist ein Training mit Daten notwendig. Alle Gewichte $\theta$ des Netzwerks werden zuerst zufällig initialisiert. Diese Parameter werden dann in Laufe des in Abbildung \ref{fig:patch-zero-train} bestärkenden Lernprozesses aktualisiert, indem als Trainingsdaten durch das Netzwerk $f_\theta$ generierte Spieldaten verwendet werden, welche durch Patchwork Spiele von PatchZero gegen sich selbst entstanden sind.
+
+Die Traningsdaten werden dabei bei PatchZero von 15 gleichzeitig ablaufenden Threads generiert. Diese spielen immer wieder Patchwork Spiele von 2 PatchZero Spielern gegeneinander. Dabei hat jeder PatchZero 1000 Monte Carlo Iterationen, um sich für einen Zug zu entscheiden. Die Evaluation des Netzwerks wird dabei vollständig auf der \ac{CPU} ausgeführt, da eine Übertragung der Eingangsdaten auf eine \ac{GPU} länger benötigt, als die $12\acs{ms}$ in der das Netzwerk die Evaluation erzeugt.
+
+Die PatchZero Spieler spielen dabei zum Großteil wie im normalen Spiel mit einigen kleineren Änderungen, um das Training zu erleichtern. Um die Exploration zu fördern und so auch unbekannte neue Situationen zu erreichen, wird nicht mehr die Aktion ausgewählt, welche nach 1000 Iterationen am meisten Besuche vorliegen hat, sondern es wird nach der in Term \ref{eqn:patch-zero-train-policy} dargestellten Formel entschieden.
 
 \begin{align}
-    \label{eqn:patch-zero-loss-function}
-    (\mathcal{V}, \pi) &= f_\theta\left(s\right) \\
-    \text{Loss} &= \underbrace{\left(z - \mathcal{V}\right)^2}_{\acs{MSE}}\:\,\mspace{1mu} \underbrace{-\: p^\mathsf{T}\, \ln \pi}_{\mathclap{\substack{\text{Multi-Target}\\ \text{Cross-Entropy}\\ \text{Loss}}}}\:\,\mspace{1mu} +\:\,\mspace{1mu} \underbrace{\lambda \cdot \lVert \theta\rVert _2^2}_{\mathclap{\substack{\text{L}_2 \\ \text{Regularisierung}}}} \\
-    p \sim \text{MCTS(iter: 400)} \\
-    z \sim tatsaechlicher outcome
+    \label{eqn:patch-zero-train-policy}
+    \pi\left(a\,|\,s_0\right) = \left(\frac{\phantom{ab\sum} \mathsf{Visits}\left[s_1 \gets s_0\left(a\right) \right]}{\phantom{ab}\sum\limits_{\mathclap{b\, \in\, \text{Actions}}} \mathsf{Visits}\left[s_1 \gets s_0\left(b\right) \right]}\right)^{\text{\Large $\frac{1}{\tau}$}}
 \end{align}
 
-% \mathclap{}
+Dabei ist die Wahrscheinlichkeit eine Aktion $a$ vom Wurzelknoten $s_0$ ausgehend auszuwählen $\pi\left(a\,|\,s_0\right)$ immer noch proportional zur Anzahl der Besuche. So ergibt sich für alle möglichen Aktionen eine Wahrscheinlichkeitsverteilung, aus der die tatsächlich gespielte Aktion als Stichprobe ausgewählt wird. Bei der Temperatur $\tau$ handelt es sich dabei um einen Hyperparameter, der in PatchZero auf $1{,}25$ gesetzt ist. Je größer $\tau$ ist, desto näher rücken die Wahrscheinlichkeiten aller Aktionen zusammen, \dash PatchZero wird experimentierfreudiger und wählt auch öfters schlechtere Aktionen. $\tau \to 0$ entspricht wieder dem $\argmax$ aller Aktionen, also einer Auswahl der besten Aktion. Nach $35$ \hyperref[text:ply]{\emph{Plys}} wird $\tau$ bei PatchZero ähnlich wie bei AlphaZero auf genau solch eine Infinitesimalzahl gesetzt, um kompetitiv zu Spielen und so das beste zu erwartende Ergebnis zu erspielen \cite[Anhang, S. 2]{2017.AlphaGoZeroPaper}. Zusätzliche Exploration wird weiterhin durch das Hinzufügen von Dirichlet Rauschen im Wurzelknoten erreicht. Die \emph{A-priori} Wahrscheinlichkeit wird durch $\pi_{Root}\left(s_0\,|\,a\right) = (1 - \varepsilon) \cdot \pi\left(s_0\,|\,a\right) + \varepsilon\eta$ gegeben, wobei $\eta \sim \operatorname{Dir}(0{,}2)$ und $\varepsilon = 0{,}25$ \cite[Anhang, S. 2]{2017.AlphaGoZeroPaper}. Dieses zusätzliche Rauschen zwingt den PatchZero Spieler während dem Selbstspiel alle möglichen Aktionen auszuprobieren, erlaubt aber weiterhin das genauere erforschen von besseren Aktionen.
 
-TODO:
+Sobald ein Spiel fertig gespielt ist, werden alle Zustände zusammen mit dem Ergebnis in einer Historie abgelegt. Diese Historie umfasst immer die letzten 500 Patchwork Spiele, die durch die Threads erzeugt wurden. Die Begrenzung dient dazu alte Traningsdaten mit der Zeit zu entfernen, da diese mithilfe von alten Parametern $\theta$ des Neuronalen Netzes generiert wurden und somit nicht mehr direkt mit der aktuellen Spielweise in Verbindung stehen müssen. Aus der Historie an Spielen nimmt dann ein weiterer Thread immer wieder eine Stichprobe von 10 Spielen. Diese Stichprobe wird dann zum Training des Netzwerkes verwendet. Dabei wird über 10 Epochen trainiert und eine Batch Size von 128 \hyperref[text:ply]{\emph{Plys}} verwendet, \dash jedes Spiel wird 10 mal verwendet (Epochen), um die Parameter $\theta$ des Netzwerks zu aktualisieren. Die Batch Size bedeutet, dass immer 128 \hyperref[text:ply]{\emph{Plys}} aus allen 10 Spielen herausgegriffen werden und gemeinsam für eine Aktualisierung von $\theta$ verwendet werden.  Trainiert wird wie bei neuronalen Netzen üblich über das Gradientenabstiegsverfahren, indem die in \ref{eqn:patch-zero-loss-function} gezeigte \emph{Loss}-Funktion minimiert wird.
 
-Grafik!
+\begin{align}
+    \label{eqn:patch-zero-network-output}
+    (\mathcal{V}, \pi) &= f_\theta\left(s\right) \\
+    \label{eqn:patch-zero-loss-function}
+    \text{Loss} &= \underbrace{\left(z - \mathcal{V}\right)^2}_{\acs{MSE}}\:\,\mspace{1mu} \underbrace{-\: p^\mathsf{T}\, \ln \pi}_{\mathclap{\substack{\text{Multi-Target}\\ \text{Cross-Entropy}\\ \text{Loss}}}}\:\,\mspace{1mu} +\:\,\mspace{1mu} \underbrace{\lambda \cdot \lVert \theta\rVert _2^2}_{\mathclap{\substack{\text{L}_2 \\ \text{Regularisierung}}}}
+\end{align}
+\vspace*{-0.2cm}
+
+Das neuronale Netz produziert dabei für eine Spielposition die Ausgaben Evaluation $\mathcal{V}$ und die Policy zum Selektieren der Aktionen $\pi$. Die \emph{Loss}-Funktion setzt sich aus drei Teilen zusammen:
+
+\begin{enumerate}
+    \item \vspace*{-0.1cm} \textbf{\acf{MSE}:} Der quadratische Abstand zwischen dem tatsächlichem Spielergebnis während dem Selbstspiel $z$ ($z=-1$ für Verloren und $z=1$ für Gewonnen aus der Sicht des derzeitigen Spielers) und der durch das Netzwerk vorhergesagten Evaluation $\mathcal{V}$. Dabei werden größere Abstände durch das Quadrat mehr bestraft.
+    \item \vspace*{-0.1cm} \textbf{Multi-Target Cross Entropy Loss:} Dieser Bestandteil ist für die Bestrafung des \emph{Policy Heads} dar. Für alle Aktionen wird die durch das Netzwerk vorhergesagte Wahrscheinlichkeit $\pi$ mit den beim Selbstspielen der 1000 Monte Carlo Iterationen tatsächlich entstandenen Besuchsraten der Aktionen $p$ verglichen und minimiert.
+    \item \vspace*{-0.1cm} \textbf{$\text{L}_2$ Regularisierung:} Die Regularisierung der Gewichte mit der $\text{L}_2$ Norm, \dash die Minimierung des euklidischen Abstandes der Gewichte vom Ursprung $\vec{0}$. Der Hyperparameter $\lambda$ ist bei PatchZero auf $5\cdot 10^{-5}$ gesetzt. Durch die Regularisierung kann das Training vereinfacht und Overfitting des Netzwerks verhindert werden \cite{2017.Regularization}.
+\end{enumerate}
+\vspace*{-0.1cm}
+
+Die Kombination aus den Threads, die neue Spiele gegen sich selbst spielen und dem Training wurde so lange wie möglich durchgeführt. Dabei werden nach jeder Trainingsphase die neuen Parameter $\theta$ an die Selbstspiel-Threads übertragen, sodass das Netzwerk kontinuierlich lernt und immer wieder bessere Spiele gegen sich selbst spielt, von denen dann wieder gelernt werden kann. Als Learning Rate wird $0{,}02$ verwendet. Der Adam Optimierer \cite{2014.Adam} wird für die Minimierung von $\theta$ im Gradientenabstiegsverfahren verwendet. Nach jeder Trainingsphase wird außerdem eine Safetensors-Datei \cite{2024.Safetensors} mit allen Parametern gespeichert. So kann das Training jederzeit unterbrochen und an anderer Stelle fortgeführt werden. Weiterhin kann die Safetensors-Datei direkt in die Patchwork-Applikation integriert werden. Das integrierte Netzwerk kann dann zur Laufzeit von PatchZero geladen und zum Spielen verwendet werden.
+
+\vspace*{-5cm}
+\pagebreak
