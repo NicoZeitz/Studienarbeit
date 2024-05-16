@@ -206,9 +206,13 @@ Die Eingabeparameter sind der Startknoten $n$, $\alpha$, welcher der beste Wert 
     \includegraphics[width=\textwidth]{res/pictures/minimax-tree-with-a-b-pruning.pdf}
     \caption{Spielbaum von Minimax-Algorithmus mit Alpha-Beta-Pruning}
     \label{fig:minimax-a-b-tree}
+    \vspace*{-0.1cm}
 \end{figure}
 
 Wenn mit dieser optimierten Variante des Minimax-Algorithmus das gleiche, vorher abgebildete Spiel noch einmal wiederholt wird, ist der Spielbaum kleiner, in Abbildung \ref{fig:minimax-a-b-tree} zu sehen, aber der optimale Spielablauf der Knoten A, B, D und I wird trotzdem gefunden. Am Maximierungsknoten E muss der zweite Kindknoten K nicht evaluiert werden, da am Minimierungsknoten B der Kindknoten D mit Wert 3 ausgewählt wird, weil der Kindknoten E den höheren Wert 6, bei Auswahl von Auswahl von J annehmen könnte. Am Minimierungsknoten C muss der zweite Kindknoten G und die folgenden Knoten nicht evaluiert werden, da dem Maximierungsknoten A im Vergleich zum geringen Wert $-2$ von C schon der höhere Wert 3 von Knoten B zur Auswahl steht. In beiden Fällen kann ein \enquote{Pruning}, dt. Beschneidung, der Zweige des Spielbaum ohne Einfluss auf die Suche nach dem optimalen Spielverlauf stattfinden. Im schlechtesten Fall sind die Zweige nach Werten aufsteigend sortiert, sodass der Algorithmus wie der Minimax-Algorithmus handelt und eine Laufzeitkomplexität von $\mathcal{O}(w^{d})$. $w$ bezeichnet den durchschnittlichen Verzweigungsfaktor und $d$ die Tiefe des Spielbaums, wobei der Verzweigungsfaktor beschreibt die maximale Anzahl an Kindknoten eines Knoten. Im besten Fall sind die Spielzüge absteigend geordnet, also genau umgekehrt zum schlechtesten Fall, wodurch der erste evaluierte Kindknoten den besten Wert liefert und die Laufzeitkomplexität innerhalb von $\mathcal{O}\left(w^{\lfloor d/2\rfloor}\right)$ liegt. Für den durchschnittlichen Fall ergibt sich eine Komplexität von $\mathcal{O}\left(w^{3d/4}\right)$, was besonders bei umfangreichen Berechnungen diesem Algorithmus einen signifikanten Vorteil bringt. \cite[S. 3 ff.]{2017.AlphaBeta}
+
+\vspace*{-5cm}
+\pagebreak
 
 \section{Monte Carlo Tree Search}
 \label{chapter:monte-carlo-tree-search}
@@ -223,6 +227,8 @@ Wenn mit dieser optimierten Variante des Minimax-Algorithmus das gleiche, vorher
 \end{enumerate}
 
 Die vier Phasen sind anschaulich in Abbildung \ref{fig:mcts-phases} dargestellt. Diese Phasen werden so lange wiederholt, bis die Entscheidungszeit vorbei ist.
+
+\pagebreak
 
 \begin{figure}[!ht]
     \centering
@@ -239,6 +245,8 @@ Für die erste Phase der Selektion wird im Normalfall die in \ref{eqn:uct} darge
 \end{equation}
 
 Ein entscheidender Vorteil von \ac{MCTS} ist, dass keine statische Evaluierungsfunktion einer Position wie bei vergleichbaren Algorithmen existieren muss \cite[S. 61]{2008.ParallelMCTS}, da durch zufällige Erkundungen eines Teils des Suchbaums eine Approximation für den tatsächlichen Wert geschaffen wird. \ac{MCTS} hat sich vor allem für Spiele mit einer sehr großen Anzahl an Aktionen bzw. möglichen Zuständen als besser geeignet als traditionelle \hyperref[chapter:minimax-algorithmus]{Minimax}-basierte Programme herausgestellt \cite[S. 1]{2013.MCTSAndMinimaxHybrids} und ist aus diesem Grund auch zu großen Teilen für die Verbesserung der Computergegner in solchen Spielen wie beispielsweise Go verantwortlich \cite[S. 206]{2009.ComputerGoMCTS} \cite[S. 185]{2018.ReinforcementLearning}.
+
+\pagebreak
 
 \section{AlphaZero}
 \label{chapter:alphazero}
@@ -271,11 +279,15 @@ Die visuelle Wahrnehmung wird deutlich durch Gestaltgesetze oder Gestaltprinzipe
 Die Fähigkeit des Menschen Bewegungen wahrzunehmen und vorherzusagen, ist sehr gut entwickelt. Der Mensch nimmt Bewegungen in seinem gesamten visuellen Feld, also auch in der Peripherie, präattentiv war. Aufgrund dieser Umstände sind Bewegungen zur Aufmerksamkeitslenkung besonders gut geeignet, müssen aber mit Bedacht eingesetzt werden, da abrupte Änderung, wie zum Beispiel das Blinken eines Icons, durch die aufmerksamkeitslenkende Wirkung vom Betrachter nicht ignoriert werden kann und störend wirken können. Trotzdem können Betrachter bis zu fünf gleichzeitig stattfindende Bewegungen korrekt interpretieren und dementsprechend reagieren, wobei die Geschwindigkeit und Komplexität der Bewegung einen Einfluss auf die Schwierigkeit haben. \cite[S. 60 f.]{2010.Preim}
 
 \subsection{Konzepte bei der Gestaltung von Bedienelementen}
-\textbf{Affordances} sind die wahrgenommenen Eigenschaften eines Geräts oder Software, die den Eindruck vermitteln, dass sie vom Benutzer bedient werden können. Die äußere Form eines Objektes legt die Bedienung nahe: Knöpfe können gedrückt werden, Hebel können in die eine und die andere Richtung bewegt werden und eine Liste von Einträgen zu Auswahl verwendet werden. Es wird zwischen realen und wahrnehmbaren Affordances unterschieden. Es wird von einer realen Affordance gesprochen, wenn der Benutzer diese als bedienbar erkennt, sie objektiv vorhanden ist und benutzt werden kann. Erkennt der Benutzer darüber hinaus andere Affordances (wahrnehmbare Affordances), die allerdings nicht intendiert oder existent sind, wird von falschen Affordances gesprochen. Diese falschen Affordances legen eine unkorrekte Bedienung nahe, die eventuell zur Fehlfunktion oder Zerstörung des Gegenstands führen können. Das Ziel eines jeden Designers sollte daher die Übereinstimmung der wahrnehmbaren und realen Affordances sein. Ebenso sollten versteckte Affordances, also real Affordances, die vom Benutzer nicht erkannt werden, vermieden werden. \cite[S. 136 ff.]{2010.Preim}
+\textbf{Affordances} sind die wahrgenommenen Eigenschaften eines Geräts oder Software, die den Eindruck vermitteln, dass sie vom Benutzer bedient werden können. Die äußere Form eines Objektes legt die Bedienung nahe: Knöpfe können gedrückt werden, Hebel können in die eine und die andere Richtung bewegt werden und eine Liste von Einträgen zu Auswahl verwendet werden. Es wird zwischen realen und wahrnehmbaren Affordances unterschieden.
+
+Es wird von einer realen Affordance gesprochen, wenn der Benutzer diese als bedienbar erkennt, sie objektiv vorhanden ist und benutzt werden kann. Erkennt der Benutzer darüber hinaus andere Affordances (wahrnehmbare Affordances), die allerdings nicht intendiert oder existent sind, wird von falschen Affordances gesprochen. Diese falschen Affordances legen eine unkorrekte Bedienung nahe, die eventuell zur Fehlfunktion oder Zerstörung des Gegenstands führen können. Das Ziel eines jeden Designers sollte daher die Übereinstimmung der wahrnehmbaren und realen Affordances sein. Ebenso sollten versteckte Affordances, also real Affordances, die vom Benutzer nicht erkannt werden, vermieden werden. \cite[S. 136 ff.]{2010.Preim}
 
 \textbf{Constraints} sind die sinnvolle Einschränkung der Freiheitsgrade des Benutzers zur korrekten Nutzung von Geräten oder Software. Eine falsche Bedienung soll so erschwert oder ausgeschlossen werden. Ein Beispiel für umgesetzte Constraints sind Steckverbindungen von Kabeln, welche nur auf eine Weise ineinanderpassen, während ein Negativbeispiel Zapfpistolen und Tanköffnungen sind, welche eine folgenreiche falsche Betankung mit dem falschen Kraftstoff eines Fahrzeugs ermöglichen. \cite[S. 136 ff.]{2010.Preim}
 
 Ein \textbf{konzeptuelles Modell} oder \textbf{mentales Modell} beschreibt die Vorstellung, wie sich ein Gerät oder Software verhält, wenn der Benutzer mit diesem interagiert. Dieses Modell sollte die Bedienung des Geräts oder Software möglichst klar vermitteln. Hier spielen Abbildungen, welche den internen Zustand eines Systems nach außen an den Benutzer widerspiegeln, eine wichtige Rolle. Das Ziel ist natürliche Abbildungen zu entwickeln, die dem Benutzer bereits bekannt sind und weit verbreitete Analogien abbilden, wie zum Beispiel die Verwendung der Farbe Rot zur Gefahrenanzeige oder Warnung. Die Bedienung eines Geräts oder einer Software wird dann als intuitiv bezeichnet, wenn gute direkte Abbildungen existieren. Neben der Sichtbarkeit des Systemzustands ist die Vermittlung der möglichen Bedienhandlungen für das konzeptuelle Modell des Benutzers wichtig. Rückkopplungen an den Benutzer beschreiben, wie ein System auf Bedienhandlungen reagiert, wie schnell es zu einer Reaktion des Systems kommt und wie der Benutzer diese Reaktion wahrnehmen und interpretieren kann. \cite[S. 136 ff.]{2010.Preim}
+
+\pagebreak
 
 \subsection{Direkte Manipulation mit Drag-and-Drop}
 Bei der direkten Manipulation wird eine grafische Darstellung des zu bearbeitenden Objektes mit einem Zeigegerät manipuliert, woraufhin die Veränderung des Objektes sofort auf dem Bildschirm zu erkennen ist. Vorbild für diese Interaktionsform ist das physische Zeigen und Bewegen, welches entsprechende Kommandos aktiviert. Das interaktive System liefert dem Benutzer unmittelbar darauf eine klar erkennbare Rückkopplung, die zum Beispiel durch Hervorhebung des selektierten Objektes geschieht. Die direktmanipulative Handhabung orientiert sich an den natürlich gegebenen Fähigkeiten und Fertigkeiten des Benutzers. Erfolgreich ist dies Interaktionsform, wenn die Affordances korrekt wahrgenommen werden. \cite[S. 351]{2010.Preim}

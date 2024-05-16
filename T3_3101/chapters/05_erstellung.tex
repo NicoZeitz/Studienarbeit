@@ -194,12 +194,17 @@ Aus diesem Grund besteht die in Pseudocode \ref{algo:action-ordering} dargestell
 
 Für die Aktionen-Anordnung stellt sich nun die Frage wie genau die Heuristik aussieht. In Schach werden hierfür beispielsweise Aktionen, bei denen eine andere Schachfigur geschlagen wird nach dem \ac{MVV-LVA} Prinzip angeordnet \cite[S. 72]{2002.FPGAMoveGenerator}. In Patchwork gibt es keine Aktionen, die den Spielzustand eindeutig verbessern, wie das Schlagen von Spielfiguren. Eine vollständige Analyse der entstehenden Ablagepläne wäre zu zeitaufwendig. Um dennoch keine zufällige Aktionsanordnung zu erhalten, werden die in »\nameref{section:auswertung-empirischer-daten}« Aufgenommenen empirischen Spieldaten verwendet.
 
+\vspace*{-0.1cm}
 \begin{equation}
     \label{eqn:action-value}
     \frac{|wins|}{|games|} + \varepsilon \cdot \sqrt[3]{\frac{\sum score}{|games|}}
 \end{equation}
+% \vspace*{-0.1cm}
 
 Jeder Aktion wird dazu eine Liste an Endergebnissen zugeordnet, welche entstanden sind, nachdem die Aktion innerhalb eines Spiels verwendet wurde. Mithilfe dieser Endergebnisse wird für jede Aktion mittels des Terms \ref{eqn:action-value} ein \enquote{Wert} zugeordnet. Der Term berechnet dabei die Winrate des Spielers zusammen mit einem kleinen Anteil aus der Kubikwurzel des tatsächlichen Endergebniswerts. Ziel ist durch die große Anzahl an empirischen Spielen eine Approximation des tatsächlichen Wertes einer \enquote{Aktion} zu erhalten. Da in den empirischen Daten nicht alle Aktionen verwendet wurden, werden in den Daten nicht vorkommende Flickenplatzierungsaktionen durch die Werte aus der umliegenden Nachbarschaft interpoliert. Weiterhin sind die Werte dabei noch in Opening- und Endgame-Tabellen aufgeteilt. Ist eine Aktion in den empirischen Daten vor 50\% der Gesamtanzahl der \hyperref[text:ply]{\emph{Plys}} des Spiels ausgeführt worden, so wird der Wert mit in die Berechnung der Opening-Tabelle aufgenommen, andernfalls für die Endgame-Tabelle verwendet. Zuletzt wurden alle Werte mittels einer Min-Max-Normalisierung auf den Wertebereich $\left[-1, 1\right]$ skaliert. Für die tatsächliche Aktionen-Anordnung wird dann der Wert der Aktion zwischen Opening- und Endgame-Tabelle mittels der Position des Spielers auf dem Zeitplan linear interpoliert.
+
+\vspace*{-5cm}
+\pagebreak
 
 Um die Effektivität dieser Aktion-Wert-Tabellen zu überprüfen, sind die Werte der Flickenplatzierungsaktionen als Heatmap auf dem Ablageplan aufgetragen. So sind in Abbildung \ref{fig:action-ordering-patch-17} und \ref{fig:action-ordering-patch-21} die Heatmaps der Flicken 17 und 21 zu sehen. Für die Erstellung wurde dabei für jedes Feld auf dem Ablageplan geschaut, welche Aktionen dieses Feld belegen, deren Werte aussummiert und anschließend durch die Anzahl geteilt. In den Grafiken ist links ist die Heatmap der Opening-Werte und rechts die der Endgame-Werte abgebildet.
 

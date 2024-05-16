@@ -146,6 +146,7 @@ Nachdem nun die grundlegenden Bausteine der Implementierung erklärt sind, kann 
 \refstepcounter{lstlisting}
 \addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode für einen Spielverlauf}
 
+\vspace*{-0.15cm}
 \begin{algorithm}
     \caption{Pseudocode für einen Spielverlauf}
     \label{algo:spielverlauf}
@@ -164,8 +165,12 @@ Nachdem nun die grundlegenden Bausteine der Implementierung erklärt sind, kann 
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
+\vspace*{-0.15cm}
 
 Jedes Spiel beginnt zuerst damit, dass der Startzustand geladen wird (Anhang \ref{code:get-initial-state}). Dabei werden wie vorgegeben jedem Spieler 5 Knöpfe und ein leerer Ablageplan zugewiesen sowie ein Zeitplan im initialen Zustand erstellt. Weiterhin gibt der PatchManager eine zufällig gemischte Liste an allen Flicken zurück. Dann wiederholen sich die Spielzüge bis zum Ende des Spiels. In jedem Spielzug muss der derzeitige Spieler, bei dem es sich sowohl um einen menschlichen Spieler als auch eine Computerengine handeln kann, eine Aktion auswählen. Die Auswahl einer Aktion wird im \hyperref[chapter:erstellung-der-computerspielengines]{5. Kapitel} genauer beschrieben. Anschließend wird die Action mittels der Methode \code{do\_action} ausgeführt. Die Methode führt dabei einfach die in den Spielregeln beschriebenen Schritte aus (Anhang \ref{code:do-action}). So wird zum Beispiel bei dem Legen eines Flickens der Ablageplan gefüllt, die Knopfkosten vom Knopfvorrat des Spielers abgezogen und der Zeitstein um die Zeitkosten des Flickens vorbewegt.
+
+\vspace*{-5cm}
+\pagebreak
 
 Zuletzt wird noch überprüft, ob eine Knopf-Wertung oder ein Spezialflicken passiert wurde und welcher Spieler als nächstes dran ist. Um ein Flicken auf dem Ablageplan abzulegen, wird einfach die passende Transformation aus dem PatchManager geladen und mittels einer Oder-Bitoperation auf den bestehenden Ablageplan gelegt.
 
