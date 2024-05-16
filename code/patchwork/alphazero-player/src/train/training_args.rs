@@ -5,8 +5,6 @@ use std::num::NonZeroUsize;
 pub struct TrainingArgs {
     // Hyperparameters
 
-    /// The exploration constant to use for the PUCT algorithm.
-    pub c: f32,
     /// The learning rate to use for training the neural network.
     pub learning_rate: f64,
     /// The dirichlet epsilon that gives the proportion between noise and probabilities in the root node
@@ -39,7 +37,6 @@ pub struct TrainingArgs {
 impl Default for TrainingArgs {
     fn default() -> Self {
         Self {
-            c: 2f32.sqrt(),
             learning_rate: 0.02, // 0.02, 0.002 0.0002 drop after some time
             dirichlet_epsilon: 0.25,
             dirichlet_alpha: 0.2,

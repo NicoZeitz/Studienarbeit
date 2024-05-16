@@ -110,6 +110,12 @@
 \pagestyle{scrheadings}
 \onehalfspacing
 
+% INCLUDE A SINGLE CHAPTER WITH ALL IMAGES LIKE THIS
+% {
+%     \setkeys{Gin}{draft=false}
+%     \include{chapters/01_einleitung}
+% }
+
 \include{chapters/01_einleitung}
 \include{chapters/02_grundlagen}
 \include{chapters/03_analyse}
@@ -132,8 +138,9 @@
 \clearpage
 \pagenumbering{Roman}  % römische Seitenzahlen für Anhang
 \include{chapters/A_quellcode}
-\include{chapters/B_bilder}
-\include{chapters/C_patchwork}
+\include{chapters/B_tabellen}
+\include{chapters/C_bilder}
+\include{chapters/D_patchwork}
 
 \newpage
 \end{document}

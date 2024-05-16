@@ -1,0 +1,477 @@
+\chapter{Tabellen}
+\label{anhang:chapter-tabellen}
+
+\section{Performance Benchmark Ergebnisse}
+\label{anhang:section-tabellen-benchmark}
+
+Nachfolgend die Ergebnisse des Performance Benchmarks Codes aus Anhang \ref{code:performance-benchmarks}. Die Tabelle zeigt für jede Methode die Zeiten des $95\%$ Konfidenzintervalls für 10 Durchläufe des Benchmarks.
+
+Die Benchmarks wurden alle auf einem Laptop durchgeführt, der folgende Spezifikationen aufweist:
+
+\begin{itemize}
+    \item \vspace{-0.1cm} \textbf{Prozessor:} 11th Gen Intel(R) Core(TM) i5-1135G7
+    \item \vspace{-0.1cm} \textbf{Arbeitsspeicher:} 16 \acsp{GiB} @ 4267 \acsp{MHz}
+    \item \vspace{-0.1cm} \textbf{Betriebssystem:} Windows 11
+    \item \vspace{-0.1cm} \textbf{Rust Version:} rustc 1.77.2
+\end{itemize}
+
+\vspace*{1.25cm}
+
+% game.get_initial_state
+% [340.22 ns 341.77 ns 343.50 ns]
+% [397.24 ns 410.75 ns 425.19 ns]
+% [515.60 ns 541.87 ns 568.65 ns]
+% [544.07 ns 583.12 ns 621.70 ns]
+% [397.78 ns 410.09 ns 423.47 ns]
+% [497.10 ns 534.98 ns 572.63 ns]
+% [447.41 ns 473.48 ns 498.91 ns]
+% [388.37 ns 403.36 ns 419.75 ns]
+% [453.85 ns 470.74 ns 490.08 ns]
+% [518.31 ns 551.15 ns 584.15 ns]
+
+% game.get_valid_actions
+% [5.0992 µs 5.1205 µs 5.1443 µs]
+% [6.9992 µs 7.3798 µs 7.7823 µs]
+% [8.0215 µs 8.4844 µs 8.9704 µs]
+% [9.9747 µs 10.647 µs 11.311 µs]
+% [9.8704 µs 10.353 µs 10.825 µs]
+% [8.8967 µs 9.3366 µs 9.8033 µs]
+% [10.479 µs 10.848 µs 11.225 µs]
+% [7.3655 µs 7.6822 µs 8.0101 µs]
+% [6.9752 µs 7.2367 µs 7.5142 µs]
+% [9.7290 µs 10.314 µs 10.939 µs]
+
+% game.get_random_action
+% [5.1063 µs 5.1288 µs 5.1573 µs]
+% [34.720 µs 35.917 µs 37.176 µs]
+% [8.4523 µs 8.9635 µs 9.5163 µs]
+% [9.6541 µs 10.107 µs 10.551 µs]
+% [8.9644 µs 9.4879 µs 10.018 µs]
+% [34.663 µs 36.132 µs 37.668 µs]
+% [9.1164 µs 9.5508 µs 10.011 µs]
+% [7.1846 µs 7.4959 µs 7.8395 µs]
+% [6.1895 µs 6.3739 µs 6.5660 µs]
+% [7.0904 µs 7.3568 µs 7.6352 µs]
+
+% game.do_action
+% [139.78 ns 141.48 ns 143.42 ns]
+% [229.35 ns 247.70 ns 266.60 ns]
+% [304.16 ns 333.22 ns 363.80 ns]
+% [289.65 ns 313.01 ns 338.07 ns]
+% [339.63 ns 355.67 ns 370.78 ns]
+% [353.42 ns 376.51 ns 399.74 ns]
+% [237.13 ns 250.28 ns 263.96 ns]
+% [295.12 ns 309.73 ns 324.34 ns]
+% [193.72 ns 204.26 ns 215.55 ns]
+% [172.38 ns 180.42 ns 189.41 ns]
+
+% game.undo_action
+% [142.62 ns 145.02 ns 148.07 ns]
+% [323.37 ns 341.65 ns 361.30 ns]
+% [440.52 ns 477.63 ns 516.75 ns]
+% [425.54 ns 462.08 ns 499.30 ns]
+% [319.83 ns 339.41 ns 359.98 ns]
+% [270.95 ns 292.80 ns 316.62 ns]
+% [265.25 ns 280.76 ns 295.80 ns]
+% [194.55 ns 205.19 ns 215.82 ns]
+% [213.01 ns 228.92 ns 248.13 ns]
+% [202.25 ns 213.25 ns 225.53 ns]
+
+% game.clone
+% [861.81 ns 874.75 ns 887.61 ns]
+% [1.3809 µs 1.4480 µs 1.5198 µs]
+% [1.4181 µs 1.4541 µs 1.4917 µs]
+% [1.2356 µs 1.2940 µs 1.3551 µs]
+% [1.3571 µs 1.4170 µs 1.4790 µs]
+% [3.4007 µs 3.5513 µs 3.7016 µs]
+% [2.6441 µs 2.7308 µs 2.8269 µs]
+% [1.0429 µs 1.0721 µs 1.1034 µs]
+% [1.1402 µs 1.1758 µs 1.2138 µs]
+% [1.2512 µs 1.2922 µs 1.3348 µs]
+
+% game.is_terminated
+% [77.795 ns 80.705 ns 83.765 ns]
+% [139.03 ns 149.84 ns 161.53 ns]
+% [81.884 ns 87.659 ns 94.234 ns]
+% [148.99 ns 158.35 ns 168.26 ns]
+% [90.594 ns 96.916 ns 103.46 ns]
+% [96.700 ns 103.63 ns 110.43 ns]
+% [76.445 ns 81.916 ns 87.448 ns]
+% [60.886 ns 63.488 ns 66.164 ns]
+% [65.852 ns 70.007 ns 74.775 ns]
+% [59.635 ns 62.569 ns 65.745 ns]
+
+% action_id.from_natural_action_id
+% [27.190 ns 27.318 ns 27.472 ns]
+% [43.708 ns 46.408 ns 49.111 ns]
+% [38.842 ns 40.817 ns 42.831 ns]
+% [44.773 ns 47.826 ns 50.933 ns]
+% [44.155 ns 46.896 ns 49.735 ns]
+% [41.110 ns 44.074 ns 47.419 ns]
+% [42.181 ns 44.551 ns 47.072 ns]
+% [31.736 ns 32.804 ns 33.907 ns]
+% [33.215 ns 34.542 ns 35.962 ns]
+% [30.980 ns 31.810 ns 32.634 ns]
+
+% natural_action_id.from_surrogate_action_id
+% [27.740 ns 27.806 ns 27.882 ns]
+% [45.620 ns 49.160 ns 52.739 ns]
+% [42.700 ns 44.906 ns 47.254 ns]
+% [45.038 ns 48.071 ns 51.140 ns]
+% [46.265 ns 49.063 ns 51.833 ns]
+% [44.655 ns 48.160 ns 51.760 ns]
+% [44.070 ns 47.034 ns 50.095 ns]
+% [32.389 ns 33.522 ns 34.737 ns]
+% [35.410 ns 36.923 ns 38.461 ns]
+% [31.666 ns 32.572 ns 33.555 ns]
+
+% patch_manager.get_patch
+% [1.0617 ns 1.0698 ns 1.0779 ns]
+% [1.7532 ns 1.8557 ns 1.9616 ns]
+% [1.9058 ns 2.0358 ns 2.1668 ns]
+% [1.7809 ns 1.9056 ns 2.0302 ns]
+% [1.9746 ns 2.1434 ns 2.3039 ns]
+% [1.8663 ns 1.9944 ns 2.1199 ns]
+% [1.7462 ns 1.8768 ns 2.0090 ns]
+% [1.2505 ns 1.3002 ns 1.3523 ns]
+% [1.2800 ns 1.3332 ns 1.3882 ns]
+% [1.1950 ns 1.2475 ns 1.3031 ns]
+
+% patch_manager.get_special_patch
+% [2.2227 ns 2.2341 ns 2.2492 ns]
+% [3.8351 ns 4.0991 ns 4.3672 ns]
+% [3.5781 ns 3.7835 ns 3.9914 ns]
+% [3.8178 ns 4.0870 ns 4.3524 ns]
+% [3.8673 ns 4.1054 ns 4.3452 ns]
+% [3.6414 ns 3.8831 ns 4.1247 ns]
+% [3.4182 ns 3.6265 ns 3.8505 ns]
+% [2.7003 ns 2.7952 ns 2.8965 ns]
+% [2.7496 ns 2.8793 ns 3.0174 ns]
+% [2.6815 ns 2.7689 ns 2.8595 ns]
+
+% patch_manager.get_transformation
+% [1.5109 ns 1.5293 ns 1.5544 ns]
+% [2.3748 ns 2.4915 ns 2.6190 ns]
+% [2.7103 ns 2.8617 ns 3.0169 ns]
+% [2.5698 ns 2.7313 ns 2.8924 ns]
+% [2.8653 ns 3.0731 ns 3.2925 ns]
+% [2.7031 ns 2.8924 ns 3.0846 ns]
+% [2.5045 ns 2.6563 ns 2.8141 ns]
+% [1.8240 ns 1.8828 ns 1.9466 ns]
+% [1.9292 ns 2.0323 ns 2.1409 ns]
+% [1.8800 ns 1.9668 ns 2.0567 ns]
+
+% player.get_position
+% [26.126 ns 26.208 ns 26.298 ns]
+% [37.937 ns 40.488 ns 43.194 ns]
+% [40.266 ns 43.381 ns 46.613 ns]
+% [44.709 ns 47.815 ns 51.181 ns]
+% [54.272 ns 57.361 ns 60.383 ns]
+% [42.394 ns 45.000 ns 47.717 ns]
+% [41.908 ns 44.102 ns 46.358 ns]
+% [30.966 ns 32.045 ns 33.250 ns]
+% [32.320 ns 33.860 ns 35.510 ns]
+% [32.106 ns 33.388 ns 34.709 ns]
+
+% quilt_board.is_full
+% [342.50 ps 343.30 ps 344.17 ps]
+% [618.76 ps 650.64 ps 682.96 ps]
+% [529.08 ps 561.22 ps 595.21 ps]
+% [570.59 ps 613.92 ps 659.79 ps]
+% [547.52 ps 582.14 ps 618.83 ps]
+% [540.14 ps 565.95 ps 592.86 ps]
+% [532.47 ps 561.10 ps 590.28 ps]
+% [421.15 ps 436.93 ps 453.58 ps]
+% [411.47 ps 427.71 ps 444.67 ps]
+% [420.78 ps 435.24 ps 450.67 ps]
+
+% quilt_board.is_special_tile_condition_reached
+% [342.99 ps 344.29 ps 345.93 ps]
+% [544.59 ps 585.83 ps 629.43 ps]
+% [566.81 ps 601.67 ps 638.90 ps]
+% [574.40 ps 609.26 ps 644.61 ps]
+% [641.30 ps 679.81 ps 718.66 ps]
+% [593.71 ps 635.12 ps 675.86 ps]
+% [440.73 ps 461.70 ps 486.05 ps]
+% [413.86 ps 430.45 ps 449.09 ps]
+% [436.45 ps 457.48 ps 480.24 ps]
+% [414.58 ps 428.39 ps 442.51 ps]
+
+% quilt_board.do_action
+% [28.409 ns 28.489 ns 28.586 ns]
+% [44.245 ns 47.015 ns 49.894 ns]
+% [44.308 ns 46.783 ns 49.551 ns]
+% [48.402 ns 51.397 ns 54.467 ns]
+% [47.589 ns 50.877 ns 54.336 ns]
+% [48.038 ns 51.287 ns 54.637 ns]
+% [44.528 ns 47.521 ns 50.662 ns]
+% [34.207 ns 35.437 ns 36.785 ns]
+% [34.402 ns 35.615 ns 36.935 ns]
+% [35.543 ns 37.383 ns 39.477 ns]
+
+% quilt_board.undo_action
+% [31.102 ns 32.280 ns 33.480 ns]
+% [41.303 ns 43.142 ns 45.123 ns]
+% [42.107 ns 44.463 ns 47.005 ns]
+% [49.502 ns 53.502 ns 57.428 ns]
+% [47.362 ns 50.100 ns 52.884 ns]
+% [48.787 ns 51.625 ns 54.677 ns]
+% [46.934 ns 49.887 ns 53.109 ns]
+% [33.770 ns 35.296 ns 36.853 ns]
+% [36.411 ns 38.562 ns 40.911 ns]
+% [47.276 ns 50.162 ns 53.180 ns]
+
+% quilt_board_get_valid_actions_for_patch
+% [1.7679 µs 1.9168 µs 2.0903 µs]
+% [1.1434 µs 1.2095 µs 1.2737 µs]
+% [1.1442 µs 1.2010 µs 1.2626 µs]
+% [1.3127 µs 1.3947 µs 1.4741 µs]
+% [1.2429 µs 1.3299 µs 1.4273 µs]
+% [919.69 ns 970.57 ns 1.0247 µs]
+% [1.0859 µs 1.1614 µs 1.2417 µs]
+% [853.17 ns 881.95 ns 911.85 ns]
+% [10.610 µs 10.901 µs 11.210 µs]
+% [1.3706 µs 1.4642 µs 1.5622 µs]
+
+% quilt_board_get_valid_actions_for_special_patch
+% [826.07 ns 885.06 ns 951.56 ns]
+% [766.61 ns 807.77 ns 850.73 ns]
+% [806.81 ns 858.97 ns 914.15 ns]
+% [937.61 ns 1.0028 µs 1.0668 µs]
+% [894.89 ns 939.40 ns 986.68 ns]
+% [916.92 ns 971.67 ns 1.0255 µs]
+% [608.10 ns 625.58 ns 643.22 ns]
+% [586.41 ns 604.76 ns 623.57 ns]
+% [616.20 ns 646.80 ns 680.50 ns]
+% [806.49 ns 852.98 ns 901.61 ns]
+\begin{longtable}[t]{|r|c|c|c|c|}
+    \hline
+    \multicolumn{1}{|c|}{Durchlauf} & \multicolumn{3}{|c|}{$95\%$ Konfidenzintervall}                                                 \\ \hline
+    \endfirsthead
+    \multicolumn{5}{c}{\tablename\ \thetable\ -- \textit{Fortsetzung von der vorherigen Seite}}                                       \\
+    \hline
+    \multicolumn{1}{|c|}{Durchlauf} & \multicolumn{3}{|c|}{$95\%$ Konfidenzintervall}                                                 \\ \hline
+    \endhead
+    \hline \multicolumn{5}{r}{\textit{Fortsetzung auf der nächsten Seite}}                                                            \\
+    \endfoot
+    \hline
+    \caption{Ergebnisse des Performance Benchmarks}
+    \label{tabelle:performance-benchmark-results}
+    \endlastfoot
+                                    & \makecell{Untere Grenze                                                                         \\ $\overline{t} - 1{,}96 \cdot \frac{\sigma}{\sqrt{n}}$ }                                   & \makecell{Punktschätzer für \\ den Mittelwert $\overline{t}$} & \makecell{Obere Grenze \\ $\overline{t} + 1{,}96 \cdot \frac{\sigma}{\sqrt{n}}$ }\\ \hline
+    \multicolumn{4}{|l|}{\code{game.get\_initial\_state}}                                                                             \\ \hline
+    $1$                             & $340{,}22\,\acs{ns}$                            & $341{,}77\,\acs{ns}$  & $343{,}50\,\acs{ns}$  \\ \hline
+    $2$                             & $397{,}24\,\acs{ns}$                            & $410{,}75\,\acs{ns}$  & $425{,}19\,\acs{ns}$  \\ \hline
+    $3$                             & $515{,}60\,\acs{ns}$                            & $541{,}87\,\acs{ns}$  & $568{,}65\,\acs{ns}$  \\ \hline
+    $4$                             & $544{,}07\,\acs{ns}$                            & $583{,}12\,\acs{ns}$  & $621{,}70\,\acs{ns}$  \\ \hline
+    $5$                             & $397{,}78\,\acs{ns}$                            & $410{,}09\,\acs{ns}$  & $423{,}47\,\acs{ns}$  \\ \hline
+    $6$                             & $497{,}10\,\acs{ns}$                            & $534{,}98\,\acs{ns}$  & $572{,}63\,\acs{ns}$  \\ \hline
+    $7$                             & $447{,}41\,\acs{ns}$                            & $473{,}48\,\acs{ns}$  & $498{,}91\,\acs{ns}$  \\ \hline
+    $8$                             & $388{,}37\,\acs{ns}$                            & $403{,}36\,\acs{ns}$  & $419{,}75\,\acs{ns}$  \\ \hline
+    $9$                             & $453{,}85\,\acs{ns}$                            & $470{,}74\,\acs{ns}$  & $490{,}08\,\acs{ns}$  \\ \hline
+    $10$                            & $518{,}31\,\acs{ns}$                            & $551{,}15\,\acs{ns}$  & $584{,}15\,\acs{ns}$  \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{game.get\_valid\_actions}}                                                                             \\ \hline
+    $1$                             & $5{,}0992\,\acs{us}$                            & $ 5{,}1205\,\acs{us}$ & $ 5{,}1443\,\acs{us}$ \\ \hline
+    $2$                             & $6{,}9992\,\acs{us}$                            & $ 7{,}3798\,\acs{us}$ & $ 7{,}7823\,\acs{us}$ \\ \hline
+    $3$                             & $8{,}0215\,\acs{us}$                            & $ 8{,}4844\,\acs{us}$ & $ 8{,}9704\,\acs{us}$ \\ \hline
+    $4$                             & $9{,}9747\,\acs{us}$                            & $ 10{,}647\,\acs{us}$ & $ 11{,}311\,\acs{us}$ \\ \hline
+    $5$                             & $9{,}8704\,\acs{us}$                            & $ 10{,}353\,\acs{us}$ & $ 10{,}825\,\acs{us}$ \\ \hline
+    $6$                             & $8{,}8967\,\acs{us}$                            & $ 9{,}3366\,\acs{us}$ & $ 9{,}8033\,\acs{us}$ \\ \hline
+    $7$                             & $10{,}479\,\acs{us}$                            & $ 10{,}848\,\acs{us}$ & $ 11{,}225\,\acs{us}$ \\ \hline
+    $8$                             & $7{,}3655\,\acs{us}$                            & $ 7{,}6822\,\acs{us}$ & $ 8{,}0101\,\acs{us}$ \\ \hline
+    $9$                             & $6{,}9752\,\acs{us}$                            & $ 7{,}2367\,\acs{us}$ & $ 7{,}5142\,\acs{us}$ \\ \hline
+    $10$                            & $9{,}7290\,\acs{us}$                            & $ 10{,}314\,\acs{us}$ & $ 10{,}939\,\acs{us}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{game.get\_random\_action}}                                                                             \\ \hline
+    $1$                             & $5{,}1063\,\acs{us}$                            & $ 5{,}1288\,\acs{us}$ & $ 5{,}1573\,\acs{us}$ \\ \hline
+    $2$                             & $34{,}720\,\acs{us}$                            & $ 35{,}917\,\acs{us}$ & $ 37{,}176\,\acs{us}$ \\ \hline
+    $3$                             & $8{,}4523\,\acs{us}$                            & $ 8{,}9635\,\acs{us}$ & $ 9{,}5163\,\acs{us}$ \\ \hline
+    $4$                             & $9{,}6541\,\acs{us}$                            & $ 10{,}107\,\acs{us}$ & $ 10{,}551\,\acs{us}$ \\ \hline
+    $5$                             & $8{,}9644\,\acs{us}$                            & $ 9{,}4879\,\acs{us}$ & $ 10{,}018\,\acs{us}$ \\ \hline
+    $6$                             & $34{,}663\,\acs{us}$                            & $ 36{,}132\,\acs{us}$ & $ 37{,}668\,\acs{us}$ \\ \hline
+    $7$                             & $9{,}1164\,\acs{us}$                            & $ 9{,}5508\,\acs{us}$ & $ 10{,}011\,\acs{us}$ \\ \hline
+    $8$                             & $7{,}1846\,\acs{us}$                            & $ 7{,}4959\,\acs{us}$ & $ 7{,}8395\,\acs{us}$ \\ \hline
+    $9$                             & $6{,}1895\,\acs{us}$                            & $ 6{,}3739\,\acs{us}$ & $ 6{,}5660\,\acs{us}$ \\ \hline
+    $10$                            & $7{,}0904\,\acs{us}$                            & $ 7{,}3568\,\acs{us}$ & $ 7{,}6352\,\acs{us}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{game.do\_action}}                                                                                      \\ \hline
+    $1$                             & $139{,}78\,\acs{ns}$                            & $ 141{,}48\,\acs{ns}$ & $ 143{,}42\,\acs{ns}$ \\ \hline
+    $2$                             & $229{,}35\,\acs{ns}$                            & $ 247{,}70\,\acs{ns}$ & $ 266{,}60\,\acs{ns}$ \\ \hline
+    $3$                             & $304{,}16\,\acs{ns}$                            & $ 333{,}22\,\acs{ns}$ & $ 363{,}80\,\acs{ns}$ \\ \hline
+    $4$                             & $289{,}65\,\acs{ns}$                            & $ 313{,}01\,\acs{ns}$ & $ 338{,}07\,\acs{ns}$ \\ \hline
+    $5$                             & $339{,}63\,\acs{ns}$                            & $ 355{,}67\,\acs{ns}$ & $ 370{,}78\,\acs{ns}$ \\ \hline
+    $6$                             & $353{,}42\,\acs{ns}$                            & $ 376{,}51\,\acs{ns}$ & $ 399{,}74\,\acs{ns}$ \\ \hline
+    $7$                             & $237{,}13\,\acs{ns}$                            & $ 250{,}28\,\acs{ns}$ & $ 263{,}96\,\acs{ns}$ \\ \hline
+    $8$                             & $295{,}12\,\acs{ns}$                            & $ 309{,}73\,\acs{ns}$ & $ 324{,}34\,\acs{ns}$ \\ \hline
+    $9$                             & $193{,}72\,\acs{ns}$                            & $ 204{,}26\,\acs{ns}$ & $ 215{,}55\,\acs{ns}$ \\ \hline
+    $10$                            & $172{,}38\,\acs{ns}$                            & $ 180{,}42\,\acs{ns}$ & $ 189{,}41\,\acs{ns}$ \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{game.undo\_action}}                                                                                    \\ \hline
+    $1$                             & $142{,}62\,\acs{ns}$                            & $ 145{,}02\,\acs{ns}$ & $ 148{,}07\,\acs{ns}$ \\ \hline
+    $2$                             & $323{,}37\,\acs{ns}$                            & $ 341{,}65\,\acs{ns}$ & $ 361{,}30\,\acs{ns}$ \\ \hline
+    $3$                             & $440{,}52\,\acs{ns}$                            & $ 477{,}63\,\acs{ns}$ & $ 516{,}75\,\acs{ns}$ \\ \hline
+    $4$                             & $425{,}54\,\acs{ns}$                            & $ 462{,}08\,\acs{ns}$ & $ 499{,}30\,\acs{ns}$ \\ \hline
+    $5$                             & $319{,}83\,\acs{ns}$                            & $ 339{,}41\,\acs{ns}$ & $ 359{,}98\,\acs{ns}$ \\ \hline
+    $6$                             & $270{,}95\,\acs{ns}$                            & $ 292{,}80\,\acs{ns}$ & $ 316{,}62\,\acs{ns}$ \\ \hline
+    $7$                             & $265{,}25\,\acs{ns}$                            & $ 280{,}76\,\acs{ns}$ & $ 295{,}80\,\acs{ns}$ \\ \hline
+    $8$                             & $194{,}55\,\acs{ns}$                            & $ 205{,}19\,\acs{ns}$ & $ 215{,}82\,\acs{ns}$ \\ \hline
+    $9$                             & $213{,}01\,\acs{ns}$                            & $ 228{,}92\,\acs{ns}$ & $ 248{,}13\,\acs{ns}$ \\ \hline
+    $10$                            & $202{,}25\,\acs{ns}$                            & $ 213{,}25\,\acs{ns}$ & $ 225{,}53\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{game.clone}}                                                                                           \\ \hline
+    $1$                             & $861{,}81\,\acs{ns}$                            & $ 874{,}75\,\acs{ns}$ & $ 887{,}61\,\acs{ns}$ \\ \hline
+    $2$                             & $1{,}3809\,\acs{us}$                            & $ 1{,}4480\,\acs{us}$ & $ 1{,}5198\,\acs{us}$ \\ \hline
+    $3$                             & $1{,}4181\,\acs{us}$                            & $ 1{,}4541\,\acs{us}$ & $ 1{,}4917\,\acs{us}$ \\ \hline
+    $4$                             & $1{,}2356\,\acs{us}$                            & $ 1{,}2940\,\acs{us}$ & $ 1{,}3551\,\acs{us}$ \\ \hline
+    $5$                             & $1{,}3571\,\acs{us}$                            & $ 1{,}4170\,\acs{us}$ & $ 1{,}4790\,\acs{us}$ \\ \hline
+    $6$                             & $3{,}4007\,\acs{us}$                            & $ 3{,}5513\,\acs{us}$ & $ 3{,}7016\,\acs{us}$ \\ \hline
+    $7$                             & $2{,}6441\,\acs{us}$                            & $ 2{,}7308\,\acs{us}$ & $ 2{,}8269\,\acs{us}$ \\ \hline
+    $8$                             & $1{,}0429\,\acs{us}$                            & $ 1{,}0721\,\acs{us}$ & $ 1{,}1034\,\acs{us}$ \\ \hline
+    $9$                             & $1{,}1402\,\acs{us}$                            & $ 1{,}1758\,\acs{us}$ & $ 1{,}2138\,\acs{us}$ \\ \hline
+    $10$                            & $1{,}2512\,\acs{us}$                            & $ 1{,}2922\,\acs{us}$ & $ 1{,}3348\,\acs{us}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{game.is\_terminated}}                                                                                  \\ \hline
+    $1$                             & $77{,}795\,\acs{ns}$                            & $ 80{,}705\,\acs{ns}$ & $ 83{,}765\,\acs{ns}$ \\ \hline
+    $2$                             & $139{,}03\,\acs{ns}$                            & $ 149{,}84\,\acs{ns}$ & $ 161{,}53\,\acs{ns}$ \\ \hline
+    $3$                             & $81{,}884\,\acs{ns}$                            & $ 87{,}659\,\acs{ns}$ & $ 94{,}234\,\acs{ns}$ \\ \hline
+    $4$                             & $148{,}99\,\acs{ns}$                            & $ 158{,}35\,\acs{ns}$ & $ 168{,}26\,\acs{ns}$ \\ \hline
+    $5$                             & $90{,}594\,\acs{ns}$                            & $ 96{,}916\,\acs{ns}$ & $ 103{,}46\,\acs{ns}$ \\ \hline
+    $6$                             & $96{,}700\,\acs{ns}$                            & $ 103{,}63\,\acs{ns}$ & $ 110{,}43\,\acs{ns}$ \\ \hline
+    $7$                             & $76{,}445\,\acs{ns}$                            & $ 81{,}916\,\acs{ns}$ & $ 87{,}448\,\acs{ns}$ \\ \hline
+    $8$                             & $60{,}886\,\acs{ns}$                            & $ 63{,}488\,\acs{ns}$ & $ 66{,}164\,\acs{ns}$ \\ \hline
+    $9$                             & $65{,}852\,\acs{ns}$                            & $ 70{,}007\,\acs{ns}$ & $ 74{,}775\,\acs{ns}$ \\ \hline
+    $10$                            & $59{,}635\,\acs{ns}$                            & $ 62{,}569\,\acs{ns}$ & $ 65{,}745\,\acs{ns}$ \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{action\_id.from\_natural\_action\_id}}                                                                 \\ \hline
+    $1$                             & $27{,}190\,\acs{ns}$                            & $ 27{,}318\,\acs{ns}$ & $ 27{,}472\,\acs{ns}$ \\ \hline
+    $2$                             & $43{,}708\,\acs{ns}$                            & $ 46{,}408\,\acs{ns}$ & $ 49{,}111\,\acs{ns}$ \\ \hline
+    $3$                             & $38{,}842\,\acs{ns}$                            & $ 40{,}817\,\acs{ns}$ & $ 42{,}831\,\acs{ns}$ \\ \hline
+    $4$                             & $44{,}773\,\acs{ns}$                            & $ 47{,}826\,\acs{ns}$ & $ 50{,}933\,\acs{ns}$ \\ \hline
+    $5$                             & $44{,}155\,\acs{ns}$                            & $ 46{,}896\,\acs{ns}$ & $ 49{,}735\,\acs{ns}$ \\ \hline
+    $6$                             & $41{,}110\,\acs{ns}$                            & $ 44{,}074\,\acs{ns}$ & $ 47{,}419\,\acs{ns}$ \\ \hline
+    $7$                             & $42{,}181\,\acs{ns}$                            & $ 44{,}551\,\acs{ns}$ & $ 47{,}072\,\acs{ns}$ \\ \hline
+    $8$                             & $31{,}736\,\acs{ns}$                            & $ 32{,}804\,\acs{ns}$ & $ 33{,}907\,\acs{ns}$ \\ \hline
+    $9$                             & $33{,}215\,\acs{ns}$                            & $ 34{,}542\,\acs{ns}$ & $ 35{,}962\,\acs{ns}$ \\ \hline
+    $10$                            & $30{,}980\,\acs{ns}$                            & $ 31{,}810\,\acs{ns}$ & $ 32{,}634\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{natural\_action\_id.from\_surrogate\_action\_id}}                                                      \\ \hline
+    $1$                             & $27{,}740\,\acs{ns}$                            & $ 27{,}806\,\acs{ns}$ & $ 27{,}882\,\acs{ns}$ \\ \hline
+    $2$                             & $45{,}620\,\acs{ns}$                            & $ 49{,}160\,\acs{ns}$ & $ 52{,}739\,\acs{ns}$ \\ \hline
+    $3$                             & $42{,}700\,\acs{ns}$                            & $ 44{,}906\,\acs{ns}$ & $ 47{,}254\,\acs{ns}$ \\ \hline
+    $4$                             & $45{,}038\,\acs{ns}$                            & $ 48{,}071\,\acs{ns}$ & $ 51{,}140\,\acs{ns}$ \\ \hline
+    $5$                             & $46{,}265\,\acs{ns}$                            & $ 49{,}063\,\acs{ns}$ & $ 51{,}833\,\acs{ns}$ \\ \hline
+    $6$                             & $44{,}655\,\acs{ns}$                            & $ 48{,}160\,\acs{ns}$ & $ 51{,}760\,\acs{ns}$ \\ \hline
+    $7$                             & $44{,}070\,\acs{ns}$                            & $ 47{,}034\,\acs{ns}$ & $ 50{,}095\,\acs{ns}$ \\ \hline
+    $8$                             & $32{,}389\,\acs{ns}$                            & $ 33{,}522\,\acs{ns}$ & $ 34{,}737\,\acs{ns}$ \\ \hline
+    $9$                             & $35{,}410\,\acs{ns}$                            & $ 36{,}923\,\acs{ns}$ & $ 38{,}461\,\acs{ns}$ \\ \hline
+    $10$                            & $31{,}666\,\acs{ns}$                            & $ 32{,}572\,\acs{ns}$ & $ 33{,}555\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{patch\_manager.get\_patch}}                                                                            \\ \hline
+    $1$                             & $1{,}0617\,\acs{ns}$                            & $ 1{,}0698\,\acs{ns}$ & $ 1{,}0779\,\acs{ns}$ \\ \hline
+    $2$                             & $1{,}7532\,\acs{ns}$                            & $ 1{,}8557\,\acs{ns}$ & $ 1{,}9616\,\acs{ns}$ \\ \hline
+    $3$                             & $1{,}9058\,\acs{ns}$                            & $ 2{,}0358\,\acs{ns}$ & $ 2{,}1668\,\acs{ns}$ \\ \hline
+    $4$                             & $1{,}7809\,\acs{ns}$                            & $ 1{,}9056\,\acs{ns}$ & $ 2{,}0302\,\acs{ns}$ \\ \hline
+    $5$                             & $1{,}9746\,\acs{ns}$                            & $ 2{,}1434\,\acs{ns}$ & $ 2{,}3039\,\acs{ns}$ \\ \hline
+    $6$                             & $1{,}8663\,\acs{ns}$                            & $ 1{,}9944\,\acs{ns}$ & $ 2{,}1199\,\acs{ns}$ \\ \hline
+    $7$                             & $1{,}7462\,\acs{ns}$                            & $ 1{,}8768\,\acs{ns}$ & $ 2{,}0090\,\acs{ns}$ \\ \hline
+    $8$                             & $1{,}2505\,\acs{ns}$                            & $ 1{,}3002\,\acs{ns}$ & $ 1{,}3523\,\acs{ns}$ \\ \hline
+    $9$                             & $1{,}2800\,\acs{ns}$                            & $ 1{,}3332\,\acs{ns}$ & $ 1{,}3882\,\acs{ns}$ \\ \hline
+    $10$                            & $1{,}1950\,\acs{ns}$                            & $ 1{,}2475\,\acs{ns}$ & $ 1{,}3031\,\acs{ns}$ \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{patch\_manager.get\_special\_patch}}                                                                   \\ \hline
+    $1$                             & $2{,}2227\,\acs{ns}$                            & $ 2{,}2341\,\acs{ns}$ & $ 2{,}2492\,\acs{ns}$ \\ \hline
+    $2$                             & $3{,}8351\,\acs{ns}$                            & $ 4{,}0991\,\acs{ns}$ & $ 4{,}3672\,\acs{ns}$ \\ \hline
+    $3$                             & $3{,}5781\,\acs{ns}$                            & $ 3{,}7835\,\acs{ns}$ & $ 3{,}9914\,\acs{ns}$ \\ \hline
+    $4$                             & $3{,}8178\,\acs{ns}$                            & $ 4{,}0870\,\acs{ns}$ & $ 4{,}3524\,\acs{ns}$ \\ \hline
+    $5$                             & $3{,}8673\,\acs{ns}$                            & $ 4{,}1054\,\acs{ns}$ & $ 4{,}3452\,\acs{ns}$ \\ \hline
+    $6$                             & $3{,}6414\,\acs{ns}$                            & $ 3{,}8831\,\acs{ns}$ & $ 4{,}1247\,\acs{ns}$ \\ \hline
+    $7$                             & $3{,}4182\,\acs{ns}$                            & $ 3{,}6265\,\acs{ns}$ & $ 3{,}8505\,\acs{ns}$ \\ \hline
+    $8$                             & $2{,}7003\,\acs{ns}$                            & $ 2{,}7952\,\acs{ns}$ & $ 2{,}8965\,\acs{ns}$ \\ \hline
+    $9$                             & $2{,}7496\,\acs{ns}$                            & $ 2{,}8793\,\acs{ns}$ & $ 3{,}0174\,\acs{ns}$ \\ \hline
+    $10$                            & $2{,}6815\,\acs{ns}$                            & $ 2{,}7689\,\acs{ns}$ & $ 2{,}8595\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{patch\_manager.get\_transformation}}                                                                   \\ \hline
+    $1$                             & $1{,}5109\,\acs{ns}$                            & $ 1{,}5293\,\acs{ns}$ & $ 1{,}5544\,\acs{ns}$ \\ \hline
+    $2$                             & $2{,}3748\,\acs{ns}$                            & $ 2{,}4915\,\acs{ns}$ & $ 2{,}6190\,\acs{ns}$ \\ \hline
+    $3$                             & $2{,}7103\,\acs{ns}$                            & $ 2{,}8617\,\acs{ns}$ & $ 3{,}0169\,\acs{ns}$ \\ \hline
+    $4$                             & $2{,}5698\,\acs{ns}$                            & $ 2{,}7313\,\acs{ns}$ & $ 2{,}8924\,\acs{ns}$ \\ \hline
+    $5$                             & $2{,}8653\,\acs{ns}$                            & $ 3{,}0731\,\acs{ns}$ & $ 3{,}2925\,\acs{ns}$ \\ \hline
+    $6$                             & $2{,}7031\,\acs{ns}$                            & $ 2{,}8924\,\acs{ns}$ & $ 3{,}0846\,\acs{ns}$ \\ \hline
+    $7$                             & $2{,}5045\,\acs{ns}$                            & $ 2{,}6563\,\acs{ns}$ & $ 2{,}8141\,\acs{ns}$ \\ \hline
+    $8$                             & $1{,}8240\,\acs{ns}$                            & $ 1{,}8828\,\acs{ns}$ & $ 1{,}9466\,\acs{ns}$ \\ \hline
+    $9$                             & $1{,}9292\,\acs{ns}$                            & $ 2{,}0323\,\acs{ns}$ & $ 2{,}1409\,\acs{ns}$ \\ \hline
+    $10$                            & $1{,}8800\,\acs{ns}$                            & $ 1{,}9668\,\acs{ns}$ & $ 2{,}0567\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{player.get\_position}}                                                                                 \\ \hline
+    $1$                             & $26{,}126\,\acs{ns}$                            & $ 26{,}208\,\acs{ns}$ & $ 26{,}298\,\acs{ns}$ \\ \hline
+    $2$                             & $37{,}937\,\acs{ns}$                            & $ 40{,}488\,\acs{ns}$ & $ 43{,}194\,\acs{ns}$ \\ \hline
+    $3$                             & $40{,}266\,\acs{ns}$                            & $ 43{,}381\,\acs{ns}$ & $ 46{,}613\,\acs{ns}$ \\ \hline
+    $4$                             & $44{,}709\,\acs{ns}$                            & $ 47{,}815\,\acs{ns}$ & $ 51{,}181\,\acs{ns}$ \\ \hline
+    $5$                             & $54{,}272\,\acs{ns}$                            & $ 57{,}361\,\acs{ns}$ & $ 60{,}383\,\acs{ns}$ \\ \hline
+    $6$                             & $42{,}394\,\acs{ns}$                            & $ 45{,}000\,\acs{ns}$ & $ 47{,}717\,\acs{ns}$ \\ \hline
+    $7$                             & $41{,}908\,\acs{ns}$                            & $ 44{,}102\,\acs{ns}$ & $ 46{,}358\,\acs{ns}$ \\ \hline
+    $8$                             & $30{,}966\,\acs{ns}$                            & $ 32{,}045\,\acs{ns}$ & $ 33{,}250\,\acs{ns}$ \\ \hline
+    $9$                             & $32{,}320\,\acs{ns}$                            & $ 33{,}860\,\acs{ns}$ & $ 35{,}510\,\acs{ns}$ \\ \hline
+    $10$                            & $32{,}106\,\acs{ns}$                            & $ 33{,}388\,\acs{ns}$ & $ 34{,}709\,\acs{ns}$ \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{quilt\_board.is\_full}}                                                                                \\ \hline
+    $1$                             & $342{,}50\,\acs{ps}$                            & $ 343{,}30\,\acs{ps}$ & $ 344{,}17\,\acs{ps}$ \\ \hline
+    $2$                             & $618{,}76\,\acs{ps}$                            & $ 650{,}64\,\acs{ps}$ & $ 682{,}96\,\acs{ps}$ \\ \hline
+    $3$                             & $529{,}08\,\acs{ps}$                            & $ 561{,}22\,\acs{ps}$ & $ 595{,}21\,\acs{ps}$ \\ \hline
+    $4$                             & $570{,}59\,\acs{ps}$                            & $ 613{,}92\,\acs{ps}$ & $ 659{,}79\,\acs{ps}$ \\ \hline
+    $5$                             & $547{,}52\,\acs{ps}$                            & $ 582{,}14\,\acs{ps}$ & $ 618{,}83\,\acs{ps}$ \\ \hline
+    $6$                             & $540{,}14\,\acs{ps}$                            & $ 565{,}95\,\acs{ps}$ & $ 592{,}86\,\acs{ps}$ \\ \hline
+    $7$                             & $532{,}47\,\acs{ps}$                            & $ 561{,}10\,\acs{ps}$ & $ 590{,}28\,\acs{ps}$ \\ \hline
+    $8$                             & $421{,}15\,\acs{ps}$                            & $ 436{,}93\,\acs{ps}$ & $ 453{,}58\,\acs{ps}$ \\ \hline
+    $9$                             & $411{,}47\,\acs{ps}$                            & $ 427{,}71\,\acs{ps}$ & $ 444{,}67\,\acs{ps}$ \\ \hline
+    $10$                            & $420{,}78\,\acs{ps}$                            & $ 435{,}24\,\acs{ps}$ & $ 450{,}67\,\acs{ps}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{quilt\_board.is\_special\_tile\_condition\_reached}}                                                   \\ \hline
+    $1$                             & $342{,}99\,\acs{ps}$                            & $ 344{,}29\,\acs{ps}$ & $ 345{,}93\,\acs{ps}$ \\ \hline
+    $2$                             & $544{,}59\,\acs{ps}$                            & $ 585{,}83\,\acs{ps}$ & $ 629{,}43\,\acs{ps}$ \\ \hline
+    $3$                             & $566{,}81\,\acs{ps}$                            & $ 601{,}67\,\acs{ps}$ & $ 638{,}90\,\acs{ps}$ \\ \hline
+    $4$                             & $574{,}40\,\acs{ps}$                            & $ 609{,}26\,\acs{ps}$ & $ 644{,}61\,\acs{ps}$ \\ \hline
+    $5$                             & $641{,}30\,\acs{ps}$                            & $ 679{,}81\,\acs{ps}$ & $ 718{,}66\,\acs{ps}$ \\ \hline
+    $6$                             & $593{,}71\,\acs{ps}$                            & $ 635{,}12\,\acs{ps}$ & $ 675{,}86\,\acs{ps}$ \\ \hline
+    $7$                             & $440{,}73\,\acs{ps}$                            & $ 461{,}70\,\acs{ps}$ & $ 486{,}05\,\acs{ps}$ \\ \hline
+    $8$                             & $413{,}86\,\acs{ps}$                            & $ 430{,}45\,\acs{ps}$ & $ 449{,}09\,\acs{ps}$ \\ \hline
+    $9$                             & $436{,}45\,\acs{ps}$                            & $ 457{,}48\,\acs{ps}$ & $ 480{,}24\,\acs{ps}$ \\ \hline
+    $10$                            & $414{,}58\,\acs{ps}$                            & $ 428{,}39\,\acs{ps}$ & $ 442{,}51\,\acs{ps}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{quilt\_board.do\_action}}                                                                              \\ \hline
+    $1$                             & $28{,}409\,\acs{ns}$                            & $ 28{,}489\,\acs{ns}$ & $ 28{,}586\,\acs{ns}$ \\ \hline
+    $2$                             & $44{,}245\,\acs{ns}$                            & $ 47{,}015\,\acs{ns}$ & $ 49{,}894\,\acs{ns}$ \\ \hline
+    $3$                             & $44{,}308\,\acs{ns}$                            & $ 46{,}783\,\acs{ns}$ & $ 49{,}551\,\acs{ns}$ \\ \hline
+    $4$                             & $48{,}402\,\acs{ns}$                            & $ 51{,}397\,\acs{ns}$ & $ 54{,}467\,\acs{ns}$ \\ \hline
+    $5$                             & $47{,}589\,\acs{ns}$                            & $ 50{,}877\,\acs{ns}$ & $ 54{,}336\,\acs{ns}$ \\ \hline
+    $6$                             & $48{,}038\,\acs{ns}$                            & $ 51{,}287\,\acs{ns}$ & $ 54{,}637\,\acs{ns}$ \\ \hline
+    $7$                             & $44{,}528\,\acs{ns}$                            & $ 47{,}521\,\acs{ns}$ & $ 50{,}662\,\acs{ns}$ \\ \hline
+    $8$                             & $34{,}207\,\acs{ns}$                            & $ 35{,}437\,\acs{ns}$ & $ 36{,}785\,\acs{ns}$ \\ \hline
+    $9$                             & $34{,}402\,\acs{ns}$                            & $ 35{,}615\,\acs{ns}$ & $ 36{,}935\,\acs{ns}$ \\ \hline
+    $10$                            & $35{,}543\,\acs{ns}$                            & $ 37{,}383\,\acs{ns}$ & $ 39{,}477\,\acs{ns}$ \\ \hline
+    \pagebreak
+    \multicolumn{4}{|l|}{\code{quilt\_board.undo\_action}}                                                                            \\ \hline
+    $1$                             & $31{,}102\,\acs{ns}$                            & $ 32{,}280\,\acs{ns}$ & $ 33{,}480\,\acs{ns}$ \\ \hline
+    $2$                             & $41{,}303\,\acs{ns}$                            & $ 43{,}142\,\acs{ns}$ & $ 45{,}123\,\acs{ns}$ \\ \hline
+    $3$                             & $42{,}107\,\acs{ns}$                            & $ 44{,}463\,\acs{ns}$ & $ 47{,}005\,\acs{ns}$ \\ \hline
+    $4$                             & $49{,}502\,\acs{ns}$                            & $ 53{,}502\,\acs{ns}$ & $ 57{,}428\,\acs{ns}$ \\ \hline
+    $5$                             & $47{,}362\,\acs{ns}$                            & $ 50{,}100\,\acs{ns}$ & $ 52{,}884\,\acs{ns}$ \\ \hline
+    $6$                             & $48{,}787\,\acs{ns}$                            & $ 51{,}625\,\acs{ns}$ & $ 54{,}677\,\acs{ns}$ \\ \hline
+    $7$                             & $46{,}934\,\acs{ns}$                            & $ 49{,}887\,\acs{ns}$ & $ 53{,}109\,\acs{ns}$ \\ \hline
+    $8$                             & $33{,}770\,\acs{ns}$                            & $ 35{,}296\,\acs{ns}$ & $ 36{,}853\,\acs{ns}$ \\ \hline
+    $9$                             & $36{,}411\,\acs{ns}$                            & $ 38{,}562\,\acs{ns}$ & $ 40{,}911\,\acs{ns}$ \\ \hline
+    $10$                            & $47{,}276\,\acs{ns}$                            & $ 50{,}162\,\acs{ns}$ & $ 53{,}180\,\acs{ns}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{quilt\_board.get\_valid\_actions\_for\_patch}}                                                         \\ \hline
+    $1$                             & $1{,}7679\,\acs{us}$                            & $ 1{,}9168\,\acs{us}$ & $ 2{,}0903\,\acs{us}$ \\ \hline
+    $2$                             & $1{,}1434\,\acs{us}$                            & $ 1{,}2095\,\acs{us}$ & $ 1{,}2737\,\acs{us}$ \\ \hline
+    $3$                             & $1{,}1442\,\acs{us}$                            & $ 1{,}2010\,\acs{us}$ & $ 1{,}2626\,\acs{us}$ \\ \hline
+    $4$                             & $1{,}3127\,\acs{us}$                            & $ 1{,}3947\,\acs{us}$ & $ 1{,}4741\,\acs{us}$ \\ \hline
+    $5$                             & $1{,}2429\,\acs{us}$                            & $ 1{,}3299\,\acs{us}$ & $ 1{,}4273\,\acs{us}$ \\ \hline
+    $6$                             & $919{,}69\,\acs{ns}$                            & $ 970{,}57\,\acs{ns}$ & $ 1{,}0247\,\acs{us}$ \\ \hline
+    $7$                             & $1{,}0859\,\acs{us}$                            & $ 1{,}1614\,\acs{us}$ & $ 1{,}2417\,\acs{us}$ \\ \hline
+    $8$                             & $853{,}17\,\acs{ns}$                            & $ 881{,}95\,\acs{ns}$ & $ 911{,}85\,\acs{ns}$ \\ \hline
+    $9$                             & $10{,}610\,\acs{us}$                            & $ 10{,}901\,\acs{us}$ & $ 11{,}210\,\acs{us}$ \\ \hline
+    $10$                            & $1{,}3706\,\acs{us}$                            & $ 1{,}4642\,\acs{us}$ & $ 1{,}5622\,\acs{us}$ \\ \hline
+    \multicolumn{4}{|l|}{\code{quilt\_board.get\_valid\_actions\_for\_special\_patch}}                                                \\ \hline
+    $1$                             & $826{,}07\,\acs{ns}$                            & $ 885{,}06\,\acs{ns}$ & $ 951{,}56\,\acs{ns}$ \\ \hline
+    $2$                             & $766{,}61\,\acs{ns}$                            & $ 807{,}77\,\acs{ns}$ & $ 850{,}73\,\acs{ns}$ \\ \hline
+    $3$                             & $806{,}81\,\acs{ns}$                            & $ 858{,}97\,\acs{ns}$ & $ 914{,}15\,\acs{ns}$ \\ \hline
+    $4$                             & $937{,}61\,\acs{ns}$                            & $ 1{,}0028\,\acs{us}$ & $ 1{,}0668\,\acs{us}$ \\ \hline
+    $5$                             & $894{,}89\,\acs{ns}$                            & $ 939{,}40\,\acs{ns}$ & $ 986{,}68\,\acs{ns}$ \\ \hline
+    $6$                             & $916{,}92\,\acs{ns}$                            & $ 971{,}67\,\acs{ns}$ & $ 1{,}0255\,\acs{us}$ \\ \hline
+    $7$                             & $608{,}10\,\acs{ns}$                            & $ 625{,}58\,\acs{ns}$ & $ 643{,}22\,\acs{ns}$ \\ \hline
+    $8$                             & $586{,}41\,\acs{ns}$                            & $ 604{,}76\,\acs{ns}$ & $ 623{,}57\,\acs{ns}$ \\ \hline
+    $9$                             & $616{,}20\,\acs{ns}$                            & $ 646{,}80\,\acs{ns}$ & $ 680{,}50\,\acs{ns}$ \\ \hline
+    $10$                            & $806{,}49\,\acs{ns}$                            & $ 852{,}98\,\acs{ns}$ & $ 901{,}61\,\acs{ns}$ \\ \hline
+\end{longtable}

@@ -370,7 +370,7 @@ impl Patchwork {
             || (Self::is_flag_player_2(player_flag)
                 && (self.status_flags & status_flags::PLAYER_2_HAS_SPECIAL_TILE) > 0)
         {
-            score += QuiltBoard::FULL_BOARD_BUTTON_INCOME;
+            score += QuiltBoard::BOARD_EXTRA_BUTTON_INCOME;
         }
 
         score

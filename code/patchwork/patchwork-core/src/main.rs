@@ -1,28 +1,31 @@
 use patchwork_core::{ActionId, PatchManager, QuiltBoard};
 
 fn main() {
-    verify();
-    // brute_force();
+    // let action_ids = [
+    //     ActionId::from_bits(44934),
+    //     ActionId::from_bits(45833),
+    //     ActionId::from_bits(46365),
+    //     ActionId::from_bits(47202),
+    //     ActionId::from_bits(49165),
+    //     ActionId::from_bits(49579),
+    //     ActionId::from_bits(49916),
+    //     ActionId::from_bits(51744),
+    //     ActionId::from_bits(52143),
+    //     ActionId::from_bits(53463),
+    //     ActionId::from_bits(54397),
+    //     ActionId::from_bits(56191),
+    //     ActionId::from_bits(57963),
+    //     ActionId::from_bits(58953),
+    // ];
+
+    let patch_ids = [1, 3, 4, 6, 10, 11, 12, 16, 17, 20 ,22, 26, 30, 32];
+
+    let action_ids = brute_force(patch_ids);
+    verify(action_ids);
 }
 
 #[allow(dead_code)]
-fn verify() {
-    let action_ids = [
-        ActionId::from_bits(44934),
-        ActionId::from_bits(45833),
-        ActionId::from_bits(46365),
-        ActionId::from_bits(47202),
-        ActionId::from_bits(49165),
-        ActionId::from_bits(49579),
-        ActionId::from_bits(49916),
-        ActionId::from_bits(51744),
-        ActionId::from_bits(52143),
-        ActionId::from_bits(53463),
-        ActionId::from_bits(54397),
-        ActionId::from_bits(56191),
-        ActionId::from_bits(57963),
-        ActionId::from_bits(58953),
-    ];
+fn verify(action_ids: [ActionId; 14]) {
     let actions = action_ids.map(|action_id| action_id.to_action());
 
     let mut quilt_board = QuiltBoard::default();
@@ -58,8 +61,8 @@ fn verify() {
 #[allow(dead_code)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::cognitive_complexity)]
-fn brute_force() {
-    let patches = [1, 3, 4, 6, 10, 11, 12, 16, 17, 20, 22, 26, 30, 32].map(PatchManager::get_patch);
+fn brute_force(patch_ids: [u8; 14]) -> [ActionId; 14] {
+    let patches = patch_ids.map(PatchManager::get_patch);
 
     let mut current_iteration = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     let mut current_action = [
@@ -82,7 +85,6 @@ fn brute_force() {
         "Patches: {:?}",
         patches.map(|patch| patch.id).iter().collect::<Vec<_>>(),
     );
-    println!("Transforms: {current_action:?}");
 
     let board = QuiltBoard::default();
 
@@ -90,7 +92,7 @@ fn brute_force() {
     println!("Iterations: {current_iteration:?}");
     let valid_actions = board.get_valid_actions_for_patch(patches[0], 0, true);
     if valid_actions.is_empty() {
-        return;
+        return current_action;
     }
 
     for valid_action in valid_actions {
@@ -255,7 +257,7 @@ fn brute_force() {
 
                                                         println!("Found solution!");
                                                         println!("Transforms: {current_action:?}");
-                                                        return;
+                                                        return current_action;
                                                     }
                                                 }
                                             }
@@ -271,4 +273,5 @@ fn brute_force() {
     }
 
     println!("No solution found");
+    current_action
 }

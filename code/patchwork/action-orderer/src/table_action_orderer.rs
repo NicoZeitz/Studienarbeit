@@ -1,4 +1,4 @@
-use patchwork_core::ActionId;
+use patchwork_core::{ActionId, Patchwork};
 
 use crate::{
     ActionOrderer, PATCH_PLACEMENT_ENDGAME_TABLE, PATCH_PLACEMENT_OPENING_TABLE, SPECIAL_PATCH_PLACEMENT_ENDGAME_TABLE,
@@ -33,7 +33,13 @@ fn interpolate(ply: usize, opening_value: f64, endgame_value: f64) -> f64 {
 
 impl ActionOrderer for TableActionOrderer {
     #[allow(clippy::unreadable_literal)]
-    fn score_action(&self, action: ActionId, pv_action: Option<ActionId>, current_ply: usize) -> f64 {
+    fn score_action(
+        &self,
+        _game: &Patchwork,
+        action: ActionId,
+        pv_action: Option<ActionId>,
+        current_ply: usize,
+    ) -> f64 {
         if pv_action.is_some() && action == pv_action.unwrap() {
             return 100000.0;
         }

@@ -1,7 +1,8 @@
 use crate::RandomOptions;
 use patchwork_core::{ActionId, Patchwork, Player, PlayerResult};
-use rand::{Rng, SeedableRng};
+use rand::{seq::SliceRandom, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
+use anyhow::anyhow;
 
 /// A computer player that takes random actions.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -35,8 +36,13 @@ impl Player for RandomPlayer {
     }
 
     fn get_action(&mut self, game: &Patchwork) -> PlayerResult<ActionId> {
-        let mut valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
-        let random_index = self.rng.gen_range(0..valid_actions.len());
-        Ok(valid_actions.remove(random_index))
+        game.get_valid_actions()
+            .choose(&mut self.rng)
+            .copied()
+            .ok_or_else(|| anyhow!("No valid actions"))
+
+        // let mut valid_actions = game.get_valid_actions().into_iter().collect::<Vec<_>>();
+        // let random_index = self.rng.gen_range(0..valid_actions.len());
+        // Ok(valid_actions.remove(random_index))
     }
 }

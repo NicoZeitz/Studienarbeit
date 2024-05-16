@@ -2,3 +2,129 @@
 \label{anhang:chapter-quellcode}
 
 \input{chapters/AA_optimization}
+
+\section{Minimax-Algorithmus}
+
+\refstepcounter{lstlisting}
+\addcontentsline{lol}{lstlisting}{\protect\numberline{\thelstlisting}Pseudocode vom Minimax-Algorithmus}
+
+\begin{algorithm}
+    \caption{Pseudocode vom Minimax-Algorithmus}
+    \label{algo:minimax}
+    \begin{algorithmic}[1]
+        \Function{minimax}{node $n$}
+        \If{$n$ is a terminal node}
+        \State \Return value of $n$
+        \ElsIf{$n$ is a maximizer node}
+        \State $maxValue \gets -\infty$
+        \For{each child node $c$ of $n$}
+        \State $value \gets \Call{minimax}{$c$}$
+        \State $maxValue \gets \max(maxValue, value)$
+        \EndFor
+        \State \Return $maxValue$
+        \ElsIf{$n$ is a minimizer node}
+        \State $minValue \gets +\infty$
+        \For{each child node $c$ of $n$}
+        \State $value \gets \Call{minimax}{$c$}$
+        \State $minValue \gets \min(minValue, value)$
+        \EndFor
+        \State \Return $minValue$
+        \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\pagebreak
+
+\section{Spielimplementierung}
+\label{anhang:section-quellcode-game-implementation}
+
+\lstinputlisting[
+    label={code:quilt-board-special-tile-condition},
+    caption={\code{is\_special\_tile\_condition\_reached} Methode},
+    captionpos=b,
+    escapeinside={<*}{*>},
+    language=Rust,
+    firstline=0,
+]{res/code/quilt-board-special-tile-condition.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:get-initial-state},
+    caption={\code{Patchwork::get\_initial\_state}},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/get-initial-state.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:get-termination-result},
+    caption={\code{Patchwork::get\_termination\_result}},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/get-termination-result.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:do-action},
+    caption={\code{Patchwork::do\_action}},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+    basicstyle=\ttfamily\scriptsize
+]{res/code/do-action.rs}
+
+\pagebreak
+
+\section{Performance Benchmarks}
+\label{anhang:section-quellcode-performance-benchmarks}
+
+\lstinputlisting[
+    label={code:performance-benchmarks},
+    caption={[Performance Benchmarks]Performance Benchmarks des Patchwork-Computerprogramms},
+    captionpos=b,
+    language=Rust,
+    firstline=0,
+    basicstyle=\ttfamily\footnotesize
+]{res/code/performance-benchmark.rs}
+
+\pagebreak
+
+\section{Principal-Variation-Search Spieler}
+\label{anhang:section-quellcode-principal-variation-search-spieler}
+
+\lstinputlisting[
+    label={code:pvs-search-extension},
+    caption={[Sucherweiterungen beim PVS-Spieler] Sucherweiterungen beim \acs{PVS}-Spieler},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/pvs-search-extension.rs}
+
+\pagebreak
+
+\lstinputlisting[
+    label={code:pvs-search},
+    caption={[Suchmethode des PVS-Spielers] Suchmethode des \acs{PVS}-Spielers},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/pvs-search.rs}
+
+\pagebreak
+
+\section{PatchZero Spieler}
+\label{anhang:section-quellcode-patchzero-spieler}
+
+\lstinputlisting[
+    label={code:patchzero-mini-batch-evaluation},
+    caption={Minibatch Ausführung bei PatchZero},
+    captionpos=b,
+    language=Rust,
+    firstline=0
+]{res/code/mini-batch-evaluation.rs}

@@ -11,8 +11,10 @@ resolver = "2"
 members = [
     "action-orderer",
     "alphazero-player",
+    "analysis/action-ordering",
     "analysis/empirical-measurement",
     "analysis/max-button-income",
+    "analysis/player-rating",
     "evaluator",
     "evaluator/evaluator-train",
     "greedy-player",

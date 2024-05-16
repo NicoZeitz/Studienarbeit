@@ -59,7 +59,8 @@ pub fn handle_upi(rl: &mut Editor<(), FileHistory>, args: Vec<String>) -> anyhow
             let readline = rl.readline(prompt);
             match readline {
                 Ok(line) => {
-                    if sender.send(line).is_err() {
+                    let line = line.trim();
+                    if sender.send(line.to_string()).is_err() {
                         // channel closed, exit loop
                         close_flag.store(true, std::sync::atomic::Ordering::SeqCst);
                         return Ok(());

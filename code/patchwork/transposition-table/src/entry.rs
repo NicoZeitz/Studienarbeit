@@ -17,7 +17,7 @@ pub struct Entry {
     /// - `depth`           (8 Bits): The depth at which this entry was stored
     /// - `evaluation`      (37 Bits): The evaluation of the position
     /// - `evaluation_type` (2 Bits): The type of node this entry is
-    /// - `best_action`     (17 Bits): The best action to take in this position-
+    /// - `best_action`     (17 Bits): The best action to take in this position
     ///
     /// The data is stored as `MSB evaluation(37 Bits)|action_id(17 Bits)|depth(8 Bits)|evaluation_type(2 Bits) LSB`
     pub data: u64,
@@ -128,7 +128,8 @@ impl Entry {
     ///
     /// The packed data and extra data
     #[rustfmt::skip]
-    #[must_use]    pub fn pack_data(
+    #[must_use]
+    pub fn pack_data(
         depth: usize,
         evaluation: i32,
         evaluation_type: EvaluationType,

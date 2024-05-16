@@ -1,5 +1,6 @@
 use patchwork_core::{PatchManager, Patchwork, PlayerState, QuiltBoard, TimeBoard};
 
+/// TODO: use new values
 /// A Zobrist hash implementation for Patchwork.
 /// This is used to hash the game state.
 ///
@@ -85,7 +86,7 @@ impl ZobristHash {
     /// still be correct. But to be safe the bound is kept at `335`.
     pub const MAX_BUTTON_BALANCE: usize = PlayerState::STARTING_BUTTON_BALANCE as usize
         + TimeBoard::AMOUNT_OF_BUTTON_INCOME_TRIGGERS * Self::MAX_BUTTON_INCOME
-        + QuiltBoard::FULL_BOARD_BUTTON_INCOME as usize
+        + QuiltBoard::BOARD_EXTRA_BUTTON_INCOME as usize
         + TimeBoard::MAX_POSITION as usize;
 
     /// The maximum amount of button income a player can have is bounded

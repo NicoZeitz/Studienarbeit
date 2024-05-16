@@ -6,7 +6,7 @@
     },
     // "rust-analyzer.cargo.features": ["performance_tests"],
     "[rust]": {
-        "editor.inlayHints.enabled": "on"
+        "editor.inlayHints.enabled": "off"
     },
     "rust-analyzer.checkOnSave": true,
     "rust-analyzer.lens.implementations.enable": false,
@@ -36,6 +36,9 @@
         "*.tsx": "${capture}.ts",
         "package.json": "package-lock.json, yarn.lock, tsconfig.*.json, tsconfig-*.json, tscondif.tsbuildinfo, tailwind.config.js, vite.config.ts, postcss.config.js, tsconfig.json, .eslintrc.js",
         ".env": ".env.example"
+    },
+    "[tex]": {
+        "editor.formatOnSave": false
     },
     // Latex
     // "latex-workshop.latex.autoBuild.run": "never",
@@ -118,6 +121,7 @@
         "argmax",
         "argpartition",
         "argwhere",
+        "ascii",
         "backprop",
         "backpropagate",
         "backpropagated",
@@ -127,6 +131,7 @@
         "bincode",
         "bitvec",
         "bools",
+        "captionpos",
         "Cayley",
         "cbrt",
         "CHOOSABLE",
@@ -166,13 +171,17 @@
         "falsch",
         "Fassung",
         "Fastpath",
+        "firstline",
         "Flickenzüge",
         "fürs",
         "Gedruckte",
         "gewünscht",
         "gibibytes",
+        "glicko",
+        "Glicko",
         "haben",
         "happends",
+        "hasher",
         "Hasher",
         "Hauptteil",
         "Hilfreiches",
@@ -199,6 +208,7 @@
         "Listenverzeichnisses",
         "Literaturverzeichnis",
         "lldb",
+        "lpsolve",
         "lstm",
         "matmul",
         "maxᵢ",
@@ -238,6 +248,7 @@
         "println",
         "puct",
         "PUCT",
+        "readline",
         "Readline",
         "readyok",
         "realloc",
@@ -276,6 +287,7 @@
         "Texel's",
         "thiserror",
         "Tiefe",
+        "Tiefensuche",
         "Titelseite",
         "titlecase",
         "tqdm",
@@ -298,8 +310,10 @@
         "werkzeug",
         "Winlibs",
         "xoring",
+        "xoshiro",
         "Xoshiro",
         "zobrist",
         "zwischen"
-    ]
+    ],
+    "C_Cpp.intelliSenseEngineFallback": "enabled"
 }

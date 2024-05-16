@@ -43,6 +43,7 @@
 2. Start lldb: `path/to/lldb.exe target/debug/console.exe`
 3. (Optional) Set breakpoints: `breakpoint set --file src/main.rs --line 10`
 4. Launch the program: `process launch`
+   a. Launch the program with stdin: `process launch -i file.txt`
 5. (Optional) Continue execution: `process continue`
 6. (Optional) See backtrace after stack overflow: `thread backtrace`
 

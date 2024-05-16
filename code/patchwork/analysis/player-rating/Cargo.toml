@@ -1,0 +1,17 @@
+[package]
+name = "player-rating"
+edition = "2021"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+readme.workspace = true
+
+[dependencies]
+rand = "0.8.5"
+regex = "1.10.4"
+skillratings = "0.26.0"
+
+[lints]
+workspace = true

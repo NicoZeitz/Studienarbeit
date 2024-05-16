@@ -3,6 +3,7 @@ import DuckButton from '../DuckButton/DuckButton';
 import PlayerSelector from '../PlayerSelector/PlayerSelector';
 import type { PlayerSettings } from '../PopupSettings/playerSettings.ts';
 import { PlayerIds } from '../../player/playerIds.ts';
+import { Link } from 'react-router-dom';
 
 export interface MainPageProps {}
 
@@ -58,10 +59,11 @@ export default function MainPage(props: MainPageProps) {
                     player={player2}
                 />
             </div>
-
-            <button className="rounded-lg bg-[#68eb5d] px-10 py-3 text-lg font-medium">
-                Spiel starten
-            </button>
+            <Link to="/game/c793dbe7-5829-428a-a249-55a03eb091c9">
+                <button className="rounded-lg bg-[#68eb5d] px-10 py-3 text-lg font-medium">
+                    Spiel starten
+                </button>
+            </Link>
             <DuckButton />
         </div>
     );

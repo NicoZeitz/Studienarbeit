@@ -16,13 +16,37 @@
 
     % Alphabetisch selbst sortieren - nicht verwendete Formeln rausnehmen!
     % Allgemein: \acro{KÜRZEL}[ABKÜRZUNG]{\acrounit{SI-EINHEIT}BESCHREIBUNG}
-    %\acro{KiB}[\phantom{KiB}]{\acrounit{KiB}Kibibyte ($2^{10}$ Byte)}
-    % \acro{MiB}[\phantom{MiB}]{\acrounit{MiB}Mebibyte ($2^{20}$ Byte)}
+    % \acro{KiB}[\phantom{KiB}]{\acrounit{KiB}Kibibyte ($2^{10}$ Byte)}
 
-    \acro{GTC}[\ensuremath{\text{GTC}(\mathcal{G})}]{Spielbaumkomplexität von Spiel $\mathcal{G}$}
+    \acro{SSC}[\ensuremath{\text{SSC}(\mathcal{G})}]{Zustandsraumkomplexität (Space-State Complexity) von Spiel $\mathcal{G}$}
+    \acro{GTS}[\ensuremath{\text{GTS}(\mathcal{G})}]{Spielbaumgröße (Game-Tree Size) von Spiel $\mathcal{G}$}
+    \acro{GTC}[\ensuremath{\text{GTC}(\mathcal{G})}]{Spielbaumkomplexität (Game-Tree Complexity) von Spiel $\mathcal{G}$}
 
+    \vspace{1.2cm}
 
-    % \vspace{1.2cm}
+    \acro{s}[\ensuremath{s}]{Sekunde}
+    \acro{ms}[\ensuremath{ms}]{Millisekunde ($10^{-3}$ Sekunden)}
+    \acro{us}[\ensuremath{\mu{}s}]{Mikrosekunde ($10^{-6}$ Sekunden)}
+    \acro{ns}[\ensuremath{ns}]{Nanosekunde ($10^{-9}$ Sekunden)}
+    \acro{ps}[\ensuremath{ps}]{Pikosekunde ($10^{-12}$ Sekunden)}
+
+    \vspace{1.2cm}
+
+    \acro{MiB}[\acroextra{\si[per-mode=fraction,fraction-function=\sfrac]{MiB}}]{Mebibyte ($2^{20}$ Byte)}
+    \acro{GiB}[\acroextra{\si[per-mode=fraction,fraction-function=\sfrac]{GiB}}]{Gibibyte ($2^{30}$ Byte)}
+
+    \vspace{1.2cm}
+
+    \acro{MHz}[\acroextra{\si[per-mode=fraction,fraction-function=\sfrac]{MHz}}]{Megahertz ($10^{6}$ Hertz)}
+
+    \vspace{1.2cm}
+
+    \acro{u8}[\code{u8}]{8-bit vorzeichenlose Ganzzahl}
+    \acro{u32}[\code{u32}]{32-bit vorzeichenlose Ganzzahl}
+    \acro{u64}[\code{u64}]{64-bit vorzeichenlose Ganzzahl}
+    \acro{u128}[\code{u128}]{128-bit vorzeichenlose Ganzzahl}
+
+    \vspace{1.2cm}
 
     % \acro{n}[\ensuremath{n}]{\acrospace{}Anzahl der Iterationen}
     % \acro{tStart}[\ensuremath{t_{Start}}]{\acrounit{ms}Startzeit}
@@ -49,15 +73,13 @@
     % \acro{mOptimiertesJSPIAvg}[\ensuremath{\overline{m}_{Opt.\ JSPI}}]{\acrounit{B}Durchschnittlicher Speicherverbrauch von optimiertem JSPI}
 
     % % alternative Darstellungen für den Text
+    \acroplural{SSC}[\ensuremath{\text{SSC}}]{SSC im Text ohne Aufruf}
+    \acroplural{GTS}[\ensuremath{\text{GTS}}]{GTS im Text ohne Aufruf}
     \acroplural{GTC}[\ensuremath{\text{GTC}}]{GTC im Text ohne Aufruf}
-    % \acroplural{KiB}[KiB]{KiB im Text}
-    % \acroplural{MiB}[MiB]{MiB im Text}
-    % \acroplural{n}[\ensuremath{\scriptstyle{}n}]{n als Zählerindex}
-    % \acroplural{tStart}[\ensuremath{t_{Start}^{(i)}}]{Startzeit in Iteration i}
-    % \acroplural{tEnde}[\ensuremath{t_{Ende}^{(i)}}]{Endzeit in Iteration i}
-    % \acroplural{tLaufzeit}[\ensuremath{t_{Laufzeit}^{(i)}}]{Laufzeit in Iteration i}
-    % \acroplural{tLaufzeitAvg}[\ensuremath{\overline{t}}]{\acrounit{ms}Durchschnittliche Laufzeit (Arithmetisches Mittel)}
-    % \acroplural{tLaufzeitMedian}[\ensuremath{\tilde{t}}]{\acrounit{ms}Durchschnittliche Laufzeit (Median)}
+    \acroplural{ms}[\ensuremath{ms}]{Milisekunden}
+    \acroplural{MiB}[MiB]{MiB im Text}
+    \acroplural{GiB}[GiB]{GiB im Text}
+    \acroplural{MHz}[MHz]{MHz im Text}
 \end{acronym}
 
 % allow usage with \ac instead of always using \acs

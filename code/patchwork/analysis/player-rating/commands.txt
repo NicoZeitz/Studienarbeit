@@ -1,0 +1,31 @@
+cat test.txt | cargo run --bin patchwork
+in Command Prompt (Powershell will add a BOM by default and fail)
+where test.txt contains
+
+```
+compare
+greedy  // player 1 name
+random  // player 2 name
+100     // games to play
+11      // parallelization
+compare // next game
+...
+```
+
+afterwards go to the analysis/player-ratings folder and execute 
+the player-ratings.exe on the command line to see the ratings
+
+human
+human(name: string)
+random
+random(seed: uint)
+greedy
+greedy(eval: static|win|score|nn)
+minimax
+minimax(depth: uint, patches: uint)
+pvs
+pvs(time: float, ord: table | eval, eval: static|win|score|nn, fail: hard|soft, asp: yes|no, lmr: yes|no, lmp: yes|no, ext: yes|no, tt: enabled|disabled, smp: yes|no)
+mcts
+mcts(time: float, iter: uint, tree: reuse|new, root: uint, leaf: uint, policy: uct|partial-score|score|puct, eval: static|win|score|nn)
+alphazero
+alphazero(time: float, iter: uint, policy: uct|partial-score|score|puct)

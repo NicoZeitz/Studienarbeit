@@ -1,4 +1,5 @@
 use std::{
+    fmt::{Display, Formatter},
     num::NonZeroUsize,
     sync::{atomic::AtomicBool, Arc},
 };
@@ -22,6 +23,22 @@ pub enum AlphaZeroEndCondition {
     // TODO: extract end condition for all players
     // add something like till end for other players (e.g. greedy random)
     // UntilEnd,
+}
+
+impl Display for AlphaZeroEndCondition {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Iterations { iterations } => {
+                write!(f, "Iterations({iterations})")
+            }
+            Self::Time { duration, .. } => {
+                write!(f, "Time({duration:?})")
+            }
+            Self::Flag { .. } => {
+                write!(f, "Flag")
+            }
+        }
+    }
 }
 
 pub struct AlphaZeroOptions {

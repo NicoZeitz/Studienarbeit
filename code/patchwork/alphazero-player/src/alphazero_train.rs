@@ -1,9 +1,10 @@
 use std::{env, fs, path::Path};
 
-use alphazero_player::train::{Trainer, TrainingArgs};
+use alphazero_player::{network::DefaultPatchZero, train::{Trainer, TrainingArgs}};
 
-use candle_core::Device;
-use patchwork_core::PlayerResult;
+use candle_core::{DType, Device};
+use candle_nn::{VarBuilder, VarMap};
+use patchwork_core::{Patchwork, PlayerResult};
 use tree_policy::PUCTPolicy;
 
 fn main() -> PlayerResult<()> {
@@ -25,6 +26,20 @@ fn main() -> PlayerResult<()> {
 
     let start_time = std::time::Instant::now();
     trainer.learn::<PUCTPolicy>()?;
+    println!("Took: {:?}", start_time.elapsed());
+
+    Ok(())
+}
+
+#[allow(dead_code)]
+fn test_network() -> PlayerResult<()> {
+    let varmap = VarMap::new();
+    let var_builder = VarBuilder::from_varmap(&varmap, DType::F32, &Device::Cpu);
+    let network = DefaultPatchZero::new(var_builder, Device::Cpu)?;
+    let state = Patchwork::get_initial_state(None);
+
+    let start_time = std::time::Instant::now();
+    network.forward_t(&[&state], false)?;
     println!("Took: {:?}", start_time.elapsed());
 
     Ok(())

@@ -46,7 +46,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         let network = DefaultPatchZero::new(vb, options.device.clone()).expect("[AlphaZeroPlayer::new] Failed to create network");
 
         Self {
-            name:  Self::format_name(name, options.as_ref(), None),
+            name: name.to_string(),
             search_tree: DefaultSearchTree::new(
                 false,
                 Policy::default(),
@@ -59,6 +59,7 @@ impl<Policy: TreePolicy + Default> AlphaZeroPlayer<Policy> {
         }
     }
 
+    #[allow(dead_code)]
     fn format_name(name: &str, options: &AlphaZeroOptions, weights_file: Option<&std::path::Path>) -> String {
         format!(
             "{} [{}|B{}|P{}]{}",

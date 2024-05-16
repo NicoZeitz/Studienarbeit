@@ -1,4 +1,7 @@
-use std::num::NonZeroUsize;
+use std::{
+    fmt::{Display, Formatter},
+    num::NonZeroUsize,
+};
 
 use patchwork_core::Logging;
 use transposition_table::Size;
@@ -21,10 +24,6 @@ impl PVSOptions {
     /// When some features are used in combination that is not allowed
     #[must_use]
     pub fn new(time_limit: std::time::Duration, features: PVSFeatures, logging: Logging) -> Self {
-        if matches!(features.lazy_smp, LazySMPFeature::Yes(_)) {
-            unimplemented!("The lazy SMP feature is not implemented jet.") // UNIMPLEMENTED: implement
-        }
-
         if matches!(features.lazy_smp, LazySMPFeature::Yes(_))
             && matches!(features.transposition_table, TranspositionTableFeature::Disabled)
         {
@@ -79,7 +78,7 @@ impl Default for PVSFeatures {
             late_move_reductions: true,
             late_move_pruning: true,
             search_extensions: true,
-            lazy_smp: LazySMPFeature::No,
+            lazy_smp: LazySMPFeature::default(),
         }
     }
 }
@@ -96,6 +95,15 @@ pub enum LazySMPFeature {
     No,
     /// The lazy SMP feature is enabled with the given parallelism.
     Yes(NonZeroUsize),
+}
+
+impl Display for LazySMPFeature {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::No => write!(f, "No"),
+            Self::Yes(parallelism) => write!(f, "Yes(Parallelism: {parallelism})"),
+        }
+    }
 }
 
 impl Default for LazySMPFeature {
@@ -124,6 +132,15 @@ pub enum FailingStrategy {
     FailHard,
 }
 
+impl Display for FailingStrategy {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::FailSoft => write!(f, "Soft"),
+            Self::FailHard => write!(f, "Hard"),
+        }
+    }
+}
+
 /// Different options for the transposition table feature.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TranspositionTableFeature {
@@ -136,11 +153,28 @@ pub enum TranspositionTableFeature {
     SymmetryEnabled { size: Size, strategy: FailingStrategy },
 }
 
+impl Display for TranspositionTableFeature {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Disabled => write!(f, "Disabled"),
+            Self::Enabled { size, strategy } => write!(f, "Enabled(Size: {size:?}, Strategy: {strategy})"),
+            Self::SymmetryEnabled { size, strategy } => {
+                write!(f, "Symmetry(Size: {size:?}, Strategy: {strategy})")
+            }
+        }
+    }
+}
+
+impl TranspositionTableFeature {
+    pub const DEFAULT_SIZE: Size = Size::MiB(250);
+    pub const DEFAULT_STRATEGY: FailingStrategy = FailingStrategy::FailHard;
+}
+
 impl Default for TranspositionTableFeature {
     fn default() -> Self {
         Self::SymmetryEnabled {
-            size: Size::MiB(10),
-            strategy: FailingStrategy::FailHard,
+            size: Self::DEFAULT_SIZE,
+            strategy: Self::DEFAULT_STRATEGY,
         }
     }
 }

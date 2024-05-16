@@ -1,12 +1,11 @@
-use patchwork_core::{ActionId, Evaluator, Patchwork, Player, PlayerResult};
-
 use evaluator::StaticEvaluator;
+use patchwork_core::{ActionId, Evaluator, Patchwork, Player, PlayerResult};
 
 use crate::MinimaxOptions;
 
 /// A computer player that uses the Minimax algorithm to choose an action.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct MinimaxPlayer {
+pub struct MinimaxPlayer<Eval: Evaluator = StaticEvaluator> {
     /// The name of the player.
     pub name: String,
     /// The depth to search to.
@@ -15,10 +14,12 @@ pub struct MinimaxPlayer {
     /// This is used to reduce the branching factor.
     pub amount_actions_per_piece: usize,
     /// The evaluator to evaluate the game state.
-    pub evaluator: StaticEvaluator, // TODO: use boxed stable evaluator
+    pub evaluator: Eval,
 }
 
-impl MinimaxPlayer {
+pub type DefaultMinimaxPlayer = MinimaxPlayer<StaticEvaluator>;
+
+impl<Eval: Evaluator + Default> MinimaxPlayer<Eval> {
     /// Creates a new [`MinimaxPlayer`] with the given name.
     pub fn new(name: impl Into<String>, options: Option<MinimaxOptions>) -> Self {
         let MinimaxOptions {
@@ -27,20 +28,20 @@ impl MinimaxPlayer {
         } = options.unwrap_or_default();
         Self {
             name: name.into(),
-            evaluator: StaticEvaluator,
+            evaluator: Eval::default(),
             depth,
             amount_actions_per_piece,
         }
     }
 }
 
-impl Default for MinimaxPlayer {
+impl<Eval: Evaluator + Default> Default for MinimaxPlayer<Eval> {
     fn default() -> Self {
         Self::new("Minimax Player".to_string(), None)
     }
 }
 
-impl Player for MinimaxPlayer {
+impl<Eval: Evaluator> Player for MinimaxPlayer<Eval> {
     fn name(&self) -> &str {
         &self.name
     }
@@ -94,7 +95,7 @@ impl Player for MinimaxPlayer {
     }
 }
 
-impl MinimaxPlayer {
+impl<Eval: Evaluator> MinimaxPlayer<Eval> {
     fn minimax<Filter>(
         game: &Patchwork,
         depth: usize,
@@ -159,10 +160,7 @@ impl MinimaxPlayer {
             .take(amount_actions_per_piece)
             .collect::<Vec<_>>();
 
-        if place_first_piece_tuple
-            .first()
-            .is_some_and(|(_, a, _)| a.is_special_patch_placement())
-        {
+        if place_first_piece_tuple.first().is_some_and(|(_, a, _)| a.is_special_patch_placement()) {
             let mut place_first_piece_tuple = place_first_piece_tuple;
             place_first_piece_tuple.sort_by(|(_, _, e1), (_, _, e2)| {
                 match e2.cmp(e1) {
@@ -179,10 +177,7 @@ impl MinimaxPlayer {
             });
 
             // special patch placement move
-            return place_first_piece_tuple
-                .into_iter()
-                .take(amount_actions_per_piece * 3)
-                .collect::<Vec<_>>();
+            return place_first_piece_tuple.into_iter().take(amount_actions_per_piece * 3).collect::<Vec<_>>();
         }
 
         let walking_tuple = valid_actions

@@ -41,13 +41,14 @@ impl<Policy: TreePolicy + Default, Eval: Evaluator + Default> MCTSPlayer<Policy,
         };
 
         Self {
-            name: format!(
-                "{} [R{}|L{}|T{}]",
-                name.into(),
-                options.root_parallelization,
-                options.leaf_parallelization,
-                if options.reuse_tree { "R" } else { "N" }
-            ),
+            // name: format!(
+            //     "{} [R{}|L{}|T{}]",
+            //     name.into(),
+            //     options.root_parallelization,
+            //     options.leaf_parallelization,
+            //     if options.reuse_tree { "R" } else { "N" }
+            // ),
+            name: name.into(),
             policy: Default::default(),
             evaluator: Default::default(),
             options,
@@ -356,10 +357,8 @@ impl<Policy: TreePolicy, Eval: Evaluator> Player for MCTSPlayer<Policy, Eval> {
                 let action = pick_best_action_from_multiple(&trees);
 
                 if *reuse_tree {
-                    self.last_trees = trees
-                        .into_iter()
-                        .map(|tree| get_tree_for_reuse(action, tree.root, tree.allocator))
-                        .collect();
+                    self.last_trees =
+                        trees.into_iter().map(|tree| get_tree_for_reuse(action, tree.root, tree.allocator)).collect();
                 }
 
                 action
@@ -395,11 +394,7 @@ pub fn pick_best_action(search_tree: &SearchTree<'_, impl TreePolicy, impl Evalu
         })
         .unwrap();
 
-    let best_action = search_tree
-        .allocator
-        .get_node(best_action_node_id)
-        .action_taken
-        .unwrap();
+    let best_action = search_tree.allocator.get_node(best_action_node_id).action_taken.unwrap();
 
     best_action
 }
@@ -440,11 +435,7 @@ pub fn pick_best_action_from_multiple(nodes: &[Tree]) -> ActionId {
         }
     }
 
-    *action_map
-        .iter()
-        .max_by_key(|(_, (visits, wins))| (*visits, *wins))
-        .unwrap()
-        .0
+    *action_map.iter().max_by_key(|(_, (visits, wins))| (*visits, *wins)).unwrap().0
 }
 
 /// Gets the tree to reuse for the given action.

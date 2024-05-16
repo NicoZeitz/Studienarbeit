@@ -31,20 +31,133 @@ const patchAttribute = [
         { gridRow: '4 / span 6', gridColumn: '4 / span 6', rotate: '180deg' },
         { gridRow: '4 / span 6', gridColumn: '4 / span 6', rotate: '270deg' },
     ],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
+    [
+        // patch id 02
+        { gridRow: '3 / span 6', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 03
+        { gridRow: '3 / span 6', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 04
+        { gridRow: '4 / span 4', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 05
+        { gridRow: '2 / span 8', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 06
+        { gridRow: '2 / span 8', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 07
+        { gridRow: '3 / span 6', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 08
+        { gridRow: '3 / span 6', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 09
+        { gridRow: '4 / span 4', gridColumn: '4 / span 4' },
+    ],
     [
         // patch id 10
         { gridRow: '2 / span 8', gridColumn: '4 / span 4' },
         { gridRow: '2 / span 8', gridColumn: '6 / span 4', rotate: '90deg' },
         { gridRow: '4 / span 8', gridColumn: '4 / span 4', rotate: '180deg' },
         { gridRow: '2 / span 8', gridColumn: '4 / span 4', rotate: '270deg' },
+    ],
+    [
+        // patch id 11
+        { gridRow: '3 / span 6', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 12
+        { gridRow: '2 / span 8', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 13
+        { gridRow: '2 / span 8', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 14
+        { gridRow: '3 / span 6', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 15
+        { gridRow: '4 / span 4', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 16
+        { gridRow: '2 / span 8', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 17
+        { gridRow: '3 / span 6', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 18
+        { gridRow: '4 / span 4', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 19
+        { gridRow: '4 / span 4', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 20
+        { gridRow: '3 / span 6', gridColumn: '1 / span 10' },
+        { gridRow: '3 / span 10', gridColumn: '1 / span 20', rotate: '90deg' },
+    ],
+    [
+        // patch id 21
+        { gridRow: '4 / span 4', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 22
+        { gridRow: '4 / span 4', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 23
+        { gridRow: '4 / span 4', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 24
+        { gridRow: '3 / span 6', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 25
+        { gridRow: '5 / span 2', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 26
+        { gridRow: '3 / span 6', gridColumn: '4 / span 4' },
+    ],
+    [
+        // patch id 27
+        { gridRow: '5 / span 2', gridColumn: '1 / span 10' },
+    ],
+    [
+        // patch id 28
+        { gridRow: '5 / span 2', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 29
+        { gridRow: '3 / span 6', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 30
+        { gridRow: '3 / span 6', gridColumn: '3 / span 6' },
+    ],
+    [
+        // patch id 31
+        { gridRow: '4 / span 4', gridColumn: '2 / span 8' },
+    ],
+    [
+        // patch id 32
+        { gridRow: '3 / span 6', gridColumn: '2 / span 8' },
     ],
 ] as const satisfies Array<Array<CSSProperties>>;
 
@@ -63,7 +176,7 @@ export default function Patch(propss: PatchProps) {
 
     // TODO: percentages for grid size
     return (
-        <div className="grid h-36 max-h-36 w-36 max-w-36 grid-cols-10 grid-rows-10 ">
+        <div className="grid h-[220px] w-[220px] grid-cols-10 grid-rows-10 ">
             <motion.picture
                 style={{
                     ...patchAttribute[patch.id][attributeIndex],

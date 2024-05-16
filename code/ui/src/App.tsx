@@ -4,7 +4,6 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
     RouterProvider,
-    Link,
 } from 'react-router-dom';
 import GameLayout, { gameLoader } from './components/GameLayout/GameLayout.tsx';
 import MainPage from './components/MainPage/MainPage.tsx';
@@ -14,15 +13,10 @@ const router = createBrowserRouter(
         <>
             <Route
                 path="/"
-                element={<>
-                    <div className='fixed top-0 left-0'>
-                        TODO Home
-                        <Link to="/game/c793dbe7-5829-428a-a249-55a03eb091c9">
-                            NAVIGATE TO GAME
-                        </Link>
-                    </div>
-                    <MainPage />
-                </>
+                element={
+                    <>
+                        <MainPage />
+                    </>
                 }
             />
 

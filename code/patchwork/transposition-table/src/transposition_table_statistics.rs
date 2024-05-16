@@ -146,7 +146,7 @@ impl TranspositionTableStatistics {
         writeln!(writer, "├────────┼──────────────────────┼───────┼─────┼────────────┼────────────┼─────────────────┤")?;
         let max_entries_value = max_entries.unwrap_or(0);
         let mut written_entries = 0;
-        for (index, entry) in transposition_table.entries.iter().enumerate() {
+        for (index, entry) in transposition_table.entries().iter().enumerate() {
             if entry.key == 0 {
                 continue;
             }

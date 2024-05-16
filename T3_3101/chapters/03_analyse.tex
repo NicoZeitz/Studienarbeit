@@ -56,7 +56,7 @@ Während des Spielverlaufs rücken die Zeitstein der beiden Spieler immer weiter
     \centering
     \includegraphics[width=0.18\textwidth]{res/pictures/assets/special-tile.png}
     % \vspace{-10pt}
-    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % Das folgende ist ein Trick, um "Abbildung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
     % im Abbildungsverzeichnis. Der Text darunter wird
     % tatsächlich angezeigt.
@@ -78,12 +78,13 @@ In der Spielanleitung ist nicht genau beschrieben, was geschehen soll, wenn ein 
 Außerdem wird in der Spielanleitung geschrieben, dass der Spieler, welcher \enquote{zuerst ein Quadrat von mindestens $7\times7$ Feldern auf seinem Ablageplan vollständig belegt hat} \cite{2014.PatchworkSpielanleitung}, das Sonderplättchen bekommt. Hier wird nicht ganz deutlich, wie genau diese Regel auszulegen ist. Die Regel wird im Konsens wie folgt interpretiert: Es muss kein vollständiges Quadrat ($8\times8$, $9\times9$) das $7\times7$-Quadrat umschließen, es reicht aus, wenn $7\times7$-Felder vollständig von Flicken bedeckt sind. Somit ist erlaubt, dass neben dem $7\times7$-Quadrat weitere Felder ausgefüllt sind und die gesamte Form auf dem Ablageplan kein Quadrat sein muss. \cite{2014.Discussion7x7}
 
 \section{Spieltheoretische Analyse}
+\label{section:spieltheoretische-analyse}
 
-Patchwork ist ein \emph{sequentielles} 2\textendash{}Spieler\textendash{}Brettspiel. Sequentielle Spiele sind rundenbasierte Spiele, bei denen die Spieler nacheinander ziehen \cite[S. 53]{2014.GameTheoryThroughExamples}. Außerdem ist Patchwork ein Spiel mit \emph{perfekter Information}, \dash dass beide Spieler zu jeder Zeit genau wissen, was der andere Spieler getan hat und wie der jetzige Zustand des Spiels ist. Des Weiteren ist Patchwork ein \emph{Strategiespiel}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \emph{Nullsummenspiel}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels.
+Patchwork ist ein \hyperref[text:game-theory-sequenziell]{\emph{sequentielles}}, \hyperref[text:game-theory-kompetitiv]{\emph{kompetitives}} 2\textendash{}Spieler\textendash{}Brettspiel. Außerdem ist Patchwork ein Spiel mit \hyperref[text:game-theory-perfekte-information]{\emph{perfekter}} sowie \hyperref[text:game-theory-vollkommene-information]{\emph{vollkommener Information}}.Des Weiteren ist Patchwork ein \hyperref[text:game-theory-strategiespiel]{\emph{Strategiespiel}}. Wie für viele Strategiespiele typisch, enthält Patchwork auch keinen Zufall während des Spielablaufes. Die einzige Ausnahme ist vor dem Spielbeginn, da dort die Flicken in einer zufälligen Reihenfolge ausgelegt werden. Da beide Spieler in dem Brettspiel versuchen einen Sieg zu erreichen, handelt es sich weiterhin um ein \hyperref[text:game-theory-nullsummenspiel]{\emph{Nullsummenspiel}}. Bei Nullsummenspielen wird der Gewinn für einen Spieler als Verlust des anderen Spielers angesehen. Auch wenn das in Patchwork für einen einzelnen Spielzug nicht unbedingt der Fall sein muss, geht es bei Nullsummenspielen aber nur um das Gewinnen oder Verlieren des gesamten Spiels. Da der Ablageplan immer nur weiter befüllt werden kann bzw. die Zeitsteine immer nur vorrücken können und es dafür immer weniger Möglichkeiten gibt, \hyperref[text:game-theory-konvergenz]{\emph{konvergiert}} Patchwork, was automatisch auch bedeutet, dass die Spiellänge begrenzt ist.
 
 \subsection*{Anzahl der möglichen Startpositionen}
 
-Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnug aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000$ Möglichkeiten. Somit gibt es $\approx 2{,}6 \cdot 10^{35}$ mögliche Startpositionen.
+Das Brettspiel ist bis auf die Startposition der Spielteile deterministisch. Der einzige Zufallsfaktor beim Start ist das Auslegen der einzelnen Flicken im Kreis. Es gibt insgesamt 33 Flicken, welche ausgelegt werden müssen. Jedoch ist der kleinste Flicken, welcher nur 2 Felder auf einem Ablageplan einnimmt ($2\times1$ bzw. $1\times2$), immer an der gleichen Position direkt hinter der Spielfigur. Somit gibt es nur noch 32 Flicken, dessen Positionen angeordnet werden müssen. Eine solche Anordnung aller 32 Flicken auf 32 mögliche Positionen wird als \emph{Permutation} bezeichnet und besitzt $32! = 263.130.836.933.693.530.167.218.012.160.000.000$ Möglichkeiten. Somit gibt es $\approx 2{,}6 \cdot 10^{35}$ mögliche Startpositionen.
 
 \subsection*{Isomorphie der Zeitpläne}
 
@@ -162,6 +163,7 @@ Das ist möglich, da wie oben beschrieben der Zeitstein des derzeitigen Spielers
 Die maximale Länge des Brettspiels ergibt sich somit aus der Kombination der 54 Vorrücken-\hyperref[text:ply]{\emph{Plys}} zusammen mit den 4 zusätzlich gewonnenen \hyperref[text:ply]{\emph{Plys}} durch das Legen von Flicken mit Zeitkosten 1. Weiterhin kommen noch die fünf \hyperref[text:ply]{\emph{Plys}} für das Legen von Spezialflicken hinzu. Somit beträgt die maximale Länge von Patchwork \textbf{63} \hyperref[text:ply]{\emph{Plys}}.
 
 \subsection*{Maximale Anzahl aufeinanderfolgender \hyperref[text:ply]{Plys} eines Spielers}
+\label{subsection:analyse-maximale-anzahl-aufeinanderfolgender-plys}
 
 Neben der Gesamtlänge des Spiels kann auch betrachtet werden, wie oft ein Spieler maximal hintereinander ziehen kann. Wie oben erläutert, kann der Zeitstein des Gegners maximal 6 Felder vor dem eigenen Zeitstein liegen. Zuerst können in 4 \hyperref[text:ply]{Plys} die vier Flicken mit Zeitkosten 1 genommen und platziert werden. Danach kann noch ein Flicken mit Zeitkosten 2 erworben werden, sodass sich der Zeitstein auf demselben Feld wie der Gegner befindet. In einem weiteren \hyperref[text:ply]{Ply} kann der Spieler noch durch laufen bzw. Flicken platzieren an dem Gegner vorbeiziehen. Zuletzt ist es möglich, dass der Spieler dabei einen Spezialflicken passiert und diesen in einem weiteren \hyperref[text:ply]{Ply} legen muss\footnote{Da der Spieler maximal 6 Felder auf dem Zeitplan auf einmal vorrücken kann, ist es nicht möglich 2 Spezialflicken zu passieren, da diese auch immer genau 6 Felder voneinander entfernt sind.}. Somit kann ein Spieler maximal \textbf{7} \hyperref[text:ply]{Plys} hintereinander ausführen.
 
@@ -189,42 +191,44 @@ Dabei ist eine $+1$ für die Aktion \enquote{Vorrücken des Zeitsteins und Knöp
 
 Um die maximale Anzahl an Platzierungsmöglichkeiten festzulegen, muss zuerst betrachtet werden, auf wie viele Arten ein Flicken auf die Ablagedecke gelegt werden kann. Die Operationen, welche vor dem Platzieren auf einen Flicken angewendet werden können, sind Drehungen und Spiegelungen, wodurch die Flicken identisch zur Diedergruppe $D_4$ sind. Die Gruppe besteht aus 8 Elementen \cite[S. 33]{2015.AbstractAlgebra}, was somit gleichzeigt die maximale Anzahl an Transformationen für ein Flicken ist. Jedoch muss beachtet werden, dass die Flicken die maximale Anzahl nicht erreichen müssen. Zum Beispiel existiert ein $2\times2$ Flicken, welcher im Sinne der Diedergruppe 8 Ausprägungen besitzt, jedoch auf der Ablagedecke mit allen Drehungen und Spiegelungen immer genau dieselben Felder bedeckt. Für die maximale Platzierungsanzahl ist aber nur relevant, dass ein Flicken existiert, welcher bei allen 8 Transformationen eine andere Anordnung aufweist. Dieser Flicken existiert und ist in Abbildung \ref{fig:diedergruppe} dargestellt.
 
-\vspace*{-0.325cm}
+\pagebreak
+
+\vspace*{-0.85cm}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.885\textwidth]{res/pictures/dihedral-group.png}
-    \vspace*{-0.225cm}
+    \includegraphics[width=0.835\textwidth]{res/pictures/dihedral-group.png}
+    \vspace*{-0.23cm}
     \caption{Flicken mit 8 verschiedenen Transformationen}
     \label{fig:diedergruppe}
-    \vspace*{-0.1cm}
+    \vspace*{-0.22cm}
 \end{figure}
 
 Weiterhin gibt es verschiedene Möglichkeiten den transformierten Flicken auf den $9\times9$ Felder großen Ablageplan zu legen. Die Möglichkeiten lassen sich dabei einfach wie in Term \ref{eqn:ablagefeld-platzierungen} in Abhängigkeit von der Breite und Höhe des Flickens sowie der Anzahl der unterschiedlichen Transformationen berechnen.
 
-\vspace*{-0.15cm}
+\vspace*{-0.28cm}
 \vspace*{-0.4cm}
 \begin{equation}
     \label{eqn:ablagefeld-platzierungen}
     \left( 9 - \text{Höhe}  + 1 \right) \cdot
     \left( 9 - \text{Breite} + 1 \right) \cdot
     \left\lvert\, \text{Transformationen} \,\right\rvert
-    \vspace*{-0.15cm}
+    \vspace*{-0.28cm}
 \end{equation}
 
 Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dargestellten $3\times 2$ großen Flicken beträgt somit $\left( 9 - 3 + 1 \right) \cdot \left( 9 - 2 + 1 \right) \cdot 8 = 448$. Jedoch muss für die Platzierungsmöglichkeiten beachtet werden, dass sich die Anzahl reduziert, je größer ein Flicken ist. Somit muss für alle Flicken, dessen Höhe $\le 3$ und Breite $\le 2$ ist \textemdash{} wobei mindestens eine der beiden Ungleichungen strikt (also $<$) sein muss \textemdash{} überprüft werden, ob mehr Platzierungsmöglichkeiten bestehen als bei dem Flicken von \ref{fig:diedergruppe}. Es existieren nur 3 Flicken dieser Art, welche in Tabelle \ref{tabelle:kleine-flicken} dargestellt sind. Jeder dieser Flicken weißt dabei durch die geringere Anzahl an verschiedenen Transformationsmöglichkeiten insgesamt weniger Platzierungsmöglichkeiten auf als der Flicken in \ref{fig:diedergruppe}.
 
-\vspace*{-0.05cm}
+\vspace*{-0.35cm}
 \begin{table}[!ht]
     \centering
     \begin{tabular}[t]{c|c|c|c}
-        \raisebox{0pt}[0.35ex][0.35ex]{Flicken} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/00-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/09-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.155\textwidth]{res/pictures/assets/21-front.png}} \\ \hline
-        \makecell{Platzierungs-                                                                                                                                                                                                                                                                                                                       \\möglichkeiten} & $9 \cdot 8 \cdot 2 = 144$                                                                      & $8 \cdot 8 \cdot 1 = 64$                                                                       & $8 \cdot 8 \cdot 4 = 256$                                                                      \\ \hline
+        \raisebox{0pt}[0.35ex][0.35ex]{Flicken} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/00-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/09-front.png}} & \adjustbox{valign=m}{\includegraphics[width=0.1525\textwidth]{res/pictures/assets/21-front.png}} \\ \hline
+        \makecell{Platzierungs-                                                                                                                                                                                                                                                                                                                          \\möglichkeiten} & $9 \cdot 8 \cdot 2 = 144$                                                                      & $8 \cdot 8 \cdot 1 = 64$                                                                       & $8 \cdot 8 \cdot 4 = 256$                                                                      \\
     \end{tabular}
-    \vspace{5pt}
+    \vspace{2pt}
     \caption{Platzierungsmöglichkeiten der kleineren Flicken}
     \label{tabelle:kleine-flicken}
 \end{table}
-\vspace*{-3.5cm}
+\vspace*{-4.5cm}
 
 \pagebreak
 
@@ -237,7 +241,7 @@ Die Anzahl der Platzierungsmöglichkeiten für den in \ref{fig:diedergruppe} dar
 
     \includegraphics[width=0.18\textwidth]{res/pictures/assets/19-front.png}
     % \vspace{-10pt}
-    % Das folgende ist ein Trick, um "Abbilgung x.y" in eine
+    % Das folgende ist ein Trick, um "Abbildung x.y" in eine
     % eigene Zeile zu packen. Der Text zwischen [ und ] steht
     % im Abbildungsverzeichnis. Der Text darunter wird
     % tatsächlich angezeigt.
@@ -281,7 +285,7 @@ Diese Obergrenze würde aber erfordern, dass alle Flicken auf dem Ablageplan min
         \end{tikzpicture}
         \captionsetup{format=plain, singlelinecheck=false}
         \setcapindent{0pt}
-        \caption{Anordnung von Flicken mit einem Knopfeinkommen von 32 \\ \phantom{und Zeitkosten von 66}}
+        \caption[Anordnung von Flicken mit einem Knopfeinkommen von 32]{Anordnung von Flicken mit einem Knopfeinkommen von 32 \\ \phantom{und Zeitkosten von 66}}
         \label{fig:quilt-board-max-button-income}
     \end{minipage}
     \hfill
@@ -293,7 +297,7 @@ Diese Obergrenze würde aber erfordern, dass alle Flicken auf dem Ablageplan min
         \end{tikzpicture}
         \captionsetup{format=plain, singlelinecheck=false}
         \setcapindent{0pt}
-        \caption{Anordnung von Flicken mit einem Knopfeinkommen von 30 \\ und Zeitkosten von 58}
+        \caption[Anordnung von Flicken mit Zeitkosten von 58]{Anordnung von Flicken mit einem Knopfeinkommen von 30 \\ und Zeitkosten von 58}
         \label{fig:quilt-board-real-max-button-income}
     \end{minipage}
 \end{figure}
@@ -305,20 +309,602 @@ Jedoch betragen die benötigten Zeitkosten bei dieser Anordnung $66$, wodurch di
     \frac{\text{Knopfeinkommen}}{\text{Felder}\, \cdot\, \text{Zeitkosten}}
 \end{equation}
 
-Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei $30$ Knöpfe und die benötigte Zeit beträgt $58$. Auf dem Zeitplan selbst, existieren nur $54$ Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar.
+Somit ergibt sich eine neue Sortierung und Anordnung der Flicken auf dem Ablageplan, wie in Abbildung \ref{fig:quilt-board-real-max-button-income}. Das maximale Knopfeinkommen beträgt dabei $30$ Knöpfe und die benötigte Zeit beträgt $58$. Auf dem Zeitplan selbst, existieren nur $54$ Felder. Ein Spieler kann aber auf dem letzten Feld vor dem Ziel noch einen Flicken nehmen und läuft \emph{immer genau $1$} Feld. Somit kann der Spieler hier auch ein Flicken mit den maximalen Zeitkosten von $6$ nehmen. Da $58 - 6 = 52 < 54$ ist die Anordnung in \ref{fig:quilt-board-real-max-button-income} also auch tatsächlich während des Spiels erreichbar. Eine obere Schranke für das Knopfeinkommen durch den Ablageplan im gesamten Spiel ist somit die Anzahl der Knopf-Wertungen auf dem Zeitplan ($9$) multipliziert mit dem maximalen Knopfeinkommen pro Knopf-Wertung ($30$) $= 270$.
 
-TODO:
+Der Spieler bekommt bei der Wertung am Ende nur Punkte abgezogen, wenn nicht alle Felder auf seinem Ablageplan bedeckt sind. Es gibt mehrere Möglichkeiten solch einen vollen Ablageplan im Spielverlauf zu erhalten (ein Beispiel hierfür ist in Anhang \ref{anhang:section-ablageplan-81} zu sehen). Somit kann für eine Obergrenze bei der Wertung mit einem Punktabzug von 0 gerechnet werden. Zusammen mit dem Ablageplan von \ref{fig:quilt-board-real-max-button-income} würde sich somit mit $5 + 7 + 30 \cdot 9 - 0 = \boldsymbol{282}$ eine neue Obergrenze für die maximale Wertung eines Spielers ergeben.
 
+Nun kann sich der minimal erreichbaren Wertung eines Spielers zugewendet werden. Eine sehr einfache Untergrenze für die minimale Wertung eines Spielers ist $-162$, \dash ein leerer Ablageplan und 0 Knöpfe im Knopfvorrat. Diese Wertung kann jedoch offensichtlich nicht erreicht werden, da die einzige Möglichkeit Knöpfe aus dem Vorrat abzugeben gleichzeitig darin besteht, den Ablageplan zu füllen und jeder Spieler mit mindestens 5 Knöpfen startet.
 
+Aus der einfachen Abschätzung lässt sich leicht erkennen, dass jeder Spieler mit einer Wertung von $5 - 2 * 81 = -157$ startet. Nun kann für jede Aktion eine Value-Funktion $V_{\alpha}\left(A\right)$ definiert werden, die aufzeigt, wie sich dieser Startwert durch die Aktion ändert. Um die minimale Wertung am Ende zu erreichen, muss nun die Summe aller im Spiel getätigten Aktionen wie in \ref{eqn:patch-value-minimize-objective} minimiert werden.
 
-54
+\begin{align}
+    \label{eqn:patch-value-minimize-objective}
+    \operatorname{minimiere} \sum V\left(A\right)
+\end{align}
 
-\subsection*{Betrachtung der Spiel-Komplexität}
+Die Value-Funktion für \enquote{Vorrücken und Knöpfe erhalten} ist für ein Feld immer Konstant $V(Walk) = 1$, \dash jede Vorrücken-Aktion erhöht zwangsweise das Endergebnis um 1.
 
-TODO:
+Auch für die Aktion \enquote{Flicken nehmen und einfügen} lässt sich die Value-Funktion definieren. Diese hängt von mehreren Faktoren ab. Zuerst wird die Endwertung für jedes bedeckte Feld um 2 erhöht. Weiterhin wird die Endwertung um die Knopfkosten des Flickens verringert. Zuletzt muss noch das Knopfeinkommen auf die Wertung addiert werden. Dieses hängt dabei von einem Parameter $\alpha$ ab, was die Anzahl der noch ausstehenden Knopf-Wertungen auf dem Zeitplan darstellt. Da sich die letzte Knopf-Wertung direkt vor dem Ziel befindet, ist $\alpha$ immer größer gleich 1.Die Value-Funktion für Flicken ist in Gleichung \ref{eqn:patch-value-for-min-value} abgebildet.
+
+\vspace*{-0.2cm}
+\begin{align}
+    \label{eqn:patch-value-for-min-value}
+    V_{\alpha}\left(F\right) = 2 \cdot Felder_F - \text{Knopfkosten}_F + \text{Knopfeinkommen}_F \cdot \alpha
+    \intertext{\begin{flushright} \vspace*{-1.25cm} wobei $\alpha \ge 1$ die Anzahl der noch ausstehenden Knopf-Wertungen ist \end{flushright}} \vspace*{-1cm} \notag
+\end{align}
+\vspace*{-2.2cm}
+
+\begin{wrapfigure}{r}{0.21\textwidth}
+    \vspace*{-0.5cm}
+    \centering
+    \includegraphics[width=0.2\textwidth]{res/pictures/assets/04-front.png}
+    \vspace{-10pt}
+    % Das folgende ist ein Trick, um "Abbildung x.y" in eine
+    % eigene Zeile zu packen. Der Text zwischen [ und ] steht
+    % im Abbildungsverzeichnis. Der Text darunter wird
+    % tatsächlich angezeigt.
+    \caption[Flicken mit $V_1\left(F\right) = -2$]{\unskip}
+    Flicken mit $V_1\left(F\right) = -2$
+    \label{fig:negative-value-patch}
+    \vspace*{-0.375cm}
+\end{wrapfigure}
+
+Nach Einsetzen aller Flicken in die Value-Funktion ergeben sich für alle Flicken und alle $\alpha > 1$ im Vergleich zu der Laufen-Aktion Werte größer gleicht 1. Somit sind alle \enquote{Flicken nehmen und einfügen} Aktionen vor der vorletzten Knopf-Wertung äquivalent oder öfters der Fall besser als \enquote{Vorrücken und Knöpfe erhalten}. Für $\alpha = 1$ gibt es für den Vergleich $ V_1\left(F\right) - V\left(Walk\right)$ insgesamt 6 Flicken mit dem Ergebnis $\le 0$. Somit kann kurz vor dem Ziel ein Flicken gekauft werden, mit dem Resultat, dass das Endergebnis schlechter ausfällt als nur zu laufen. Da die Summe der Zeitkosten von je 2 dieser 6 Flicken größer als 6 ist, kann jedoch nur genau einer dieser Flicken gekauft werden. Dabei muss darauf geachtet werden, dass auf dem Zeitplan auch genauso viele Felder gelaufen werden, wie der Flicken vorgibt und keine Zeitkosten mit in das Ziel genommen werden. Der in Abbildung \ref{fig:negative-value-patch} dargestellte Flicken besitzt als einziger der Sechs eine Value-Funktion von $-2$ bei $\alpha = 1$ und minimiert somit die Endwertung.
+
+Für Spezialflicken ist die Value-Funktion Konstant $V\left(\text{Spezialflicken}\right) = 2$, da immer genau ein Feld auf dem Ablageplan befüllt wird. Da sich die Wertung somit durch einen Spezialflicken erhöhen würde, sollten für die minimale Wertung keine Spezialflicken eingesammelt werden.
+
+Um nun die minimale Wertung am Ende zu erhalten kann ein Spieler also 47-mal hintereinander laufen und zuletzt den in \ref{fig:negative-value-patch} dargestellten Flicken kaufen. Dadurch ergibt sich für die minimale Wertung am Ende des Spiels eine Wertung von $5 - 2 \cdot 81 + 47 - 7 + 2 \cdot 4 + 3 = \boldsymbol{-106}$ Punkten. Im Gegensatz dazu bringt ein Spielverlauf, bei dem ein Spieler nur läuft eine Endwertung ovn $-104$ Punkten.
+
+\subsection*{Maximale Wertung als Optimierungsproblem}
+
+Die Schätzung im vorherigen Abschnitt für die maximale Wertung eines Spielers ist an einigen Stellen problematisch. Das größte Problem ist hierbei, dass angenommen wird, dass der Ablageplan bereits bei der ersten Knopf-Wertung komplett befüllt ist und somit das maximalen Knopfeinkommen von $30$ generiert. Somit handelt es sich bei der Obergrenze um eine viel zu große Schätzung. Um einen exakten Wert für die maximale Knopfwertung am Ende eines Spiels zu erhalten, kann das Problem als ein \ac{ILP}-Optimierungsproblem formuliert werden. Im ersten Schritt werden dazu für das Problem relevante Konstanten und Variablen definiert. Diese werden anschließend zur Definition der zu maximierenden Zielfunktion, sowie den Ungleichungen, welche erfüllt sein müssen, verwendet. Zuletzt kann das lineare Optimierungsproblem mit einem Programm gelöst werden.
+
+\textbf{Konstanten}
+
+Nachfolgend fünf für die maximalen Wertung in Patchwork relevante Konstanten. Die ersten vier Konstanten bilden dabei für jeden Flicken in Patchwork genau einen Wert ab. Als bijektive Abbildung zwischen Flicken und Zeile wird dabei die Tabelle in Anhang \ref{anhang:section-patchwork-patches} verwendet.
+
+\renewcommand{\arraystretch}{0.6666}
+
+\begin{addmargin}[1em]{0em}
+    Knopfkosten der Flicken (\emph{cost}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            c = \begin{bmatrix}
+                    2 & 10 & 5 & 8 & 7 & 4 & 2 & 2 & 2 & 6 & 2 & 1 & 7 & 10 & 4 & 7 & 1 & 5 & 10 & 4 & 1 & 1 & 1 & 3 & 2 & 2 & 3 & 7 & 3 & 5 & 3 & 3 & 0
+                \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}_0^{33} &
+        \end{align*}
+    \end{fleqn}
+    Zeitkosten der Flicken (\emph{time}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            t = \begin{bmatrix}
+                    1 & 4 & 3 & 6 & 6 & 2 & 1 & 3 & 2 & 5 & 3 & 2 & 2 & 5 & 6 & 4 & 5 & 4 & 3 & 2 & 4 & 3 & 2 & 1 & 2 & 2 & 2 & 1 & 3 & 5 & 6 & 4 & 3
+                \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{33}
+        \end{align*}
+    \end{fleqn}
+    Knopfeinkommen der Flicken (\emph{profit}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            p = \begin{bmatrix}
+                    0 & 3 & 1 & 3 & 3 & 0 & 0 & 0 & 0 & 2 & 1 & 0 & 2 & 3 & 2 & 2 & 1 & 2 & 2 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 2 & 2 & 1 & 1
+                \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}_0^{33}
+        \end{align*}
+    \end{fleqn}
+    Fläche der Flicken (\emph{area}) \vspace*{-10pt}
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            a = \begin{bmatrix}
+                    2 & 5 & 8 & 6 & 4 & 6 & 6 & 7 & 5 & 4 & 5 & 6 & 6 & 6 & 4 & 6 & 6 & 5 & 5 & 4 & 7 & 3 & 5 & 3 & 4 & 3 & 4 & 5 & 4 & 5 & 6 & 5 & 6
+                \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{33}
+        \end{align*}
+    \end{fleqn}
+    Index der Felder vor den Knopf-Wertungen auf dem Zeitplan \vspace*{-10pt} % 0 - 53
+    \begin{fleqn}
+        \begin{align*}
+            \begingroup
+            \setlength\arraycolsep{1.5pt}
+            b = \begin{bmatrix}
+                    4 & 10 & 16 & 22 & 28 & 34 & 40 & 46 & 52
+                \end{bmatrix}^\mathsf{T}
+            \endgroup \in \mathbb{N}^{9}
+        \end{align*}
+    \end{fleqn}
+\end{addmargin}
+
+\textbf{Variablen}
+
+\begin{align*}
+    X       & = \begin{bmatrix}
+                    x_{1,1}  & \dots  & x_{1,9}  \\
+                    \vdots   & \ddots & \vdots   \\
+                    x_{33,1} & \dots  & x_{33,9}
+                \end{bmatrix} & X       & \in \{0,1\}^{33 \times 9}                                                 \\
+    Y       & = \begin{bmatrix}
+                    y_{1,1}  & \dots  & y_{1,9}  \\
+                    \vdots   & \ddots & \vdots   \\
+                    y_{33,1} & \dots  & y_{33,9}
+                \end{bmatrix} & Y       & \in \{0,1\}^{33 \times 9}                                                 \\
+    \psi    & = \begin{bmatrix}
+                    \psi_1 & \dots & \psi_9
+                \end{bmatrix}^\mathsf{T}        & \psi    & \in \mathbb{N}_0^{9} \text{ insbesondere } \psi_i \ge 0 \\
+    \phi    & = \begin{bmatrix}
+                    \phi_1 & \dots & \phi_9
+                \end{bmatrix}^\mathsf{T}        & \phi    & \in \{0,1\}^{9}                                         \\
+    \xi     & = \begin{bmatrix}
+                    \xi_1 & \dots & \xi_8
+                \end{bmatrix}^\mathsf{T}        & \xi     & \in \mathbb{N}_0^{8} \text{ insbesondere } \xi_i \ge 0  \\
+    \lambda &                                 & \lambda & \in \{0,1\}                                               \\
+\end{align*}
+
+\vspace*{-1cm}
+
+$X$ stellt dabei eine Matrix mit den ausgewählten Flicken dar. Im gesamten Optimierungsproblem wird an verschiedenen Stellten nicht nur die finale Auswahl, sondern auch der Zustand direkt vor dem Überschreiten einer Knopf-Wertung benötigt. Aus diesem Grund enthält die Matrix $9$ Spalten, eine für jede Knopf-Wertung, startend bei der ersten und endend bei der letzten. Die letzte Spalte enthält somit gleichzeitig auch die am Ende des Spiels ausgewählten Flicken. Ist ein Flicken ausgewählt, so enthält der entsprechende Eintrag der Matrix eine $1$ ansonsten eine $0$.
+
+$Y$ ist eine Matrix bestehend aus One-Hot-Kodierten Spaltenvektoren, \dash jede Spalte besitzt maximal genau einen Eintrag, welcher 1 ist. Das ist genau dann der Fall, wenn es sich dabei um einen Flicken handelt, welcher zum entsprechenden Zeitpunkt ausgewählt wurde und gleichzeitig so gekauft wurde, dass durch das Ablaufen der Zeitkosten eine Knopf-Wertung überschritten wird. Durch diese Matrix können in den Nebenbedingungen mehrere \enquote{schwache} Ungleichungen erfüllt werden, die erfordern, das ein Zustand vor einer Knopf-Wertung erreicht wird, aber gleichzeitig das Überschreiten dieser Knopf-Wertung erlauben.
+
+Die Laufaktionen werden durch den Vektor $\psi$ dargestellt. Dabei wird in jedem Eintrag die Anzahl der gelaufenen Felder zwischen je zwei Knopf-Wertungen notiert.
+
+$\phi$ dient ähnlich wie $Y$ dazu das Überschreiten einer Knopf-Wertung für genau eine Laufaktion zu erlauben.
+
+$\xi$ ist eine Hilfsvariable, die in den Nebenbedingungen das Maximum von den Positionen der Knopf-Wertungen und der tatsächlichen Position, die durch die gespielten Positionen erreicht wurden, repräsentiert.
+
+Der Skalar $\lambda$ ist eine Indikatorvariable, die bei der Zielfunktion steuert, dass die Fläche auf dem Ablageplan ab einem bestimmten Zeitpunkt nicht weiter optimiert wird, da die Spezialflicken den restlichen Platz füllen können.
+
+\textbf{Zielfunktion}
+
+\begin{align*}
+    \smash{\displaystyle{\maximize_{X,Y,\lambda,\psi}}}\qquad & 5 \tag{\text{Startknöpfe}}                                                                                         \\[2pt]
+                                                              & + 7 \tag{\text{Sonderplättchen}}                                                                                   \\[2pt]
+                                                              & - 2 \cdot 81 \tag{\text{Ablageplanabzug}}                                                                          \\[2pt]
+                                                              & + p^\mathsf{T}X\vec{1} \tag{\text{Knopfeinkommen maximieren}}                                                      \\[2pt]
+                                                              & + 2 \cdot \left(\lambda\cdot 81 + (1 - \lambda) \cdot a^\mathsf{T}X\vec{e_9}\right) \tag{\text{Fläche maximieren}} \\[2pt]
+                                                              & - c^\mathsf{T}X\vec{e_9} \tag{\text{Kosten minimieren}}                                                            \\[2pt]
+                                                              & + \psi^\mathsf{T}\vec{1} \tag{\text{Laufen einberechnen}}                                                          \\[2pt]
+    \intertext{\hspace{7cm} wobei $\vec{1}$ der Vektor bestehend aus Einsen ist \newline \hspace*{7.3cm} und $\vec{e_i}$ ein kanonischer Einheitsvektor ist.}
+\end{align*}
+
+\vspace*{-1cm}
+
+\emph{Das Skalarprodukt eines Vektors mit dem $\vec{1}$-Vektor entspricht der Aufsummierung aller Einträge. Durch eine Multiplikation einer Matrix mit dem $i$-tem Einheitsvektor ($e_9 = \left[0,0,0,0,0,0,0,0,1\right]^\mathsf{T}$) wird die i-te Spalte der Matrix extrahiert.}
+
+Die Zielfunktion bildet alle Terme ab, welche die Endwertung eines Spielers verändern. Terme, die maximiert werden sollen, gehen dabei mit einem positiven Einfluss in die Zielfunktion ein, wohingegen negative Terme zu minimieren sind. Die Zielfunktion setzt sich dabei aus 7 Termen zusammen:
+
+\pagebreak
+
+\begin{enumerate}
+    \item \emph{Startknöpfe}: Die Anzahl der Knöpfe, die ein Spieler zum Start erhält
+    \item \vspace*{-0.175cm} \emph{Sonderplättchen}: Wenn der Spieler perfekt spielt, wird er den Ablageplan füllen und somit auch das $7\times 7$-Sonderplättchen erhalten
+    \item \vspace*{-0.175cm} \emph{Ablageplanabzug}: Der leere Ablageplan am Start führt bei jedem Feld zu Punktabzug
+    \item \vspace*{-0.175cm} \emph{Knopfeinkommen maximieren}: Das über den Spielverlauf durch gekaufte Flicken generierte Knopfeinkommen sollte möglichst hoch sein. Ein Flicken generiert so oft Knopfeinkommen, wie die Anzahl der zu seinem Kauf auf dem Zeitplan noch ausstehenden Knopf-Wertungen. Deswegen wird jede Spalte der Matrix $X$ mit dem entsprechenden Knopf-Einkommen multipliziert und danach werden alle Einträge des Ergebnisses aufsummiert.
+    \item \vspace*{-0.175cm} \emph{Fläche maximieren}: Der Punktabzug auf dem Ablageplan kann durch die Fläche von gekauften Flicken kompensiert werden. Dabei werden alle final ausgewählten Flicken ($X\vec{e_9}$) mit ihrer entsprechenden Fläche multipliziert. Nach 76 gefüllten Feldern wird der Parameter $\lambda$ aktiviert, da davon ausgegangen wird, dass die restlichen Felder mit Spezialflicken gefüllt werden können und somit keine weitere Optimierung der Fläche nötig und möglich ist.
+    \item \vspace*{-0.175cm} \emph{Kosten minimieren}: Die Knopfkosten der gekauften Flicken soll minimiert werden. Deshalb werden alle final ausgewählten Flicken mit ihren entsprechenden Knopfkosten multipliziert.
+    \item \vspace*{-0.175cm} \emph{Laufen einberechnen}: Die durch laufen generierten Knöpfe müssen mit einberechnet werden. Dies entspricht der Aufsummierung aller Einträge des $\psi$ Vektors bzw. der Summe der einzelnen Laufaktionen zwischen den Knopf-Wertungen.
+\end{enumerate}
+
+\textbf{Nebenbedingungen}
+
+Um nicht nur die Zielfunktion von Patchwork sondern alle Gegebenheiten des Spiels in das \ac{ILP}-Optimierungsproblem zu übertragen, müssen auch noch einige weitere Anforderungen für eine Lösung erfüllt sein. Aus diesem Grund werden neben dem zulässigen Definitionsbereich der Variablen noch folgende Nebenbedingungen formuliert:
+%
+
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
+    a^\mathsf{T}X\vec{e_9}                                                                             & \le 81                     &                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   \\
+    a^\mathsf{T}X\vec{e_9} - 76 + 1                                                                    & \le 1000 \cdot \lambda     & \text{bzw. } a^\mathsf{T}X\vec{e_9} - 76 < 1000 \cdot \lambda \hspace*{1.25cm}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    \\
+    76 \lambda                                                                                         & \le a^\mathsf{T}X\vec{e_9}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     \\
+    \intertext{\begin{addmargin}[1em]{0em}
+                       Die durch gekaufte Flicken auf dem Ablageplan ausgefüllte Fläche muss kleiner gleich $81$ sein (Ungleichung 1). Weiterhin sorgt Ungleichung 2 dafür, dass $\lambda$ ab 76 gefüllten Feldern anspringt und somit die Optimierung in der Zielfunktion für die Fläche ab diesem Zeitpunkt ausstellt. In Ungleichung 3 wird dafür gesorgt, dass $\lambda$ nur dann anspringen kann, wenn die durch Flicken ausgefüllte Fläche auf dem Ablageplan auch tatsächlich 76 erreicht hat.
+                   \end{addmargin}} \noalign{\vskip10pt}
+    \left(X\vec{e_1}\ \phantom{ - X\vec{e}_{j-1} } - Y\vec{e_1} \right)^\mathsf{T}t + \psi_1 - \phi_1  & \le b_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        \\
+    \ \xi_{j-1} + \left(X\vec{e_j} - X\vec{e}_{j-1} - Y\vec{e_j} \right)^\mathsf{T}t + \psi_j - \phi_1 & \le b_j                    & j=2,\dots,9
+    \intertext{\begin{addmargin}[1em]{0em}
+                       \vspace*{-10pt} Bis zu jeder Knopf-Wertung ($b_j$) dürfen nur so viele Flicken gekauft werden, wie durch die aufsummierten Zeitkosten ermöglicht wird. Dazu wird in der ersten Ungleichung der Basisfall vor der ersten Knopf-Wertung definiert. Die durch Flicken entstandenen Zeitkosten müssen zusammen mit den durch Laufen verursachten Zeitkosten kleiner gleich dem Feld vor der ersten Knopf-Wertung sein. Dabei kann mit dem $Y\vec{e_1}$ Vektor genau einer der Flicken ignoriert werden, da es möglich ist mit diesem Flicken die Knopf-Wertungsbegrenzung zu übertreten. Falls in $Y\vec{e_1}$ kein Eintrag aktiv ist, kann auch die Laufaktion mit $\phi_1$ ignoriert werden. Aufbauend auf dem Basisfall folgt in Ungleichung 2 der Rekursionsschritt, der die erste Formel so erweitert, dass auf die zuvor erreichten Zeitkosten ($\xi_{j-1}$) die neuen Zeitkosten aufaddiert werden. Weiterhin wird nun die Differenz zwischen $X\vec{e_j}$ und $X\vec{e}_{j-1}$ verwendet, um nur die neu dazugekauften Flicken mit einzuberechnen. Der letzte Fall der zweiten Ungleichung prüft auch, dass die Gesamtzeitkosten der Aktionen $52$ nicht überschreiten, wobei ab $52$ wieder noch genau ein weiterer Flicken gekauft oder 1 Feld gelaufen werden kann.
+                   \end{addmargin}} \noalign{\vskip10pt}
+    b_j + 1                                                                                            & \le \xi_j                  & j=1,\dots,8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \\
+    t^\mathsf{T}X\vec{e_1} + \psi_1                                                                    & \le \xi_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+    \xi_{j-1} + t^\mathsf{T}\left(X\vec{e_j} - X\vec{e}_{j-1}\right) + \psi_j                          & \le \xi_j                  & j=2,\dots,8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \\
+    \intertext{\begin{addmargin}[1em]{0em}
+                       \vspace*{-10pt} Um die an $\xi$ gestellten Anforderungen zu erfüllen, werden die obigen drei Ungleichungen verwendet. Zuerst wird sichergestellt, dass der vorherige Zug mindestens bis zur Knopf-Wertung gekommen ist. Die Weiteren Ungleichungen fordern, dass $\xi$ größer als durch die vergangenen Aktionen entstandenen Zeitkosten ist. Da $\xi$ im Optimierungsproblem für die maximale Zielfunktion minimiert werden muss, nimmt $\xi$ somit immer das Maximum beider Werte an. \vspace*{-2cm} \pagebreak
+                   \end{addmargin}} \noalign{\vskip10pt}                                                                                                                                                                         \\
+    \left(Y\vec{e_j}\right)^\mathsf{T}\vec{1}                                                          & \le 1                      & j=1,\dots,9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \\
+    Y_{i,j}                                                                                            & \le X_{i,j}                & i=1,\dots,33\quad j=1\phantom{,\dots,9}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
+    Y_{i,j}                                                                                            & \le X_{i,j} - X_{i,j-1}    & i=1,\dots,33\quad j=2,\dots,9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     \\
+    \phi_j                                                                                             & \le \psi_j                 & j=1,\dots,9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       \\
+    \phi_j + \left(Y\vec{e_j}\right)^\mathsf{T}\vec{1}                                                 & \le 1                      & j=1,\dots,9
+    \intertext{\begin{addmargin}[1em]{0em}
+                       \vspace*{-10pt} Weiterhin müssen noch die Anforderungen an $Y$ und $\phi$ erfüllt werden. Zuerst wird sichergestellt, dass innerhalb einer Spalte von $Y$ immer nur genau ein Flicken ausgewählt werden kann, der nicht in die Überschreitung der Zeitkosten mit eingeht. Außerdem muss der weggelassene Flicken im derzeitigen Bereich ausgewählt wurden sein. Dies wird durch die zwei darauffolgenden Ungleichungen sichergestellt. In Ungleichung 4 wird sichergestellt, dass die Laufaktion nur weggelassen werden darf, wenn auch tatsächlich gelaufen wurde. Die letzte Ungleichung stellt sicher, dass jeweils entweder die Laufaktion oder eine Flickenlegeaktion aber nicht beide weggelassen werden können.
+                   \end{addmargin}} \noalign{\vskip10pt}
+    5 + \sum_{k=1}^{j-1} p^\mathsf{T}X\vec{e_k} + \sum_{k=1}^{j} \psi_k                                & \ge c^\mathsf{T}X\vec{e_j} & j=1,\dots,9
+    \intertext{\begin{addmargin}[1em]{0em}
+                       \vspace*{-10pt} Der Knopfvorrat des Spielers muss immer größer gleich $0$ betragen. Diese Überprüfung immer kann direkt vor einer Knopf-Wertung stattfinden. Das ist der Fall, da eine Knopf-Wertung der einzige Zeitpunkt ist, bei dem der Knopfvorrat von einem negativen Stand wieder in einen positiven Stand wechseln könnte. Die Ungleichung vergleicht hierzu die Knopfeinnahmen (linke Seite) mit den Knopfausgaben (rechte Seite). Die Einnahmen setzen sich aus den 5 Startknöpfen, den Knopfeinkommen aller vergangenen Knopf-Wertungen sowie der Summe aller Laufaktionen zusammen. Die einzigen Knopfausgaben sind die Kosten aller bis zur Knopf-Wertung gekauften Flicken.
+                   \end{addmargin}} \\
+    X_{i,j}                                                                                            & \le X_{i,j+1}              & i=1,\dots,33\quad j=1,\dots,8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     \\
+    b_j - t^\mathsf{T}X\vec{e_j} - \sum_{k=1}^{j-1} \psi_k                                             & \le \psi_j                 & j=1,\dots,9
+    \intertext{\begin{addmargin}[1em]{0em}
+                       Hinzu kommen noch zwei weitere Bedingungen, die absichern, dass sich die Variablen $X$ und $\psi$ wie gefordert verhalten. So muss der $i$-te Eintrag einer Spalte in $X$ größer gleich dem Eintrag in der vorherigen Spalte sein, was absichert, dass sobald ein Flicken genommen wurde, dieser auch im späteren Verlauf noch ausgewählt ist. Außerdem soll $\psi$ die Anzahl der Laufaktionen zwischen zwei Knopf-Wertungen widerspiegeln. Dazu werden einfach die Zeitkosten der ausgewählten Flicken sowie die bisherigen Laufaktionen von der Position der nächsten Knopf-Wertung abgezogen.
+                   \end{addmargin}} \noalign{\vskip10pt}
+    \omega_i                                                                                           & \le X_{i,9}                & i=1,\dots,33                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+    \omega^\mathsf{T}\vec{1}                                                                           & \le 33 \cdot \lambda                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           \\
+    X_{i,9} + \lambda - 1                                                                              & \le \omega_i               & i=1,\dots,33                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \\
+\end{align*}
+\vspace*{-1.75cm}
+\begin{addmargin}[1em]{0em}
+    Zuletzt besteht noch das Problem, dass die Zielfunktion nicht linear ist. Der Term $2 \cdot \left(1 - \lambda\right) \cdot a^\mathsf{T}X\vec{e_9}$ ist bezüglich der Variablen $\lambda$ und $X$ quadratisch, was für Lineare Optimierung nicht erlaubt ist. Da es sich bei $\lambda$ sowie $X$ um binäre Entscheidungsvariablen handelt, kann die Multiplikation jedoch durch einen weitere Hilfsvariable $\omega \in \{0,1\}^{33}$ mit entsprechenden Nebenbedingungen ersetzt werden \cite[S. 7]{2017.MIPFormulation}. Die ersten beiden Ungleichungen fordern, dass $\omega$ immer $0$ ist, wenn eine der beiden Variablen $0$ ist. Mit der dritten Ungleichung wird sichergestellt, dass wenn beide Variablen $1$ sind auch $\omega = 1$ gilt.
+\end{addmargin}
+\begin{align*}
+                           & 2 \cdot \left(\lambda\cdot 81 + (1 - \lambda) \cdot a^\mathsf{T}X\vec{e_9}\right)                                                   \\
+    \Leftrightarrow  \quad & 2 \cdot 81 \cdot \lambda + 2 \cdot a^\mathsf{T}X\vec{e_9} - 2 \cdot a^\mathsf{T}\smash{\underbrace{X\vec{e_9}\cdot \lambda}_\omega} \\
+    \Leftrightarrow  \quad & 162\lambda + 2a^\mathsf{T}X\vec{e_9} - 2a^\mathsf{T}\omega                                                                          \\
+\end{align*}
+\vspace*{-1.65cm}
+\begin{addmargin}[1em]{0em}
+    Zuletzt muss noch der entsprechende Term in der Zielfunktion angepasst werden. Nach der Ausmultiplikation entstehen 3 neue Terme, wobei ein Term von $\omega$ abhängt. Die angepasste Zielfunktion sieht wie folgt aus:
+\end{addmargin}
+\vspace*{-0.4cm}
+\begin{align*}
+    \smash{\displaystyle{\maximize_{X,Y,\lambda,\psi,\omega}}}\qquad & 5 +7 - 2 \cdot 81 + p^\mathsf{T}X\vec{1}          \\
+                                                                     & + 162\lambda                                      \\
+                                                                     & + 2a^\mathsf{T}X\vec{e_9}                         \\
+                                                                     & - 2a^\mathsf{T}\omega                             \\
+                                                                     & - c^\mathsf{T}X\vec{e_9} + \psi^\mathsf{T}\vec{1}
+\end{align*}
+\endgroup
+
+% \vspace*{-1.65cm}
+
+\textbf{Lösung des Optimierungsproblems}
+\label{section-loesung-des-optimierungsproblems}
+
+\begin{wrapfigure}{r}{0.25\textwidth}
+    \centering
+    \vspace*{-1.5cm}
+    % \vspace*{-0.985cm}
+    \begin{align*}
+        \hat{x} = \begin{bmatrix}
+                      \operatorname{vec}\left(X\right) \\[2pt]
+                      \operatorname{vec}\left(Y\right) \\[2pt]
+                      \psi                             \\[2pt]
+                      \phi                             \\[2pt]
+                      \xi                              \\[2pt]
+                      \lambda                          \\[2pt]
+                      \omega
+                  \end{bmatrix} \in \mathbb{N}_0^{654}
+    \end{align*}
+    \vspace*{-1.25cm}
+    % \vspace*{-2cm}
+\end{wrapfigure}
+
+Um das Optimierungsproblem zu lösen, müssen zuerst alle Variablen wie rechts zu sehen zusammengefasst werden und die Formeln in die Standardform überführt werden. Dazu kann eine Programmierbibliothek wie CVXPY verwendet werden \cite{2016.CVXPY} \cite{2018.CVXPYRewrite}. Anschließend können für die Variablen des $654$-dimensionalen Problems optimale Werte mithilfe einer Lösungssoftware wie dem \ac{GLPK} gefunden werden. Der vollständige Programmcode für das Optimierungsproblem ist in Anhang \ref{anhang:section-integer-linear-program} abgebildet.
+
+\renewcommand{\arraystretch}{1}
+
+% parallel
+%     take 17, take 32
+%     take 32, take 17
+% take 10
+% take 20
+% walk 2
+% take 4
+% take 3
+% take 1
+% take 12
+% take 30
+% take 26
+% parallel
+%     walk 2,  take 11, walk 1
+%     take 11, walk 3
+%     walk 1, take 11, walk 2 (skip special patch)
+%     walk 3, take 11 (skip special patch)
+% parallel
+%     take 6, walk 2, take 22
+%     take 6, take 22, walk 2
+%     take 22, take 1, walk 2
+%     take 22, walk 2, take 6
+%     walk 2, take 6, take 22 (skip special patch)
+%     walk 2, take 22, take 6 (skip special patch)
+% take 16
+\begin{figure}[!ht]
+    \centering
+    \begin{adjustbox}{width=\textwidth,keepaspectratio}
+        \begin{tikzpicture}[
+                arrow/.style={->, very thick, shorten >=2pt, shorten <=2pt}
+            ]
+
+            \tikzset{
+                take/.style={inner sep=0,outer sep=0, label=below:#1 nehmen},
+            }
+
+            % start
+            \node[draw, circle, inner sep=2pt, label=below:Start] (start) at (0,0) {};
+
+            % parallel
+            %     a) take 32, take 17
+            \node[take=32, above right = 1cm and 2cm of start] (take32a) {\includegraphics[width=20mm]{res/pictures/assets/32-front.png}};
+            \node[take=17, right = of take32a] (take17a)  {\includegraphics[width=15mm]{res/pictures/assets/17-front.png}};
+            \draw[arrow] (start) -|- (take32a);
+            \draw[arrow] (take32a) -- (take17a);
+
+            %     b) take 17, take 32
+            \node[take=17, below right = 1cm and 2cm of start] (take17b)  {\includegraphics[width=15mm]{res/pictures/assets/17-front.png}};
+            \node[take=32, right = of take17b] (take32b) {\includegraphics[width=20mm]{res/pictures/assets/32-front.png}};
+            \draw[arrow] (start) -|- (take17b);
+            \draw[arrow] (take17b) -- (take32b);
+
+            % take 10
+            \node[take=10, right = 3cm of start -| take17a] (take10) {\includegraphics[width=10mm]{res/pictures/assets/10-front.png}};
+            \draw[arrow] (take17a) -|- (take10);
+            \draw[arrow] (take32b) -|- (take10);
+
+            % take 20
+            \node[take=20, right = of take10] (take20) {\includegraphics[width=25mm]{res/pictures/assets/20-front.png}};
+            \draw[arrow] (take10) -- (take20);
+
+            % walk 2
+            \node[right = of take20] (walk2a) {2 laufen};
+            \draw[arrow] (take20) -- (walk2a);
+
+            % take 4
+            \node[take=4, right = of walk2a] (take04) {\includegraphics[width=15mm]{res/pictures/assets/04-front.png}};
+            \draw[arrow] (walk2a) -- (take04);
+
+            % take 3
+            \node[take=3, right = of take04] (take03) {\includegraphics[width=15mm]{res/pictures/assets/03-front.png}};
+            \draw[arrow] (take04) -- (take03);
+
+            % take 1
+            \node[take=1, right = of take03] (take01) {\includegraphics[width=15mm]{res/pictures/assets/01-front.png}};
+            \draw[arrow] (take03) -- (take01);
+
+            % take 12
+            \node[take=12, right = of take01] (take12) {\includegraphics[width=15mm]{res/pictures/assets/12-front.png}};
+            \draw[arrow] (take01) -- (take12);
+
+            % take 30
+            \node[take=30, right = of take12] (take30) {\includegraphics[width=15mm]{res/pictures/assets/30-front.png}};
+            \draw[arrow] (take12) -- (take30);
+
+            % take 26
+            \node[take=26, below = 5.5cm of take32b -| take30] (take26) {\includegraphics[width=10mm]{res/pictures/assets/26-front.png}};
+            \draw[arrow, shorten <=20pt] (take30) -- (take26);
+
+            % parallel
+            %     a) walk 2,  take 11, walk 1
+            \node[above left = 1cm and 2cm of take26] (walk2p1) {2 laufen};
+            \node[take=11, left = of walk2p1] (take11a) {\includegraphics[width=20mm]{res/pictures/assets/11-front.png}};
+            \node[left = of take11a] (walk1p1) {1 laufen};
+            \draw[arrow] (take26) -|- (walk2p1);
+            \draw[arrow] (walk2p1) -- (take11a);
+            \draw[arrow] (take11a) -- (walk1p1);
+            %     b) take 11, walk 1, walk 2
+            \node[take=11, below left = 1cm and 2cm of take26] (take11b) {\includegraphics[width=20mm]{res/pictures/assets/11-front.png}};
+            \node[left = of take11b] (walk1p2) {1 laufen};
+            \node[left = of walk1p2] (walk2p2) {2 laufen};
+            \draw[arrow] (take26) -|- (take11b);
+            \draw[arrow] (take11b) -- (walk1p2);
+            \draw[arrow] (walk1p2) -- (walk2p2);
+            %     c) walk 1, take 11, walk 2 (skip special patch)
+            %     d) walk 3, take 11 (skip special patch)
+
+            \coordinate[draw=none, inner sep=0,outer sep=0, left = 2.5cm of take26 -| walk1p1] (dummy) {};
+            \coordinate[draw=none, inner sep=0, outer sep=0, left = 0.25cm of dummy] (dummy1) {};
+            \coordinate[draw=none, inner sep=0, outer sep=0, right = 0.25cm of dummy] (dummy2) {};
+            \draw[very thick, shorten >=2pt] (walk1p1) -|- (dummy);
+            \draw[very thick, shorten >=2pt] (walk2p2) -|- (dummy);
+            \draw[very thick] (dummy1) -- (dummy2);
+
+            % parallel
+            %     b) take 6, take 22, walk 2
+            \node[take=6, above left = 0.3cm and 2cm of dummy] (take06b) {\includegraphics[width=15mm]{res/pictures/assets/06-front.png}};
+            \node[take=22, left = of take06b] (take22b) {\includegraphics[width=15mm]{res/pictures/assets/22-front.png}};
+            \node[left = of take22b] (walk2b) {2 laufen};
+            \draw[->, very thick, shorten <=2pt] (dummy) -|-[ratio=.5] (take06b);
+            \draw[arrow] (take06b) -- (take22b);
+            \draw[arrow] (take22b) -- (walk2b);
+            %     a) take 6, walk 2, take 22
+            \node[take=6, above = 0.9cm of take06b] (take06a) {\includegraphics[width=15mm]{res/pictures/assets/06-front.png}};
+            \node[left = of take06a] (walk2a) {2 laufen};
+            \node[take=22, left = of walk2a] (take22a) {\includegraphics[width=15mm]{res/pictures/assets/22-front.png}};
+            \draw[->, very thick, shorten <=2pt] (dummy) -|-[ratio=.5] (take06a);
+            \draw[arrow] (take06a) -- (walk2a);
+            \draw[arrow] (walk2a) -- (take22a);
+            %     c) take 22, take 6, walk 2
+            \node[take=22, below left = 0.3cm and 2cm of dummy] (take22c) {\includegraphics[width=15mm]{res/pictures/assets/22-front.png}};
+            \node[take=6, left = of take22c] (take06c) {\includegraphics[width=15mm]{res/pictures/assets/06-front.png}};
+            \node[left = of take06c] (walk2c) {2 laufen};
+            \draw[->, very thick, shorten <=2pt] (dummy) -|-[ratio=.5] (take22c);
+            \draw[arrow] (take22c) -- (take06c);
+            \draw[arrow] (take06c) -- (walk2c);
+            %     d) take 22, walk 2, take 6
+            \node[take=22, below=1.1cm of take22c] (take22d) {\includegraphics[width=15mm]{res/pictures/assets/22-front.png}};
+            \node[left = of take22d] (walk2d) {2 laufen};
+            \node[take=6, left = of walk2d] (take06d) {\includegraphics[width=15mm]{res/pictures/assets/06-front.png}};
+            \draw[->, very thick, shorten <=2pt] (dummy) -|-[ratio=.5] (take22d);
+            \draw[arrow] (take22d) -- (walk2d);
+            \draw[arrow] (walk2d) -- (take06d);
+            %     e) walk 2, take 6, take 22 (skip special patch)
+            %     f) walk 2, take 22, take 6 (skip special patch)
+
+            % take 16
+            \node[take=16, left = 4.5cm of dummy -| take06d] (take16) {\includegraphics[width=10mm]{res/pictures/assets/16-front.png}};
+            \draw[arrow] (take22a) -|- (take16);
+            \draw[arrow] (walk2b) -|- (take16);
+            \draw[arrow] (walk2c) -|- (take16);
+            \draw[arrow] (take06d) -|- (take16);
+
+            % end
+            \node[draw, circle, inner sep=2pt, label=below:Ende] (end) at (start |- take16)  {};
+            \draw[arrow] (take16) -- (end);
+        \end{tikzpicture}
+    \end{adjustbox}
+    % \vspace*{-0.5cm}
+    \caption{Perfektes Patchwork Spiel}
+    \label{fig:max-score-turns}
+\end{figure}
+
+Der sich aus dem Optimierungsproblem ergebene perfekte Spielverlauf eines Spielers ist in Grafik \ref{fig:max-score-turns} zu sehen. Zuerst werden Flicken gekauft, die zu ihren vergleichsweißen geringen Kosten viel Knopfeinkommen generieren. Zusammen mit einer Laufaktion kann so im frühem Spielverlauf so viel Knopfeinkommen generiert werden, dass anschließend mehrere Flicken gekauft werden, die das Knopfeinkommen früh deutlich erhöhen. Im weiteren Verlauf des Spiels nimmt die Anzahl der Knopfeinkommen auf den gekauften Flicken immer weiter ab. Das ist wahrscheinlich der Fall, da das noch zu generierende Knopfeinkommen den höheren Preis solcher Flicken im späteren Spielstadium nicht mehr kompensieren kann.
+
+Im spätem Spielverlauf wird nur noch die auf dem Ablageplan gefüllte Fläche vollständig ausgefüllt und alle übrigen \enquote{freien} Aktionen dazu verwendet, durch Laufen den Knopfvorrat weiter zu erhöhen. Als letzte Aktion wird noch der Flicken Nummer 16 genommen, da dieser eine relative große Fläche ausfüllt, ein Knopfeinkommen generiert und nur einen Knopf kostet. Da anschließend direkt das Ziel erreicht wird, sind die großen Zeitkosten von 5 zu vernachlässigen. Am Ende ergibt sich für den Spieler eine maximale Wertung von $\boldsymbol{85}$ Punkten.
+
+\begin{wrapfigure}{r}{0.45\textwidth}
+    \vspace*{-0.75cm}
+    \centering
+    \begin{tikzpicture}
+        \node [inner sep=0pt,outer sep=0pt,clip,rounded corners=0.15cm] (image) at (0,0) {\includegraphics[width=0.375\textwidth]{res/pictures/perfect-game.jpg}};
+        \drawshadow{image}
+    \end{tikzpicture}
+    \caption[Ablageplan beim perfekten Spiel]{\unskip}
+    Ablageplan beim perfekten Spiel
+    \label{fig:max-score-quilt-board}
+    \vspace*{-0.75cm}
+\end{wrapfigure}
+
+Um zu zeigen, dass es sich bei den $85$ Punkten auch tatsächlich um die maximale Wertung handelt, müssen alle Flicken auch auf dem Ablageplan platzierbar sein. Eine mögliche Kombination hierfür ist in Abbildung \ref{fig:max-score-quilt-board} zu sehen.
+
+Besonders anzumerken ist hierbei, dass der Gegenspieler genau einen der Spezialflicken aufsammeln muss, da der Spieler den fünften Spezialflicken ansonsten auf seinem Ablageplan platzieren müsse und somit keinen Platz mehr für den letzten Flicken hätte. Somit ergibt sich automatisch, dass innerhalb eines Spiels nicht gleichzeitig die maximale Wertung bei einem Spieler und die minimale Wertung bei einem anderen Spieler auftreten kann. Das ist sowieso der Fall, da ein Spieler für die minimale als auch die maximale Wertung den Flicken mit der Nummer 4 kaufen muss.
+
+Weiterhin ist für ein perfektes Spiel eines Spielers neben dem Glück, dass die Flicken am Anfang richtig liegen auch besonders die Kooperation des zweiten Spielers notwendig, sodass alle Aktionen bis zum Ende genauso wie vorgegeben möglich sind. Das ist im Normalfall des kompetitiven Spiels sehr unwahrscheinlich. Jedoch muss aber sichergestellt werden, dass der zweite Spieler genau so agieren kann, dass die oben gezeigten Aktionen des ersten Spielers generell möglich sind. Die Verifikation hierfür wird dem Leser als Übung überlassen. Zuletzt ist noch anzumerken, dass die hier gezeigte Lösung nicht eindeutig ist. Zwei Alternative Spielverläufe, die auch mit einer Wertung von $85$ Punkten enden, sind in Anhang \ref{anhang:section-bilder-spielverlaeufe} gezeigt.
+
+\pagebreak
+
+\section{Auswertung empirischer Daten}
+\label{section:auswertung-empirischer-daten}
+
+Um die vorangegangenen Betrachtungen genauer einordnen zu können und um gleichzeitig eine realistischere Betrachtung von Patchwork zu erhalten, werden 10 Millionen Spiele von Patchwork aufgenommen und ausgewertet. Dabei treten 2 Computer gegeneinander an, welche für ihren Zug immer eine zufällige Aktion aus allen möglichen Aktionen auswählen (siehe Kapitel \ref{section:erstellung-ansatz-a}). So sollten die 10 Millionen Spiele eine möglichst unverzerrte Datenverteilung enthalten, bei der keine bestimmte Spielkonfiguration bevorzugt wird.
+
+% MEAN: 42.8176
+% MEDIAN: 43.0
+% MIN: 34 (Count: 4000)
+% MAX: 54 (Count: 2000)
+% VAR: 8.031931043193113
+% STDEV: 2.834066167751401
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{res/pictures/plots/game_lengths.pdf}
+    % \vspace*{-0.5cm}
+    \caption{Spiellänge der 10 Millionen Spiele in \hyperref[text:ply]{\emph{Plys}}}
+    \label{fig:plot-game-length-10-million}
+\end{figure}
+
+Die durchschnittliche Spiellänge, gemessen in \hyperref[text:ply]{\emph{Plys}}, beträgt ${\approx}42{,}8176$. Die kürzesten Spiele der Messung sind nach 34 \hyperref[text:ply]{\emph{Plys}} beendet. Das bedeutet nicht, dass es keine Spiele geben kann, welche kürzer gehen, sondern dass diese in der Messung nicht vorhanden sind. Zu sehen ist das an der maximalen Länge. Hier wurden nur Spiele bis zu einer Länge von 54 \hyperref[text:ply]{\emph{Plys}} erreicht, während wie in »\nameref{subsection:analyse-laenge-des-spiels}« gezeigt auch ein Spielverlauf mit bis zu 63 \hyperref[text:ply]{\emph{Plys}} möglich ist. Die gesamte Verteilung der Spiellänge der empirischen Messung ist in Diagramm \ref{fig:plot-game-length-10-million} zu sehen.
+
+\pagebreak
+
+% MEAN: 83.65933586478253
+% MEDIAN: 11.0
+% MIN: 1 (Count: 130760000)
+% MAX: 1345 (Count: 2000)
+% VAR: 22351.213723901034
+% STDEV: 149.50322312211543
+\begin{wrapfigure}{r}{0.55\textwidth}
+    % \vspace*{-0.75cm}
+    \centering
+    \includegraphics[width=0.549\textwidth]{res/pictures/plots/available_actions.pdf}
+    \vspace{-7pt}
+    \caption[Verteilung der verfügbare Aktionen]{\unskip}
+    Verteilung der verfügbare Aktionen
+    \label{fig:plot-available-actions-10-million}
+    \vspace{-7pt}
+    % \vspace*{-0.85cm}
+\end{wrapfigure}
+
+Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief. Im Diagramm sind dabei keine Aktionen für das Platzieren von Spezialflicken aufgenommen und die Aktionen sind in einer logarithmischen Skala dargestellt. Es existieren deutlich mehr Aktionen mit weniger Möglichkeiten und die durchschnittliche Anzahl an verfügbaren Aktionen liegt bei ${\approx}83{,}66$. Diese rechtsschiefe lässt sich auch leicht erklären: Sobald ein Flicken zu viele Knöpfe kostet oder auf dem Ablageplan keinen Platz findet, fallen auf einen Schlag ungefähr $\sfrac{1}{3}$ der Aktionen weg. Weiterhin fallen immer mehr Platzierungsmöglichkeiten weg, je voller der Ablageplan eines Spielers ist.
+
+\section{Betrachtung der Spiel-Komplexität}
+\label{section:betrachtung-der-spiel-komplexitaet}
+
+Nachdem nun einige Betrachtungen zu konkreten Wertungen, Aktionen und Spielverläufen von Patchwork gemacht sowie empirische Daten analysiert wurden, wird nachfolgend die spieltheoretische Komplexität untersucht, um eine genauere Vorstellung über die Komplexität von Patchwork im Vergleich zu anderen Spielen zu erhalten.
+
+\subsubsection*{Zustandsraum-Komplexität}
+\label{subsection:zustandsraum-komplexitaet}
+
+Eine Spieler kann im Spiel aus maximal $3 \cdot 448 + 1 = 1345$ Aktionen wählen und das längste Patchwork-Spiel geht 63 \hyperref[text:ply]{\emph{Plys}}. Somit lässt sich eine einfache obere Schätzung für die Zustandsraum-Komplexität formulieren:
+
+% \vspace*{-1cm}
+\begin{align}
+    \label{eqn:ssc-patchwork-easy}
+    \text{\acsp{SSC}}(Patchwork) & \approx 1345^{63} \approx 1{,}28677884782552 \cdot 10^{197}
+\end{align}
+
+Diese Schätzung geht davon aus, dass von der Initialposition immer alle Aktionen möglich sind, das längste Spiel erreicht wird und das der Zustandsraum nach jeder Aktion einzigartig im Vergleich zu allen anderen Zuständen im gesamten Spielbaum ist. Obwohl diese Annahmen sehr unrealistisch sind, werden bei der Komplexitätsbetrachtung oft solche Vereinfachungen zugelassen, die auch nichtexistierende Zustände mitzählen, da dadurch leichter Obergrenzen gefunden werden können. Dadurch, dass jeder Zustand als einzigartig angenommen wird, ist \ref{eqn:ssc-patchwork-easy} auch gleichzeitig eine Obergrenze für die Anzahl der Knoten im Spielbaum, sowie der Anzahl der Blattknoten im Spielbaum / Spielbaumgröße. Somit dürfen alle nachfolgenden Komplexitätsbetrachtungen diese Zahl nicht überschreiten.
+
+Für den Zustandsraum lässt sich auch eine genauere Schätzung verfassen. Ein Spieler besitzt einen Ablageplan mit $81$ Feldern. Diese Felder können immer genau 2 Zustände besitzen, also $2^{81}$. Hinzu kommen $54$ mögliche Positionen, Knopfeinkommen auf dem Ablageplan von $0$ bis $30$ inklusive sowie $184$ Möglichkeiten für die Anzahl der Knöpfe im Knopfvorrat ($\left[-106,\dots,77\right]$). Alle diese Werte wurden zuvor in diesem Kapitel erläutert. Da 2 Spieler existieren, müssen alle diese Werte hoch $2$ genommen werden. Weiterhin gibt es 3 Möglichkeiten für die Vergabe des $7\times 7$ Sonderplättchen (nicht vergeben, Spieler 1 und Spieler 2). Somit ergibt sich als Schätzung für den Zustandsraum von Patchwork:
+
+\begin{align}
+    \label{eqn:ssc-patchwork}
+    \text{\acsp{SSC}}(Patchwork) & \approx \left(2^{81} \cdot 54 \cdot 31 \cdot 184\right)^{2}\cdot 3 \approx 1{,}66 \cdot 10^{60}
+\end{align}
+
+Somit ist es wahrscheinlich, dass es in Patchwork mehr Möglichkeiten für die Platzierung von Flicken, Zeitsteinen und Knöpfen gibt, als Positionen in Schach. Hierfür wurde von S. Chinchalkar eine Obergrenze von $1{,}78\cdot 10^{46}$ berechnet \cite[S. 182]{1996.ChessPositions}. Jedoch ist anzumerken, dass gedrehte und gespiegelte Versionen des Ablageplans als mehrere verschiedene Zustände gelten, obwohl sich dadurch die Komplexität des Spiels nicht vergrößert.
+
+\subsubsection*{Komplexitätstheoretischer Rechenaufwand}
+
+Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
+
+Oft wird der komplexitätstheoretische Rechenaufwand für Spiele so verallgemeinert, dass die Entwicklung der $\mathcal{O}$-Notation mit beliebig großen Spielfeldern betrachtet wird. Da in dieser Arbeit aber nur Computergegner für das originale Patchwork-Spiel umgesetzt werden, wird dies an dieser Stelle nicht genauer betrachtet.
+
+\subsubsection*{Spielbaumkomplexität}
+
+Mit den empirischen Daten aus dem vorherigem Abschnitt lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
+
+% \vspace*{-1cm}
+\begin{align}
+    \label{eqn:gtc-patchwork-branch-estimation}
+    \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
+    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                         \\
+    \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
+\end{align}
+
+Die in \ref{eqn:gtc-patchwork-branch-estimation} resultierende Schätzung von $2{,}08 \cdot 10^{82}$ ist dabei jedoch wahrscheinlich zu groß. Der Median der verfügbaren Aktionen beträgt im Gegensatz zum Durchschnitt bei den empirischen Daten nur $11$. Durch einzelne Zustände mit sehr vielen verfügbaren Aktionen wird der Durchschnitt angehoben, obwohl in den meisten Zuständen nur eine oder wenige Aktionen möglich sind.
+
+\subsubsection*{Spielbaumgröße}
+
+Für die Größe des Spielbaums lässt sich nach A. und D. Yong eine recht genaue Schätzung finden. Dazu wird ein Spiel mit $N$ \hyperref[text:ply]{\emph{Plys}} gespielt, wobei die einzelnen Aktionen mittels einer Gleichverteilung ausgewählt werden. In jedem \hyperref[text:ply]{\emph{Ply}} $i$ werden dabei die Anzahl der möglichen Aktionen $c_i(g)$ gespeichert. Aus der Multiplikation all dieser Verzweigungen ergibt sich die Zufallsvariable $X(g)$ als Schätzung für die Größe des Spielbaums. Um nun eine möglichst akkurate Schätzung zu erhalten, wird dieser Prozess in vielen unabhängigen Durchläufen wiederholt und der Mittelwert wie in Formel \ref{eqn:gts-patchwork-avg-estimation} gebildet. Mit $n \to \infty$ nähert sich diese Schätzung immer mehr der tatsächlichen Größe des Spielbaums an. \cite{2019.GameTreeComplexityEstimation}
+
+\begin{equation}
+    \label{eqn:gts-patchwork-avg-estimation}
+    \begin{aligned}
+        X(g)                         & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
+        \text{\acsp{GTS}}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
+                                     & \approx 1{,}68 \cdot 10^{38}
+    \end{aligned}
+\end{equation}
+
+Als unabhängige Stichproben der Zufallsvariable $X$ können die aufgenommenen 10 Millionen Spiele eingesetzt werden. Somit ergibt sich eine Schätzung der Spielbaumgröße von $1{,}68 \cdot 10^{38}$.
+
+Die Spielbaumkomplexität ist definiert als die Anzahl der Blattknoten im Lösungs-Suchbaum des Startzustandes. Da dieser Lösungs-Suchbaum immer ein Teilbaum des gesamten Spielbaums ist, gilt immer:
+
+\begin{equation}
+    \label{eqn:gts-greater-equal-gtc}
+    \begin{aligned}
+        \forall \mathcal{G} \in \text{Spiele}:\quad \text{\acsp{GTS}}(\mathcal{G}) \geq \text{\acsp{GTC}}(\mathcal{G})
+    \end{aligned}
+\end{equation}
+
+Somit kann \textendash{} wenn es sich bei \ref{eqn:gts-patchwork-avg-estimation} um eine genügend genaue Schätzung handelt \textendash{} angenommen werden, dass die tatsächliche Spielbaumkomplexität von Patchwork auch unterhalb der $1{,}68 \cdot 10^{38}$ liegt. Diese Schätzung ist höher als die Komplexität von \emph{TicTacToe} mit $255168$ \cite{2024.TicTacToe} oder von \emph{Vier gewinnt} mit $8{,}34 \cdot 10^{28}$ \cite[S. 3]{2019.GameTreeComplexityEstimation} aber geringer als beispielsweise \emph{Othello} mit $6{,}47 \cdot 10^{54}$ \cite[S. 4]{2019.GameTreeComplexityEstimation}. Diese Vergleichswerte für andere Spiele legen nahe, dass Patchwork sich eher der Klasse der komplexeren Spiele zuordnen lässt, sich dabei jedoch eher im unteren Spektrum einordnet. Dieser Umstand wird auch deutlich, wenn man die einfache Schätzung der Spielbaumkomplexität in \ref{eqn:gtc-patchwork-branch-estimation} mit einer äquivalenten Schätzung für Schach mit $10^{120}$ von Shannon vergleicht \cite[S. 4]{1950.ChessShannon}. Patchwork ist zwar insgesamt weniger komplex, jedoch immer noch viel zu komplex als dass das gesamte Spielgeschehen vorhergesehen werden kann oder Brute-Force-Algorithmen alles vorausberechnen können. Das wird vor allem dann ersichtlich, wenn man die Spielbaumkomplexität mit der großen Zustandsraum-Komplexität kombiniert. Patchwork lässt sich zusammen mit anderen Spielen in einem 2-dimensionalen-Koordinatensystem mit den Achsen \emph{$\log_{10} \log_{10} \text{Zustandsraum-Komplexität}$} und \emph{$\log_{10} \log_{10} \text{Spielbaumkomplexität}$} plotten (Abbildung \ref{fig:game-complexity-coordinate-system})\footnote{Die Komplexitätswerte der anderen Spiele sind dabei von Quelle \cite[S. 300]{2002.GamesSolved} übernommen}. Dabei reiht sich Patchwork zusammen mit Schach oder Hex ein.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{res/pictures/game-complexity-coordinate-system.pdf}
+    \caption{Patchwork in der doppelten Dichotomie des Spielraums}
+    \label{fig:game-complexity-coordinate-system}
+\end{figure}
+
+\vfill
+\vspace*{100cm}
 
 % sum k=1 to n of P(n, k) = n! / (n-k)! = 36! / (36-k)! = 36! / (36-36)! = 36! / 0! = 36!
-
 
 % import math
 % result = 0
@@ -340,140 +926,3 @@ TODO:
 % (2) * 1!
 % (3) * 1!
 % ()  * 0!
-
-% TODO: hyperreferencen für Komplexitätsparameter (e.g. Spielbaumkomplexität) in Formelsammlung einfügen
-
-Der komplexitätstheoretische Rechenaufwand für Patchwork ist, wie auch für TicTacToe oder Schach, $\mathcal{O}(1)$, da das Spiel eine feste Brettgröße besitzt und somit nur endlich viele Zustände zulässt. Somit ist es theoretisch möglich eine Tabelle zu konstruieren, bei der zu jedem Zustand angegeben wird, was die beste Aktion ist. Praktisch ist dies aber im Gegensatz zu TicTacToe durch die große Menge an Zuständen nicht umsetzbar.
-
-Eine Schätzung für die Spielbaumkomplexität wird im nachfolgenden Abschnitt vorgenommen.
-
-\section{Auswertung empirischer Daten}
-
-Um die vorangegangenen Komplexitätsbetrachtungen genauer einordnen zu können und um gleichzeitig eine realistischere Betrachtung von Patchwork zu erhalten, werden 10 Millionen Spiele von Patchwork aufgenommen und ausgewertet. Dabei treten 2 Computer gegeneinander an, welche für ihren Zug immer eine zufällige Aktion aus allen möglichen Aktionen auswählen (siehe Kapitel \ref{section:erstellung-ansatz-a}). So sollten die 10 Millionen Spiele eine möglichst unverzerrte Datenverteilung enthalten, bei der keine bestimmte Spielkonfiguration bevorzugt wird.
-
-% MEAN: 42.8176
-% MEDIAN: 43.0
-% MIN: 34 (Count: 4000)
-% MAX: 54 (Count: 2000)
-% VAR: 8.031931043193113
-% STDEV: 2.834066167751401
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.7\textwidth]{res/pictures/plots/game_lengths.pdf}
-    % \vspace*{-0.5cm}
-    \caption{Spiellänge der 10 Millionen Spiele in \hyperref[text:ply]{\emph{Plys}}}
-    \label{fig:plot-game-length-10-million}
-\end{figure}
-
-Die durchschnittliche Spiellänge, gemessen in \hyperref[text:ply]{\emph{Plys}}, beträgt ${\approx}42{,}8176$. Die kürzesten Spiele der Messung sind nach 34 \hyperref[text:ply]{\emph{Plys}} beendet. Das bedeutet nicht, dass es keine Spiele geben kann, welche kürzer gehen, sondern dass diese in der Messung nicht vorhanden sind. Zu sehen ist das an der maximalen Länge. Hier wurden nur Spiele bis zu einer Länge von 54 \hyperref[text:ply]{\emph{Plys}} erreicht, während wie in »\nameref{subsection:analyse-laenge-des-spiels}« gezeigt auch ein Spielverlauf mit bis zu 63 \hyperref[text:ply]{\emph{Plys}} möglich ist. Die gesamte Verteilung der Spiellänge der empirischen Messung ist in Diagramm \ref{fig:plot-game-length-10-million} zu sehen.
-
-% MEAN: 83.65933586478253
-% MEDIAN: 11.0
-% MIN: 1 (Count: 130760000)
-% MAX: 1345 (Count: 2000)
-% VAR: 22351.213723901034
-% STDEV: 149.50322312211543
-\begin{wrapfigure}{r}{0.55\textwidth}
-    \vspace*{-0.75cm}
-    \centering
-    \includegraphics[width=0.549\textwidth]{res/pictures/plots/available_actions.pdf}
-    % \vspace{-10pt}
-    \caption[Verteilung der verfügbare Aktionen]{\unskip}
-    Verteilung der verfügbare Aktionen
-    \label{fig:plot-available-actions-10-million}
-    \vspace*{-0.85cm}
-\end{wrapfigure}
-
-Im Gegensatz zu der normalverteilten Spiellänge, ist die Verteilung der verfügbaren Aktionen, wie in Diagramm \ref{fig:plot-available-actions-10-million} dargestellt ist, stark rechtsschief. Im Diagramm sind dabei keine Aktionen für das Platzieren von Spezialflicken aufgenommen und die Aktionen sind in einer logarithmischen Skala dargestellt. Es existieren deutlich mehr Aktionen mit weniger Möglichkeiten und die durchschnittliche Anzahl an verfügbaren Aktionen liegt bei ${\approx}83{,}66$. Diese rechtsschiefe lässt sich auch leicht erklären: Sobald ein Flicken zu viele Knöpfe kostet oder auf dem Ablageplan keinen Platz findet, fallen auf einen Schlag ungefähr $\sfrac{1}{3}$ der Aktionen weg. Weiterhin fallen immer mehr Platzierungsmöglichkeiten weg, je voller der Ablageplan eines Spielers ist.
-
-\subsection*{Schätzung der Spielbaumkomplexität}
-
-Mit den empirischen Daten lässt sich eine grobe Schätzung für die Komplexität des Spielbaums in Patchwork erstellen, wobei der durchschnittliche Verzweigungsfaktor mit der durchschnittlichen Spiellänge potenziert wird \cite[S. 160]{1194.SearchAndAiInGames}.
-
-\vspace*{-1cm}
-\begin{align}
-    \label{eqn:gtc-patchwork-branch-estimation}
-    \text{\acsp{GTC}}(Patchwork) & \approx b^d \approx {83{,}6593}^{42{,}8176} \approx 2{,}08 \cdot 10^{82} \\[2pt]
-    \tag*{$\text{mit }           b = \text{durchschnittlicher Verzweigungsfaktor}$}                         \\
-    \tag*{$\phantom{\text{mit }} d = \text{durchschnittliche\phantom{r} \rlap{Spiellänge}\phantom{Verzweigungsfaktor}}$}
-\end{align}
-
-Die in \ref{eqn:gtc-patchwork-branch-estimation} resultierende Schätzung von $2{,}08 \cdot 10^{82}$ ist dabei jedoch wahrscheinlich zu groß. Der Median der verfügbaren Aktionen beträgt im Gegensatz zum Durchschnitt nur $11$. Durch einzelne Zustände mit sehr vielen verfügbaren Aktionen wird der Durschnitt angehoben, obwohl in den meisten Zuständen nur eine oder wenige Aktionen möglich sind.
-
-Eine weitere genauere Schätzung für die Komplexität des Spielbaums kann nach A. und D. Yong gefunden werden. Dazu wird ein Spiel mit $N$ \hyperref[text:ply]{\emph{Plys}} gespielt, wobei die einzelnen Aktionen mittels einer Gleichverteilung ausgewählt werden. In jedem \hyperref[text:ply]{\emph{Ply}} $i$ werden dabei die Anzahl der möglichen Aktionen $c_i(g)$ gespeichert. Aus der Multiplikation all dieser Verzweigungen ergibt sich die Zufallsvariable $X(g)$ als Schätzung für die Komplexität des Spielbaums. Um nun eine möglichst akkurate Schätzung zu erhalten, wird dieser Prozess in vielen unabhängigen Durchläufen wiederholt und der Mittelwert wie in Formel \ref{eqn:gtc-patchwork-avg-estimation} gebildet. Mit $n \to \infty$ nähert sich diese Schätzung immer mehr der tatsächlichen Komplexität des Spielbaums an. \cite{2019.GameTreeComplexityEstimation}
-
-\begin{equation}
-    \label{eqn:gtc-patchwork-avg-estimation}
-    \begin{aligned}
-        X(g)                         & = \prod\nolimits_{j=1}^{N} c_j(g)         \\[15pt]
-        \text{\acsp{GTC}}(Patchwork) & \approx \frac{1}{n} \sum_{i=1}^{n} X(g_i) \\[1pt]
-                                     & \approx 1{,}68 \cdot 10^{38}
-    \end{aligned}
-\end{equation}
-
-Als unabhängige Stichproben der Zufallsvariable $X$ können die aufgenommenen 10 Millionen Spiele eingesetzt werden. Somit ergibt sich eine Schätzung der Spielbaumkomplexität von $1{,}68 \cdot 10^{38}$.
-
-% balance >= 0
-% zeitkosten <= 54
-% t_i = vorherige t_is + time cost
-
-% \\  Variablen \\ \\
-
-% x = \left(x_0, \dots, x_{32}\right)^T \\
-% t = \left(t_0, \dots, t_{32}\right)^T \text{Auswahlzeitpunkt auf Zeitplan} \\
-% a = \left(a_0, \dots, a_{32}\right)^T \text{Flaechenvektor} \\
-% i = \text{Button Income Vektor} \\
-% z = \text{Zeitkostenvektor} \\
-% c = \text{Kostenvektor}
-
-% \\ Bedingung \\ \\
-
-% max \overset{!}{=} \sum_{n=1}^{9} i^Tbi^{(n)} + 2 \cdot \left(\lambda\cdot 81 + (1 - \lambda) \cdot x^Ta\right) - x^Tc
-
-% \\ \\ Nebenbedingungen \\ \\
-
-% 0 \le \lambda      \le 1  \quad \text{ bzw. } \lambda \in \{0,1\}\\
-% 0 \le x_i          \le 1  \quad \text{ bzw. } x_i \in \{0,1\}\\
-% 0 \le t_i          \le 53 \quad \text{ bzw. } t_i \in \mathbb{N}_0 \cap [0,53] \\
-% 0 \le bi^{(n)}_{i} \le 1  \quad \text{ bzw. } bi^{(n)}_{i} \in \{0,1\} \qquad \forall n \in \mathbb{N} \cap [1,9] \\
-
-% \\
-
-% x_i \le t_i \le 1000 \cdot x_i \\
-
-% \\ Flaeche \\
-
-% x^Ta \le 81 \\
-% x^Ta - 76 + 1 \le 1000 \cdot \lambda \text{ bzw. } x^Ta - 76 < 1000 \cdot \lambda \\
-
-% \\ Zeitkosten \\
-
-% ???\ x^Tz \le \\
-
-% \\ Income \\
-% c_n - t_i < 1000 \cdot bi^{(n)}_{i} \quad \forall n \in \mathbb{N} \cap [1,9] \text{ und } c=(5,11,17,23,29,35,41,47,53) \\
-
-% \\ Balance \ge 0 \\
-
-% ???\ c^T ?? \ge 5 + \quad \forall n \in \mathbb{N}_0 \cap [0,54] \\
-
-% \\ t_i's \\
-
-% ???\ test
-
-
-% für z = 0 bis 54
-%     alle c_i mit t_i <= z
-%     summe c_i >= 5 + summe income_i mit passenden konstanten
-
-%     alle kosten von t_i
-
-
-% i = (3,2,4,5,1) Indexe nach Flickenauswahl
-% alle unterschiedlich i_i != i_j
-
-% sum t_i    = 1 + 4 + 5 + 10 + 14 + 35 = 69
-% sum z_i    =     3 + 1 +  5 +  4 + 21 = 34
-% cumsum z_i =     3 + 4 +  9 + 13 + 34 = 63
-
-% sum t_i = cumsum z_i + 1
