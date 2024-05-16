@@ -15,7 +15,7 @@ Nachfolgend wird eine Evaluation der einzelnen Computerengines vorgenommen. Dazu
     \item \vspace{-0.15cm} \textbf{Rust Version:} rustc 1.77.2
 \end{itemize}
 
-Nachfolgend werden, sofern nicht anders beschrieben, immer 100 Vergleichsspiele zwischen 2 Spielern gegeneinander gespielt. Dabei hat jeder Spieler immer eine Bedenkzeit von $10\acs{s}$, um eine Aktion auszuwählen. Computerengines mit Parallelisierung stehen 8 Threads zur Verfügung.
+Sofern nicht anders beschrieben, werden immer 100 Vergleichsspiele zwischen 2 Spielern gegeneinander gespielt. Dabei hat jeder Spieler immer eine Bedenkzeit von $10\acs{s}$, um eine Aktion auszuwählen. Computerengines mit Parallelisierung stehen 8 Threads zur Verfügung.
 
 Die Stichprobe von 100 Spielen ist zu klein, um verlässliche statistische Vorhersagen zu treffen, vor allem was die genauen Gewinnraten der Spieler gegeneinander betrifft. Eine Tendenz der Ergebnisse lässt sich aber dennoch feststellen. Die kleine Anzahl an Vergleichsspielen ergibt sich aus der zeitlichen und hardwaretechnischen Ressourcenbegrenzung. Ein Spieler hat $10\acs{s}$ Bedenkzeit, multipliziert mit der durchschnittlichen Anzahl an \hyperref[text:ply]{\emph{Plys}} ($42{,}8176$) und den 100 Vergleichsspielen, ergibt sich eine Zeit von ca. $11,89$ Stunden für ein Vergleich zwischen zwei Spielern. Hardwaretechnisch werden alle Spiele auf dem gleichen oben genannten Rechnersystem durchgeführt, um vergleichbare Ergebnisse zu erhalten. Somit war es nicht möglich für die Evaluation mehr Vergleichsspiele durchzuführen. Bei den Vergleichsspielen wird immer nur das Endergebnis (also Gewinnen oder Verlieren) betrachtet, nicht die genaue Endwertung. In tatsächlichen Spielen geht es auch darum welcher Spieler gewinnt und nicht mit welcher Punktzahl. Außerdem wird die genaue Endwertung stark durch die initiale Flickenverteilung, den Spielverlauf und das Gegnerverhalten bestimmt. Spielen zwei starke Spieler gegeneinander, kann die Endwertung niedriger ausfallen als bei zwei schwächeren Spielern, da sich die starken Spieler vielleicht auch gegenseitig die besten Aktionen verbauen.
 
@@ -96,7 +96,7 @@ Beim \ac{PVS} Spieler werden zuerst während der Suche typische Statistiken betr
                 Time:                 & $5{,}0634892\acs{s}$                                                 \\
                 Nodes searched:       & $43720$                                                              \\
                 % Branching factor:   & $2{,}84$ AVG / $1{,}78$ EFF / $1{,}38$ MEAN                          \\
-                Branching factor:     & $13{,}73$ AVG / $3{,}32$ EFF / $1{,}59$ MEAN                         \\
+                % Branching factor:     & $13{,}73$ AVG / $3{,}32$ EFF / $1{,}59$ MEAN                         \\
                 Best Action:          & P7I1═4‖3↻1↔0P1 ($3$ points)                                          \\
                 Action Ordering:      & $86{,}80\%$ ($8611$ high pv / $9920$ high)                           \\
                 Aspiration window:    & $0$ low / $0$ high                                                   \\
@@ -140,7 +140,9 @@ Beim \ac{PVS} Spieler werden zuerst während der Suche typische Statistiken betr
     \label{fig:pvs-statistics}
 \end{figure}
 
-TODO:
+Der \ac{PVS} Spieler schafft in der Regel eine Suchtiefe von 8 bis 11 Ebenen. Dabei werden nach 10 Sekunden ca. $150{.}000$ Knoten bzw. Spielzustände durchsucht und evaluiert. Neben der besten Aktion, welche durch den \ac{PVS} Spieler ausgewählt wird, kann auch die gesamte \acs{PV} betrachtet werden, welche sich über mehrere Ebenen erstreckt. Die Aktionen Anordnung ist im $80\%-90\%$ akzeptabel, aber noch verbesserbar. Generell findet ein \hyperref[text:beta-cutoff]{\emph{Beta-Cutoff}} fast immer am ersten Knoten statt, was für eine gelungene Umsetzung von \ac{PVS} spricht. Die Aspiration Window Funktionalität verkleinert das Suchfenster und muss nur in wenigen Fällen erneut Suchen (in \ref{fig:pvs-statistics} kein einziges Mal). Auch die Sucherweiterungen, \ac{LMR} und \ac{LMP} funktionieren, wobei vor allem durch \ac{LMP} sehr viele Teilbäume gar nicht evaluiert werden (in der Statistik 3271). Die Transpositionstabelle hat eine \emph{Hit-Rate} von $\approx 23\%$, was nicht sehr viel ist. Dies ist für Patchwork aber auch zu erwarten, da es zum Beispiel im Gegensatz zu Schach, kaum Zugfolgen gibt, die im gleichen Spielzustand enden. Dies ist der Fall, da man entweder direkt 2 Flicken nacheinander auswählen kann oder zuerst den zweiten Flicken nimmt und dann eine ganze Umrundung der Flicken mit der Spielfigur abwarten muss, um den gleichen zweiten Flicken zu nehmen. Die Wahrscheinlichkeit, dass in diesem Fall auch der Knopfvorrat, Position auf dem Zeitplan und alle weiteren Eigenschaften gleich sind, ist gering. Das Einfügen von Position mit Symmetrie erhöht die \emph{Hit-Rate} nur um etwa $2\%$, eine kleine aber dennoch bedeutungsvolle Änderung.
+
+In Abbildung \ref{fig:pvs-comparision} werden die einzelnen Funktionalitäten des \ac{PVS} Spielers getestet, indem immer ein Spieler mit allen aktivierten Funktionalitäten gegen einen anderen Spieler antritt, bei dem eine der Funktionalitäten abgeschaltet ist.
 
 \begin{figure}[!ht]
     \centering
@@ -222,9 +224,7 @@ TODO:
     \label{fig:pvs-comparision}
 \end{figure}
 
-TODO:
-
-\pagebreak
+Mit Aspiration Windows aktiviert gewinnt der \ac{PVS} Spieler $51\%$ der Spiele gegen sich selbst. Bei 100 Spielen ist dies keine Garantie für eine Verbesserung, legt aber zumindest nahe, dass sich die Performance nicht verschlechtert hat. Die Sucherweiterungen sowie \ac{LMR} und \ac{LMP} bringen einen kleinen aber gleichzeitig bemerkbaren Vorteil. Weiterhin wurde die Aktionen Anordnung getestet. Ein Spieler spielt mit der normalen auf Tabellenwerten basierten Aktionen-Anordnung, während ein anderer Spieler die tatsächliche Evaluation des statischen Evaluierers verwendet, um die Aktionen anzuordnen (außer für die \ac{PV} Aktion, welche immer an die erste Stelle angeordnet wird). Das Ergebnis beträgt dabei $50\%$, was dafürspricht, dass die Standard Tabellenanordnung die Aktionen bereits relativ gut anordnet. Auf jeden Fall kann der statische Evaluierer die Aktionen auch nicht besser anordnen. Zuletzt gibt es noch einen Vergleich zwischen dem Single-Threaded-\ac{PVS}-Spieler und der Variante mit Lazy \ac{SMP}. Diesen Vergleich gewinnt die parallelisierte Lazy \ac{SMP} Variante.
 
 \section{Vergleich der MCTS-Varianten}
 
@@ -335,6 +335,8 @@ Weiterhin werden die \ac{MCTS} Spielervarianten noch verglichen, indem ein Spiel
     \label{fig:mcts-comparision}
 \end{figure}
 
+\pagebreak
+
 Um die \ac{MCTS} Spielervergleiche abzuschließen, werden zuletzt die einzelnen Parallelisierungsmöglichkeiten untereinander in \ref{fig:mcts-comparision} verglichen. Dabei spielen die nicht parallelisierte Single-Threaded Variante sowie die Leaf- und Root-Parallelisierten Varianten mit 8 Threads gegenaeinander. Die \hyperref[text:leaf-parallelization]{\emph{Leaf Parallelisierung}} schneidet dabei am schlechtesten ab, auch schlechter als die \ac{MCTS} Suche mit einem Thread. Da der \ac{MCTS} Spieler in Patchwork generell sehr wenige Iterationen schafft, ist es wahrscheinlich besser die Change einen guten Spielverlauf zu finden durch viele Iterationen zu maximieren, anstatt weniger Pfade auszuprobieren und für diese Pfade mittels \hyperref[text:leaf-parallelization]{\emph{Leaf Parallelisierung}} eine etwas genaueren Schätzer für den tatsächlichen Wert eines Knotens zu erhalten. Am besten spielt die \hyperref[text:root-parallelization]{\emph{Root-Parallelisierte}} Variante. Diese setzt sich gegen beide anderen Varianten durch, auch wenn der Vorsprung vor der Single-Threaded Variante geringer ausfällt als erhofft.
 
 % ┌───────────────────────────── MCTS Player ─────────────────────────────┐
@@ -393,7 +395,9 @@ Um die \ac{MCTS} Spielervergleiche abzuschließen, werden zuletzt die einzelnen 
     \label{fig:mcts-statistics}
 \end{figure}
 
-Abschließend werden wie beim \ac{PVS} Spieler noch verschiedene Statistiken zu einer \ac{MCTS} Suche betrachtet. Die in Abbildung \ref{fig:mcts-statistics} gezeigte Auflistung stammt dabei von einem \ac{MCTS} Spieler mit einer \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} mit 8 Threads, der seinen Suchbaum wiederverwendet, die \ac{UCT} Tree Policy sowie den Win-Loss-Evaluator verwendet. Generell schafft ein Thread innerhalb der Suchzeit meistens zwischen $50{.}000$ und $100{.}000$ Iterationen. Je später im Spiel eine Aktion gesucht wird, desto mehr Iterationen sind es normalerweise, da eine Simulationsphase zum Beispiel statt $42$ nur noch $10$ \hyperref[text:ply]{\emph{Plys}} umfasst. Über eine Vielzahl von Iterationen summiert sich dieser kleine Zeitunterschied auf. In der dargestellten Auflistung hat der Main-Thread $74{.}767$ Iterationen geschafft. Es ist auch zu erkennen, dass die \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} einwandfrei funktioniert. Schafft ein Thread $74{.}767$ Iterationen, so müssten 8 Threads $74{.}767 \cdot 8 = 598{.}136$ Iterationen schaffen. Der tatsächliche Wert aller Threads liegt bei $592{.}082$ Iterationen, was einer prozentualen Abweichung von $-1{,}01\%$ vom erwarteten Wert entspricht und somit innerhalb der Fehlermarge liegt. Auch gibt es im Suchbaum des Main-Threads leicht weniger Knoten als Iterationen im Baum. Somit wurde die Expansionsphase innerhalb einiger Iterationen übersprungen, was nur vorkommen kann, falls ein Spielverlauf verfolgt wird, der im Baum in einem bereits bestehendem Terminalknoten endet. Das ist generell ein gutes Zeichen, da der \ac{MCTS} Spieler in diesem Fall bereit einen großen Bereich der möglichen Spielverläufe erkundet oder einen sehr vielversprechenden Spielverlauf gefunden hat. Die \acl{PV} ist 4 \hyperref[text:ply]{\emph{Plys}} lang. Somit wurden entlang der \ac{PV} vier Ebenen lang alle möglichen Aktionen expandiert und mindestens einmal erkunden. Nach diesen vier Ebenen existieren noch weitere Ebenen, bei denen aber noch nicht alle möglichen Aktionen erkunden sind.
+Abschließend werden wie beim \ac{PVS} Spieler noch verschiedene Statistiken zu einer \ac{MCTS} Suche betrachtet. Die in Abbildung \ref{fig:mcts-statistics} gezeigte Auflistung stammt dabei von einem \ac{MCTS} Spieler mit einer \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} mit 8 Threads, der seinen Suchbaum wiederverwendet, die \ac{UCT} Tree Policy sowie den Win-Loss-Evaluator verwendet. Generell schafft ein Thread innerhalb der Suchzeit meistens zwischen $50{.}000$ und $100{.}000$ Iterationen. Je später im Spiel eine Aktion gesucht wird, desto mehr Iterationen sind es normalerweise, da eine Simulationsphase zum Beispiel statt $42$ nur noch $10$ \hyperref[text:ply]{\emph{Plys}} umfasst. Über eine Vielzahl von Iterationen summiert sich dieser kleine Zeitunterschied auf. In der dargestellten Auflistung hat der Main-Thread $74{.}767$ Iterationen geschafft.
+
+Es ist auch zu erkennen, dass die \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} einwandfrei funktioniert. Schafft ein Thread $74{.}767$ Iterationen, so müssten 8 Threads $74{.}767 \cdot 8 = 598{.}136$ Iterationen schaffen. Der tatsächliche Wert aller Threads liegt bei $592{.}082$ Iterationen, was einer prozentualen Abweichung von $-1{,}01\%$ vom erwarteten Wert entspricht und somit innerhalb der Fehlermarge liegt. Auch gibt es im Suchbaum des Main-Threads leicht weniger Knoten als Iterationen im Baum. Somit wurde die Expansionsphase innerhalb einiger Iterationen übersprungen, was nur vorkommen kann, falls ein Spielverlauf verfolgt wird, der im Baum in einem bereits bestehendem Terminalknoten endet. Das ist generell ein gutes Zeichen, da der \ac{MCTS} Spieler in diesem Fall bereit einen großen Bereich der möglichen Spielverläufe erkundet oder einen sehr vielversprechenden Spielverlauf gefunden hat. Die \acl{PV} ist 4 \hyperref[text:ply]{\emph{Plys}} lang. Somit wurden entlang der \ac{PV} vier Ebenen lang alle möglichen Aktionen expandiert und mindestens einmal erkunden. Nach diesen vier Ebenen existieren noch weitere Ebenen, bei denen aber noch nicht alle möglichen Aktionen erkunden sind.
 
 \section{Evaluation von PatchZero}
 
@@ -431,7 +435,14 @@ Die Evaluation des PatchZero Spielers findet im direkten Vergleich mit dem Rando
     \label{fig:patchzero-comparision}
 \end{figure}
 
-TODO:
+Die wenig begeisternde Performance von PatchZero gegen Random und Greedy deuten darauf hin, dass der Spieler nicht genug trainiert ist. Dies ist sogar sehr wahrscheinlich, da Deepmind für das Training der originalen AlphaZero-Spieler sehr viel Hardware zur Verfügung hatte. So bräuchte beispielsweise ein Training einer Go-Spielengine etwa 1700 Jahre auf handelsüblicher Hardware, um das gleiche Spielniveau zu erreichen \cite{2017.AlphaZeroTraining}.
+
+Auch wenn Go wie im Kapitel »\nameref{section:betrachtung-der-spiel-komplexitaet}« aufgezeigt komplexer als Patchwork ist, reicht die begrenzte Trainingszeit von 4 Wochen auf dem gleichen System, was auch für die Evaluation verwendet wird, wahrscheinlich bei weitem nicht aus. Dennoch ist die Leistung gegen Greedy nach der Trainingszeit relativ	enttäuschend.
+
+PatchZero braucht für eine Netzwerkevaluation $\approx 12\acs{ms}$ und schafft zusammen mit den \acs{MCTS} Schritten etwa $5.000$ Iterationen in 10 Sekunden. Auch hier ist also der immense Hardwareunterschied erkennbar, da AlphaZero innerhalb einer Sekunde allein schon die Evaluation von $60.000$ Positionen schafft. \cite{2018.AlphaZero}.
+
+Generell kann PatchZero schon als gelungene Umsetzung des AlphaZero-Algorithmus in Patchwork angesehen werden. Sehr wahrscheinlich werden aber noch deutlich mehr Trainingszeit und Hardwareressourcen benötigt, um aus PatchZero einen im Vergleich zu anderen Spielern gute performenden Spieler zu erschaffen.
+
 
 \section{Paarvergleiche}
 
@@ -469,7 +480,7 @@ TODO:
     \label{fig:pvs-random-greedy-comparision}
 \end{figure}
 
-TODO:
+Zuerst werden die Single-Threaded Varianten des \ac{PVS} Spielers und \ac{MCTS} Spielers mit den Random- und Greedy-Spieler verglichen. Abbildung \ref{fig:pvs-random-greedy-comparision} zeigt die Leistung des \ac{PVS} Spielers gegen Random und Greedy auf. Der \ac{PVS} Spieler stellt dabei eine sichtbar Verbesserung im Vergleich zu beiden Spielern dar. Mit einer Gewinnrate von $\sfrac{2}{3}$ gegen Greedy ist aber festzustellen, dass der \ac{PVS} Spieler zwar besser Patchwork spielt, jedoch nicht komplett überlegen ist. Anders sieht dies beim \ac{MCTS} Spieler aus. Dieser dominiert die Vergleichsspiele mit Random und Greedy in Abbildung \ref{fig:mcts-random-greedy-comparision} geradezu und verliert nur 2 Spiele gegen den Greedy Spieler.
 
 \begin{figure}[!ht]
     \centering
@@ -502,7 +513,7 @@ TODO:
     \label{fig:mcts-random-greedy-comparision}
 \end{figure}
 
-TODO:
+Über den indirekten Vergleich von \ac{PVS} Spieler und \ac{MCTS} Spieler über Random und Greedy lässt sich schon erahnen, dass der \ac{MCTS} Spieler wahrscheinlich besser ist. Der direkte Vergleich in \ref{fig:pvs-mcts-comparison} zeigt dies jedoch noch viel deutlicher.
 
 \begin{figure}[!ht]
     \centering
@@ -547,12 +558,17 @@ TODO:
     \label{fig:pvs-mcts-comparison}
 \end{figure}
 
-TODO:
+Der \ac{MCTS} Spieler gewinnt im Single-Threaded vergleich genauso dominant gegen den \ac{PVS} Spieler wie gegen den Greedy Spieler. Der \ac{PVS} Spieler schein somit im Spielervergleich etwas besser als Greedy aber noch ungefähr auf dem gleichen Level zu spielen, während \ac{MCTS} auf einem komplett anderem Niveau spielt. Deshalb ist es auch nicht verwunderlich, dass Lazy \ac{SMP} dem \ac{PVS} Spieler nicht zu mehr Gewinnen gegen \ac{MCTS} verhelfen kann. Das dabei bei Lazy \ac{SMP} kein einziges der 100 Spiele gewonnen werden konnte, liegt wahrscheinlich an der geringen Anzahl von Spielen. So kann der \ac{PVS} Spieler mit Lazy \ac{SMP} beispielsweise auch gegen den \ac{MCTS} Spieler mit \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} gewinnen, obwohl dieser stärker als die Single-Threaded \ac{MCTS} Variante ist.
 
+Ein Grund für das bessere Abschneiden des \ac{MCTS} Spielers könnte die große Zustandsraumkomplexität (Kapitel \ref{section:betrachtung-der-spiel-komplexitaet} Abbildung \ref{fig:game-complexity-coordinate-system}) in Patchwork sein. Der \ac{PVS} Spieler muss möglichst alle Aktionen testen und schafft dadurch in der Suchzeit keine Evaluierung weit entfernter Ereignisse. Der \ac{MCTS} Spieler hingegen findet durch die Verwendung von Zufall und Heuristiken zur Selektion von Knoten oftmals bei Aktionen auch die Auswirkungen, welche noch weit in der Zukunft liegen.
+
+Ein weiterer Grund für die Dominanz kann auch der statische Evaluierer sein. Dieser scheint einen Spielzustand nur relativ oberflächlich zu bewerten. Der Greedy Spieler kann statt mit dem statischen Evaluierer auch mit dem Score-Evaluator ausgestattet werden. Dann spielt der Greedy Spieler für jede Aktion ein zufälliges Spiel bis zum Ende und merkt sich die Endwertung als Differenz der beiden Spieler. Am Ende wird dann die Aktion mit dem besten Endergebnis ausgewählt. Somit verhält sich dieser Greedy Spieler wie ein \ac{MCTS} Spieler, der nur alle Aktionen innerhalb der ersten Ebene genau einmal betrachtet. In Abbildung \ref{fig:greedy-static-greedy-score-comparison} spielt der Greedy Spieler mit dem statischen Evaluierer und verliert gegen den Greedy Spieler mit dem Score Evaluierer. Somit schneidet die Auswahl gewürfelter Zufallsspiele besser ab, als die Evaluierung aller Aktionen durch den statischen Evaluierer. Somit sind auch die vorherigen Ergebnisse des \ac{PVS} Spielers gegen den \ac{MCTS} nicht sehr verwunderlich.
+
+\vspace*{0.2cm}
 \begin{figure}[!ht]
     \centering
     \resizebox{\textwidth}{!}{\begin{tikzpicture}
-            \coordinate (bar1Start) at (0,0);
+        \coordinate (bar1Start) at (0,0);
             \coordinate (bar1End) at (10,0);
             \coordinate (bar1Break) at (3.1,0);
 
@@ -568,14 +584,19 @@ TODO:
     \caption[Statische Evaluation vs. Score Evaluation]{Statische Evaluation vs. Random Rollout Score Evaluation}
     \label{fig:greedy-static-greedy-score-comparison}
 \end{figure}
+\vspace*{0.1cm}
 
-TODO:
+Es würde auch keinen Sinn machen, den statischen Evaluierer beim \ac{PVS} Spieler durch den Score-Evaluierer zu ersetzen. Durch die zufällige Natur der Score-Evaluation wären viele Annahmen bezüglich \ac{PV} Aktion beim \ac{PVS} Spieler nichtig. Die Stärke des \ac{PVS} Spielers liegt gerade in der deterministischen Evaluierung vieler Zustände, während der Zufall gerade die Stärke von \ac{MCTS} ist. Weiterhin benötigt die Evaluation eines zufälligen Spielverlaufes deutlich mehr Zeit, was dazu führen würde, dass der \ac{PVS} Spieler noch weniger Knoten überprüfen könnte.
+
+\pagebreak
 
 \section{Platzierungen innerhalb des Glicko-2-Systems}
 
 Auch wenn die einzelnen Paarvergleiche der Computerengines einen groben Einblick in die Leistungsfähigkeit der einzelnen Spieler geben können, ist ein präzises Ranking aller Spieler anschaulicher. Deshalb wird das Glicko-2-System verwendet, um einen genaueren Überblick sowie eine Einschätzung für ein präzises Ranking zu erstellen. Das Glicko-System ist ein mathematisches Bewertungssystem, das speziell für die Bewertung der Spielstärke von Spielern in Turnieren entwickelt wurde \cite[S. 377]{1999.GlickoMath}. Im originalen Glicko-System wird neben der genauen Bewertung auch eine \enquote{Rating Derviation} geschätzt \cite[S. 1f.]{2016.Glicko}. Die \enquote{Rating Derviation} entspricht der Standardabweichung und stellt die Unsicherheit bei der Schätzung der Bewertung dar. So kann neben dem Punktschätzer der Bewertung auch ein Konfidenzintervall angegeben werden, in dem die Bewertung eines Spielers mit einer hohen Wahrscheinlichkeit liegt. Das Glicko-2-System erweitert diese Modellierung noch um die \emph{Volatilität}, welche niedrig ist falls ein Spieler konstant gleiche Leistungen erbringt und hoch, wenn ein Spieler unregelmäßig größere Ausreißer in den Leistungen zeigt \cite[S. 1]{2022.Glicko2}. Das Glicko-2-System wird auch von Schachwebseiten wie \enquote{Lichess} für das Rating der Spieler verwendet, während andere Webseiten wie \enquote{Chess.com} den Vorgänger Glicko-1 verwenden \cite{2024.ChessRatingSystems}.
 
 Für die Vergabe der Bewertung sind jedem Spieler zum Anfang die aus dem Glicko-2-Paper übernommenen Standardwerte von 1500 für die Bewertung, 350 für die \enquote{Rating Derviation} und $0{,}06$ für die \emph{Volatilität} zugeordnet \cite[S. 2]{2022.Glicko2}. Diese Werte werden dann inkrementell aktualisiert, indem die zuvor beschriebenen Vergleichsspiele als Ergebnisse eingesetzt werden. Die daraus entstehende Rangliste ist in Abbildung \ref{fig:player-ratings} dargestellt. Dabei werden bei den Spielern, welche mehrere Varianten besitzen, der Übersichtlichkeit halber immer nur die besten Varianten dargestellt.
+
+\pagebreak
 
 \begin{figure}[!ht]
     \centering
@@ -585,8 +606,6 @@ Für die Vergabe der Bewertung sind jedem Spieler zum Anfang die aus dem Glicko-
 \end{figure}
 
 In der Rangliste spiegeln sich die Ergebnisse der Vergleichspartien. Auch hier ist der RandomPlayer der schlechteste Spieler. Kurz davor liegt PatchZero. Die Greedy und \ac{PVS} Spieler Varianten teilen sich zusammen in eine ähnliche Bewertungsgruppe ein, wobei der mit Lazy \ac{SMP} parallelisierte \ac{PVS} Spieler die Gruppe anführt. Die \ac{MCTS} Varianten stehen deutlich von den anderen Spielern abgesetzt auf den vorderen Plätzen. Nur der \ac{MCTS} Spieler mit einer statischen Evaluation liegt im Bereich von Greedy- und \ac{PVS}-Spieler. Dies ist nicht verwunderlich, da diese Variante auch eher ähnlich zu diesen Spielern arbeitet, als wie die tatsächlichen \ac{MCTS} Spieler. Die \hyperref[text:leaf-parallelization]{\emph{Leaf Parallelisierung}} bei \ac{MCTS} liegt leicht abgeschlagen von den anderen Varianten, jedoch immer noch weit vor allen anderen Algorithmen, während \hyperref[text:root-parallelization]{\emph{Root Parallelisierung}} einen kleinen Rangvorsprung über die Single-Threaded \ac{MCTS} Varianten aufbauen kann. An dieser Stelle ist es wichtig anzumerken, dass alle in Abbildung \ref{fig:player-ratings} aufgezeigten Glicko-2-Ratings nur relativ zueinander sind und somit nicht mit anderen Glicko-2-Ratings, zum Beispiel von Schach, verglichen werden können.
-
-TODO:
 
 \pagebreak
 
